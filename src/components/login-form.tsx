@@ -60,7 +60,7 @@ export function LoginForm({
   };
 
   const loginWithGithub = async () => {
-    setLoading(true); // Set loading to true when the request starts
+    setLoading(true);
     await authClient.signIn.social(
       {
         provider: "github",
@@ -73,7 +73,7 @@ export function LoginForm({
         onSuccess: () => {
           toast.dismiss(loadingToastId);
           toast.success("You're successfully signed in");
-          setLoading(false); // Set loading to false when the request succeeds
+          setLoading(false); 
         },
         onError: (ctx) => {
           toast.dismiss(loadingToastId);
@@ -82,7 +82,7 @@ export function LoginForm({
           }
 
           toast.error(ctx.error.message);
-          setLoading(false); // Set loading to false when the request fails
+          setLoading(false);
         },
       },
     );
@@ -98,7 +98,7 @@ export function LoginForm({
       {...props}
     >
       <div className="mb-3 flex flex-col items-center gap-2 text-center">
-        <h1 className="font-playfair text-3xl text-textAlternative">
+        <h1 className="font-playfair text-3xl text-textAlternative dark:text-white">
           <span className="mx-1 font-itcThinItalic text-4xl">Welcome</span> Back
         </h1>
       </div>
@@ -106,9 +106,9 @@ export function LoginForm({
       <Button
         onClick={loginWithGithub}
         variant="outline"
-        className="w-full rounded-lg bg-inputBg py-5"
-        type="button" // Ensure this button doesn't submit the form
-        disabled={loading} // Disable the button when loading is true
+        className="w-full rounded-lg bg-inputBg  py-5"
+        type="button" 
+        disabled={loading} 
       >
         {loading ? (
           "Loading..."
@@ -121,14 +121,14 @@ export function LoginForm({
       </Button>
 
       <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-        <span className="relative z-10 bg-background px-2 text-muted-foreground">
+        <span className="relative z-10 bg-background dark:bg-textAlternative py-1 rounded-lg px-2 text-muted-foreground">
           OR
         </span>
       </div>
 
       <div className="grid gap-6">
         <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
+          <Label className=" dark:text-white" htmlFor="email">Email</Label>
           <Input
             id="email"
             type="email"
@@ -142,10 +142,10 @@ export function LoginForm({
         </div>
         <div className="grid gap-2">
           <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
+            <Label className=" dark:text-white" htmlFor="password">Password</Label>
             <a
               href="/forget-password"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
+              className="ml-auto text-sm dark:text-white text-muted-foreground underline-offset-4 hover:underline"
             >
               Forgot your password?
             </a>
@@ -172,14 +172,14 @@ export function LoginForm({
         </div>
         <Button
           type="submit"
-          className="w-full bg-textAlternative hover:bg-textAlternative/95"
+          className="w-full bg-textAlternative dark:bg-white hover:bg-textAlternative/95"
         >
           Login
         </Button>
       </div>
-      <div className="text-center text-sm">
+      <div className="text-center text-sm dark:text-white/60">
         Don&apos;t have an account?{" "}
-        <Link href="/signup" className="underline underline-offset-4">
+        <Link href="/signup" className="underline underline-offset-4 dark:text-white">
           Sign up
         </Link>
       </div>
