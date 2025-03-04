@@ -43,7 +43,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex items-center justify-between flex-row  mx-auto py-4 px-6 sticky top-0 bg-white dark:bg-textAlternative">
+    <div className="flex items-center justify-between max-w-6xl flex-row  mx-auto py-4 px-6 sticky top-0 bg-white dark:bg-textAlternative">
       <div className="text-3xl text-labelColor dark:text-white hover:opacity-80 transition-opacity font-instrument cursor-pointer">
         NerdSpace
       </div>
