@@ -14,7 +14,7 @@ import { Input } from "./ui/input";
 const Navbar = () => {
   const router = useRouter();
   let loadingToastId: string | undefined;
-  const session = authClient.useSession()
+  const session = authClient.useSession();
 
   const logout = async () => {
     await authClient.signOut({

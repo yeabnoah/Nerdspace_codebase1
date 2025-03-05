@@ -1,6 +1,6 @@
 import localFont from "next/font/local";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Playfair_Display, Inter, Instrument_Serif } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display, Inter, Instrument_Serif , } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { ThemeProvider } from "@/components/theme-provider";

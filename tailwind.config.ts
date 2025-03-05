@@ -18,6 +18,7 @@ export default {
         itcBold: ["var(--font-itcBold)"],
         itcThinItalic: ["var(--font-itcThinItalic)"],
         instrument: ["var(--font-instrument-serif)", "serif"],
+        inter : ["var(--font-inter)"],
       },
       colors: {
         textAlternative: "#201e1d",
