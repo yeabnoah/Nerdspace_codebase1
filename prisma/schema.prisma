@@ -28,9 +28,22 @@ model User {
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
+  nerdAt        String?
+  posts         Post[]
 
   @@unique([email])
   @@map("user")
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("posts")
 }
 
 model Session {
