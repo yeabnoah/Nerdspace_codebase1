@@ -6,16 +6,17 @@ import RightNavbar from "@/components/navbar/right-navbar";
 import RenderPOst from "@/components/post/render-post";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import usePostStore from "@/store/post.store";
 import { HomeIcon, Search } from "lucide-react";
 import { use, useState } from "react";
 
 export default function Home() {
 
   const [post, setPost] = useState<string>("");
-
-  const postSubmit = () => {
-    console.log(post);
-  }
+  // const postSubmit = () => {
+  //   console.log(post);
+  // }
+  const {fetchPosts} = usePostStore()
 
   return (
     <div className="flex flex-row flex-1 items-start justify-center max-w-6xl mx-auto">
@@ -28,7 +29,7 @@ export default function Home() {
           setPost(e.target.value);
         }} 
         />
-        <Button onClick={postSubmit} className=" itemright mt-3 h-8">
+        <Button onClick={fetchPosts} className=" itemright mt-3 h-8">
           Post
         </Button>
 
