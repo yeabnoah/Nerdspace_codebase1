@@ -3,6 +3,7 @@
 import LeftNavbar from "@/components/navbar/left-navbar";
 import MobileNavBar from "@/components/navbar/mobile-nav-bar";
 import RightNavbar from "@/components/navbar/right-navbar";
+import RenderPOst from "@/components/post/render-post";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { HomeIcon, Search } from "lucide-react";
@@ -30,6 +31,8 @@ export default function Home() {
         <Button onClick={postSubmit} className=" itemright mt-3 h-8">
           Post
         </Button>
+
+        <RenderPOst />
       </div>
 
       <RightNavbar />
