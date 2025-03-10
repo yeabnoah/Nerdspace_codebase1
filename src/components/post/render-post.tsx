@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { timeAgo } from "@/functions/calculate-time-difference";
 import usePostStore from "@/store/post.store";
@@ -7,8 +6,36 @@ import Image from "next/image";
 
 const RenderPOst = () => {
   const { posts, fetchPostLoading } = usePostStore();
-  const [isExpanded, setIsExpanded] = useState(false);
-  
+
+  // Minimum number of words to trim for each screen size 
+  const trimLimits = {
+    sm: 30,
+    md: 20,
+    lg: 55 
+  };
+
+  const [expandedStates, setExpandedStates] = useState<boolean[]>(
+    Array(posts.length).fill(false)
+  );
+
+  const toggleExpand = (index: number) => {
+    setExpandedStates((prev) => {
+      const newExpandedStates = [...prev];
+      newExpandedStates[index] = !newExpandedStates[index];
+      return newExpandedStates;
+    });
+  };
+
+  const getTrimLimit = () => {
+    if (window.innerWidth < 640) {
+      return trimLimits.sm; 
+    } else if (window.innerWidth >= 640 && window.innerWidth < 1024) {
+      return trimLimits.md;
+    } else {
+      return trimLimits.lg; 
+    }
+  };
+
   if (fetchPostLoading) {
     return (
       <div className="h-[60vh] flex justify-center items-center w-full">
@@ -20,12 +47,12 @@ const RenderPOst = () => {
   return (
     <div>
       {posts.map((each, index) => {
-       
-        
-        // Trim content to 20 words
         const contentWords = each.content.split(" ");
-        const truncatedContent = contentWords.slice(0, 20).join(" ");
-        const isLongContent = contentWords.length > 20;
+        const trimLimit = getTrimLimit();
+        const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
+        const isLongContent = contentWords.length > trimLimit;
+        const isShortContent = contentWords.length < trimLimit;
+        const isTooShort = contentWords.length < 10;
 
         return (
           <div className="my-5 rounded-xl border p-4" key={index}>
@@ -44,32 +71,34 @@ const RenderPOst = () => {
               </div>
             </div>
 
-            <div className="mt-2 flex items-start justify-center">
+            <div
+              className={`mt-2 flex ${isShortContent && isTooShort ? "flex-col" : "flex-row"} items-start justify-center`}
+            >
               <div className="flex-1">
-                <h4 className="text-balance text-sm">
-                  {isExpanded || !isLongContent
+                <h4 className="text-xs md:text-sm">
+                  {expandedStates[index] || !isLongContent
                     ? each.content
                     : `${truncatedContent}...`}
                 </h4>
                 {isLongContent && (
                   <button
                     className="text-blue-500 text-xs mt-2"
-                    onClick={() => setIsExpanded((prev) => !prev)}
+                    onClick={() => toggleExpand(index)}
                   >
-                    {isExpanded ? "See less" : "See more"}
+                    {expandedStates[index] ? "See less" : "See more"}
                   </button>
                 )}
               </div>
 
-              <div className="flex flex-col gap-5">
-                <div className="rounded-full px-2">
-                  <Heart />
+              <div className={`flex ${isShortContent && isTooShort ? "flex-row mt-5" : "flex-col"} gap-5`}>
+                <div className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}>
+                  <Heart className="size-5" />
                 </div>
                 <div className="rounded-full px-2">
-                  <MessageCircle />
+                  <MessageCircle className="size-5" />
                 </div>
                 <div className="rounded-full px-2">
-                  <BookmarkIcon />
+                  <BookmarkIcon className="size-5" />
                 </div>
               </div>
             </div>
