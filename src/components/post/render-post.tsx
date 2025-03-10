@@ -1,18 +1,20 @@
 "use client";
 
 import { timeAgo } from "@/functions/calculate-time-difference";
+import fetchPosts from "@/functions/fetch-post";
 import usePostStore from "@/store/post.store";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { BookmarkIcon, Heart, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const RenderPOst = () => {
-  const { posts, fetchPostLoading ,fetchPosts} = usePostStore();
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-  // const sortedPosts = [...posts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  const {data : posts, isPending, isError} = useQuery({
+    queryKey: ["posts"],
+    queryFn: fetchPosts,
+  });
 
   const trimLimits = {
     sm: 30,
@@ -21,7 +23,7 @@ const RenderPOst = () => {
   };
 
   const [expandedStates, setExpandedStates] = useState<boolean[]>(
-    Array(posts.length).fill(false),
+    Array(posts?.length).fill(false),
   );
 
   const toggleExpand = (index: number) => {
@@ -42,7 +44,7 @@ const RenderPOst = () => {
     }
   };
 
-  if (fetchPostLoading) {
+  if (isPending) {
     return (
       <div className="flex h-[60vh] w-full items-center justify-center">
         loading ..
@@ -52,7 +54,7 @@ const RenderPOst = () => {
 
   return (
     <div>
-      {posts.map((each, index) => {
+      {posts?.map((each, index) => {
         const contentWords = each.content.split(" ");
         const trimLimit = getTrimLimit();
         const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
@@ -61,10 +63,10 @@ const RenderPOst = () => {
         const isTooShort = contentWords.length < 10;
 
         return (
-          <div className="my-5 rounded-xl border py-4 pl-4 pr-2 md:pr-4" key={index}>
+          <div className="my-5 rounded-xl border p-4" key={index}>
             <div className="flex items-center gap-5">
               <Image
-                src={each.user.image || "/user.jpg"}
+                src={each.user.image || "/user_placeholder.jpg"}
                 alt="user"
                 className="size-10 rounded-full"
                 height={200}
