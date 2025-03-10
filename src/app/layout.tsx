@@ -1,9 +1,16 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Instrument_Serif, Inter, Playfair_Display, } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Instrument_Serif,
+  Inter,
+  Playfair_Display,
+} from "next/font/google";
 import localFont from "next/font/local";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
+import TanstackQueryProvider from "@/providers/tanstack-query-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +40,6 @@ export const metadata: Metadata = {
   },
   description: "social media for nerds",
 };
-
 
 const InstrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
@@ -89,7 +95,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <TanstackQueryProvider>{children}</TanstackQueryProvider>
           <Toaster
             position="bottom-right"
             reverseOrder={false}
@@ -107,7 +113,6 @@ export default function RootLayout({
               },
             }}
           />
-          
         </ThemeProvider>
       </body>
     </html>
