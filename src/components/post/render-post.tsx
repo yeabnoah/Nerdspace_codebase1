@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { timeAgo } from "@/functions/calculate-time-difference";
 import usePostStore from "@/store/post.store";
@@ -9,15 +9,15 @@ import { useState } from "react";
 const RenderPOst = () => {
   const { posts, fetchPostLoading } = usePostStore();
 
-  // Minimum number of words to trim for each screen size 
+  // Minimum number of words to trim for each screen size
   const trimLimits = {
     sm: 30,
     md: 20,
-    lg: 55 
+    lg: 55,
   };
 
   const [expandedStates, setExpandedStates] = useState<boolean[]>(
-    Array(posts.length).fill(false)
+    Array(posts.length).fill(false),
   );
 
   const toggleExpand = (index: number) => {
@@ -30,17 +30,17 @@ const RenderPOst = () => {
 
   const getTrimLimit = () => {
     if (window.innerWidth < 640) {
-      return trimLimits.sm; 
+      return trimLimits.sm;
     } else if (window.innerWidth >= 640 && window.innerWidth < 1024) {
       return trimLimits.md;
     } else {
-      return trimLimits.lg; 
+      return trimLimits.lg;
     }
   };
 
   if (fetchPostLoading) {
     return (
-      <div className="h-[60vh] flex justify-center items-center w-full">
+      <div className="flex h-[60vh] w-full items-center justify-center">
         loading ..
       </div>
     );
@@ -84,7 +84,7 @@ const RenderPOst = () => {
                 </h4>
                 {isLongContent && (
                   <button
-                    className=" underline text-xs mt-2"
+                    className="mt-2 text-xs underline"
                     onClick={() => toggleExpand(index)}
                   >
                     {expandedStates[index] ? "See less" : "See more"}
@@ -92,14 +92,22 @@ const RenderPOst = () => {
                 )}
               </div>
 
-              <div className={`flex ${isShortContent && isTooShort ? "flex-row mt-5" : "flex-col"} gap-5`}>
-                <div className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}>
+              <div
+                className={`flex ${isShortContent && isTooShort ? "mt-5 flex-row" : "flex-col"} gap-5`}
+              >
+                <div
+                  className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
+                >
                   <Heart className="size-5" />
                 </div>
-                <div className="rounded-full px-2">
+                <div
+                  className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
+                >
                   <MessageCircle className="size-5" />
                 </div>
-                <div className="rounded-full px-2">
+                <div
+                  className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
+                >
                   <BookmarkIcon className="size-5" />
                 </div>
               </div>

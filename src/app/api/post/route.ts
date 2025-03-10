@@ -55,10 +55,13 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
-    return NextResponse.json({
-      data: newPost,
-      id: session.user.id as string | "user",
-    });
+    return NextResponse.json(
+      {
+        data: newPost,
+        id: session.user.id as string | "user",
+      },
+      { status: 200 },
+    );
   } catch (error) {
     return NextResponse.json(
       {
