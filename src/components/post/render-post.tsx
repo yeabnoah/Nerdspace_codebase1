@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { timeAgo } from "@/functions/calculate-time-difference";
 import usePostStore from "@/store/post.store";
 import { BookmarkIcon, Heart, MessageCircle } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 const RenderPOst = () => {
   const { posts, fetchPostLoading } = usePostStore();
@@ -82,7 +82,7 @@ const RenderPOst = () => {
                 </h4>
                 {isLongContent && (
                   <button
-                    className="text-blue-500 text-xs mt-2"
+                    className=" underline text-xs mt-2"
                     onClick={() => toggleExpand(index)}
                   >
                     {expandedStates[index] ? "See less" : "See more"}
