@@ -9,7 +9,9 @@ import { useState } from "react";
 const RenderPOst = () => {
   const { posts, fetchPostLoading } = usePostStore();
 
-  // Minimum number of words to trim for each screen size
+  // Sort posts by createdAt in descending order (latest first)
+  const sortedPosts = [...posts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
   const trimLimits = {
     sm: 30,
     md: 20,
@@ -17,7 +19,7 @@ const RenderPOst = () => {
   };
 
   const [expandedStates, setExpandedStates] = useState<boolean[]>(
-    Array(posts.length).fill(false),
+    Array(sortedPosts.length).fill(false),
   );
 
   const toggleExpand = (index: number) => {
@@ -48,7 +50,7 @@ const RenderPOst = () => {
 
   return (
     <div>
-      {posts.map((each, index) => {
+      {sortedPosts.map((each, index) => {
         const contentWords = each.content.split(" ");
         const trimLimit = getTrimLimit();
         const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
@@ -60,7 +62,7 @@ const RenderPOst = () => {
           <div className="my-5 rounded-xl border p-4" key={index}>
             <div className="flex items-center gap-5">
               <Image
-                src={each.user.image}
+                src={each.user.image || "/path/to/placeholder-image.jpg"}
                 alt="user"
                 className="size-10 rounded-full"
                 height={200}
