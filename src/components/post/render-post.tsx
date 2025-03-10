@@ -4,13 +4,15 @@ import { timeAgo } from "@/functions/calculate-time-difference";
 import usePostStore from "@/store/post.store";
 import { BookmarkIcon, Heart, MessageCircle } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const RenderPOst = () => {
-  const { posts, fetchPostLoading } = usePostStore();
+  const { posts, fetchPostLoading ,fetchPosts} = usePostStore();
 
-  // Sort posts by createdAt in descending order (latest first)
-  const sortedPosts = [...posts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+  // const sortedPosts = [...posts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   const trimLimits = {
     sm: 30,
@@ -19,7 +21,7 @@ const RenderPOst = () => {
   };
 
   const [expandedStates, setExpandedStates] = useState<boolean[]>(
-    Array(sortedPosts.length).fill(false),
+    Array(posts.length).fill(false),
   );
 
   const toggleExpand = (index: number) => {
@@ -50,7 +52,7 @@ const RenderPOst = () => {
 
   return (
     <div>
-      {sortedPosts.map((each, index) => {
+      {posts.map((each, index) => {
         const contentWords = each.content.split(" ");
         const trimLimit = getTrimLimit();
         const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
@@ -59,10 +61,10 @@ const RenderPOst = () => {
         const isTooShort = contentWords.length < 10;
 
         return (
-          <div className="my-5 rounded-xl border p-4" key={index}>
+          <div className="my-5 rounded-xl border py-4 pl-4 pr-2 md:pr-4" key={index}>
             <div className="flex items-center gap-5">
               <Image
-                src={each.user.image || "/path/to/placeholder-image.jpg"}
+                src={each.user.image || "/user.jpg"}
                 alt="user"
                 className="size-10 rounded-full"
                 height={200}

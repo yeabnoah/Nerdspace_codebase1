@@ -42,7 +42,7 @@ const PostInput = () => {
     <div className="flex gap-2 justify-center items-start rounded-xl border  p-2">
       <div>
         <Image
-          src={session?.data?.user?.image || "/user_placeholder.jpg"}
+          src={session?.data?.user?.image || "/user.jpg"}
           alt="user"
           className="size-8 rounded-full"
           height={200}
