@@ -1,29 +1,24 @@
-import React from 'react'
-import { Button } from '../ui/button'
-import { HomeIcon, Search } from 'lucide-react'
+import { prisma } from "@/lib/prisma";
+import FollowList from "../user/followList";
+import { authClient } from "@/lib/auth-client";
+import { auth } from "@/lib/auth";
+import { TrendingTopics } from "../user/trending";
 
-const RightNavbar = () => {
+const RightNavbar = async () => {
+  const user = await authClient.getSession();
+  const users = await prisma.user.findMany({
+    where: {
+      NOT: { id: user?.data?.user.id },
+    },
+    take: 5,
+  });
+
   return (
-    <div className=" hidden sticky top-20 left-0 md:w-fit  lg:w-[17vw]  md:flex md:flex-col px-5 py-5 gap-2">
-    <Button variant="outline" className=" gap-3 justify-start bg-transparent">
-      <HomeIcon className=" hidden md:block" size={20} />
-      <span className=" hidden lg:block">Home</span>
-    </Button>
-  
-    <Button variant="outline" className=" gap-3 justify-start bg-transparent">
-      <Search  className=" hidden md:block" size={20} />
-      <span className=" hidden lg:block">search</span>
-    </Button>
-    <Button variant="outline" className=" gap-3 justify-start bg-transparent">
-      <HomeIcon  className=" hidden md:block" size={20} />
-      <span className=" hidden lg:block">Home</span>
-    </Button>
-    <Button variant="outline" className=" gap-3 justify-start bg-transparent">
-      <HomeIcon  className=" hidden md:block" size={20} />
-      <span className=" hidden lg:block">Home</span>
-    </Button>
-  </div>
-  )
-}
+    <div className=" sticky left-0 top-20 md:pr-5 lg:pr-0">
+      <FollowList users={users} />
+      <TrendingTopics />
+    </div>
+  );
+};
 
-export default RightNavbar
+export default RightNavbar;
