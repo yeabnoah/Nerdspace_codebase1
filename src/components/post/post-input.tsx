@@ -1,3 +1,5 @@
+"use client"
+
 import usePostStore from "@/store/post.store";
 import { useState } from "react";
 import { Textarea } from "../ui/textarea";

@@ -1,3 +1,5 @@
+"use client"
+
 import { timeAgo } from "@/functions/calculate-time-difference";
 import usePostStore from "@/store/post.store";
 import { BookmarkIcon, Heart, MessageCircle } from "lucide-react";
