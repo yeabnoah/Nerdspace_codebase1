@@ -3,17 +3,27 @@ import { prisma } from "@/lib/prisma";
 import { postSchema } from "@/validation/post.validation";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const cursor = request.nextUrl.searchParams.get("cursor") || null;
+    const limit = 5;
+
     const posts = await prisma.post.findMany({
       include: {
         user: true,
       },
       orderBy: { createdAt: "desc" },
+      take: limit,
+      skip: cursor ? 1 : 0,
+      cursor: cursor ? { id: cursor } : undefined,
     });
+
+    const nextCursor = posts.length > 0 ? posts[posts.length - 1].id : null;
+
     return NextResponse.json(
       {
         data: posts,
+        nextCursor: nextCursor,
         message: "posts fetched successfully",
       },
       { status: 200 },
