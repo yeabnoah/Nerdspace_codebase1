@@ -87,14 +87,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${InstrumentSerif.variable} ${inter.variable} ${itcThin.variable} ${itcBold.variable} ${itcThinItalic.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${InstrumentSerif.variable} ${inter.variable} ${itcThin.variable} ${itcBold.variable} ${itcThinItalic.variable} antialiased dark:bg-textAlternative`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
+       
           <TanstackQueryProvider>{children}</TanstackQueryProvider>
           <Toaster
             position="bottom-right"
@@ -104,7 +99,7 @@ export default function RootLayout({
               style: {
                 border: "1px solid #201e1d",
                 padding: "8px",
-                color: "#ffffff", // Change to white or another contrasting color
+                color: "#ffffff",
                 backgroundColor: "#201e1d",
                 borderTopLeftRadius: 10,
                 borderTopRightRadius: 10,
@@ -113,7 +108,7 @@ export default function RootLayout({
               },
             }}
           />
-        </ThemeProvider>
+        {/* </ThemeProvider> */}
       </body>
     </html>
   );
