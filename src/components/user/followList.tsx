@@ -6,13 +6,13 @@ import Image from "next/image";
 
 const FollowList = ({ users }: { users: User[] }) => {
   return (
-    <div className=" hidden gap-2 py-5 md:flex md:flex-col lg:w-[17vw]">
+    <div className=" hidden gap-2 py-5 md:flex md:flex-col border px-3 my-5 rounded-xl lg:w-[19vw]">
       <div>
         <h1 className="text-lg ">Who to Follow</h1>
         <div className="space-y-3">
           {users.length > 0 ? (
             users.map((u) => (
-              <div key={u.id} className="flex items-center my-2 justify-between">
+              <div key={u.id} className="flex items-center my-5 justify-between">
                 <div className=" flex items-center gap-2">
                 <Image
                   src={u.image || "/user.jpg"}
