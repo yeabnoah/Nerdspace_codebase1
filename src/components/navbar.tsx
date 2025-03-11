@@ -61,7 +61,7 @@ const Navbar = () => {
             <Button variant="ghost" size="icon" className="rounded-full">
               <Avatar className="flex items-center justify-center">
                 <AvatarImage
-                  src={session.data?.user?.image || "/user_placeholder.jpg"}
+                  src={session.data?.user?.image || "/user.jpg"}
                   className=" rounded-full ring-2 ring-green-200/50 size-8"
                   alt="@shadcn"
                 />

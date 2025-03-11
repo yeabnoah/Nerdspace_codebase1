@@ -27,7 +27,7 @@ const FollowList = ({ users }: { users: User[] }) => {
                 </div>
                 </div>
 
-                <Button size="sm">Follow</Button>
+                <Button size="sm" className=" bg-transparent border dark:text-white hover:bg-transparent text-textAlternative shadow-none">Follow</Button>
               </div>
             ))
           ) : (

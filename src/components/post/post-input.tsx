@@ -1,17 +1,15 @@
 "use client";
 
-import usePostStore from "@/store/post.store";
-import { useState } from "react";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
-import { toast } from "react-hot-toast";
+import createPost from "@/functions/create-post";
 import { authClient } from "@/lib/auth-client";
+import { queryClient } from "@/providers/tanstack-query-provider";
+import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { queryClient } from "@/providers/tanstack-query-provider";
-import createPost from "@/functions/create-post";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
+import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
 
 const PostInput = () => {
   const [post, setPost] = useState<string>("");
@@ -21,13 +19,13 @@ const PostInput = () => {
   const { mutate, isPending, isError } = useMutation({
     mutationKey: ["create-post"],
     mutationFn: createPost,
-    onSuccess : () => {
-     toast.success("Post created successfully");
-     queryClient.invalidateQueries({queryKey : ["posts"]});
+    onSuccess: () => {
+      toast.success("Post created successfully");
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
-    onError : () => {
+    onError: () => {
       toast.error("An error occured while creating post");
-    }
+    },
   });
 
   const handleSubmit = async () => {
@@ -44,7 +42,7 @@ const PostInput = () => {
   }
 
   return (
-    <div className="flex gap-2 justify-center items-start rounded-xl border p-2">
+    <div className="flex items-start justify-center gap-2 rounded-xl border p-2">
       <div>
         <Image
           src={session?.data?.user?.image || "/user.jpg"}
@@ -55,16 +53,16 @@ const PostInput = () => {
         />
       </div>
 
-      <div className="flex-1 flex flex-col items-end">
+      <div className="flex flex-1 flex-col items-end">
         <Textarea
           placeholder="What's on your mind?"
-          className="h-14 w-full font-inter bg-black/10 placeholder:text-sm text-sm md:text-base"
+          className="h-14 w-full font-inter text-sm placeholder:text-sm md:text-base"
           value={post}
           onChange={(e) => setPost(e.target.value)}
         />
         <Button
           onClick={handleSubmit}
-          className="mt-3 h-8 bg-transparent border text-black/50 dark:text-white border-white/50 hover:bg-transparent"
+          className="border bg-transparent my-2 text-textAlternative shadow-none hover:bg-transparent dark:text-white"
           disabled={isPending || post.trim() === ""}
         >
           {isPending ? "Posting..." : "Post"}
