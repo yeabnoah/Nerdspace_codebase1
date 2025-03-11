@@ -62,7 +62,7 @@ const PostInput = () => {
         />
         <Button
           onClick={handleSubmit}
-          className="border bg-transparent my-2 text-textAlternative shadow-none hover:bg-transparent dark:text-white"
+          className="my-2 border bg-transparent text-textAlternative shadow-none hover:bg-transparent dark:text-white"
           disabled={isPending || post.trim() === ""}
         >
           {isPending ? "Posting..." : "Post"}

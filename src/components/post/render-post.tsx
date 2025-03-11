@@ -60,7 +60,7 @@ const RenderPost = () => {
   if (isLoading) {
     return (
       <div>
-        <Card className="my-5 rounded-xl border bg-transparent p-4">
+        <Card className="my-5 rounded-xl border bg-transparent p-4 shadow-none">
           <div className="flex items-center gap-5">
             <Skeleton className="size-10 rounded-full" />
             <div>
@@ -75,7 +75,7 @@ const RenderPost = () => {
             <Skeleton className="h-6 w-6 rounded-full" />
           </div>
         </Card>
-        <Card className="my-5 rounded-xl border bg-transparent p-4">
+        <Card className="my-5 rounded-xl border bg-transparent p-4 shadow-none">
           <div className="flex items-center gap-5">
             <Skeleton className="size-10 rounded-full" />
             <div>
@@ -90,7 +90,7 @@ const RenderPost = () => {
             <Skeleton className="h-6 w-6 rounded-full" />
           </div>
         </Card>
-        <Card className="my-5 rounded-xl border bg-transparent p-4">
+        <Card className="my-5 rounded-xl border bg-transparent p-4 shadow-none">
           <div className="flex items-center gap-5">
             <Skeleton className="size-10 rounded-full" />
             <div>
@@ -105,6 +105,14 @@ const RenderPost = () => {
             <Skeleton className="h-6 w-6 rounded-full" />
           </div>
         </Card>
+      </div>
+    );
+  }
+
+  if (data && data.pages.flatMap((page) => page.data).length === 0) {
+    return (
+      <div className="flex h-[50vh] w-full items-center justify-center">
+        No posts available
       </div>
     );
   }
@@ -193,7 +201,7 @@ const RenderPost = () => {
       <div ref={ref}>
         {isFetchingNextPage && (
           <div className="">
-            <Card className="my-5 rounded-xl border bg-transparent p-4">
+            <Card className="my-5 rounded-xl border shadow-none bg-transparent p-4">
               <div className="flex items-center gap-5">
                 <Skeleton className="size-10 rounded-full" />
                 <div>
@@ -208,7 +216,7 @@ const RenderPost = () => {
                 <Skeleton className="h-6 w-6 rounded-full" />
               </div>
             </Card>
-            {/* <Card className="my-5 rounded-xl border bg-transparent p-4">
+            {/* <Card className="my-5 rounded-xl border bg-transparent p-4 shadow-none">
               <div className="flex items-center gap-5">
                 <Skeleton className="size-10 rounded-full" />
                 <div>
