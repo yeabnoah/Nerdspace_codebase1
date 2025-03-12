@@ -9,16 +9,28 @@ import {
 import { AutosizeTextarea } from "../ui/resizeble-text-area";
 import postInterface from "@/interface/auth/post.interface";
 import { Button } from "../ui/button";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import editPostFunction from "@/functions/edit-post";
 
 const EditModal = ({
   selectedPost,
   setEditModal,
   editModal,
+  content,
+  setContent,
 }: {
   selectedPost: postInterface;
   setEditModal: (open: boolean) => void;
   editModal: boolean;
+  content: string;
+  setContent: (content: string) => void;
 }) => {
+  const mutation = useMutation({
+    mutationKey: ["edit-post"],
+    mutationFn: editPostFunction,
+  });
+
   return (
     <Dialog open={editModal} onOpenChange={setEditModal}>
       <DialogContent className="max-w-[90%] rounded-xl dark:bg-textAlternative md:max-w-[45%]">
@@ -28,9 +40,9 @@ const EditModal = ({
         <AutosizeTextarea
           maxHeight={300}
           className="bg-transparent"
-          value={selectedPost?.content}
+          value={content}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            console.log(e);
+            setContent(e.target.value);
           }}
         />
         <DialogFooter className="gap-3">

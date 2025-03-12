@@ -6,6 +6,8 @@ interface PostStoreInterface {
   posts: postInterface[];
   selectedPost: postInterface;
   setSelectedPost: (post: postInterface) => void;
+  content: string;
+  setContent: (content: string) => void;
 }
 
 const usePostStore = create<PostStoreInterface>((set, get) => ({
@@ -28,6 +30,12 @@ const usePostStore = create<PostStoreInterface>((set, get) => ({
     },
   },
   setSelectedPost: (post: postInterface) => set({ selectedPost: post }),
+  content: "",
+  setContent: (content) => {
+    set({
+      content: content,
+    });
+  },
 }));
 
 export default usePostStore;
