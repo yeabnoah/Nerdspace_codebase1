@@ -35,7 +35,8 @@ const RenderPost = () => {
   const { ref, inView } = useInView();
   const session = authClient.useSession();
   const [editModal, setEditModal] = useState(false);
-  const { selectedPost, setSelectedPost } = usePostStore();
+  const { selectedPost, setSelectedPost, content, setContent } = usePostStore();
+  const [editPostInput, setEditPostInput] = useState<String>()
 
   const {
     data,
@@ -125,6 +126,7 @@ const RenderPost = () => {
                     <DropdownMenuContent className="mr-5 flex flex-row bg-white dark:bg-textAlternative md:mr-0 md:block">
                       <DropdownMenuItem onClick={() => {
                         setSelectedPost(each)
+                        setContent(each.content)
                         console.log(each)
                         setEditModal(true)
                       }}>
@@ -223,7 +225,7 @@ const RenderPost = () => {
         )}
       </div>
 
-      <EditModal selectedPost={selectedPost} setEditModal={setEditModal} editModal={editModal} />
+      <EditModal selectedPost={selectedPost} setEditModal={setEditModal} editModal={editModal} content={content} setContent={setContent} />
     </div>
   );
 };
