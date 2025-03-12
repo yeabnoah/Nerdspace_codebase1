@@ -12,6 +12,9 @@ import { Button } from "../ui/button";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import editPostFunction from "@/functions/edit-post";
+import toast from "react-hot-toast";
+import { queryClient } from "@/providers/tanstack-query-provider";
+import { Loader } from "lucide-react";
 
 const EditModal = ({
   selectedPost,
@@ -29,7 +32,21 @@ const EditModal = ({
   const mutation = useMutation({
     mutationKey: ["edit-post"],
     mutationFn: editPostFunction,
+    onSuccess : ()=>{
+      toast.success("updated post successfully")
+      setEditModal(false)
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+    onError : ()=>{
+      toast.error("error occured while updating post")
+    }
   });
+
+  const editPost = async() =>{
+    await mutation.mutate()
+  }
+
+
 
   return (
     <Dialog open={editModal} onOpenChange={setEditModal}>
@@ -47,13 +64,19 @@ const EditModal = ({
         />
         <DialogFooter className="gap-3">
           <Button
+          disabled={mutation.isPending}
             onClick={() => {
               setEditModal(false);
             }}
           >
             Cancel
           </Button>
-          <Button>Update</Button>
+          <Button
+          onClick={editPost}
+           disabled={mutation.isPending}>
+            {mutation.isPending && <Loader />}
+            {mutation.isPending ? "Updating ..." : "Update"}
+            </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
