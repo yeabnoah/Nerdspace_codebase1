@@ -1,8 +1,8 @@
 interface postInterface {
   id: string;
   content: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | null;
+  updatedAt: Date | null;
   userId: string;
   user: {
     id: string;
@@ -10,8 +10,8 @@ interface postInterface {
     email: string;
     emailVerified: boolean;
     image: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: Date | null;
+    updatedAt: Date | null;
     nerdAt: null | string;
   };
 }

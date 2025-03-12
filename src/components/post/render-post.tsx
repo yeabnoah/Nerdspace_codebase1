@@ -26,10 +26,20 @@ import {
 } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
 import { authClient } from "@/lib/auth-client";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Textarea } from "../ui/textarea";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
   const session = authClient.useSession();
+  const [editModal, setEditModal] = useState(false);
 
   const {
     data,
@@ -178,10 +188,10 @@ const RenderPost = () => {
                     <MoreHorizontal />
                   </DropdownMenuTrigger>
                   {session?.data?.user?.id === each.user.id ? (
-                    <DropdownMenuContent className="bg-white dark:bg-textAlternative flex-row flex md:block">
-                      <DropdownMenuItem onClick={() => console.log("edit")}>
+                    <DropdownMenuContent className="mr-5 flex flex-row bg-white dark:bg-textAlternative md:mr-0 md:block">
+                      <DropdownMenuItem onClick={() => setEditModal(true)}>
                         <Edit />
-                        <span className=" hidden md:block">Edit</span>
+                        <span className="hidden md:block">Edit</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem>
                         <TrashIcon />
@@ -197,7 +207,7 @@ const RenderPost = () => {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   ) : (
-                    <DropdownMenuContent className="bg-white dark:bg-textAlternative">
+                    <DropdownMenuContent className="mr-5 flex flex-row justify-center bg-white dark:bg-textAlternative md:mr-0 md:block">
                       <DropdownMenuItem>
                         <Share2Icon />
                         <span className="hidden md:block">share</span>
@@ -289,6 +299,15 @@ const RenderPost = () => {
           </div>
         )}
       </div>
+
+      <Dialog open={editModal} onOpenChange={setEditModal}>
+        <DialogContent className=" dark:bg-textAlternative">
+          <DialogHeader>
+            <DialogTitle>Edit Post</DialogTitle>
+            {/* <Textarea value={} /> */}
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
