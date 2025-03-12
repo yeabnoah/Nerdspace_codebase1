@@ -5,12 +5,32 @@ import fetchPosts from "@/functions/fetch-post";
 import usePostStore from "@/store/post.store";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { BookmarkIcon, Heart, MessageCircle } from "lucide-react";
+import {
+  ActivityIcon,
+  BanIcon,
+  BookmarkIcon,
+  Dot,
+  Edit,
+  Heart,
+  Info,
+  LockIcon,
+  MessageCircle,
+  MoreHorizontal,
+  TrashIcon,
+} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { Skeleton } from "../ui/skeleton";
 import { Card } from "../ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "../ui/dropdown-menu";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -141,19 +161,45 @@ const RenderPost = () => {
 
           return (
             <div className="my-5 rounded-xl border p-4" key={index}>
-              <div className="flex items-center gap-5">
-                <Image
-                  src={each.user.image || "/user.jpg"}
-                  alt="user"
-                  className="size-10 rounded-full"
-                  height={200}
-                  width={200}
-                />
+              <div className="mr-2 flex justify-between pb-2">
+                <div className="flex items-center gap-5">
+                  <Image
+                    src={each.user.image || "/user.jpg"}
+                    alt="user"
+                    className="size-10 rounded-full"
+                    height={200}
+                    width={200}
+                  />
 
-                <div>
-                  <h1 className="text-sm">{each.user.name}</h1>
-                  <h1 className="text-xs">{timeAgo(each.createdAt)}</h1>
+                  <div>
+                    <h1 className="text-sm">{each.user.name}</h1>
+                    <h1 className="text-xs">{timeAgo(each.createdAt)}</h1>
+                  </div>
                 </div>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="py-0 outline-none">
+                    <MoreHorizontal />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-white dark:bg-textAlternative">
+                    <DropdownMenuItem>
+                      <Edit />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <TrashIcon />
+                      Delete
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <LockIcon />
+                      Private
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <BanIcon />
+                      Report
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               <div
@@ -201,7 +247,7 @@ const RenderPost = () => {
       <div ref={ref}>
         {isFetchingNextPage && (
           <div className="">
-            <Card className="my-5 rounded-xl border shadow-none bg-transparent p-4">
+            <Card className="my-5 rounded-xl border bg-transparent p-4 shadow-none">
               <div className="flex items-center gap-5">
                 <Skeleton className="size-10 rounded-full" />
                 <div>
