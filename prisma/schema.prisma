@@ -36,14 +36,20 @@ model User {
 }
 
 model Post {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  access    PostAccess @default(public)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("posts")
+}
+
+enum PostAccess {
+  private
+  public
 }
 
 model Session {
