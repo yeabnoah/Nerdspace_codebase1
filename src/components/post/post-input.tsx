@@ -22,6 +22,7 @@ const PostInput = () => {
     onSuccess: () => {
       toast.success("Post created successfully");
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      //mutation.ts
     },
     onError: () => {
       toast.error("An error occured while creating post");
