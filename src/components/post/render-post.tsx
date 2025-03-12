@@ -2,6 +2,9 @@
 
 import { timeAgo } from "@/functions/calculate-time-difference";
 import fetchPosts from "@/functions/fetch-post";
+import { getTrimLimit } from "@/functions/render-helper";
+import { authClient } from "@/lib/auth-client";
+import usePostStore from "@/store/post.store";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
@@ -18,6 +21,8 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import { useInView } from "react-intersection-observer";
+import EditModal from "../modal/edit.modal";
+import RenderPostSkeleton from "../skeleton/render-post.skeleton";
 import { Card } from "../ui/card";
 import {
   DropdownMenu,
@@ -25,21 +30,12 @@ import {
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
-import { authClient } from "@/lib/auth-client";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import { Textarea } from "../ui/textarea";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
   const session = authClient.useSession();
   const [editModal, setEditModal] = useState(false);
+  const { selectedPost, setSelectedPost } = usePostStore();
 
   const {
     data,
@@ -55,11 +51,7 @@ const RenderPost = () => {
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 
-  const trimLimits = {
-    sm: 30,
-    md: 20,
-    lg: 55,
-  };
+
 
   const [expandedStates, setExpandedStates] = useState<boolean[]>(
     Array(data?.pages?.flatMap((page) => page.data)?.length).fill(false),
@@ -73,66 +65,8 @@ const RenderPost = () => {
     });
   };
 
-  const getTrimLimit = () => {
-    if (window.innerWidth < 640) {
-      return trimLimits.sm;
-    } else if (window.innerWidth >= 640 && window.innerWidth < 1024) {
-      return trimLimits.md;
-    } else {
-      return trimLimits.lg;
-    }
-  };
-
   if (isLoading) {
-    return (
-      <div>
-        <Card className="my-5 rounded-xl border bg-transparent p-4 shadow-none">
-          <div className="flex items-center gap-5">
-            <Skeleton className="size-10 rounded-full" />
-            <div>
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="mt-1 h-3 w-16" />
-            </div>
-          </div>
-          <Skeleton className="mt-4 h-16 w-full" />
-          <div className="mt-4 flex gap-3">
-            <Skeleton className="h-6 w-6 rounded-full" />
-            <Skeleton className="h-6 w-6 rounded-full" />
-            <Skeleton className="h-6 w-6 rounded-full" />
-          </div>
-        </Card>
-        <Card className="my-5 rounded-xl border bg-transparent p-4 shadow-none">
-          <div className="flex items-center gap-5">
-            <Skeleton className="size-10 rounded-full" />
-            <div>
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="mt-1 h-3 w-16" />
-            </div>
-          </div>
-          <Skeleton className="mt-4 h-16 w-full" />
-          <div className="mt-4 flex gap-3">
-            <Skeleton className="h-6 w-6 rounded-full" />
-            <Skeleton className="h-6 w-6 rounded-full" />
-            <Skeleton className="h-6 w-6 rounded-full" />
-          </div>
-        </Card>
-        <Card className="my-5 rounded-xl border bg-transparent p-4 shadow-none">
-          <div className="flex items-center gap-5">
-            <Skeleton className="size-10 rounded-full" />
-            <div>
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="mt-1 h-3 w-16" />
-            </div>
-          </div>
-          <Skeleton className="mt-4 h-16 w-full" />
-          <div className="mt-4 flex gap-3">
-            <Skeleton className="h-6 w-6 rounded-full" />
-            <Skeleton className="h-6 w-6 rounded-full" />
-            <Skeleton className="h-6 w-6 rounded-full" />
-          </div>
-        </Card>
-      </div>
-    );
+    return <RenderPostSkeleton />
   }
 
   if (data && data.pages.flatMap((page) => page.data).length === 0) {
@@ -189,7 +123,11 @@ const RenderPost = () => {
                   </DropdownMenuTrigger>
                   {session?.data?.user?.id === each.user.id ? (
                     <DropdownMenuContent className="mr-5 flex flex-row bg-white dark:bg-textAlternative md:mr-0 md:block">
-                      <DropdownMenuItem onClick={() => setEditModal(true)}>
+                      <DropdownMenuItem onClick={() => {
+                        setSelectedPost(each)
+                        console.log(each)
+                        setEditModal(true)
+                      }}>
                         <Edit />
                         <span className="hidden md:block">Edit</span>
                       </DropdownMenuItem>
@@ -281,33 +219,11 @@ const RenderPost = () => {
                 <Skeleton className="h-6 w-6 rounded-full" />
               </div>
             </Card>
-            {/* <Card className="my-5 rounded-xl border bg-transparent p-4 shadow-none">
-              <div className="flex items-center gap-5">
-                <Skeleton className="size-10 rounded-full" />
-                <div>
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="mt-1 h-3 w-16" />
-                </div>
-              </div>
-              <Skeleton className="mt-4 h-16 w-full" />
-              <div className="mt-4 flex gap-3">
-                <Skeleton className="h-6 w-6 rounded-full" />
-                <Skeleton className="h-6 w-6 rounded-full" />
-                <Skeleton className="h-6 w-6 rounded-full" />
-              </div>
-            </Card> */}
           </div>
         )}
       </div>
 
-      <Dialog open={editModal} onOpenChange={setEditModal}>
-        <DialogContent className=" dark:bg-textAlternative">
-          <DialogHeader>
-            <DialogTitle>Edit Post</DialogTitle>
-            {/* <Textarea value={} /> */}
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <EditModal selectedPost={selectedPost} setEditModal={setEditModal} editModal={editModal} />
     </div>
   );
 };
