@@ -2,38 +2,34 @@
 
 import { timeAgo } from "@/functions/calculate-time-difference";
 import fetchPosts from "@/functions/fetch-post";
-import usePostStore from "@/store/post.store";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import axios from "axios";
 import {
-  ActivityIcon,
   BanIcon,
   BookmarkIcon,
-  Dot,
   Edit,
   Heart,
-  Info,
   LockIcon,
   MessageCircle,
   MoreHorizontal,
+  Share2Icon,
   TrashIcon,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useInView } from "react-intersection-observer";
-import { Skeleton } from "../ui/skeleton";
 import { Card } from "../ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Skeleton } from "../ui/skeleton";
+import { authClient } from "@/lib/auth-client";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
+  const session = authClient.useSession();
 
   const {
     data,
@@ -181,24 +177,37 @@ const RenderPost = () => {
                   <DropdownMenuTrigger className="py-0 outline-none">
                     <MoreHorizontal />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-white dark:bg-textAlternative">
-                    <DropdownMenuItem>
-                      <Edit />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <TrashIcon />
-                      Delete
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <LockIcon />
-                      Private
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <BanIcon />
-                      Report
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
+                  {session?.data?.user?.id === each.user.id ? (
+                    <DropdownMenuContent className="bg-white dark:bg-textAlternative flex-row flex md:block">
+                      <DropdownMenuItem onClick={() => console.log("edit")}>
+                        <Edit />
+                        <span className=" hidden md:block">Edit</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <TrashIcon />
+                        <span className="hidden md:block">Delete</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <LockIcon />
+                        <span className="hidden md:block">Private</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Share2Icon />
+                        <span className="hidden md:block">share</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  ) : (
+                    <DropdownMenuContent className="bg-white dark:bg-textAlternative">
+                      <DropdownMenuItem>
+                        <Share2Icon />
+                        <span className="hidden md:block">share</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <BanIcon />
+                        <span className="hidden md:block">Report</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  )}
                 </DropdownMenu>
               </div>
 
