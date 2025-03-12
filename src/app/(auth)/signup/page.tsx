@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function SignUpPage() {
   return (
-    <div className="grid min-h-svh lg:grid-cols-2 dark:bg-white/5">
+    <div className="grid min-h-svh dark:bg-white/5 lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full">
@@ -18,14 +18,16 @@ export default function SignUpPage() {
       </div>
       <div className="auth-right relative hidden justify-center bg-[#201e1d] text-white md:flex md:items-center">
         <div className="flex flex-col items-center justify-center">
-          <h2 className="text-regular font-playfair mb-2 text-center text-3xl md:mb-4">
-            Start your journey here
+          <h2 className="text-regular mb-2 text-center font-playfair text-3xl md:mb-4">
+            Start your{" "}
+            <span className="mx-1 font-itcThinItalic text-4xl">Journey</span>{" "}
+            here
           </h2>
 
-          <p className="text-white-500 mb-4 max-w-sm text-center text-sm font-light leading-relaxed md:mb-6">
-            Build one simple profile and let our AI work it&apos;s magic.
-            We&apos;ll automatically apply to hundreds of jobs for you. Focus on
-            what matters most - your skills and experience.
+          <p className="text-white-500 mb-4 max-w-md text-center text-sm font-light leading-relaxed md:mb-6">
+            Create a simple profile and connect with like-minded people who
+            share your passions. Explore communities, collaborate on projects,
+            and grow with others who truly get you.
           </p>
 
           <Image

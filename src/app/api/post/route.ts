@@ -44,7 +44,7 @@ export const POST = async (req: NextRequest) => {
     if (validateContent.error) {
       return Response.json(
         {
-          message: "Plase provide the right parameters",
+          message: "Please provide the right parameters",
         },
         { status: 403 },
       );
@@ -77,6 +77,115 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json(
       {
         message: "error while posting post",
+        error: error,
+      },
+      { status: 500 },
+    );
+  }
+};
+
+export const DELETE = async (req: NextRequest) => {
+  try {
+    const { id }: { id: string } = await req.json();
+    const session = await getUserSession();
+
+    if (!session) {
+      return Response.json(
+        {
+          message: "unauthorized | not logged in",
+        },
+        { status: 400 },
+      );
+    }
+
+    const post = await prisma.post.findUnique({
+      where: { id: id },
+    });
+
+    if (!post || post.userId !== session.user.id) {
+      return Response.json(
+        {
+          message: "Post not found or unauthorized",
+        },
+        { status: 404 },
+      );
+    }
+
+    await prisma.post.delete({
+      where: { id: id, userId: session.user.id },
+    });
+
+    return NextResponse.json(
+      {
+        message: "Post deleted successfully",
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        message: "error while deleting post",
+        error: error,
+      },
+      { status: 500 },
+    );
+  }
+};
+
+export const PATCH = async (req: NextRequest) => {
+  try {
+    const { id, content }: { id: string; content: string } = await req.json();
+    const session = await getUserSession();
+
+    const validateContent = postSchema.safeParse({ content });
+
+    if (validateContent.error) {
+      return Response.json(
+        {
+          message: "Please provide the right parameters",
+        },
+        { status: 403 },
+      );
+    }
+
+    if (!session) {
+      return Response.json(
+        {
+          message: "unauthorized | not logged in",
+        },
+        { status: 400 },
+      );
+    }
+
+    const post = await prisma.post.findUnique({
+      where: { id: id },
+    });
+
+    if (!post || post.userId !== session.user.id) {
+      return Response.json(
+        {
+          message: "Post not found or unauthorized",
+        },
+        { status: 404 },
+      );
+    }
+
+    const updatedPost = await prisma.post.update({
+      where: { id: id, userId: session.user.id },
+      data: { content: content },
+    });
+
+    return NextResponse.json(
+      {
+        data: updatedPost,
+        message: "Post updated successfully",
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        message: "error while updating post",
         error: error,
       },
       { status: 500 },
