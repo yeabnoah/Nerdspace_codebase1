@@ -4,6 +4,7 @@ interface postInterface {
   createdAt: Date | null;
   updatedAt: Date | null;
   userId: string;
+  access: postAccess;
   user: {
     id: string;
     name: string;
@@ -14,6 +15,11 @@ interface postInterface {
     updatedAt: Date | null;
     nerdAt: null | string;
   };
+}
+
+enum postAccess {
+  private,
+  public,
 }
 
 export default postInterface;

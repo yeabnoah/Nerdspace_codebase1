@@ -1,18 +1,22 @@
 "use client";
 
+import changePostAccess from "@/functions/access-change-post";
 import { timeAgo } from "@/functions/calculate-time-difference";
 import fetchPosts from "@/functions/fetch-post";
 import { getTrimLimit } from "@/functions/render-helper";
+import postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
 import usePostStore from "@/store/post.store";
+import { PostAccess } from "@prisma/client";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
   BanIcon,
   BookmarkIcon,
   Edit,
   Heart,
   LockIcon,
+  LockOpen,
   MessageCircle,
   MoreHorizontal,
   Share2Icon,
@@ -21,6 +25,7 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import { useInView } from "react-intersection-observer";
+import DeleteModal from "../modal/delete.modal";
 import EditModal from "../modal/edit.modal";
 import RenderPostSkeleton from "../skeleton/render-post.skeleton";
 import { Card } from "../ui/card";
@@ -30,13 +35,17 @@ import {
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
+import { queryClient } from "@/providers/tanstack-query-provider";
+import toast from "react-hot-toast";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
   const session = authClient.useSession();
   const [editModal, setEditModal] = useState(false);
   const { selectedPost, setSelectedPost, content, setContent } = usePostStore();
-  const [editPostInput, setEditPostInput] = useState<String>()
+  const [editPostInput, setEditPostInput] = useState<String>();
+  const [deleteModal, setDeleteModal] = useState<boolean>(false);
+  // const [currentPostStatusm]
 
   const {
     data,
@@ -52,7 +61,16 @@ const RenderPost = () => {
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 
-
+  const mutation = useMutation({
+    mutationKey: ["change-post-status"],
+    mutationFn: changePostAccess,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+    onError : ()=>{
+      toast.error("error occured while updating post")
+    }
+  });
 
   const [expandedStates, setExpandedStates] = useState<boolean[]>(
     Array(data?.pages?.flatMap((page) => page.data)?.length).fill(false),
@@ -67,7 +85,7 @@ const RenderPost = () => {
   };
 
   if (isLoading) {
-    return <RenderPostSkeleton />
+    return <RenderPostSkeleton />;
   }
 
   if (data && data.pages.flatMap((page) => page.data).length === 0) {
@@ -85,6 +103,11 @@ const RenderPost = () => {
       </div>
     );
   }
+
+  const changePostAccessType = async (currentPost: postInterface) => {
+    setSelectedPost(currentPost);
+   await mutation.mutate();
+  };
 
   return (
     <div>
@@ -124,23 +147,48 @@ const RenderPost = () => {
                   </DropdownMenuTrigger>
                   {session?.data?.user?.id === each.user.id ? (
                     <DropdownMenuContent className="mr-5 flex flex-row bg-white dark:bg-textAlternative md:mr-0 md:block">
-                      <DropdownMenuItem onClick={() => {
-                        setSelectedPost(each)
-                        setContent(each.content)
-                        console.log(each)
-                        setEditModal(true)
-                      }}>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedPost(each);
+                          setContent(each.content);
+                          console.log(each);
+                          setEditModal(true);
+                        }}
+                      >
                         <Edit />
                         <span className="hidden md:block">Edit</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedPost(each);
+                          setContent(each.content);
+                          console.log(each);
+                          setDeleteModal(true);
+                        }}
+                      >
                         <TrashIcon />
                         <span className="hidden md:block">Delete</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <LockIcon />
-                        <span className="hidden md:block">Private</span>
-                      </DropdownMenuItem>
+                      {(each?.access as unknown as string) ===
+                      (PostAccess.public as unknown as string) ? (
+                        <DropdownMenuItem
+                          onClick={() => {
+                            changePostAccessType(each);
+                          }}
+                        >
+                          <LockIcon />
+                          <span className="hidden md:block">Go Private</span>
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem
+                          onClick={() => {
+                            changePostAccessType(each);
+                          }}
+                        >
+                          <LockOpen />
+                          <span className="hidden md:block">Go Public</span>
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem>
                         <Share2Icon />
                         <span className="hidden md:block">share</span>
@@ -225,7 +273,21 @@ const RenderPost = () => {
         )}
       </div>
 
-      <EditModal selectedPost={selectedPost} setEditModal={setEditModal} editModal={editModal} content={content} setContent={setContent} />
+      <EditModal
+        selectedPost={selectedPost}
+        setEditModal={setEditModal}
+        editModal={editModal}
+        content={content}
+        setContent={setContent}
+      />
+
+      <DeleteModal
+        selectedPost={selectedPost}
+        setDeleteModal={setDeleteModal}
+        deleteModal={deleteModal}
+        content={content}
+        setContent={setContent}
+      />
     </div>
   );
 };

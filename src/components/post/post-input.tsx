@@ -10,6 +10,7 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
+import { AutosizeTextarea } from "../ui/resizeble-text-area";
 
 const PostInput = () => {
   const [post, setPost] = useState<string>("");
@@ -30,6 +31,7 @@ const PostInput = () => {
   });
 
   const handleSubmit = async () => {
+    setPost("")
     if (post.trim() === "") {
       toast.error("Post content cannot be empty.");
       return;
@@ -55,9 +57,10 @@ const PostInput = () => {
       </div>
 
       <div className="flex flex-1 flex-col items-end">
-        <Textarea
+        <AutosizeTextarea
+          maxHeight={300}
           placeholder="What's on your mind?"
-          className="h-14 w-full font-inter text-sm placeholder:text-sm md:text-base"
+          className="h-14 w-full font-inter bg-transparent text-sm placeholder:text-sm md:text-base"
           value={post}
           onChange={(e) => setPost(e.target.value)}
         />

@@ -1,4 +1,5 @@
 import getUserSession from "@/functions/get-user";
+import postInterface from "@/interface/auth/post.interface";
 import { prisma } from "@/lib/prisma";
 import { postSchema } from "@/validation/post.validation";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,6 +10,9 @@ export async function GET(request: NextRequest) {
     const limit = 5;
 
     const posts = await prisma.post.findMany({
+      where: {
+        access: "public",
+      },
       include: {
         user: true,
       },
