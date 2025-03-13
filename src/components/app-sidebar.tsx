@@ -1,188 +1,118 @@
 "use client"
 
-import * as React from "react"
-import {
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  LifeBuoy,
-  Map,
-  PieChart,
-  Send,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react"
+import { useState } from "react"
+import { Bell, Computer, MessageCircle, Search, Settings, User, Video, X } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { cn } from "@/lib/utils"
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
+export default function SettingsScreen() {
+  const [activeTab, setActiveTab] = useState("chat")
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+  const tabs = [
+    { id: "profile", label: "Profile", icon: <User className="w-5 h-5" /> },
+    { id: "account", label: "Account", icon: <Settings className="w-5 h-5" /> },
+    { id: "chat", label: "Chat", icon: <MessageCircle className="w-5 h-5" /> },
+    { id: "voice", label: "Voice & Video", icon: <Video className="w-5 h-5" /> },
+    { id: "appearance", label: "Appearance", icon: <Computer className="w-5 h-5" /> },
+    { id: "notification", label: "Notification", icon: <Bell className="w-5 h-5" /> },
+  ]
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const chatSettings = [
+    {
+      id: "enterSend",
+      title: "Use 'Enter' as send",
+      description: "",
+      enabled: true,
+    },
+    {
+      id: "renderImage",
+      title: "Render image",
+      description: "Automatically showed image",
+      enabled: true,
+    },
+    {
+      id: "emoticons",
+      title: "Convert to emoticons",
+      description: "Change any symbols that related to emoticons",
+      enabled: false,
+    },
+    {
+      id: "embeddedContent",
+      title: "Display embedded content and preview URLs pasted into chat",
+      description: "",
+      enabled: true,
+    },
+    {
+      id: "textSuggestion",
+      title: "Text suggestion",
+      description: "",
+      enabled: false,
+    },
+    {
+      id: "autoCorrection",
+      title: "Auto correction",
+      description: "",
+      enabled: false,
+    },
+  ]
+
   return (
-    <Sidebar
-      className="top-[--header-height] !h-[calc(100svh-var(--header-height))]"
-      {...props}
-    >
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Command className="size-4" />
+      <div className="flex h-[80%] overflow-hidden min-w-[70vw] my-[3vh] rounded-xl border text-white">
+      {/* Left sidebar */}
+      <div className=" min-w-60 border-r border-zinc-800 flex flex-col">
+        <div className="p-4 flex items-center justify-between border-b border-zinc-800">
+          <h1 className="text-xl font-semibold">Settings</h1>
+          <button className="rounded-full p-1 hover:bg-zinc-800">
+            <Search className="w-5 h-5 text-zinc-400" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-auto">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-zinc-800/50 transition-colors",
+                activeTab === tab.id && "bg-zinc-800",
+              )}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.icon}
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col">
+        <div className="flex justify-end p-4">
+          <button className="rounded-full p-1 hover:bg-zinc-800">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-auto px-6 pb-6">
+          {activeTab === "chat" && (
+            <div className="space-y-8">
+              {chatSettings.map((setting) => (
+                <div key={setting.id} className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-white">{setting.title}</h3>
+                    {setting.description && <p className="text-sm text-zinc-400 mt-1">{setting.description}</p>}
+                  </div>
+                  <Switch
+                    checked={setting.enabled}
+                    onCheckedChange={() => {}}
+                    className="data-[state=checked]:bg-emerald-500"
+                  />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-    </Sidebar>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
+
