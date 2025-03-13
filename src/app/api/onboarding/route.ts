@@ -53,7 +53,7 @@ export const PATCH = async (req: NextRequest) => {
   } catch (error) {
     console.error("Prisma error:", error);
     return NextResponse.json(
-      { message: "error while updating data", error: error?.message as string },
+      { message: "error while updating data", error: error },
       { status: 500 },
     );
   }
