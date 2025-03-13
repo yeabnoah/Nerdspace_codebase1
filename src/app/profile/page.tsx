@@ -1,10 +1,14 @@
-import { SettingsDialog } from "@/components/settings-dialog";
-import React from "react";
+import SettingsScreen from "@/components/app-sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const ProfileScreen = () => {
-  return <div>
-    <SettingsDialog />
-  </div>;
+  return (
+    <SidebarProvider>
+      <div className=" bg-white dark:bg-textAlternative mx-auto">
+        <SettingsScreen />
+      </div>
+    </SidebarProvider>
+  );
 };
 
 export default ProfileScreen;
