@@ -50,7 +50,7 @@ const Step1 = ({
   };
 
   return (
-    <div className="p-4">
+    <div className="px-4">
       <div className="relative mb-4">
         {selectedImage ? (
           <Image
@@ -58,7 +58,7 @@ const Step1 = ({
             alt="Profile Preview"
             width={200}
             height={200}
-            className="mx-auto mt-2 h-24 w-24 rounded-full object-cover"
+            className="mx-auto mt-2 h-16 w-16 rounded-full object-cover"
           />
         ) : (
           <Image
@@ -66,7 +66,7 @@ const Step1 = ({
             alt="Profile Preview"
             width={200}
             height={200}
-            className="mx-auto mt-2 size-32 rounded-full object-cover"
+            className="mx-auto mt-2 size-16 rounded-full object-cover"
           />
         )}
         <Input

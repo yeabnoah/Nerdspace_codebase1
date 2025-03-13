@@ -21,7 +21,7 @@ const Step3: React.FC<Step3Props> = ({
   } = useFormContext();
 
   return (
-    <div className="p-4">
+    <div className="px-4">
       <div className="mb-4">
         <Label className="mb-2">Display name</Label>
         <Input

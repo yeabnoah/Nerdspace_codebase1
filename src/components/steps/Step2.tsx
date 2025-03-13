@@ -13,7 +13,7 @@ interface Step2Props {
 
 const Step2: React.FC<Step2Props> = ({ nerdAt, setNerdAt, bio, setBio }) => {
   return (
-    <div className="p-4">
+    <div className="px-4">
       <div className="mb-4">
         <Label className="mb-2">What are you nerd at</Label>
         <Input
