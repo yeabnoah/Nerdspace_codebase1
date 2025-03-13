@@ -1,21 +1,21 @@
 "use client"
 
-import { useState } from "react"
-import { Bell, Computer, MessageCircle, Search, Settings, User, Video, X } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
+import axios from "axios"
+import { Bell, File, IdCard, Search, Settings, User2 } from "lucide-react"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { z } from "zod"
 // import { CountrySelector } from "@/components/country-selector";
-import { useFormStore } from "../store/useFormStore";
-import { Button } from "./ui/button"
+import { useFormStore } from "../store/useFormStore"
 import Step1 from "./steps/Step1"
 import Step2 from "./steps/Step2"
 import Step3 from "./steps/Step3"
+import { Button } from "./ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Form } from "./ui/form"
 
@@ -122,11 +122,10 @@ export default function SettingsScreen() {
   const [activeTab, setActiveTab] = useState("chat")
 
   const tabs = [
-    { id: "profile", label: "Profile", icon: <User className="w-5 h-5" /> },
-    { id: "account", label: "Account", icon: <Settings className="w-5 h-5" /> },
-    { id: "chat", label: "Chat", icon: <MessageCircle className="w-5 h-5" /> },
-    { id: "voice", label: "Voice & Video", icon: <Video className="w-5 h-5" /> },
-    { id: "appearance", label: "Appearance", icon: <Computer className="w-5 h-5" /> },
+    { id: "profile", label: "Profile", icon: <IdCard className="w-5 h-5" /> },
+    { id: "account", label: "Account", icon: <User2 className="w-5 h-5" /> },
+    { id: "Setting", label: "Setting", icon: <Settings className="w-5 h-5" /> },
+    { id: "Therms & conditions", label: "Therms & conditions", icon: <File className="w-5 h-5" /> },
     { id: "notification", label: "Notification", icon: <Bell className="w-5 h-5" /> },
   ]
 

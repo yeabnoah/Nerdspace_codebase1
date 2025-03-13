@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Edit } from "lucide-react";
 import axios from "axios";
 import { Input } from "../ui/input";
+import { authClient } from "@/lib/auth-client";
 
 interface Step1Props {
   selectedCountry: Country | null;
@@ -20,9 +21,11 @@ const Step1 = ({
   setSelectedImage,
 }: Step1Props) => {
   const cloudinaryUploadUrl = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!;
-  const cloudinaryUploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
+  const cloudinaryUploadPreset =
+    process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const session = authClient.useSession();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -51,24 +54,24 @@ const Step1 = ({
 
   return (
     <div className="px-4">
+      <div className=" flex items-center gap-10">
       <div className="relative mb-4">
-        {selectedImage ? (
-          <Image
-            src={selectedImage ? selectedImage : "/user_placeholder.jpg"}
-            alt="Profile Preview"
-            width={200}
-            height={200}
-            className="mx-auto mt-2 h-16 w-16 rounded-full object-cover"
-          />
-        ) : (
-          <Image
-            src={"/user.jpg"}
-            alt="Profile Preview"
-            width={200}
-            height={200}
-            className="mx-auto mt-2 size-16 rounded-full object-cover"
-          />
-        )}
+        <Image
+          src={
+            session?.data?.user?.image ||
+            selectedImage ||
+            "/user_placeholder.jpg"
+          }
+          alt="Profile Preview"
+          width={200}
+          height={200}
+          className=" mt-2 size-16 rounded-full object-cover"
+        />
+
+        <div>
+          
+        </div>
+
         <Input
           type="file"
           accept="image/*"
@@ -78,13 +81,12 @@ const Step1 = ({
         />
         <label
           htmlFor="image-upload"
-          className="absolute bottom-0 right-[42%] cursor-pointer rounded-full bg-white p-2 text-white"
+          className="absolute bottom-0 left-[70%] cursor-pointer rounded-full bg-white p-1 text-white"
         >
-          <Edit size={16} color="black" />
+          <Edit size={13} color="black" />
         </label>
       </div>
-
-      <div className="mb-4">
+      <div className="mb-4 flex-1">
         <Label>Your nationality</Label>
         <CountryDropdown
           className="mt-2"
@@ -93,6 +95,10 @@ const Step1 = ({
           onChange={(country) => setSelectedCountry(country)}
         />
       </div>
+      </div>
+      
+
+     
     </div>
   );
 };
