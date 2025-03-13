@@ -1,13 +1,9 @@
 "use client";
-import React from "react";
-
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-
-// import { Console } from "@/components/console";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,16 +14,16 @@ import {
 } from "@/components/ui/card";
 import {
   Form,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Country, CountryDropdown } from "./ui/country-dropdown";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { AutosizeTextarea } from "./ui/resizeble-text-area";
+import { Progress } from "@/components/ui/progress";
+import { useFormStore } from "../store/useFormStore";
+import Step1 from "./steps/Step1";
+import Step2 from "./steps/Step2";
+import Step3 from "./steps/Step3";
 
 const FormSchema = z.object({
   country: z.string({
@@ -38,22 +34,35 @@ const FormSchema = z.object({
 type FormSchema = z.infer<typeof FormSchema>;
 
 export const CountrySelector = () => {
-  const [selectedCountry, setSelectedCountry] = React.useState<Country | null>(
-    null,
-  );
+  const {
+    selectedCountry,
+    selectedImage,
+    nerdAt,
+    bio,
+    displayName,
+    link,
+    setSelectedCountry,
+    setSelectedImage,
+    setNerdAt,
+    setBio,
+    setDisplayName,
+    setLink,
+  } = useFormStore();
+
+  const [step, setStep] = useState<number>(1);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("HIYA", data);
-    toast.success(`${selectedCountry?.name} ${selectedCountry?.emoji} `);
-  }
+  function onSubmit() {}
+
+  const progressPercentage = (step / 3) * 100;
 
   return (
     <>
       <Card className="preview-card border-none bg-transparent shadow-none">
+      <Progress value={progressPercentage} className="mb-4" />
         <CardHeader>
           <CardTitle>What's your nationality</CardTitle>
           <CardDescription>please provide accurate information</CardDescription>
@@ -64,71 +73,70 @@ export const CountrySelector = () => {
               onSubmit={form.handleSubmit(onSubmit)}
               className="w-full space-y-4"
             >
-              <FormField
-                control={form.control}
-                name="country"
-                render={({ field }) => (
-                  <FormItem className="space-b-3">
-                    <div>
-                      <Label className="mb-3">Profile Picture</Label>
-                      
-                    </div>
-
-                    <div className=" ">
-                      <Label>Your nationality</Label>
-                      <CountryDropdown
-                        className="mt-2"
-                        placeholder="Select country"
-                        defaultValue={field.value}
-                        onChange={(country) => {
-                          field.onChange(country.alpha3);
-                          setSelectedCountry(country);
-                        }}
-                      />
-                    </div>
-
-                    <div>
-                      <Label className="mb-3">What are you nerd at</Label>
-                      <Input
-                        placeholder="Nerd@"
-                        className="mt-2 bg-transparent py-0"
-                      />
-                    </div>
-
-                    <div>
-                      <Label className="mb-3">Bio</Label>
-                      <AutosizeTextarea
-                        placeholder="Please provide your bio here"
-                        className="mt-2 bg-transparent py-1"
-                      />
-                    </div>
-
-                    <FormMessage />
-                  </FormItem>
+              {step === 1 && (
+                <Step1
+                  selectedCountry={selectedCountry}
+                  setSelectedCountry={setSelectedCountry}
+                  selectedImage={selectedImage}
+                  setSelectedImage={setSelectedImage}
+                />
+              )}
+              {step === 2 && (
+                <Step2
+                  nerdAt={nerdAt}
+                  setNerdAt={setNerdAt}
+                  bio={bio}
+                  setBio={setBio}
+                />
+              )}
+              {step === 3 && (
+                <Step3
+                  displayName={displayName}
+                  setDisplayName={setDisplayName}
+                  link={link}
+                  setLink={setLink}
+                />
+              )}
+              <div className="flex justify-between">
+                {step > 1 && (
+                  <Button type="button" onClick={() => setStep(step - 1)}>
+                    Previous
+                  </Button>
                 )}
-              />
-              <Button type="submit">Submit</Button>
+                {step < 3 ? (
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setStep(step + 1);
+                    }}
+                  >
+                    Next
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      const formData = {
+                        country: selectedCountry,
+                        selectedImage,
+                        nerdAt,
+                        bio,
+                        displayName,
+                        link,
+                      };
+                      console.log("Form Data:", formData);
+                      toast.success(
+                        `${selectedCountry?.name} ${selectedCountry?.emoji} `,
+                      );
+                    }}
+                  >
+                    Submit
+                  </Button>
+                )}
+              </div>
             </form>
           </Form>
         </CardContent>
       </Card>
-
-      {/* <Console>
-        {selectedCountry ? (
-          <div className="w-full">
-            <pre className="p-4">
-              {JSON.stringify(selectedCountry, null, 2)}
-            </pre>
-          </div>
-        ) : (
-          <div className="flex items-center text-sm text-zinc-400 font-mono ">
-            <pre className="p-4">
-              &gt;
-              <span className="animate-blink">_</span>
-            </pre>
-          </div>
-        )}
-      </Console> */}
     </>
   );
 };
