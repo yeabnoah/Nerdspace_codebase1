@@ -24,6 +24,8 @@ import { useFormStore } from "../store/useFormStore";
 import Step1 from "./steps/Step1";
 import Step2 from "./steps/Step2";
 import Step3 from "./steps/Step3";
+import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 const FormSchema = z.object({
   country: z.string({
@@ -55,22 +57,53 @@ export const CountrySelector = () => {
     resolver: zodResolver(FormSchema),
   });
 
-  function onSubmit() {}
+  function onSubmit(data: FormSchema) {
+    console.log(data);
+  }
+
+  const mutation = useMutation({
+    mutationKey: ["update-user"],
+    mutationFn: async () => {
+      const response = await axios.patch(
+        "/api/onboarding",
+        {
+          country: selectedCountry,
+          image: selectedImage,
+          nerdAt,
+          bio,
+          displayName,
+          link,
+          firstTime: false,
+        },
+
+        { withCredentials: true },
+      );
+
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Data successfully updated");
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.message || "An error occurred while onboarding";
+      toast.error(errorMessage);
+    },
+  });
 
   const progressPercentage = (step / 3) * 100;
 
   return (
     <>
       <Card className="preview-card border-none bg-transparent shadow-none">
-      <Progress value={progressPercentage} className="mb-4" />
         <CardHeader>
           <CardTitle>What's your nationality</CardTitle>
-          <CardDescription>please provide accurate information</CardDescription>
+          <CardDescription>Please provide accurate information</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(onSubmit as any)}
               className="w-full space-y-4"
             >
               {step === 1 && (
@@ -115,18 +148,16 @@ export const CountrySelector = () => {
                 ) : (
                   <Button
                     onClick={() => {
-                      const formData = {
+                      console.log({
                         country: selectedCountry,
-                        selectedImage,
+                        image: selectedImage,
                         nerdAt,
                         bio,
                         displayName,
                         link,
-                      };
-                      console.log("Form Data:", formData);
-                      toast.success(
-                        `${selectedCountry?.name} ${selectedCountry?.emoji} `,
-                      );
+                        firstTime: false,
+                      });
+                      mutation.mutate();
                     }}
                   >
                     Submit

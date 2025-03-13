@@ -34,7 +34,7 @@ export function LoginForm({
       {
         email: data.email,
         password: data.password,
-        callbackURL: "/",
+        callbackURL: "/onboarding",
         // rememberMe: true,
       },
       {

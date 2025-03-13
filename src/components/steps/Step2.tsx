@@ -13,22 +13,22 @@ interface Step2Props {
 
 const Step2: React.FC<Step2Props> = ({ nerdAt, setNerdAt, bio, setBio }) => {
   return (
-    <div>
-      <div>
-        <Label className="mb-3">What are you nerd at</Label>
+    <div className="p-4">
+      <div className="mb-4">
+        <Label className="mb-2">What are you nerd at</Label>
         <Input
           placeholder="Music"
-          className="mt-2 bg-transparent py-0 text-sm placeholder:text-sm"
+          className="mt-1 bg-transparent py-2 text-sm placeholder:text-sm"
           value={nerdAt}
           onChange={(e) => setNerdAt(e.target.value)}
         />
       </div>
 
-      <div className="mt-4">
-        <Label className="mb-3">Bio</Label>
+      <div className="mb-4">
+        <Label className="mb-2">Bio</Label>
         <AutosizeTextarea
-          placeholder="Please  provide your bio here"
-          className="mt-2 bg-transparent py-1"
+          placeholder="Please provide your bio here"
+          className="mt-1 bg-transparent py-2"
           value={bio}
           onChange={(e) => setBio(e.target.value)}
         />
