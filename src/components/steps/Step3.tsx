@@ -25,8 +25,8 @@ const Step3: React.FC<Step3Props> = ({
       <div>
         <Label className="mb-3">Display name</Label>
         <Input
-          placeholder="what do you want your display name to be"
-          className="mt-2 bg-transparent py-0"
+          placeholder="John Doe"
+          className="mt-2 bg-transparent py-0 text-sm placeholder:text-sm"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
         />
@@ -40,8 +40,8 @@ const Step3: React.FC<Step3Props> = ({
       <div className="mt-4">
         <Label className="mb-3">Link</Label>
         <Input
-          placeholder="link to personal site"
-          className="mt-2 bg-transparent py-0"
+          placeholder="https://johndoe.blog"
+          className="mt-2 bg-transparent py-0 text-sm placeholder:text-sm"
           value={link}
           onChange={(e) => setLink(e.target.value)}
         />

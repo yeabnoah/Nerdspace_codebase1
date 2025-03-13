@@ -1,3 +1,5 @@
+import { Country } from "@/components/ui/country-dropdown";
+
 interface UserInterface {
   id: string;
   email: string;
@@ -8,9 +10,10 @@ interface UserInterface {
   image?: string | null;
   nerdAt?: string | null;
   bio?: string | null;
-  country?: string | null;
   link?: string | null;
   visualName?: string | null;
+  firstTime: boolean;
+  country: Country;
 }
 
 export default UserInterface;

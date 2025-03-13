@@ -41,7 +41,7 @@ const Step1 = ({
         <Input
           type="file"
           accept="image/*"
-          className="hidden"
+          className="hidden "
           id="image-upload"
           onChange={(e) => {
             const file = e.target.files?.[0];
