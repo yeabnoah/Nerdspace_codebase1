@@ -31,12 +31,31 @@ model User {
   nerdAt        String?
   posts         Post[]
   bio           String?
-  country       String?
+  countryId     String?
+  country       Country?
   link          String?
   visualName    String?
+  firstTime     Boolean   @default(true)
 
   @@unique([email])
   @@map("user")
+}
+
+model Country {
+  id                  String   @id @default(uuid())
+  alpha2              String
+  alpha3              String
+  countryCallingCodes String[]
+  currencies          String[]
+  emoji               String?
+  ioc                 String
+  languages           String[]
+  name                String
+  status              String
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("country")
 }
 
 model Post {

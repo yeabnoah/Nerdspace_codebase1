@@ -17,8 +17,8 @@ const Step2: React.FC<Step2Props> = ({ nerdAt, setNerdAt, bio, setBio }) => {
       <div>
         <Label className="mb-3">What are you nerd at</Label>
         <Input
-          placeholder="Nerd@"
-          className="mt-2 bg-transparent py-0"
+          placeholder="Music"
+          className="mt-2 bg-transparent py-0 text-sm placeholder:text-sm"
           value={nerdAt}
           onChange={(e) => setNerdAt(e.target.value)}
         />
@@ -27,7 +27,7 @@ const Step2: React.FC<Step2Props> = ({ nerdAt, setNerdAt, bio, setBio }) => {
       <div className="mt-4">
         <Label className="mb-3">Bio</Label>
         <AutosizeTextarea
-          placeholder="Please provide your bio here"
+          placeholder="Please  provide your bio here"
           className="mt-2 bg-transparent py-1"
           value={bio}
           onChange={(e) => setBio(e.target.value)}
