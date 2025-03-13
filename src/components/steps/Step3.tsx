@@ -21,32 +21,32 @@ const Step3: React.FC<Step3Props> = ({
   } = useFormContext();
 
   return (
-    <div>
-      <div>
-        <Label className="mb-3">Display name</Label>
+    <div className="p-4">
+      <div className="mb-4">
+        <Label className="mb-2">Display name</Label>
         <Input
           placeholder="John Doe"
-          className="mt-2 bg-transparent py-0 text-sm placeholder:text-sm"
+          className="mt-1 bg-transparent py-2 text-sm placeholder:text-sm"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
         />
         {errors.displayName && (
-          <p className="text-red-500 text-sm mt-2">
+          <p className="text-red-500 text-sm mt-1">
             {errors.displayName.message?.toString()}
           </p>
         )}
       </div>
 
-      <div className="mt-4">
-        <Label className="mb-3">Link</Label>
+      <div className="mb-4">
+        <Label className="mb-2">Link</Label>
         <Input
           placeholder="https://johndoe.blog"
-          className="mt-2 bg-transparent py-0 text-sm placeholder:text-sm"
+          className="mt-1 bg-transparent py-2 text-sm placeholder:text-sm"
           value={link}
           onChange={(e) => setLink(e.target.value)}
         />
         {errors.link && (
-          <p className="text-red-500 text-sm mt-2">{errors.link.message?.toString()}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.link.message?.toString()}</p>
         )}
       </div>
     </div>
