@@ -1,4 +1,4 @@
-import { PhoneAndNationality } from "@/components/country-selector";
+import { CountrySelector } from "@/components/country-selectore";
 import {
   Card,
   CardContent,
@@ -17,7 +17,7 @@ const Onboarding = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <PhoneAndNationality />
+          <CountrySelector />
           <CardDescription></CardDescription>
         </CardContent>
       </Card>
