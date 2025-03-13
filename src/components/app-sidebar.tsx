@@ -4,6 +4,119 @@ import { useState } from "react"
 import { Bell, Computer, MessageCircle, Search, Settings, User, Video, X } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+// import { CountrySelector } from "@/components/country-selector";
+import { useFormStore } from "../store/useFormStore";
+import { Button } from "./ui/button"
+import Step1 from "./steps/Step1"
+import Step2 from "./steps/Step2"
+import Step3 from "./steps/Step3"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
+import { Form } from "./ui/form"
+
+const FormSchema = z.object({
+  country: z.string({
+    required_error: "Please select a country",
+  }),
+});
+
+type FormSchema = z.infer<typeof FormSchema>;
+
+const ProfileSettings = () => {
+  const {
+    selectedCountry,
+    selectedImage,
+    nerdAt,
+    bio,
+    displayName,
+    link,
+    setSelectedCountry,
+    setSelectedImage,
+    setNerdAt,
+    setBio,
+    setDisplayName,
+    setLink,
+  } = useFormStore();
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+  });
+
+  const mutation = useMutation({
+    mutationKey: ["update-user"],
+    mutationFn: async () => {
+      const response = await axios.patch(
+        "/api/onboarding",
+        {
+          country: selectedCountry,
+          image: selectedImage,
+          nerdAt,
+          bio,
+          displayName,
+          link,
+          firstTime: false,
+        },
+        { withCredentials: true },
+      );
+
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Data successfully updated");
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.message || "An error occurred while onboarding";
+      toast.error(errorMessage);
+    },
+  });
+
+  return (
+    <Card className="preview-card border-none bg-transparent shadow-none">
+      <CardHeader>
+        <CardTitle>Profile Settings</CardTitle>
+        <CardDescription>Please provide accurate information</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(() => mutation.mutate())}
+            className="w-full space-y-4"
+          >
+            <Step1
+              selectedCountry={selectedCountry}
+              setSelectedCountry={setSelectedCountry}
+              selectedImage={selectedImage}
+              setSelectedImage={setSelectedImage}
+            />
+            <Step2
+              nerdAt={nerdAt}
+              setNerdAt={setNerdAt}
+              bio={bio}
+              setBio={setBio}
+            />
+            <Step3
+              displayName={displayName}
+              setDisplayName={setDisplayName}
+              link={link}
+              setLink={setLink}
+            />
+            <div className="flex justify-end">
+              <Button type="submit">
+                Submit
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+};
 
 export default function SettingsScreen() {
   const [activeTab, setActiveTab] = useState("chat")
@@ -86,12 +199,6 @@ export default function SettingsScreen() {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col">
-        <div className="flex justify-end p-4">
-          <button className="rounded-full p-1 hover:bg-zinc-800">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
         <div className="flex-1 overflow-auto px-6 pb-6">
           {activeTab === "chat" && (
             <div className="space-y-8">
@@ -110,6 +217,7 @@ export default function SettingsScreen() {
               ))}
             </div>
           )}
+          {activeTab === "profile" && <ProfileSettings />}
         </div>
       </div>
     </div>
