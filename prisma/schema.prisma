@@ -30,6 +30,10 @@ model User {
   accounts      Account[]
   nerdAt        String?
   posts         Post[]
+  bio           String?
+  country       String?
+  link          String?
+  visualName    String?
 
   @@unique([email])
   @@map("user")
