@@ -6,6 +6,7 @@ const ProfileScreen = () => {
   return (
     <SidebarProvider>
       <div className="mx-auto">
+        <SettingsScreen />
       </div>
     </SidebarProvider>
   );
