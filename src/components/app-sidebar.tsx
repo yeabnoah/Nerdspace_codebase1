@@ -26,12 +26,6 @@ export default function SettingsScreen() {
       component: <AccountSetting />,
     },
     {
-      id: "Setting",
-      label: "Setting",
-      icon: <Settings className="h-5 w-5 text-textAlternative dark:text-white" />,
-      component: <ProfileSettings />,
-    },
-    {
       id: "Therms & conditions",
       label: "Therms & conditions",
       icon: <File className="h-5 w-5 text-textAlternative dark:text-white" />,

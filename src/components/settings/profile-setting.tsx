@@ -242,7 +242,7 @@ const ProfileSettings = () => {
               await mutation.mutate();
             }}
           >
-            Submit
+            Update my info
           </Button>
         </div>
       </CardContent>
