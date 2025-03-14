@@ -4,7 +4,10 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { Bell, File, IdCard, Search, Settings, User2 } from "lucide-react";
 import { useState } from "react";
-import ProfileSettings from "./profile/profile-setting";
+import ProfileSettings from "./settings/profile-setting";
+import AccountSetting from "./settings/account-setting";
+import ThermsConditions from "./settings/therms-conditions";
+import NotificationSetting from "./settings/notification-setting";
 
 export default function SettingsScreen() {
   const [activeTab, setActiveTab] = useState("profile");
@@ -20,7 +23,7 @@ export default function SettingsScreen() {
       id: "account",
       label: "Account",
       icon: <User2 className="h-5 w-5" />,
-      component: <ProfileSettings />,
+      component: <AccountSetting />,
     },
     {
       id: "Setting",
@@ -32,13 +35,13 @@ export default function SettingsScreen() {
       id: "Therms & conditions",
       label: "Therms & conditions",
       icon: <File className="h-5 w-5" />,
-      component: <ProfileSettings />,
+      component: <ThermsConditions />,
     },
     {
       id: "notification",
       label: "Notification",
       icon: <Bell className="h-5 w-5" />,
-      component: <ProfileSettings />,
+      component: <NotificationSetting />,
     },
   ];
 
@@ -73,39 +76,9 @@ export default function SettingsScreen() {
       {/* Main content */}
       <div className="flex flex-1 flex-col">
         <div className="flex-1 overflow-auto px-6 pb-6">
-          {activeTab === "chat" && (
-            <div className="space-y-8">chat setting</div>
-          )}
-          {activeTab === "profile" && <ProfileSettings />}
+          {tabs.find((tab) => tab.id === activeTab)?.component}
         </div>
       </div>
     </div>
   );
 }
-
-
-export const AccountSetting = () => {
-  return (
-    <div>
-      Account Setting
-    </div>
-  )
-}
-
-export const NotificationSetting = () => {
-  return (
-    <div>
-      Notification Setting
-    </div>
-  )
-}
-
-export const ThermsConditions = () => {
-  return (
-    <div>
-      ThermsConditions
-    </div>
-  )
-}
-
-
