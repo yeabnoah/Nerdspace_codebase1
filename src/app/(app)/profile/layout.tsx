@@ -10,8 +10,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
       enableSystem
       disableTransitionOnChange
     >
-      <div className="full h-screen w-full flex-col overflow-hidden p-3 dark:bg-textAlternative">
-        <Navbar />
+      <div className="full h-screen w-full flex-col px-3 dark:bg-textAlternative">
         <div className="flex-1">{children}</div>
       </div>
     </ThemeProvider>
