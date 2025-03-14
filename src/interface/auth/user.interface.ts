@@ -1,4 +1,5 @@
 import { Country } from "@/components/ui/country-dropdown";
+import postInterface from "./post.interface";
 
 interface UserInterface {
   id: string;
@@ -14,6 +15,7 @@ interface UserInterface {
   visualName?: string | null;
   firstTime: boolean;
   country: Country;
+  posts: postInterface[];
 }
 
 export default UserInterface;
