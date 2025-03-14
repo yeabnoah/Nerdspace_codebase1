@@ -37,7 +37,7 @@ const DeleteModal = ({
     onSuccess: () => {
       toast.success("post deleted successfully");
       setDeleteModal(false);
-      queryClient.invalidateQueries({ queryKey: ["posts", "my-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts", "my-posts", "my-private-posts"] });
     },
     onError: () => {
       toast.error("error occured while deleting post");

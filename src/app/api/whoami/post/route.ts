@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
     const posts = await prisma.post.findMany({
       where: {
         userId: session.user.id,
+        access: "public",
       },
       include: {
         user: true,
