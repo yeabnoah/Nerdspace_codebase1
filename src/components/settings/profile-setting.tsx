@@ -100,9 +100,9 @@ const ProfileSettings = () => {
             </div>
           </div>
 
-          
           <Skeleton className="mt-2 h-[5vh] w-full" />
           <Skeleton className="mt-2 h-[25vh] w-full" />
+         
         </CardContent>
       </Card>
     );
