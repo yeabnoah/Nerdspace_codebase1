@@ -20,6 +20,7 @@ import { CountryDropdown } from "../ui/country-dropdown";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { AutosizeTextarea } from "../ui/resizeble-text-area";
+import { Skeleton } from "../ui/skeleton";
 
 const ProfileSettings = () => {
   const {
@@ -42,30 +43,7 @@ const ProfileSettings = () => {
     process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const session = authClient.useSession();
-  const { user } = useUserStore();
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", cloudinaryUploadPreset);
-
-      try {
-        const response = await axios.post(cloudinaryUploadUrl, formData);
-        setSelectedImage(response.data.secure_url);
-      } catch (error) {
-        console.error("Image upload failed:", error);
-      }
-    }
-  };
+  const { user, isloading } = useUserStore();
 
   const mutation = useMutation({
     mutationKey: ["update-user"],
@@ -96,6 +74,85 @@ const ProfileSettings = () => {
       toast.error(errorMessage);
     },
   });
+
+  if (isloading) {
+    return (
+      <Card className="preview-card border-none bg-transparent shadow-none">
+        <CardHeader className=" mt-2">
+          <CardTitle>
+            <Skeleton className="h-3 w-1/2 rounded-sm" />
+          </CardTitle>
+          <CardDescription>
+            <Skeleton className="h-2 w-3/4 rounded-sm" />
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="px-4">
+            <div className="flex items-center gap-10">
+              <div className="relative mb-4">
+                <Skeleton className=" size-16 rounded-full" />
+              </div>
+              <div className="mb-4 flex-1">
+              <Skeleton className="h-3 w-1/2 mt-2" />
+                <Skeleton className="h-2 w-1/2 mt-2" />
+              </div>
+            </div>
+          </div>
+
+          <div className="px-4">
+            <div className="mb-4">
+            <Skeleton className="h-10 w-1/3 mt-1" />
+              <Skeleton className="h-10 w-full mt-1" />
+            </div>
+
+            <div className="mb-4">
+              <Label className="mb-2">Bio</Label>
+              <Skeleton className="h-24 w-full mt-1" />
+            </div>
+          </div>
+
+          <div className="px-4">
+            <div className="mb-4">
+              <Label className="mb-2">Display name</Label>
+              <Skeleton className="h-10 w-full mt-1" />
+            </div>
+
+            <div className="mb-4">
+              <Label className="mb-2">Link</Label>
+              <Skeleton className="h-10 w-full mt-1" />
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Skeleton className="h-10 w-24" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", cloudinaryUploadPreset);
+
+      try {
+        const response = await axios.post(cloudinaryUploadUrl, formData);
+        setSelectedImage(response.data.secure_url);
+      } catch (error) {
+        console.error("Image upload failed:", error);
+      }
+    }
+  };
 
   return (
     <Card className="preview-card border-none bg-transparent shadow-none">
