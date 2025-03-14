@@ -4,9 +4,20 @@ import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Edit, Settings, Grid3X3, BookMarked, Bookmark, Lock, Group, UsersRound, Projector, Building2Icon, Hammer } from "lucide-react";
+import {
+  Settings,
+  Grid3X3,
+  Bookmark,
+  Lock,
+  UsersRound,
+  Hammer,
+} from "lucide-react";
 import useUserStore from "@/store/user.store";
 import RenderMyPost from "./myposts";
+import ProjectsTab from "./tabs/ProjectsTab";
+import CollectionsTab from "./tabs/CollectionsTab";
+import BookmarksTab from "./tabs/BookmarksTab";
+import PrivateTab from "./tabs/PrivateTab";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("posts");
@@ -15,7 +26,13 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto min-h-screen w-[70%] px-4 sm:px-6 lg:px-8">
       <div className="relative h-40 overflow-hidden rounded-xl border bg-transparent">
-        <Image src={"/obsession.jpg"} className=" w-full" height={1000} width={1000} alt="test" />
+        <Image
+          src={"/obsession.jpg"}
+          className="w-full"
+          height={1000}
+          width={1000}
+          alt="test"
+        />
         <Button
           variant="ghost"
           size="icon"
@@ -40,9 +57,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <h1 className="mt-2 text-lg"> 
-            {user.visualName || user.name}
-          </h1>
+          <h1 className="mt-2 text-lg">{user.visualName || user.name}</h1>
           <p className="text-muted-foreground">Nerd@{user.nerdAt}</p>
           <p className="mb-4 text-sm text-muted-foreground">{user.bio}</p>
         </div>
@@ -75,9 +90,8 @@ export default function ProfilePage() {
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <UsersRound className="mr-2 h-4 w-4" />
-              community
+              Community
             </TabsTrigger>
-
             <TabsTrigger
               value="bookmarks"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
@@ -85,44 +99,29 @@ export default function ProfilePage() {
               <Bookmark className="mr-2 h-4 w-4" />
               Bookmarks
             </TabsTrigger>
-
             <TabsTrigger
               value="private"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Lock className="mr-2 h-4 w-4" />
-              private
+              Private
             </TabsTrigger>
           </TabsList>
 
-          {/* <hr className=" mb-5" /> */}
-
-          <RenderMyPost />
-
+          <TabsContent value="posts" className="mt-0">
+            <RenderMyPost />
+          </TabsContent>
+          <TabsContent value="projects" className="mt-0">
+            <ProjectsTab />
+          </TabsContent>
           <TabsContent value="collections" className="mt-0">
-            <div className="flex flex-row">
-              {Array.from({ length: 2 }).map((_, i) => (
-                <div key={i} className="overflow-hidden rounded-md shadow-md">
-                  <div className="grid grid-cols-2 gap-0.5">
-                    {Array.from({ length: 4 }).map((_, j) => (
-                      <div key={j} className="relative aspect-square">
-                        <Image
-                          src={`/placeholder.svg?height=150&width=150&text=Item+${j + 1}`}
-                          alt={`Collection item ${j + 1}`}
-                          width={150}
-                          height={150}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-medium">Collection {i + 1}</h3>
-                    <p className="text-sm text-muted-foreground">{4} items</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <CollectionsTab />
+          </TabsContent>
+          <TabsContent value="bookmarks" className="mt-0">
+            <BookmarksTab />
+          </TabsContent>
+          <TabsContent value="private" className="mt-0">
+            <PrivateTab />
           </TabsContent>
         </Tabs>
       </div>
