@@ -35,7 +35,7 @@ const EditModal = ({
     onSuccess : ()=>{
       toast.success("updated post successfully")
       setEditModal(false)
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts", "my-posts"] });
     },
     onError : ()=>{
       toast.error("error occured while updating post")

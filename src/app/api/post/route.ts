@@ -6,6 +6,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await getUserSession();
+
+    if (!session) {
+      return Response.json(
+        {
+          message: "unauthorized | not logged in",
+        },
+        { status: 400 },
+      );
+    }
     const cursor = request.nextUrl.searchParams.get("cursor") || null;
     const limit = 5;
 

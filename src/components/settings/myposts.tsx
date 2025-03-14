@@ -37,6 +37,7 @@ import {
 import { Skeleton } from "../ui/skeleton";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import toast from "react-hot-toast";
+import fetchMyPosts from "@/functions/fetch-my-post";
 
 const RenderMyPost = () => {
   const { ref, inView } = useInView();
@@ -55,8 +56,8 @@ const RenderMyPost = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["posts"],
-    queryFn: fetchPosts,
+    queryKey: ["my-posts"],
+    queryFn: fetchMyPosts,
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
@@ -65,7 +66,7 @@ const RenderMyPost = () => {
     mutationKey: ["change-post-status"],
     mutationFn: changePostAccess,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts", "my-posts"] });
     },
     onError : ()=>{
       toast.error("error occured while updating post")
