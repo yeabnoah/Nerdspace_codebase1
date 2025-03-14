@@ -16,31 +16,31 @@ export default function SettingsScreen() {
     {
       id: "profile",
       label: "Profile",
-      icon: <IdCard className="h-5 w-5" />,
+      icon: <IdCard className="h-5 w-5 text-textAlternative dark:text-white" />,
       component: <ProfileSettings />,
     },
     {
       id: "account",
       label: "Account",
-      icon: <User2 className="h-5 w-5" />,
+      icon: <User2 className="h-5 w-5 text-textAlternative dark:text-white" />,
       component: <AccountSetting />,
     },
     {
       id: "Setting",
       label: "Setting",
-      icon: <Settings className="h-5 w-5" />,
+      icon: <Settings className="h-5 w-5 text-textAlternative dark:text-white" />,
       component: <ProfileSettings />,
     },
     {
       id: "Therms & conditions",
       label: "Therms & conditions",
-      icon: <File className="h-5 w-5" />,
+      icon: <File className="h-5 w-5 text-textAlternative dark:text-white" />,
       component: <ThermsConditions />,
     },
     {
       id: "notification",
       label: "Notification",
-      icon: <Bell className="h-5 w-5" />,
+      icon: <Bell className="h-5 w-5 text-textAlternative dark:text-white" />,
       component: <NotificationSetting />,
     },
   ];
@@ -48,9 +48,9 @@ export default function SettingsScreen() {
   return (
     <div className="my-[3vh] flex h-[80%] min-w-[70vw] overflow-hidden rounded-xl border text-white">
       {/* Left sidebar */}
-      <div className="flex min-w-60 flex-col border-r border-zinc-800">
-        <div className="flex items-center justify-between border-b border-zinc-800 p-4">
-          <h1 className="text-xl font-semibold">Settings</h1>
+      <div className="flex min-w-60 flex-col border-r dark:border-zinc-800">
+        <div className="flex items-center justify-between border-b dark:border-zinc-800 p-4">
+          <h1 className="text-2xl font-instrument text-textAlternative dark:text-white">Settings</h1>
           <button className="rounded-full p-1 hover:bg-zinc-800">
             <Search className="h-5 w-5 text-zinc-400" />
           </button>
@@ -62,12 +62,12 @@ export default function SettingsScreen() {
               key={tab.id}
               className={cn(
                 "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-zinc-800/50",
-                activeTab === tab.id && "bg-zinc-800",
+                activeTab === tab.id && "dark:bg-zinc-800 bg-textAlternative/20 text-textAlternative",
               )}
               onClick={() => setActiveTab(tab.id)}
             >
               {tab.icon}
-              <span>{tab.label}</span>
+              <span className=" text-textAlternative dark:text-white">{tab.label}</span>
             </button>
           ))}
         </div>

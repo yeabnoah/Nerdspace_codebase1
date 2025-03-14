@@ -5,7 +5,7 @@ const ProfileScreen = () => {
 
   return (
     <SidebarProvider>
-      <div className="mx-auto bg-white dark:bg-textAlternative">
+      <div className="mx-auto">
         <SettingsScreen />
       </div>
     </SidebarProvider>
