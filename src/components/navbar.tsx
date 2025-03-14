@@ -18,11 +18,13 @@ import {
 } from "./ui/dropdown-menu";
 import { Input } from "./ui/input";
 import Link from "next/link";
+import useUserStore from "@/store/user.store";
 
 const Navbar = () => {
   const router = useRouter();
   let loadingToastId: string | undefined;
   const session = authClient.useSession();
+  const { user } = useUserStore();
 
   const logout = async () => {
     await authClient.signOut({
@@ -83,13 +85,14 @@ const Navbar = () => {
             <Button variant="ghost" size="icon" className="rounded-full">
               <Avatar className="flex items-center justify-center">
                 <AvatarImage
-                  src={session.data?.user?.image || "/user.jpg"}
+                  src={user.image || "/user.jpg"}
                   className="size-8 rounded-full ring-2 ring-green-200/50"
                   alt="@shadcn"
                 />
                 <AvatarFallback className="rounded-full border border-gray-300 p-2">
                   {session.data?.user.name
-                    ? session.data.user.name
+                    ? user.name ||
+                      session.data.user.name
                         .split(" ")
                         .map((word) => word[0])
                         .join("")
@@ -105,17 +108,22 @@ const Navbar = () => {
           >
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium">{session.data?.user.name}</p>
+                <p className="text-sm font-medium">
+                  {user.name || session.data?.user.name}
+                </p>
                 <p className="text-xs text-muted-foreground">
-                  {session.data?.user.email}
+                  {user.email || session.data?.user.email}
                 </p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={()=>{
-              router.push("/profile")
-            }} className="cursor-pointer">
+            <DropdownMenuItem
+              onClick={() => {
+                router.push("/profile");
+              }}
+              className="cursor-pointer"
+            >
               <UserIcon className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </DropdownMenuItem>

@@ -26,28 +26,40 @@ export const PATCH = async (req: NextRequest) => {
       );
     }
 
-    const { country } = body;
+    const { country, ...rest } = body;
 
-    const [createCountry, updatedUser] = await prisma.$transaction([
-      prisma.country.create({
-        data: {
-          userId: session.user.id,
-          ...country,
-        },
-      }),
-      prisma.user.update({
-        where: { id: session.user.id },
-        data: {
-          image: body.image,
-          visualName: body.displayName,
-          bio: body.bio,
-          firstTime: body.firstTime,
-          link: body.link,
-          nerdAt: body.nerdAt,
-        },
-        include: { country: true },
-      }),
-    ]);
+    const updateData: any = {
+      image: rest.image,
+      visualName: rest.displayName,
+      bio: rest.bio,
+      firstTime: rest.firstTime,
+      link: rest.link,
+      nerdAt: rest.nerdAt,
+    };
+
+    const transaction = country
+      ? [
+          prisma.country.create({
+            data: {
+              userId: session.user.id,
+              ...country,
+            },
+          }),
+          prisma.user.update({
+            where: { id: session.user.id },
+            data: updateData,
+            include: { country: true },
+          }),
+        ]
+      : [
+          prisma.user.update({
+            where: { id: session.user.id },
+            data: updateData,
+            include: { country: true },
+          }),
+        ];
+
+    const [, updatedUser] = await prisma.$transaction(transaction);
 
     return NextResponse.json({ user: updatedUser });
   } catch (error) {

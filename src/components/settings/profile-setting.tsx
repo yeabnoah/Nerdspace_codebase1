@@ -2,8 +2,13 @@ import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import { useFormStore } from "@/store/useFormStore";
 import useUserStore from "@/store/user.store";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { Edit } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { Button } from "../ui/button";
 import {
   Card,
   CardContent,
@@ -11,15 +16,10 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { Input } from "../ui/input";
-import Image from "next/image";
-import { Edit } from "lucide-react";
-import { Label } from "../ui/label";
 import { CountryDropdown } from "../ui/country-dropdown";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import { AutosizeTextarea } from "../ui/resizeble-text-area";
-import { Button } from "../ui/button";
 
 const ProfileSettings = () => {
   const {
@@ -73,7 +73,7 @@ const ProfileSettings = () => {
       const response = await axios.patch(
         "/api/onboarding",
         {
-          country: selectedCountry,
+          country: user?.country ? undefined : selectedCountry,
           image: selectedImage,
           nerdAt,
           bio,
@@ -104,102 +104,116 @@ const ProfileSettings = () => {
         <CardDescription>Please provide accurate information</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={() => mutation.mutate()} className="w-full space-y-4">
-          <div className="px-4">
-            <div className="flex items-center gap-10">
-              <div className="relative mb-4">
-                <Image
-                  src={
-                    user.image ||
-                    session?.data?.user?.image ||
-                    "/user_placeholder.jpg"
-                  }
-                  alt="Profile Preview"
-                  width={200}
-                  height={200}
-                  className="mt-2 size-16 rounded-full object-cover"
+        <div className="px-4">
+          <div className="flex items-center gap-10">
+            <div className="relative mb-4">
+              <Image
+                src={
+                  previewUrl ||
+                  user.image ||
+                  session?.data?.user?.image ||
+                  "/user_placeholder.jpg"
+                }
+                alt="Profile Preview"
+                width={200}
+                height={200}
+                className="mt-2 size-16 rounded-full object-cover"
+              />
+
+              <div></div>
+
+              <Input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                id="image-upload"
+                onChange={handleFileChange}
+              />
+              <label
+                htmlFor="image-upload"
+                className="absolute bottom-0 left-[70%] cursor-pointer rounded-full bg-white p-1 text-white"
+              >
+                <Edit size={13} color="black" />
+              </label>
+            </div>
+            <div className="mb-4 flex-1">
+              <Label>Your Country</Label>
+              {user?.country ? (
+                <p>{user?.country?.name}</p>
+              ) : (
+                <CountryDropdown
+                  className="mt-2"
+                  placeholder="Select country"
+                  defaultValue={selectedCountry?.alpha3}
+                  onChange={(country) => setSelectedCountry(country)}
                 />
-
-                <div></div>
-
-                <Input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  id="image-upload"
-                  onChange={handleFileChange}
-                />
-                <label
-                  htmlFor="image-upload"
-                  className="absolute bottom-0 left-[70%] cursor-pointer rounded-full bg-white p-1 text-white"
-                >
-                  <Edit size={13} color="black" />
-                </label>
-              </div>
-              <div className="mb-4 flex-1">
-                <Label>Your Country</Label>
-                {user?.country !== null ? (
-                  <p>{user?.country?.name}</p>
-                ) : (
-                  <CountryDropdown
-                    className="mt-2"
-                    placeholder="Select country"
-                    defaultValue={selectedCountry?.alpha3}
-                    onChange={(country) => setSelectedCountry(country)}
-                  />
-                )}
-              </div>
+              )}
             </div>
           </div>
+        </div>
 
-          <div className="px-4">
-            <div className="mb-4">
-              <Label className="mb-2">What are you nerd at</Label>
-              <Input
-                placeholder="Music"
-                className="mt-1 bg-transparent py-2 text-sm placeholder:text-sm"
-                value={nerdAt}
-                onChange={(e) => setNerdAt(e.target.value)}
-              />
-            </div>
-
-            <div className="mb-4">
-              <Label className="mb-2">Bio</Label>
-              <AutosizeTextarea
-                placeholder="Please provide your bio here"
-                className="mt-1 bg-transparent py-2"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-              />
-            </div>
+        <div className="px-4">
+          <div className="mb-4">
+            <Label className="mb-2">What are you nerd at</Label>
+            <Input
+              placeholder="Music"
+              className="mt-1 bg-transparent py-2 text-sm placeholder:text-sm"
+              value={nerdAt}
+              onChange={(e) => setNerdAt(e.target.value)}
+            />
           </div>
 
-          <div className="px-4">
-            <div className="mb-4">
-              <Label className="mb-2">Display name</Label>
-              <Input
-                placeholder="John Doe"
-                className="mt-1 bg-transparent py-2 text-sm placeholder:text-sm"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-              />
-            </div>
+          <div className="mb-4">
+            <Label className="mb-2">Bio</Label>
+            <AutosizeTextarea
+              placeholder="Please provide your bio here"
+              className="mt-1 bg-transparent py-2"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+            />
+          </div>
+        </div>
 
-            <div className="mb-4">
-              <Label className="mb-2">Link</Label>
-              <Input
-                placeholder="https://johndoe.blog"
-                className="mt-1 bg-transparent py-2 text-sm placeholder:text-sm"
-                value={link}
-                onChange={(e) => setLink(e.target.value)}
-              />
-            </div>
+        <div className="px-4">
+          <div className="mb-4">
+            <Label className="mb-2">Display name</Label>
+            <Input
+              placeholder="John Doe"
+              className="mt-1 bg-transparent py-2 text-sm placeholder:text-sm"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+            />
           </div>
 
-          <div className="flex justify-end">
-            <Button type="submit">Submit</Button>
+          <div className="mb-4">
+            <Label className="mb-2">Link</Label>
+            <Input
+              placeholder="https://johndoe.blog"
+              className="mt-1 bg-transparent py-2 text-sm placeholder:text-sm"
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+            />
           </div>
-        </form>
+        </div>
+
+        <div className="flex justify-end">
+          <Button
+            onClick={async () => {
+              console.log({
+                country: selectedCountry,
+                image: selectedImage,
+                nerdAt,
+                bio,
+                displayName,
+                link,
+                firstTime: false,
+              });
+              await mutation.mutate();
+            }}
+          >
+            Submit
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
