@@ -19,12 +19,13 @@ import {
 import { Input } from "./ui/input";
 import Link from "next/link";
 import useUserStore from "@/store/user.store";
+import { Skeleton } from "./ui/skeleton";
 
 const Navbar = () => {
   const router = useRouter();
   let loadingToastId: string | undefined;
   const session = authClient.useSession();
-  const { user } = useUserStore();
+  const { user, isloading } = useUserStore();
 
   const logout = async () => {
     await authClient.signOut({
@@ -84,21 +85,20 @@ const Navbar = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full">
               <Avatar className="flex items-center justify-center">
-                <AvatarImage
-                  src={user.image || "/user.jpg"}
-                  className="size-8 rounded-full ring-2 ring-green-200/50"
-                  alt="@shadcn"
-                />
-                <AvatarFallback className="rounded-full border border-gray-300 p-2">
-                  {session.data?.user.name
-                    ? user.name ||
-                      session.data.user.name
-                        .split(" ")
-                        .map((word) => word[0])
-                        .join("")
-                        .toLowerCase()
-                    : "user"}
-                </AvatarFallback>
+                {isloading ? (
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                ) : (
+                  <>
+                    <AvatarImage
+                      src={user.image || "/user.jpg"}
+                      className="size-8 rounded-full ring-2 ring-green-200/50"
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback className="">
+                      <Skeleton className="h-8 w-8 rounded-full" />
+                    </AvatarFallback>
+                  </>
+                )}
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
