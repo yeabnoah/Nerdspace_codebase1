@@ -1,8 +1,9 @@
+import RenderMyPrivatePost from "../my-private-post";
+
 export default function PrivateTab() {
   return (
     <div>
-      {/* Add your private content here */}
-      <p>Private content goes here.</p>
+      <RenderMyPrivatePost />
     </div>
   );
 }
