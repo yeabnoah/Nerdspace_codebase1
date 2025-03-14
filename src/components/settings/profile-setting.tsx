@@ -78,54 +78,31 @@ const ProfileSettings = () => {
   if (isloading) {
     return (
       <Card className="preview-card border-none bg-transparent shadow-none">
-        <CardHeader className=" mt-2">
+        <CardHeader className="mt-2">
           <CardTitle>
-            <Skeleton className="h-3 w-1/2 rounded-sm" />
+            <Skeleton className="h-3 w-1/4 rounded-sm" />
           </CardTitle>
           <CardDescription>
-            <Skeleton className="h-2 w-3/4 rounded-sm" />
+            <Skeleton className="h-4 w-3/4 rounded-sm" />
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="px-4">
+          <div className="">
             <div className="flex items-center gap-10">
               <div className="relative mb-4">
-                <Skeleton className=" size-16 rounded-full" />
+                <Skeleton className="size-16 rounded-full" />
               </div>
               <div className="mb-4 flex-1">
-              <Skeleton className="h-3 w-1/2 mt-2" />
-                <Skeleton className="h-2 w-1/2 mt-2" />
+                {/* <Skeleton className="mt-2 h-3 w-1/2" /> */}
+                <Skeleton className="mt-2 h-7 w-1/2" />
+                <Skeleton className="mt-2 h-3 w-1/2" />
               </div>
             </div>
           </div>
 
-          <div className="px-4">
-            <div className="mb-4">
-            <Skeleton className="h-10 w-1/3 mt-1" />
-              <Skeleton className="h-10 w-full mt-1" />
-            </div>
-
-            <div className="mb-4">
-              <Label className="mb-2">Bio</Label>
-              <Skeleton className="h-24 w-full mt-1" />
-            </div>
-          </div>
-
-          <div className="px-4">
-            <div className="mb-4">
-              <Label className="mb-2">Display name</Label>
-              <Skeleton className="h-10 w-full mt-1" />
-            </div>
-
-            <div className="mb-4">
-              <Label className="mb-2">Link</Label>
-              <Skeleton className="h-10 w-full mt-1" />
-            </div>
-          </div>
-
-          <div className="flex justify-end">
-            <Skeleton className="h-10 w-24" />
-          </div>
+          
+          <Skeleton className="mt-2 h-[5vh] w-full" />
+          <Skeleton className="mt-2 h-[25vh] w-full" />
         </CardContent>
       </Card>
     );
