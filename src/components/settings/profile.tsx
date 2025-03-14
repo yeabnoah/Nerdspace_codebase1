@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Edit, Settings, Grid3X3, BookMarked } from "lucide-react";
+import { Edit, Settings, Grid3X3, BookMarked, Bookmark, Lock, Group, UsersRound, Projector, Building2Icon, Hammer } from "lucide-react";
 import useUserStore from "@/store/user.store";
 import RenderMyPost from "./myposts";
 
@@ -15,6 +15,7 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto min-h-screen w-[70%] px-4 sm:px-6 lg:px-8">
       <div className="relative h-40 overflow-hidden rounded-xl border bg-transparent">
+        <Image src={"/obsession.jpg"} className=" w-full" height={1000} width={1000} alt="test" />
         <Button
           variant="ghost"
           size="icon"
@@ -39,7 +40,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <h1 className="mt-4 text-2xl font-bold">
+          <h1 className="mt-2 text-lg"> 
             {user.visualName || user.name}
           </h1>
           <p className="text-muted-foreground">Nerd@{user.nerdAt}</p>
@@ -63,11 +64,34 @@ export default function ProfilePage() {
               Posts
             </TabsTrigger>
             <TabsTrigger
+              value="projects"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <Hammer className="mr-2 h-4 w-4" />
+              Projects
+            </TabsTrigger>
+            <TabsTrigger
               value="collections"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
-              <BookMarked className="mr-2 h-4 w-4" />
-              Collections
+              <UsersRound className="mr-2 h-4 w-4" />
+              community
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="bookmarks"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <Bookmark className="mr-2 h-4 w-4" />
+              Bookmarks
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="private"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <Lock className="mr-2 h-4 w-4" />
+              private
             </TabsTrigger>
           </TabsList>
 

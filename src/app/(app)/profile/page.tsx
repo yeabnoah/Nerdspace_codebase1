@@ -9,10 +9,7 @@ export default function Profile() {
   return (
     <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start justify-center">
       <LeftNavbar />
-
       <ProfilePage />
-
-      {/* <RightNavbar /> */}
       <MobileNavBar />
     </div>
   );
