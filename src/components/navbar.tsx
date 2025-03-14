@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { ArrowBigRight, LogOut, Search, UserIcon } from "lucide-react";
+import { ArrowBigRight, LogOut, Search, Settings, UserIcon } from "lucide-react";
 import { ModeToggle } from "./theme-toggle";
 import {
   DropdownMenu,
@@ -126,6 +126,16 @@ const Navbar = () => {
             >
               <UserIcon className="mr-2 h-4 w-4" />
               <span>Profile</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => {
+                router.push("/settings");
+              }}
+              className="cursor-pointer"
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer" onClick={logout}>
               <LogOut className="mr-2 h-4 w-4" />
