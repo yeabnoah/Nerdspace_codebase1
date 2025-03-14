@@ -13,7 +13,7 @@ const CountrySchema = z.object({
 });
 
 export const OnboardingSchema = z.object({
-  country: CountrySchema,
+  country: CountrySchema.optional(),
   bio: z.string(),
   displayName: z.string(),
   nerdAt: z.string(),

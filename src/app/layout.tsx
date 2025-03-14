@@ -11,6 +11,7 @@ import localFont from "next/font/local";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import TanstackQueryProvider from "@/providers/tanstack-query-provider";
+import WhoAmIProvider from "@/providers/who-am-i-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -89,25 +90,26 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${InstrumentSerif.variable} ${inter.variable} ${itcThin.variable} ${itcBold.variable} ${itcThinItalic.variable} antialiased dark:bg-textAlternative`}
       >
-       
-          <TanstackQueryProvider>{children}</TanstackQueryProvider>
-          <Toaster
-            position="bottom-right"
-            reverseOrder={false}
-            toastOptions={{
-              className: "",
-              style: {
-                border: "1px solid #201e1d",
-                padding: "8px",
-                color: "#ffffff",
-                backgroundColor: "#201e1d",
-                borderTopLeftRadius: 10,
-                borderTopRightRadius: 10,
-                borderBottomLeftRadius: 10,
-                borderBottomRightRadius: 0,
-              },
-            }}
-          />
+        <TanstackQueryProvider>
+          <WhoAmIProvider>{children}</WhoAmIProvider>
+        </TanstackQueryProvider>
+        <Toaster
+          position="bottom-right"
+          reverseOrder={false}
+          toastOptions={{
+            className: "",
+            style: {
+              border: "1px solid #201e1d",
+              padding: "8px",
+              color: "#ffffff",
+              backgroundColor: "#201e1d",
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+              borderBottomLeftRadius: 10,
+              borderBottomRightRadius: 0,
+            },
+          }}
+        />
         {/* </ThemeProvider> */}
       </body>
     </html>
