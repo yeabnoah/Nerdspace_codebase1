@@ -40,28 +40,33 @@ export default function SettingsScreen() {
   ];
 
   return (
-    <div className="my-[3vh] flex h-[80%] min-w-[70vw] overflow-hidden rounded-xl border text-white">
+    <div className="my-[3vh] flex h-[80%] min-w-[70vw] flex-col overflow-hidden rounded-xl border text-white md:flex-row">
       {/* Left sidebar */}
-      <div className="flex min-w-60 flex-col border-r dark:border-zinc-800">
-        <div className="flex items-center justify-between border-b dark:border-zinc-800 p-4">
-          <h1 className="text-2xl font-instrument text-textAlternative dark:text-white">Settings</h1>
+      <div className="flex w-full md:w-16 justify-evenly flex-row border-r dark:border-zinc-800 md:min-w-60 md:flex-col">
+        <div className="hidden items-center justify-evenly  border-b p-4 dark:border-zinc-800 md:flex">
+          <h1 className="font-instrument text-2xl text-textAlternative dark:text-white">
+            Settings
+          </h1>
           <button className="rounded-full p-1 hover:bg-zinc-800">
             <Search className="h-5 w-5 text-zinc-400" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto flex flex-row md:flex-col">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               className={cn(
                 "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-zinc-800/50",
-                activeTab === tab.id && "dark:bg-zinc-800 bg-textAlternative/20 text-textAlternative",
+                activeTab === tab.id &&
+                  "bg-textAlternative/20 text-textAlternative dark:bg-zinc-800",
               )}
               onClick={() => setActiveTab(tab.id)}
             >
               {tab.icon}
-              <span className=" text-textAlternative dark:text-white">{tab.label}</span>
+              <span className="hidden text-textAlternative dark:text-white lg:inline">
+                {tab.label}
+              </span>
             </button>
           ))}
         </div>
@@ -69,7 +74,7 @@ export default function SettingsScreen() {
 
       {/* Main content */}
       <div className="flex flex-1 flex-col">
-        <div className="flex-1 overflow-auto px-6 pb-6">
+        <div className="flex-1 overflow-auto pb-6 md:px-6">
           {tabs.find((tab) => tab.id === activeTab)?.component}
         </div>
       </div>

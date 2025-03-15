@@ -57,7 +57,7 @@ const RenderMyPrivatePost = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["my-private-posts"],
+    queryKey: ["posts"],
     queryFn: fetchMyPrivatePosts,
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,

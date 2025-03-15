@@ -63,7 +63,7 @@ const RenderMyPost = () => {
   });
 
   const mutation = useMutation({
-    mutationKey: ["change-post-status"],
+    mutationKey: ["posts"],
     mutationFn: changePostAccess,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts", "my-posts"] });
