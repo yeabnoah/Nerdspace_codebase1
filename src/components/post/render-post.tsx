@@ -9,7 +9,7 @@ import { authClient } from "@/lib/auth-client";
 import usePostStore from "@/store/post.store";
 import { PostAccess } from "@prisma/client";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import {
   BanIcon,
   BookmarkIcon,
@@ -40,6 +40,7 @@ import { queryClient } from "@/providers/tanstack-query-provider";
 import toast from "react-hot-toast";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import axios from "axios";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -62,6 +63,17 @@ const RenderPost = () => {
     queryFn: fetchPosts,
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+
+  const { data: comment } = useQuery({
+    queryKey: ["comment"],
+    queryFn: async () => {
+      const response = await axios.get(
+        `/api/post/comment?postId=2279139f-9bc3-464b-a9fc-e2bb9b84e088}`,
+      );
+      console.log("test", response.data.data);
+      return response.data.data;
+    },
   });
 
   const mutation = useMutation({
@@ -259,12 +271,13 @@ const RenderPost = () => {
                 <div>
                   <hr className="mb-2 mt-5" />
                   <div className="itemc flex gap-2">
-                  <input
-                  placeholder="Comment Here"
-                  className="border-0 border-b placeholder:font-instrument placeholder:text-lg text-sm  bg-transparent w-full border-white/50 focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0" />
-                  <Button className="border bg-transparent focus:outline-none focus:ring-0">
-                    <SendIcon color="white" />
-                  </Button>
+                    <input
+                      placeholder="Comment here"
+                      className="w-full border-0 border-b border-white/50 bg-transparent text-sm placeholder:font-instrument placeholder:text-lg focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0"
+                    />
+                    <Button className="border bg-transparent focus:outline-none focus:ring-0">
+                      <SendIcon color="white" />
+                    </Button>
                   </div>
                 </div>
               )}
