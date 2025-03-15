@@ -19,6 +19,7 @@ import {
   LockOpen,
   MessageCircle,
   MoreHorizontal,
+  SendIcon,
   Share2Icon,
   TrashIcon,
 } from "lucide-react";
@@ -37,6 +38,8 @@ import {
 import { Skeleton } from "../ui/skeleton";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import toast from "react-hot-toast";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -45,7 +48,7 @@ const RenderPost = () => {
   const { selectedPost, setSelectedPost, content, setContent } = usePostStore();
   const [editPostInput, setEditPostInput] = useState<String>();
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
-  // const [currentPostStatusm]
+  const [commentShown, setCommentShown] = useState<boolean>(false);
 
   const {
     data,
@@ -67,9 +70,9 @@ const RenderPost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
-    onError : ()=>{
-      toast.error("error occured while updating post")
-    }
+    onError: () => {
+      toast.error("error occured while updating post");
+    },
   });
 
   const [expandedStates, setExpandedStates] = useState<boolean[]>(
@@ -106,7 +109,7 @@ const RenderPost = () => {
 
   const changePostAccessType = async (currentPost: postInterface) => {
     setSelectedPost(currentPost);
-   await mutation.mutate();
+    await mutation.mutate();
   };
 
   return (
@@ -237,7 +240,10 @@ const RenderPost = () => {
                     <Heart className="size-5" />
                   </div>
                   <div
-                    className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
+                    onClick={() => {
+                      setCommentShown(!commentShown);
+                    }}
+                    className={`cursor-pointer rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
                   >
                     <MessageCircle className="size-5" />
                   </div>
@@ -248,6 +254,20 @@ const RenderPost = () => {
                   </div>
                 </div>
               </div>
+
+              {commentShown && (
+                <div>
+                  <hr className="mb-2 mt-5" />
+                  <div className="itemc flex gap-2">
+                  <input
+                  placeholder="Comment Here"
+                  className="border-0 border-b placeholder:font-instrument placeholder:text-lg text-sm  bg-transparent w-full border-white/50 focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0" />
+                  <Button className="border bg-transparent focus:outline-none focus:ring-0">
+                    <SendIcon color="white" />
+                  </Button>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
