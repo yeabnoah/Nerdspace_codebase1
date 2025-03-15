@@ -14,7 +14,6 @@ export const POST = async (req: NextRequest) => {
     const session = await getUserSession();
     const body = await req.json();
 
-    // Validate the request body
     const parsedBody = commentSchema.safeParse(body);
     if (!parsedBody.success) {
       return NextResponse.json(
