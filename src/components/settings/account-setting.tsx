@@ -1,6 +1,6 @@
 const AccountSetting = () => {
   return (
-    <div>
+    <div className=" flex-1">
       Account Setting
     </div>
   )

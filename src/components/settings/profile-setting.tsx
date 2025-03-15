@@ -137,9 +137,9 @@ const ProfileSettings = () => {
         <CardDescription>Please provide accurate information</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="px-4">
-          <div className="flex items-center gap-10">
-            <div className="relative mb-4">
+        <div className="md:px-4">
+          <div className="flex md:items-center w-full md:gap-10 md:flex-row flex-col">
+            <div className="relative mb-4 ">
               <Image
                 src={
                   previewUrl ||
@@ -153,7 +153,7 @@ const ProfileSettings = () => {
                 className="mt-2 size-16 rounded-full object-cover"
               />
 
-              <div></div>
+              {/* <div></div> */}
 
               <Input
                 type="file"
@@ -164,7 +164,7 @@ const ProfileSettings = () => {
               />
               <label
                 htmlFor="image-upload"
-                className="absolute bottom-0 left-[70%] cursor-pointer rounded-full bg-white p-1 text-white"
+                className="absolute bottom-0 left-[15%] md:left-[70%] cursor-pointer rounded-full bg-white p-1 text-white"
               >
                 <Edit size={13} color="black" />
               </label>
