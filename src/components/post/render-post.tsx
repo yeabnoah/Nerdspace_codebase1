@@ -69,7 +69,7 @@ const RenderPost = () => {
     queryKey: ["comment"],
     queryFn: async () => {
       const response = await axios.get(
-        `/api/post/comment?postId=2279139f-9bc3-464b-a9fc-e2bb9b84e088}`,
+        `/api/post/comment?postId=${selectedPost.id}}`,
       );
       console.log("test", response.data.data);
       return response.data.data;
@@ -253,6 +253,7 @@ const RenderPost = () => {
                   </div>
                   <div
                     onClick={() => {
+                      setSelectedPost(each);
                       setCommentShown(!commentShown);
                     }}
                     className={`cursor-pointer rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
