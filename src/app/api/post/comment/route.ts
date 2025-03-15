@@ -95,3 +95,103 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json({ error: "error" }, { status: 500 });
   }
 };
+
+export const PUT = async (req: NextRequest) => {
+  try {
+    const session = await getUserSession();
+    const body = await req.json();
+
+    // const parsedBody = commentSchema.safeParse(body);
+    // if (!parsedBody.success) {
+    //   return NextResponse.json(
+    //     {
+    //       message: "Invalid request body",
+    //       errors: parsedBody.error.errors,
+    //     },
+    //     { status: 400 },
+    //   );
+    // }
+
+    const { commentId, content } = body;
+
+    if (!session) {
+      return NextResponse.json(
+        {
+          message: "unauthorized | not logged in",
+        },
+        { status: 400 },
+      );
+    }
+
+    const comment = await prisma.postComment.findUnique({
+      where: { id: commentId },
+    });
+
+    if (!comment || comment.userId !== session.user.id) {
+      return NextResponse.json(
+        {
+          message: "unauthorized | not allowed to edit this comment",
+        },
+        { status: 403 },
+      );
+    }
+
+    const updatedComment = await prisma.postComment.update({
+      where: { id: commentId },
+      data: { content: content },
+    });
+
+    return NextResponse.json(
+      {
+        data: updatedComment,
+      },
+      { status: 200 },
+    );
+  } catch (err) {
+    console.error("Error updating comment:", err);
+    return NextResponse.json({ error: "error" }, { status: 500 });
+  }
+};
+
+export const DELETE = async (request: NextRequest) => {
+  try {
+    const session = await getUserSession();
+    const commentId = await request.nextUrl.searchParams.get("commentId");
+
+    if (!session) {
+      return NextResponse.json(
+        {
+          message: "unauthorized | not logged in",
+        },
+        { status: 400 },
+      );
+    }
+
+    const comment = await prisma.postComment.findUnique({
+      where: { id: commentId as string },
+    });
+
+    if (!comment || comment.userId !== session.user.id) {
+      return NextResponse.json(
+        {
+          message: "unauthorized | not allowed to delete this comment",
+        },
+        { status: 403 },
+      );
+    }
+
+    await prisma.postComment.delete({
+      where: { id: commentId as string },
+    });
+
+    return NextResponse.json(
+      {
+        message: "Comment deleted successfully",
+      },
+      { status: 200 },
+    );
+  } catch (err) {
+    console.error("Error deleting comment:", err);
+    return NextResponse.json({ error: "error" }, { status: 500 });
+  }
+};
