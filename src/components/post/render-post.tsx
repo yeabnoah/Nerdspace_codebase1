@@ -233,6 +233,7 @@ const RenderPost = () => {
                       ? each.content
                       : `${truncatedContent}...`}
                   </h4>
+                  //tedt
                   {isLongContent && (
                     <button
                       className="mt-2 text-xs underline"
