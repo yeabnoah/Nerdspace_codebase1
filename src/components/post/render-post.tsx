@@ -41,6 +41,7 @@ import toast from "react-hot-toast";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import axios from "axios";
+import { Value } from "@radix-ui/react-select";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -50,6 +51,7 @@ const RenderPost = () => {
   const [editPostInput, setEditPostInput] = useState<String>();
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
   const [commentShown, setCommentShown] = useState<boolean>(false);
+  const [commentContent, setCommentContent] = useState<String>();
 
   const {
     data,
@@ -73,6 +75,23 @@ const RenderPost = () => {
       );
       console.log("test", response.data.data);
       return response.data.data;
+    },
+  });
+
+  const commentMutation = useMutation({
+    mutationKey: ["post-comment"],
+    mutationFn: async () => {
+      const response = await axios.post("/api/post/comment", {
+        postId: selectedPost.id,
+        content: commentContent,
+      });
+      return response.data.data;
+    },
+    onSuccess: () => {
+      toast.success("commented successfully");
+    },
+    onError: () => {
+      toast.error("Error happened while commenting");
     },
   });
 
@@ -274,13 +293,23 @@ const RenderPost = () => {
                   <hr className="mb-2 mt-5" />
                   <div className="itemc flex gap-2">
                     <input
+                      onChange={(e) => {
+                        setCommentContent(e.target.value);
+                      }}
                       placeholder="Comment here"
                       className="w-full border-0 border-b border-white/50 bg-transparent text-sm placeholder:font-instrument placeholder:text-lg focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0"
                     />
-                    <Button className="border bg-transparent focus:outline-none focus:ring-0">
+                    <Button
+                      onClick={async () => {
+                        await commentMutation.mutate();
+                      }}
+                      className="border bg-transparent transition-all hover:scale-105 hover:bg-transparent focus:outline-none focus:ring-0"
+                    >
                       <SendIcon color="white" />
                     </Button>
                   </div>
+
+                  <div></div>
                 </div>
               )}
             </div>
