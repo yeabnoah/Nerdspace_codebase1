@@ -19,7 +19,7 @@ model test {
 }
 
 model User {
-  id            String        @id
+  id            String         @id
   name          String
   email         String
   emailVerified Boolean
@@ -35,8 +35,10 @@ model User {
   country       Country?
   link          String?
   visualName    String?
-  firstTime     Boolean       @default(true)
+  firstTime     Boolean        @default(true)
   PostComment   PostComment[]
+  postLike      postLike[]
+  postBookmark  postBookmark[]
 
   @@unique([email])
   @@map("user")
@@ -60,14 +62,16 @@ model Country {
 }
 
 model Post {
-  id           String        @id @default(uuid())
+  id           String         @id @default(uuid())
   content      String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @default(now())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now())
   userId       String
-  access       PostAccess    @default(public)
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  access       PostAccess     @default(public)
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   postcomments PostComment[]
+  postLike     postLike[]
+  postBookmark postBookmark[]
 
   @@map("posts")
 }
@@ -91,6 +95,30 @@ model PostComment {
 enum PostAccess {
   private
   public
+}
+
+model postLike {
+  id     String @id @default(uuid())
+  userId String
+  postId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@map("postlikes")
+}
+
+model postBookmark {
+  id     String @id @default(uuid())
+  userId String
+  postId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@map("postbookmarks")
 }
 
 model Session {

@@ -79,7 +79,10 @@ const RenderPost = () => {
   };
 
   const toggleCommentShown = (postId: string) => {
-    setCommentShown({ [postId]: true });
+    setCommentShown((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
   };
 
   const [expandedReplies, setExpandedReplies] = useState<{
@@ -92,6 +95,8 @@ const RenderPost = () => {
       [commentId]: !prev[commentId],
     }));
   };
+
+  const [commentCursor, setCommentCursor] = useState<string | null>(null);
 
   const {
     data,
@@ -107,19 +112,26 @@ const RenderPost = () => {
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 
-  const { data: comment, isLoading: commentLoading } = useQuery({
-    queryKey: ["comment"],
-    queryFn: async () => {
+  const {
+    data: commentData,
+    isLoading: commentLoading,
+    fetchNextPage: fetchNextCommentPage,
+    hasNextPage: hasNextCommentPage,
+    isFetchingNextPage: isFetchingNextCommentPage,
+  } = useInfiniteQuery({
+    queryKey: ["comment", selectedPost?.id],
+    queryFn: async ({ pageParam = null }) => {
       const response = await axios.get(
-        `/api/post/comment?postId=${selectedPost.id}`,
+        `/api/post/comment?postId=${selectedPost?.id}&cursor=${pageParam}`,
       );
-
-      console.log(`/api/post/comment?postId=${selectedPost.id}`);
-
-      console.log("test", response.data.data);
-      return response.data.data;
+      return response.data;
     },
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    initialPageParam: null,
+    enabled: !!selectedPost?.id,
   });
+
+  const comments = commentData?.pages.flatMap((page) => page.data) || [];
 
   const mutation = useMutation({
     mutationKey: ["change-post-status"],
@@ -204,17 +216,17 @@ const RenderPost = () => {
     useState<PostCommentInterface | null>(null);
 
   const handleEditComment = (commentId: string) => {
-    const comments = comment.find((c: any) => c.id === commentId);
-    if (comments) {
-      setSelectedComment(comments);
+    const commentser = comments.find((c: any) => c.id === commentId);
+    if (commentser) {
+      setSelectedComment(commentser);
       setEditCommentModalOpen(true);
     }
   };
 
   const handleDeleteComment = (commentId: string) => {
-    const comments = comment.find((c: any) => c.id === commentId);
-    if (comments) {
-      setSelectedComment(comments);
+    const commentser = comments.find((c: any) => c.id === commentId);
+    if (commentser) {
+      setSelectedComment(commentser);
       setDeleteCommentModalOpen(true);
     }
   };
@@ -252,7 +264,7 @@ const RenderPost = () => {
   const [deleteReplyModalOpen, setDeleteReplyModalOpen] = useState(false);
 
   const handleEditReply = (commentId: string) => {
-    const replies = comment.find((c: any) => c.id === commentId);
+    const replies = comments.find((c: any) => c.id === commentId);
     if (replies) {
       setSelectedCommentReply(replies);
       setEditReplyModalOpen(true);
@@ -260,7 +272,7 @@ const RenderPost = () => {
   };
 
   const handleDeleteReply = (commentId: string) => {
-    const replies = comment.find((c: any) => c.id === commentId);
+    const replies = comments.find((c: any) => c.id === commentId);
     if (replies) {
       setSelectedCommentReply(replies);
       setDeleteReplyModalOpen(true);
@@ -424,7 +436,7 @@ const RenderPost = () => {
                       await setSelectedPost(each);
                       toggleCommentShown(each.id);
                       await queryClient.invalidateQueries({
-                        queryKey: ["comment"],
+                        queryKey: ["comment", each.id],
                       });
                     }}
                     className={`cursor-pointer rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
@@ -459,7 +471,7 @@ const RenderPost = () => {
                   {commentLoading && <CommentSkeleton />}
                   <div className="mt-4">
                     {renderComments({
-                      comments: comment,
+                      comments: comments,
                       parentId: null,
                       level: 0,
                       expandedComments,
@@ -479,6 +491,15 @@ const RenderPost = () => {
                       modalEditOpened: editModalOpen,
                       modalDeleteOpened: deleteModalOpen,
                     })}
+                    {hasNextCommentPage && (
+                      <Button
+                        onClick={() => fetchNextCommentPage()}
+                        disabled={isFetchingNextCommentPage}
+                        className="mt-4"
+                      >
+                        {isFetchingNextCommentPage ? "Loading..." : "Load More"}
+                      </Button>
+                    )}
                   </div>
                 </div>
               )}
