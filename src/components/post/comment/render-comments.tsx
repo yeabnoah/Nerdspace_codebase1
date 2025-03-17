@@ -135,14 +135,14 @@ export const renderComments = ({
                         {user?.id === comment.user?.id && (
                           <>
                             <DropdownMenuItem
-                              onClick={() => openEditModal(comment)}
+                              onClick={() => handleEditComment(comment.id)}
                               className="flex items-center gap-2"
                             >
                               <Edit size={16} />
                               Edit
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              onClick={() => openDeleteModal(comment)}
+                              onClick={() => handleDeleteComment(comment.id)}
                               className="flex items-center gap-2 text-red-500"
                             >
                               <Trash size={16} />
