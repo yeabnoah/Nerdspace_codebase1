@@ -15,7 +15,7 @@ export const POST = async (req: NextRequest) => {
           message: "Invalid request body",
           errors: parsedBody.error.errors,
         },
-        { status: 400 },
+        { status: 401 },
       );
     }
 
@@ -36,6 +36,11 @@ export const POST = async (req: NextRequest) => {
         postId: postId,
         content: content,
         parentId: parentId || null,
+      },
+      include: {
+        user: true,
+        replies: true,
+        parent: true,
       },
     });
 
@@ -61,7 +66,7 @@ export const GET = async (request: NextRequest) => {
         {
           message: "postId query parameter is required",
         },
-        { status: 400 },
+        { status: 401 },
       );
     }
 
@@ -79,6 +84,7 @@ export const GET = async (request: NextRequest) => {
         postId: postId,
       },
       include: {
+        user: true,
         replies: true,
         parent: true,
       },

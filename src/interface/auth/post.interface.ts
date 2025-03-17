@@ -1,3 +1,5 @@
+import PostCommentInterface from "./comment.interface";
+
 interface postInterface {
   id: string;
   content: string;
@@ -15,6 +17,7 @@ interface postInterface {
     updatedAt: Date | null;
     nerdAt: null | string;
   };
+  replies?: PostCommentInterface[];
 }
 
 enum postAccess {
