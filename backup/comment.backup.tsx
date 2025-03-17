@@ -6,12 +6,10 @@ import fetchPosts from "@/functions/fetch-post";
 import { getTrimLimit } from "@/functions/render-helper";
 import postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
-import { queryClient } from "@/providers/tanstack-query-provider";
 import usePostStore from "@/store/post.store";
 import { PostAccess } from "@prisma/client";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import {
   BanIcon,
   BookmarkIcon,
@@ -24,23 +22,30 @@ import {
   SendIcon,
   Share2Icon,
   TrashIcon,
+  ChevronDown,
+  ChevronRight,
+  Dot,
+  MessageCircleIcon,
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { useInView } from "react-intersection-observer";
 import DeleteModal from "../modal/delete.modal";
 import EditModal from "../modal/edit.modal";
-import CommentSkeleton from "../skeleton/comment.skelton";
-import MorePostsFetchSkeleton from "../skeleton/morepostFetch.skeleton";
 import RenderPostSkeleton from "../skeleton/render-post.skeleton";
-import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
-import { renderComments } from "./comment/render-comments";
+import { Skeleton } from "../ui/skeleton";
+import { queryClient } from "@/providers/tanstack-query-provider";
+import toast from "react-hot-toast";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import axios from "axios";
+import PostCommentInterface from "@/interface/auth/comment.interface";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -197,6 +202,114 @@ const RenderPost = () => {
       newExpandedStates[index] = !newExpandedStates[index];
       return newExpandedStates;
     });
+  };
+
+  const renderComments = (
+    comments: PostCommentInterface[],
+    parentId: String | null,
+    level = 0,
+  ) => {
+    return (
+      comments &&
+      comments
+        .filter(
+          (comment: PostCommentInterface) => comment?.parentId === parentId,
+        )
+        .map((comment) => {
+          const contentWords = comment.content.split(" ");
+          const trimLimit = 20; // Adjust the trim limit as needed
+          const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
+          const isLongContent = contentWords.length > trimLimit;
+
+          return (
+            <div
+              key={comment.id}
+              className={`relative my-1 py-2 ml-${level * 4} pl-4`}
+            >
+              <div className="absolute left-0 top-0 ml-4 h-full w-6 rounded-l border-b border-l border-t-0 border-white/5"></div>
+              <div className="flex items-center justify-between pl-2">
+                <div className="flex gap-2">
+                  <Image
+                    className="size-8 rounded-full"
+                    src={comment.user?.image || "/user.jpg"}
+                    height={200}
+                    width={200}
+                    alt="user"
+                  />
+                  <div className="flex items-center">
+                    <h4 className="text-xs">{comment?.user?.visualName}</h4>
+                    <Dot />
+                    <p className="text-xs">{timeAgo(comment.createdAt)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="rounded-xl border p-2"
+                    onClick={() => {
+                      toggleReplyShown(comment.id);
+                    }}
+                  >
+                    <MessageCircleIcon size={16} className="" />
+                  </button>
+                  <button
+                    className="rounded-xl border p-2"
+                    onClick={() => toggleReplies(comment.id)}
+                  >
+                    {expandedReplies[comment.id] ? (
+                      <ChevronDown size={16} />
+                    ) : (
+                      <ChevronRight size={16} />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-2 w-[90%] pl-4">
+                <p className="text-xs">
+                  {expandedComments[comment.id] || !isLongContent
+                    ? comment.content
+                    : `${truncatedContent}...`}
+                </p>
+                {isLongContent && (
+                  <button
+                    className="mt-2 text-xs underline"
+                    onClick={() => toggleCommentExpand(comment.id)}
+                  >
+                    {expandedComments[comment.id] ? "See less" : "See more"}
+                  </button>
+                )}
+                {expandedComments[comment.id] &&
+                  renderComments(comments, comment?.id, level + 1)}
+              </div>
+
+              {replyShown[comment.id] && (
+                <div className="mt-2 flex items-start gap-2 pl-8">
+                  <input
+                    placeholder="Reply here"
+                    className="w-full border-0 border-b border-white/5 bg-transparent p-1 text-sm placeholder:font-instrument placeholder:text-lg focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0"
+                    value={replyContent[comment.id] || ""}
+                    onChange={(e) =>
+                      setReplyContent((prev) => ({
+                        ...prev,
+                        [comment.id]: e.target.value,
+                      }))
+                    }
+                  />
+                  <Button
+                    className="mt-2 rounded-lg border bg-transparent px-2 py-1 hover:bg-transparent focus:outline-none focus:ring-0"
+                    onClick={() => handleReplySubmit(comment.id)}
+                  >
+                    <SendIcon color="white" size={8} />
+                  </Button>
+                </div>
+              )}
+
+              {expandedReplies[comment.id] &&
+                renderComments(comments, comment.id, level + 1)}
+            </div>
+          );
+        })
+    );
   };
 
   if (isLoading) {
@@ -388,29 +501,67 @@ const RenderPost = () => {
                       <SendIcon color="white" />
                     </Button>
                   </div>
-                  {commentLoading && <CommentSkeleton />}
-                  <div className="mt-4">
-                    {renderComments({
-                      comments: comment,
-                      parentId: null,
-                      level: 0,
-                      expandedComments,
-                      toggleCommentExpand,
-                      replyShown,
-                      toggleReplyShown,
-                      replyContent,
-                      setReplyContent,
-                      handleReplySubmit,
-                      expandedReplies,
-                      toggleReplies,
-                    })}
-                  </div>
+                  {commentLoading && (
+                    <div>
+                      <Skeleton className="my-2 ml-4 h-fit border bg-black/5 pb-3 pl-4">
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="mt-2 size-10 rounded-full" />
+                          <div className="flex flex-1 flex-col gap-2">
+                            <div className="flex flex-1 items-center gap-2">
+                              <Skeleton className="h-3 w-3/4 rounded" />
+                            </div>
+                            <div className="flex flex-1 items-center gap-2">
+                              <Skeleton className="h-3 w-1/3 rounded" />
+                            </div>
+                          </div>
+                          {/* <div></div> */}
+                        </div>
+                        <Skeleton className="my-2 h-4 w-[95%] rounded" />
+                      </Skeleton>
+                      <Skeleton className="my-2 ml-4 h-fit border bg-black/5 pb-3 pl-4">
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="mt-2 size-10 rounded-full" />
+                          <div className="flex flex-1 flex-col gap-2">
+                            <div className="flex flex-1 items-center gap-2">
+                              <Skeleton className="h-3 w-3/4 rounded" />
+                            </div>
+                            <div className="flex flex-1 items-center gap-2">
+                              <Skeleton className="h-3 w-1/3 rounded" />
+                            </div>
+                          </div>
+                          {/* <div></div> */}
+                        </div>
+                        <Skeleton className="my-2 h-4 w-[95%] rounded" />
+                      </Skeleton>
+                    </div>
+                  )}
+                  <div className="mt-4">{renderComments(comment, null)}</div>
                 </div>
               )}
             </div>
           );
         })}
-      <div ref={ref}>{isFetchingNextPage && <MorePostsFetchSkeleton />}</div>
+      <div ref={ref}>
+        {isFetchingNextPage && (
+          <div className="">
+            <Card className="my-5 rounded-xl border bg-transparent p-4 shadow-none">
+              <div className="flex items-center gap-5">
+                <Skeleton className="size-10 rounded-full" />
+                <div>
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="mt-1 h-3 w-16" />
+                </div>
+              </div>
+              <Skeleton className="mt-4 h-16 w-full" />
+              <div className="mt-4 flex gap-3">
+                <Skeleton className="h-6 w-6 rounded-full" />
+                <Skeleton className="h-6 w-6 rounded-full" />
+                <Skeleton className="h-6 w-6 rounded-full" />
+              </div>
+            </Card>
+          </div>
+        )}
+      </div>
 
       <EditModal
         selectedPost={selectedPost}
