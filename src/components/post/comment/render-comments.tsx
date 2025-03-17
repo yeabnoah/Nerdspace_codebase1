@@ -1,14 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { timeAgo } from "@/functions/calculate-time-difference";
 import PostCommentInterface from "@/interface/auth/comment.interface";
+import { authClient } from "@/lib/auth-client";
+import useUserStore from "@/store/user.store";
 import {
-  ChevronDown,
   ChevronRight,
   Dot,
   MessageCircleIcon,
   SendIcon,
+  TrashIcon,
 } from "lucide-react";
 import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown, Eye, EyeOff, Edit, Trash } from "lucide-react";
 
 interface RenderCommentsProps {
   comments: PostCommentInterface[];
@@ -25,6 +34,8 @@ interface RenderCommentsProps {
   handleReplySubmit: (commentId: string) => void;
   expandedReplies: { [key: string]: boolean };
   toggleReplies: (commentId: string) => void;
+  handleEditComment: (commentId: string) => void;
+  handleDeleteComment: (commentId: string) => void;
 }
 
 export const renderComments = ({
@@ -40,7 +51,10 @@ export const renderComments = ({
   handleReplySubmit,
   expandedReplies,
   toggleReplies,
+  handleEditComment,
+  handleDeleteComment,
 }: RenderCommentsProps) => {
+  const user = useUserStore.getState().user;
   return (
     comments &&
     comments
@@ -54,7 +68,7 @@ export const renderComments = ({
         return (
           <div
             key={comment.id}
-            className={`relative my-1 py-2 ml-${level * 4} pl-4`}
+            className={`relative my-1 py-2 pl-4 sm:ml-${level * 4}`}
           >
             <div className="absolute left-0 top-0 ml-4 h-full w-6 rounded-l border-b border-l border-t-0 border-white/5"></div>
             <div className="flex items-center justify-between pl-2">
@@ -81,20 +95,48 @@ export const renderComments = ({
                 >
                   <MessageCircleIcon size={16} className="" />
                 </button>
-                <button
-                  className="rounded-xl border p-2"
-                  onClick={() => toggleReplies(comment.id)}
-                >
-                  {expandedReplies[comment.id] ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="rounded-xl border p-2">
                     <ChevronDown size={16} />
-                  ) : (
-                    <ChevronRight size={16} />
-                  )}
-                </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="rounded-md outline-none border bg-white dark:bg-textAlternative shadow-lg">
+                    <DropdownMenuItem
+                      onClick={() => toggleReplies(comment.id)}
+                      className="flex items-center gap-2"
+                    >
+                      {expandedReplies[comment.id] ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
+                      {expandedReplies[comment.id]
+                        ? "Hide Replies"
+                        : "Show Replies"}
+                    </DropdownMenuItem>
+                    {user?.id === comment.user?.id && (
+                      <>
+                        <DropdownMenuItem
+                          onClick={() => handleEditComment(comment.id)}
+                          className="flex items-center gap-2"
+                        >
+                          <Edit size={16} />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteComment(comment.id)}
+                          className="flex items-center gap-2 text-red-500"
+                        >
+                          <Trash size={16} />
+                          Delete
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
 
-            <div className="mt-2 w-[90%] pl-4">
+            <div className="mt-2 w-full sm:w-[90%] pl-4">
               <p className="text-xs">
                 {expandedComments[comment.id] || !isLongContent
                   ? comment.content
@@ -122,6 +164,8 @@ export const renderComments = ({
                   handleReplySubmit,
                   expandedReplies,
                   toggleReplies,
+                  handleEditComment,
+                  handleDeleteComment,
                 })}
             </div>
 
@@ -161,6 +205,8 @@ export const renderComments = ({
                 handleReplySubmit,
                 expandedReplies,
                 toggleReplies,
+                handleEditComment,
+                handleDeleteComment,
               })}
           </div>
         );

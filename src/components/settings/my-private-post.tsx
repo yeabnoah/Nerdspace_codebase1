@@ -57,21 +57,24 @@ const RenderMyPrivatePost = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["posts"],
+    queryKey: ["Privateposts"],
     queryFn: fetchMyPrivatePosts,
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 
   const mutation = useMutation({
-    mutationKey: ["change-post-status"],
+    mutationKey: ["change-post-status-private"],
     mutationFn: changePostAccess,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts", "my-posts", "my-private-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["my-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["my-private-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["Privateposts"] });
     },
-    onError : ()=>{
-      toast.error("error occured while updating post")
-    }
+    onError: () => {
+      toast.error("error occured while updating post");
+    },
   });
 
   const [expandedStates, setExpandedStates] = useState<boolean[]>(
@@ -108,7 +111,7 @@ const RenderMyPrivatePost = () => {
 
   const changePostAccessType = async (currentPost: postInterface) => {
     setSelectedPost(currentPost);
-   await mutation.mutate();
+    await mutation.mutate();
   };
 
   return (

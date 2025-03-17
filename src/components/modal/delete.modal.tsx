@@ -1,4 +1,10 @@
-import React from "react";
+import deletePostFunction from "@/functions/delete-post";
+import postInterface from "@/interface/auth/post.interface";
+import { DialogDescription } from "@radix-ui/react-dialog";
+import { useMutation } from "@tanstack/react-query";
+import { Loader } from "lucide-react";
+import toast from "react-hot-toast";
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
@@ -6,17 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { AutosizeTextarea } from "../ui/resizeble-text-area";
-import postInterface from "@/interface/auth/post.interface";
-import { Button } from "../ui/button";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import editPostFunction from "@/functions/edit-post";
-import toast from "react-hot-toast";
 import { queryClient } from "@/providers/tanstack-query-provider";
-import { Loader } from "lucide-react";
-import { DialogDescription } from "@radix-ui/react-dialog";
-import deletePostFunction from "@/functions/delete-post";
 
 const DeleteModal = ({
   selectedPost,
@@ -34,10 +30,15 @@ const DeleteModal = ({
   const mutation = useMutation({
     mutationKey: ["delete-post"],
     mutationFn: deletePostFunction,
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("post deleted successfully");
       setDeleteModal(false);
-      queryClient.invalidateQueries({ queryKey: ["posts", "my-posts", "my-private-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["my-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["my-private-posts"] });
+         queryClient.invalidateQueries({ queryKey: ["Privateposts"] });
+            
     },
     onError: () => {
       toast.error("error occured while deleting post");
@@ -69,7 +70,9 @@ const DeleteModal = ({
           </Button>
           <Button
             variant="destructive"
-          onClick={deletePost} disabled={mutation.isPending}>
+            onClick={deletePost}
+            disabled={mutation.isPending}
+          >
             {mutation.isPending && <Loader />}
             {mutation.isPending ? "Deleting ..." : "Delete"}
           </Button>
