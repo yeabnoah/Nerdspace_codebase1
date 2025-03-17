@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea"; // Ensure Textarea componen
 
 interface EditCommentModalProps {
   commentId: string;
+  postId: string; // Add postId to props
   initialContent: string;
   isOpen: boolean;
   onClose: () => void;
@@ -21,6 +22,7 @@ interface EditCommentModalProps {
 
 const EditCommentModal: React.FC<EditCommentModalProps> = ({
   commentId,
+  postId, // Add postId to destructuring
   initialContent,
   isOpen,
   onClose,
@@ -32,6 +34,7 @@ const EditCommentModal: React.FC<EditCommentModalProps> = ({
     mutationFn: async (newContent: string) => {
       await axios.put("/api/post/comment", {
         commentId,
+        postId, // Include postId in the request body
         content: newContent,
       });
     },

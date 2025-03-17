@@ -507,6 +507,7 @@ const RenderPost = () => {
         <>
           <EditCommentModal
             commentId={selectedComment.id}
+            postId={selectedPost.id} // Pass postId here
             initialContent={selectedComment.content}
             isOpen={editCommentModalOpen}
             onClose={() => setEditCommentModalOpen(false)}
@@ -521,6 +522,7 @@ const RenderPost = () => {
       {selectedCommentReply && (
         <>
           <EditCommentModal
+            postId={selectedPost.id}
             commentId={selectedCommentReply.id}
             initialContent={selectedCommentReply.content}
             isOpen={editReplyModalOpen}

@@ -1,26 +1,23 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { timeAgo } from "@/functions/calculate-time-difference";
-import PostCommentInterface from "@/interface/auth/comment.interface";
-import { authClient } from "@/lib/auth-client";
-import useUserStore from "@/store/user.store";
-import {
-  ChevronRight,
-  Dot,
-  MessageCircleIcon,
-  SendIcon,
-  TrashIcon,
-} from "lucide-react";
-import Image from "next/image";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, Eye, EyeOff, Edit, Trash } from "lucide-react";
-import EditCommentModal from "./EditCommentModal";
-import DeleteCommentModal from "./DeleteCommentModal";
+import { timeAgo } from "@/functions/calculate-time-difference";
+import PostCommentInterface from "@/interface/auth/comment.interface";
+import useUserStore from "@/store/user.store";
+import {
+  ChevronDown,
+  Dot,
+  Edit,
+  Eye, EyeOff,
+  MessageCircleIcon,
+  SendIcon,
+  Trash
+} from "lucide-react";
+import Image from "next/image";
 
 interface RenderCommentsProps {
   comments: PostCommentInterface[];
@@ -113,9 +110,7 @@ export const renderComments = ({
                       <MessageCircleIcon size={16} className="" />
                     </button>
                     <DropdownMenu>
-                      <DropdownMenuTrigger
-                        className="rounded-xl border p-2"
-                      >
+                      <DropdownMenuTrigger className="rounded-xl border p-2">
                         <ChevronDown size={16} />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="rounded-md border bg-white shadow-lg outline-none dark:bg-textAlternative">
