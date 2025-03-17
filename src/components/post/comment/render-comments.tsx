@@ -42,6 +42,8 @@ interface RenderCommentsProps {
   openEditModal: (comment: PostCommentInterface) => void;
   openDeleteModal: (comment: PostCommentInterface) => void;
   setSelectedCommentReply: (comment: PostCommentInterface) => void;
+  modalEditOpened: boolean;
+  modalDeleteOpened: boolean;
 }
 
 export const renderComments = ({
@@ -62,6 +64,8 @@ export const renderComments = ({
   openEditModal,
   openDeleteModal,
   setSelectedCommentReply,
+  modalEditOpened,
+  modalDeleteOpened,
 }: RenderCommentsProps) => {
   const user = useUserStore.getState().user;
 
@@ -111,7 +115,6 @@ export const renderComments = ({
                     <DropdownMenu>
                       <DropdownMenuTrigger
                         className="rounded-xl border p-2"
-                        onClick={() => setSelectedCommentReply(comment)}
                       >
                         <ChevronDown size={16} />
                       </DropdownMenuTrigger>
@@ -185,6 +188,8 @@ export const renderComments = ({
                       openEditModal,
                       openDeleteModal,
                       setSelectedCommentReply,
+                      modalDeleteOpened,
+                      modalEditOpened,
                     })}
                 </div>
 
@@ -229,6 +234,8 @@ export const renderComments = ({
                     openEditModal,
                     openDeleteModal,
                     setSelectedCommentReply,
+                    modalDeleteOpened,
+                    modalEditOpened,
                   })}
               </div>
             );

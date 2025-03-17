@@ -476,6 +476,8 @@ const RenderPost = () => {
                       openEditModal,
                       openDeleteModal,
                       setSelectedCommentReply,
+                      modalEditOpened: editModalOpen,
+                      modalDeleteOpened: deleteModalOpen,
                     })}
                   </div>
                 </div>
