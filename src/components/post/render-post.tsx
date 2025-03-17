@@ -44,6 +44,7 @@ import { renderComments } from "./comment/render-comments";
 import EditCommentModal from "./comment/EditCommentModal";
 import DeleteCommentModal from "./comment/DeleteCommentModal";
 import PostCommentInterface from "@/interface/auth/comment.interface";
+import { GoHeart, GoHeartFill } from "react-icons/go";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -279,6 +280,34 @@ const RenderPost = () => {
     }
   };
 
+  const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
+
+  const likeMutation = useMutation({
+    mutationFn: async (postId: string) => {
+      if (likedPosts[postId]) {
+        await axios.delete("/api/post/like", {
+          data: { postId, userId: session.data?.user.id },
+        });
+      } else {
+        await axios.post("/api/post/like", {
+          postId,
+          userId: session.data?.user.id,
+        });
+      }
+    },
+    onSuccess: (_, postId) => {
+      setLikedPosts((prev) => ({ ...prev, [postId]: !prev[postId] }));
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+    onError: () => {
+      toast.error("Error occurred while liking/unliking post");
+    },
+  });
+
+  const handleLike = (postId: string) => {
+    likeMutation.mutate(postId);
+  };
+
   if (isLoading) {
     return <RenderPostSkeleton />;
   }
@@ -428,8 +457,13 @@ const RenderPost = () => {
                 >
                   <div
                     className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
+                    onClick={() => handleLike(each.id)}
                   >
-                    <Heart className="size-5" />
+                    {likedPosts[each.id] ? (
+                      <GoHeartFill className="size-5" />
+                    ) : (
+                      <GoHeart className="size-5" />
+                    )}
                   </div>
                   <div
                     onClick={async () => {
