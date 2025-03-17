@@ -49,7 +49,9 @@ const RenderPost = () => {
   const { selectedPost, setSelectedPost, content, setContent } = usePostStore();
   const [editPostInput, setEditPostInput] = useState<String>();
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
-  const [commentShown, setCommentShown] = useState<boolean>(false);
+  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>(
+    {},
+  );
   const [expandedComments, setExpandedComments] = useState<{
     [key: string]: boolean;
   }>({});
@@ -71,6 +73,10 @@ const RenderPost = () => {
       ...prev,
       [commentId]: !prev[commentId],
     }));
+  };
+
+  const toggleCommentShown = (postId: string) => {
+    setCommentShown({ [postId]: true });
   };
 
   const [expandedReplies, setExpandedReplies] = useState<{
@@ -117,6 +123,8 @@ const RenderPost = () => {
     mutationFn: changePostAccess,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["Privateposts"] });
+      // queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
     onError: () => {
       toast.error("error occured while updating post");
@@ -185,6 +193,14 @@ const RenderPost = () => {
         content: commentContent,
       });
     }
+  };
+
+  const handleEditComment = (commentId: string) => {
+    console.log(`Edit comment with ID: ${commentId}`);
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    console.log(`Delete comment with ID: ${commentId}`);
   };
 
   const [expandedStates, setExpandedStates] = useState<boolean[]>(
@@ -354,7 +370,7 @@ const RenderPost = () => {
                   <div
                     onClick={async () => {
                       await setSelectedPost(each);
-                      setCommentShown(!commentShown);
+                      toggleCommentShown(each.id);
                       await queryClient.invalidateQueries({
                         queryKey: ["comment"],
                       });
@@ -371,7 +387,7 @@ const RenderPost = () => {
                 </div>
               </div>
 
-              {commentShown && (
+              {commentShown[each.id] && (
                 <div>
                   <hr className="mb-2 mt-5" />
                   <div className="itemc flex gap-2">
@@ -403,6 +419,8 @@ const RenderPost = () => {
                       handleReplySubmit,
                       expandedReplies,
                       toggleReplies,
+                      handleEditComment,
+                      handleDeleteComment,
                     })}
                   </div>
                 </div>

@@ -32,21 +32,23 @@ const EditModal = ({
   const mutation = useMutation({
     mutationKey: ["edit-post"],
     mutationFn: editPostFunction,
-    onSuccess : ()=>{
-      toast.success("updated post successfully")
-      setEditModal(false)
-      queryClient.invalidateQueries({ queryKey: ["posts", "my-posts", "my-private-posts"] });
+    onSuccess: () => {
+      toast.success("updated post successfully");
+      setEditModal(false);
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["my-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["my-private-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["Privateposts"] });
     },
-    onError : ()=>{
-      toast.error("error occured while updating post")
-    }
+    onError: () => {
+      toast.error("error occured while updating post");
+    },
   });
 
-  const editPost = async() =>{
-    await mutation.mutate()
-  }
-
-
+  const editPost = async () => {
+    await mutation.mutate();
+  };
 
   return (
     <Dialog open={editModal} onOpenChange={setEditModal}>
@@ -64,19 +66,17 @@ const EditModal = ({
         />
         <DialogFooter className="gap-3">
           <Button
-          disabled={mutation.isPending}
+            disabled={mutation.isPending}
             onClick={() => {
               setEditModal(false);
             }}
           >
             Cancel
           </Button>
-          <Button
-          onClick={editPost}
-           disabled={mutation.isPending}>
+          <Button onClick={editPost} disabled={mutation.isPending}>
             {mutation.isPending && <Loader />}
             {mutation.isPending ? "Updating ..." : "Update"}
-            </Button>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

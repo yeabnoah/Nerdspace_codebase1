@@ -66,11 +66,12 @@ const RenderMyPost = () => {
     mutationKey: ["posts"],
     mutationFn: changePostAccess,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts", "my-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["my-posts"] });
     },
-    onError : ()=>{
-      toast.error("error occured while updating post")
-    }
+    onError: () => {
+      toast.error("error occured while updating post");
+    },
   });
 
   const [expandedStates, setExpandedStates] = useState<boolean[]>(
@@ -107,7 +108,7 @@ const RenderMyPost = () => {
 
   const changePostAccessType = async (currentPost: postInterface) => {
     setSelectedPost(currentPost);
-   await mutation.mutate();
+    await mutation.mutate();
   };
 
   return (

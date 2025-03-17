@@ -107,16 +107,16 @@ export const PUT = async (req: NextRequest) => {
     const session = await getUserSession();
     const body = await req.json();
 
-    // const parsedBody = commentSchema.safeParse(body);
-    // if (!parsedBody.success) {
-    //   return NextResponse.json(
-    //     {
-    //       message: "Invalid request body",
-    //       errors: parsedBody.error.errors,
-    //     },
-    //     { status: 400 },
-    //   );
-    // }
+    const parsedBody = commentSchema.safeParse(body);
+    if (!parsedBody.success) {
+      return NextResponse.json(
+        {
+          message: "Invalid request body",
+          errors: parsedBody.error.errors,
+        },
+        { status: 400 },
+      );
+    }
 
     const { commentId, content } = body;
 
