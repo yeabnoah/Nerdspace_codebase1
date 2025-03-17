@@ -41,6 +41,9 @@ import {
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { renderComments } from "./comment/render-comments";
+import EditCommentModal from "./comment/EditCommentModal";
+import DeleteCommentModal from "./comment/DeleteCommentModal";
+import PostCommentInterface from "@/interface/auth/comment.interface";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -195,12 +198,25 @@ const RenderPost = () => {
     }
   };
 
+  const [editCommentModal, setEditCommentModal] = useState(false);
+  const [deleteCommentModal, setDeleteCommentModal] = useState(false);
+  const [selectedComment, setSelectedComment] =
+    useState<PostCommentInterface | null>(null);
+
   const handleEditComment = (commentId: string) => {
-    console.log(`Edit comment with ID: ${commentId}`);
+    const comments = comment.find((c: any) => c.id === commentId);
+    if (comments) {
+      setSelectedComment(comments);
+      setEditCommentModalOpen(true);
+    }
   };
 
   const handleDeleteComment = (commentId: string) => {
-    console.log(`Delete comment with ID: ${commentId}`);
+    const comments = comment.find((c: any) => c.id === commentId);
+    if (comments) {
+      setSelectedComment(comments);
+      setDeleteCommentModalOpen(true);
+    }
   };
 
   const [expandedStates, setExpandedStates] = useState<boolean[]>(
@@ -213,6 +229,42 @@ const RenderPost = () => {
       newExpandedStates[index] = !newExpandedStates[index];
       return newExpandedStates;
     });
+  };
+
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedCommentReply, setSelectedCommentReply] =
+    useState<PostCommentInterface | null>(null);
+
+  const openEditModal = (comment: PostCommentInterface) => {
+    setSelectedComment(comment);
+    setEditModalOpen(true);
+  };
+
+  const openDeleteModal = (comment: PostCommentInterface) => {
+    setSelectedComment(comment);
+    setDeleteModalOpen(true);
+  };
+
+  const [editCommentModalOpen, setEditCommentModalOpen] = useState(false);
+  const [deleteCommentModalOpen, setDeleteCommentModalOpen] = useState(false);
+  const [editReplyModalOpen, setEditReplyModalOpen] = useState(false);
+  const [deleteReplyModalOpen, setDeleteReplyModalOpen] = useState(false);
+
+  const handleEditReply = (commentId: string) => {
+    const replies = comment.find((c: any) => c.id === commentId);
+    if (replies) {
+      setSelectedCommentReply(replies);
+      setEditReplyModalOpen(true);
+    }
+  };
+
+  const handleDeleteReply = (commentId: string) => {
+    const replies = comment.find((c: any) => c.id === commentId);
+    if (replies) {
+      setSelectedCommentReply(replies);
+      setDeleteReplyModalOpen(true);
+    }
   };
 
   if (isLoading) {
@@ -421,6 +473,9 @@ const RenderPost = () => {
                       toggleReplies,
                       handleEditComment,
                       handleDeleteComment,
+                      openEditModal,
+                      openDeleteModal,
+                      setSelectedCommentReply,
                     })}
                   </div>
                 </div>
@@ -445,6 +500,37 @@ const RenderPost = () => {
         content={content}
         setContent={setContent}
       />
+
+      {selectedComment && (
+        <>
+          <EditCommentModal
+            commentId={selectedComment.id}
+            initialContent={selectedComment.content}
+            isOpen={editCommentModalOpen}
+            onClose={() => setEditCommentModalOpen(false)}
+          />
+          <DeleteCommentModal
+            commentId={selectedComment.id}
+            isOpen={deleteCommentModalOpen}
+            onClose={() => setDeleteCommentModalOpen(false)}
+          />
+        </>
+      )}
+      {selectedCommentReply && (
+        <>
+          <EditCommentModal
+            commentId={selectedCommentReply.id}
+            initialContent={selectedCommentReply.content}
+            isOpen={editReplyModalOpen}
+            onClose={() => setEditReplyModalOpen(false)}
+          />
+          <DeleteCommentModal
+            commentId={selectedCommentReply.id}
+            isOpen={deleteReplyModalOpen}
+            onClose={() => setDeleteReplyModalOpen(false)}
+          />
+        </>
+      )}
     </div>
   );
 };
