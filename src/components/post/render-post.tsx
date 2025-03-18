@@ -125,6 +125,7 @@ const RenderPost = () => {
       const response = await axios.get(
         `/api/post/comment?postId=${selectedPost?.id}&cursor=${pageParam}`,
       );
+
       return response.data;
     },
     getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -140,7 +141,6 @@ const RenderPost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       queryClient.invalidateQueries({ queryKey: ["Privateposts"] });
-      // queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
     onError: () => {
       toast.error("error occured while updating post");
@@ -284,16 +284,13 @@ const RenderPost = () => {
 
   const likeMutation = useMutation({
     mutationFn: async (postId: string) => {
-      if (likedPosts[postId]) {
-        await axios.delete("/api/post/like", {
-          data: { postId, userId: session.data?.user.id },
-        });
-      } else {
-        await axios.post("/api/post/like", {
-          postId,
-          userId: session.data?.user.id,
-        });
-      }
+      const response = await axios.post("/api/post/like", {
+        postId,
+        userId: session.data?.user.id,
+      });
+
+      console.log(response.data);
+      return response.data.data;
     },
     onSuccess: (_, postId) => {
       setLikedPosts((prev) => ({ ...prev, [postId]: !prev[postId] }));
@@ -337,7 +334,7 @@ const RenderPost = () => {
     <div>
       {data?.pages
         .flatMap((page) => page.data)
-        .map((each, index) => {
+        .map((each: postInterface, index) => {
           const contentWords = each.content.split(" ");
           const trimLimit = getTrimLimit();
           const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
@@ -459,7 +456,7 @@ const RenderPost = () => {
                     className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
                     onClick={() => handleLike(each.id)}
                   >
-                    {likedPosts[each.id] ? (
+                    {each.likes.includes(session.data?.user.id as string) ? (
                       <GoHeartFill className="size-5" />
                     ) : (
                       <GoHeart className="size-5" />

@@ -3,10 +3,12 @@ import PostCommentInterface from "./comment.interface";
 interface postInterface {
   id: string;
   content: string;
-  createdAt: Date | null;
+  createdAt: Date;
   updatedAt: Date | null;
   userId: string;
   access: postAccess;
+  likes: { id: string; postId: string; userId: string }[];
+  bookmarks: { id: string; postId: string; userId: string }[];
   user: {
     id: string;
     name: string;
