@@ -1,37 +1,38 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import getUserSession from "@/functions/get-user";
 
-export async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { postId, userId } = req.body;
-
-  if (!postId || !userId) {
-    return res.status(400).json({ error: "Post ID and User ID are required" });
-  }
-
+export const POST = async (req: NextResponse) => {
   try {
-    if (req.method === "POST") {
-      const like = await prisma.postLike.create({
-        data: {
-          postId,
-          userId,
+    const session = await getUserSession();
+
+    if (!session) {
+      return NextResponse.json(
+        {
+          message: "unauthorized | not logged in",
         },
-      });
-      return res.status(200).json(like);
-    } else if (req.method === "DELETE") {
-      // Unlike a post
-      const unlike = await prisma.postLike.deleteMany({
-        where: {
-          postId,
-          userId,
-        },
-      });
-      return res.status(200).json({ message: "Post unliked successfully" });
-    } else {
-      res.setHeader("Allow", ["POST", "DELETE"]);
-      return res.status(405).end(`Method ${req.method} Not Allowed`);
+        { status: 400 },
+      );
     }
-  } catch (error) {
-    return res.status(500).json({ error: "Internal server error" });
+
+    const { userId, postId } = await req.json();
+
+    const existingLike = await prisma.like.findFirst({
+      where: { userId, postId },
+    });
+
+    if (existingLike) {
+      await prisma.like.delete({ where: { id: existingLike.id } });
+      return NextResponse.json({ message: "Like removed" }, { status: 200 });
+    }
+
+    await prisma.like.create({
+      data: { userId, postId },
+    });
+
+    return NextResponse.json({ message: "Liked post" }, { status: 201 });
+  } catch (err) {
+    console.error("Error updating comment:", err);
+    return NextResponse.json({ error: "error" }, { status: 500 });
   }
-}
+};

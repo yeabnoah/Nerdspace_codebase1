@@ -37,7 +37,8 @@ model User {
   visualName    String?
   firstTime     Boolean       @default(true)
   PostComment   PostComment[]
-  PostLike      PostLike[]
+  likes         Like[]
+  bookmarks     Bookmark[]
 
   @@unique([email])
   @@map("user")
@@ -69,7 +70,8 @@ model Post {
   access       PostAccess    @default(public)
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   postcomments PostComment[]
-  likes        PostLike[]
+  likes        Like[]
+  bookmarks    Bookmark[]
 
   @@map("posts")
 }
@@ -140,14 +142,22 @@ model Verification {
   @@map("verification")
 }
 
-model PostLike {
-  id        String   @id @default(uuid())
-  userId    String
-  postId    String
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+model Like {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
 
-  @@unique([userId, postId])
-  @@map("postlikes")
+  @@unique([userId, postId]) // Ensures a user can like a post only once
+}
+
+model Bookmark {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+
+  @@unique([userId, postId]) // Ensures a user can bookmark a post only once
 }
