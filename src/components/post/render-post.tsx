@@ -537,15 +537,15 @@ const RenderPost = () => {
                   <div className="itemc flex gap-2">
                     <input
                       placeholder="Comment here"
-                      className="w-full border-0 border-b border-white/50 bg-transparent text-sm placeholder:font-instrument placeholder:text-lg focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0"
+                      className="w-full border-0 border-b dark:border-white/50 border-b-textAlternative/20 bg-transparent text-sm placeholder:font-instrument placeholder:text-lg focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0"
                       value={commentContent}
                       onChange={(e) => setCommentContent(e.target.value)}
                     />
                     <Button
                       onClick={handleCommentSubmit}
-                      className="border bg-transparent hover:bg-transparent focus:outline-none focus:ring-0"
+                      className="border bg-transparent shadow-none hover:bg-transparent focus:outline-none focus:ring-0"
                     >
-                      <SendIcon color="white" />
+                      <SendIcon className=" text-textAlternative dark:text-white" />
                     </Button>
                   </div>
                   {commentLoading && <CommentSkeleton />}
