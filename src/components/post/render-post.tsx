@@ -45,6 +45,8 @@ import EditCommentModal from "./comment/EditCommentModal";
 import DeleteCommentModal from "./comment/DeleteCommentModal";
 import PostCommentInterface from "@/interface/auth/comment.interface";
 import { GoHeart, GoHeartFill } from "react-icons/go";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -281,6 +283,7 @@ const RenderPost = () => {
   };
 
   const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<{ [key: string]: boolean }>({});
 
   const likeMutation = useMutation({
     mutationFn: async (postId: string) => {
@@ -301,8 +304,30 @@ const RenderPost = () => {
     },
   });
 
+  const bookmarkMutation = useMutation({
+    mutationFn: async (postId: string) => {
+      const response = await axios.post("/api/post/bookmark", {
+        postId,
+        userId: session.data?.user.id,
+      });
+
+      return response.data.data;
+    },
+    onSuccess: (_, postId) => {
+      setBookmarkedPosts((prev) => ({ ...prev, [postId]: !prev[postId] }));
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+    onError: () => {
+      toast.error("Error occurred while bookmarking/unbookmarking post");
+    },
+  });
+
   const handleLike = (postId: string) => {
     likeMutation.mutate(postId);
+  };
+
+  const handleBookmark = (postId: string) => {
+    bookmarkMutation.mutate(postId);
   };
 
   if (isLoading) {
@@ -478,8 +503,15 @@ const RenderPost = () => {
                   </div>
                   <div
                     className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
+                    onClick={() => handleBookmark(each.id)}
                   >
-                    <BookmarkIcon className="size-5" />
+                     {each.bookmarks.some(
+                      (bookmark) => bookmark.userId === session.data?.user.id,
+                    ) ? (
+                      <HiBookmark className="size-5" />
+                    ) : (
+                      <HiOutlineBookmark className="size-5" />
+                    )}
                   </div>
                 </div>
               </div>

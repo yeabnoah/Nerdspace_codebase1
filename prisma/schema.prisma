@@ -39,6 +39,7 @@ model User {
   PostComment   PostComment[]
   likes         Like[]
   bookmarks     Bookmark[]
+  reports       Report[]
 
   @@unique([email])
   @@map("user")
@@ -72,6 +73,7 @@ model Post {
   postcomments PostComment[]
   likes        Like[]
   bookmarks    Bookmark[]
+  reports      Report[]
 
   @@map("posts")
 }
@@ -88,6 +90,7 @@ model PostComment {
   post      Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
+  reports   Report[]
 
   @@map("postcomments")
 }
@@ -160,4 +163,27 @@ model Bookmark {
   postId String
 
   @@unique([userId, postId]) // Ensures a user can bookmark a post only once
+}
+
+model Report {
+  id         String       @id @default(uuid())
+  reporter   User         @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  reporterId String
+  post       Post?        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId     String?
+  comment    PostComment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId  String?
+  reason     String
+  status     ReportStatus @default(PENDING)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@map("reports")
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  REJECTED
 }
