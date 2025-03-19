@@ -64,7 +64,9 @@ export const POST = async (req: NextRequest) => {
 
     const requestBody = {
       reporterId: session.user.id,
-      ...body,
+      postId: body.postId || null,
+      commentId: body.commentId || null,
+      reason: body.reason,
     };
 
     const newReport = await prisma.report.create({
