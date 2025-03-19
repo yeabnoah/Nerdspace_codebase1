@@ -456,7 +456,9 @@ const RenderPost = () => {
                     className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
                     onClick={() => handleLike(each.id)}
                   >
-                    {each.likes.includes(session.data?.user.id as string) ? (
+                    {each.likes.some(
+                      (like) => like.userId === session.data?.user.id,
+                    ) ? (
                       <GoHeartFill className="size-5" />
                     ) : (
                       <GoHeart className="size-5" />
