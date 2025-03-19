@@ -1,15 +1,7 @@
 import getUserSession from "@/functions/get-user";
 import { prisma } from "@/lib/prisma";
+import { reportSchema, reportType } from "@/validation/report.validation";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-
-const reportSchema = z.object({
-  postId: z.string().optional(),
-  commentId: z.string().optional(),
-  reason: z.string(),
-});
-
-export type reportType = z.infer<typeof reportSchema>;
 
 export const POST = async (req: NextRequest) => {
   try {
