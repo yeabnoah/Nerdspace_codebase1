@@ -47,6 +47,7 @@ import PostCommentInterface from "@/interface/auth/comment.interface";
 import { GoHeart, GoHeartFill } from "react-icons/go";
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
+import ReportModal from "../modal/report.modal";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -284,6 +285,13 @@ const RenderPost = () => {
 
   const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
   const [bookmarkedPosts, setBookmarkedPosts] = useState<{ [key: string]: boolean }>({});
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportPostId, setReportPostId] = useState<string | null>(null);
+
+  const handleReport = (postId: string) => {
+    setReportPostId(postId);
+    setReportModalOpen(true);
+  };
 
   const likeMutation = useMutation({
     mutationFn: async (postId: string) => {
@@ -446,7 +454,7 @@ const RenderPost = () => {
                         <Share2Icon />
                         <span className="hidden md:block">share</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleReport(each.id)}>
                         <BanIcon />
                         <span className="hidden md:block">Report</span>
                       </DropdownMenuItem>
@@ -621,6 +629,11 @@ const RenderPost = () => {
           />
         </>
       )}
+      <ReportModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        postId={reportPostId}
+      />
     </div>
   );
 };
