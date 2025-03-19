@@ -1,3 +1,4 @@
+import ReportModal from "@/components/modal/report.modal";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,17 +8,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { timeAgo } from "@/functions/calculate-time-difference";
 import PostCommentInterface from "@/interface/auth/comment.interface";
+import useReportStore from "@/store/report.strore";
 import useUserStore from "@/store/user.store";
 import {
+  BanIcon,
   ChevronDown,
   Dot,
   Edit,
-  Eye, EyeOff,
+  Eye,
+  EyeOff,
   MessageCircleIcon,
   SendIcon,
-  Trash
+  Trash,
 } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 interface RenderCommentsProps {
   comments: PostCommentInterface[];
@@ -41,6 +46,9 @@ interface RenderCommentsProps {
   setSelectedCommentReply: (comment: PostCommentInterface) => void;
   modalEditOpened: boolean;
   modalDeleteOpened: boolean;
+  reportModalOpen: boolean;
+  setReportModalOpen: (value: boolean) => void;
+  setCommentId: (value: string) => void;
 }
 
 export const renderComments = ({
@@ -63,8 +71,16 @@ export const renderComments = ({
   setSelectedCommentReply,
   modalEditOpened,
   modalDeleteOpened,
+  reportModalOpen,
+  setReportModalOpen,
+  setCommentId,
 }: RenderCommentsProps) => {
   const user = useUserStore.getState().user;
+
+  const handleReport = (commentId: string) => {
+    setCommentId(commentId);
+    setReportModalOpen(true);
+  };
 
   return (
     <>
@@ -145,6 +161,13 @@ export const renderComments = ({
                             </DropdownMenuItem>
                           </>
                         )}
+                        <DropdownMenuItem
+                          onClick={() => handleReport(comment.id)}
+                          disabled={user?.id === comment.user?.id}
+                        >
+                          <BanIcon size={16} />
+                          Report
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -185,6 +208,9 @@ export const renderComments = ({
                       setSelectedCommentReply,
                       modalDeleteOpened,
                       modalEditOpened,
+                      reportModalOpen,
+                      setReportModalOpen,
+                      setCommentId,
                     })}
                 </div>
 
@@ -231,10 +257,18 @@ export const renderComments = ({
                     setSelectedCommentReply,
                     modalDeleteOpened,
                     modalEditOpened,
+                    reportModalOpen,
+                    setReportModalOpen,
+                    setCommentId,
                   })}
               </div>
             );
           })}
+
+      <ReportModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+      />
     </>
   );
 };

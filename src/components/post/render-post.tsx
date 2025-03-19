@@ -48,6 +48,7 @@ import { GoHeart, GoHeartFill } from "react-icons/go";
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
 import ReportModal from "../modal/report.modal";
+import useReportStore from "@/store/report.strore";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -56,6 +57,7 @@ const RenderPost = () => {
   const { selectedPost, setSelectedPost, content, setContent } = usePostStore();
   const [editPostInput, setEditPostInput] = useState<String>();
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
   const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>(
     {},
   );
@@ -284,12 +286,14 @@ const RenderPost = () => {
   };
 
   const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
-  const [bookmarkedPosts, setBookmarkedPosts] = useState<{ [key: string]: boolean }>({});
-  const [reportModalOpen, setReportModalOpen] = useState(false);
-  const [reportPostId, setReportPostId] = useState<string | null>(null);
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<{
+    [key: string]: boolean;
+  }>({});
+  // const [reportModalOpen, setReportModalOpen] = useState(false);
+  const { setPostId, setCommentId } = useReportStore();
 
   const handleReport = (postId: string) => {
-    setReportPostId(postId);
+    setPostId(postId);
     setReportModalOpen(true);
   };
 
@@ -454,7 +458,10 @@ const RenderPost = () => {
                         <Share2Icon />
                         <span className="hidden md:block">share</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleReport(each.id)}>
+                      <DropdownMenuItem
+                        onClick={() => handleReport(each.id)}
+                        disabled={session?.data?.user?.id === each.user.id}
+                      >
                         <BanIcon />
                         <span className="hidden md:block">Report</span>
                       </DropdownMenuItem>
@@ -513,7 +520,7 @@ const RenderPost = () => {
                     className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
                     onClick={() => handleBookmark(each.id)}
                   >
-                     {each.bookmarks.some(
+                    {each.bookmarks.some(
                       (bookmark) => bookmark.userId === session.data?.user.id,
                     ) ? (
                       <HiBookmark className="size-5" />
@@ -563,6 +570,9 @@ const RenderPost = () => {
                       setSelectedCommentReply,
                       modalEditOpened: editModalOpen,
                       modalDeleteOpened: deleteModalOpen,
+                      reportModalOpen,
+                      setReportModalOpen,
+                      setCommentId,
                     })}
                     {hasNextCommentPage && (
                       <Button
@@ -632,7 +642,6 @@ const RenderPost = () => {
       <ReportModal
         isOpen={reportModalOpen}
         onClose={() => setReportModalOpen(false)}
-        postId={reportPostId}
       />
     </div>
   );
