@@ -23,6 +23,29 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
+    // Check if the postId or commentId exists
+    if (body.postId) {
+      const postExists = await prisma.post.findUnique({
+        where: { id: body.postId },
+      });
+      if (!postExists) {
+        return NextResponse.json(
+          { message: "Post not found" },
+          { status: 404 },
+        );
+      }
+    } else if (body.commentId) {
+      const commentExists = await prisma.postComment.findUnique({
+        where: { id: body.commentId },
+      });
+      if (!commentExists) {
+        return NextResponse.json(
+          { message: "Comment not found" },
+          { status: 404 },
+        );
+      }
+    }
+
     const reportExist = await prisma.report.findFirst({
       where: {
         reporterId: session.user.id,

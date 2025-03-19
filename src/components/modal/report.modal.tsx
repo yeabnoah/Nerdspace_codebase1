@@ -10,29 +10,30 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-// import { cn } from "shadcn/utils"; // Import the utility function for conditional class names
+import useReportStore from "@/store/report.strore";
 
 const ReportModal = ({
   isOpen,
   onClose,
-  postId,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  postId: string | null;
 }) => {
+  const { commentId, postId } = useReportStore();
   const [reason, setReason] = useState("");
 
   const handleSubmit = async () => {
     try {
-      await axios.post("/api/post/report", { postId, reason });
+      await axios.post("/api/post/report", { postId, commentId, reason });
       toast.success("Report submitted successfully");
       onClose();
     } catch (error: any) {
       if (error.response && error.response.status === 409) {
-        toast.error("You have already submitted a report for this post");
+        toast.error("You have already submitted a report for twhenis item");
+        onClose();
       } else {
         toast.error("Error submitting report");
+        onClose();
       }
     }
   };
@@ -47,7 +48,7 @@ const ReportModal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="rounded-xl dark:bg-textAlternative">
         <DialogHeader>
-          <DialogTitle>Report Post</DialogTitle>
+          <DialogTitle>Report {postId ? "Post" : "Comment"}</DialogTitle>
         </DialogHeader>
         <div>
           <div className="mt-2 flex flex-col space-y-2">
