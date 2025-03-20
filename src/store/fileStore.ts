@@ -14,6 +14,8 @@ interface FileStore {
   removeFile: (id: string) => void;
   clearFiles: () => void;
   setError: (error: string | null) => void;
+  clearError: () => void;
+  setFiles: (files: FileWithPreview[]) => void;
 }
 
 export const useFileStore = create<FileStore>((set) => ({
@@ -29,4 +31,6 @@ export const useFileStore = create<FileStore>((set) => ({
     })),
   clearFiles: () => set({ files: [] }),
   setError: (error) => set({ error }),
+  clearError: () => set({ error: null }),
+  setFiles: (files) => set({ files }),
 }));

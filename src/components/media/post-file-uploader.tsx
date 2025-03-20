@@ -4,6 +4,7 @@ import { useRef, type ChangeEvent } from "react";
 import { X, ImageIcon, Film, File } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFileStore } from "@/store/fileStore";
+import axios from "axios";
 
 interface PostFileUploaderProps {
   maxFiles?: number;
@@ -14,7 +15,7 @@ interface PostFileUploaderProps {
 
 export function PostFileUploader({
   maxFiles = 4,
-  maxSize = 50, // 50MB default
+  maxSize = 50,
   onFilesSelected,
   acceptedFileTypes = [
     "image/jpeg",
@@ -27,16 +28,16 @@ export function PostFileUploader({
   const { files, addFiles, removeFile, clearFiles, setError, error } = useFileStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
-    processFiles(selectedFiles);
+    await processFiles(selectedFiles);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
-  const processFiles = (selectedFiles: File[]) => {
+  const processFiles = async (selectedFiles: File[]) => {
     setError(null);
 
     if (files.length + selectedFiles.length > maxFiles) {
@@ -79,7 +80,7 @@ export function PostFileUploader({
     addFiles(newFilesWithPreview);
 
     if (onFilesSelected) {
-      onFilesSelected(newFilesWithPreview.map((f) => f.file));
+      onFilesSelected(validFiles);
     }
   };
 
@@ -87,36 +88,6 @@ export function PostFileUploader({
     if (fileType.startsWith("image/")) return <ImageIcon className="h-5 w-5" />;
     if (fileType.startsWith("video/")) return <Film className="h-5 w-5" />;
     return <File className="h-5 w-5" />;
-  };
-
-  const getGridClasses = () => {
-    switch (files.length) {
-      case 1:
-        return "grid-cols-1";
-      case 2:
-        return "grid-cols-2";
-      case 3:
-        return "grid-cols-2 grid-rows-2";
-      case 4:
-        return "grid-cols-2";
-      default:
-        return "";
-    }
-  };
-
-  const getImageHeight = () => {
-    switch (files.length) {
-      case 1:
-        return "h-48";
-      case 2:
-        return "h-36";
-      case 3:
-        return "h-24";
-      case 4:
-        return "h-24";
-      default:
-        return "h-24";
-    }
   };
 
   return (
@@ -169,11 +140,11 @@ export function PostFileUploader({
       />
 
       {files.length > 0 && (
-        <div className={`grid gap-2 ${getGridClasses()}`}>
-          {files.map((file, index) => (
+        <div className="grid grid-cols-2 gap-2">
+          {files.map((file) => (
             <div
               key={file.id}
-              className={`relative overflow-hidden rounded-lg border ${getImageHeight()}`}
+              className="group relative overflow-hidden h-36 rounded-lg border"
             >
               <div className="relative aspect-square bg-gray-100">
                 {file.type === "image" || file.type === "gif" ? (

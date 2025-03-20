@@ -9,12 +9,20 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
 import { AutosizeTextarea } from "../ui/resizeble-text-area";
 import { PostFileUploader } from "../media/post-file-uploader";
+import axios from "axios";
+
+const cloudinaryUploadUrl = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!;
+const cloudinaryUploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
 
 const PostInput = () => {
+  
   const [post, setPost] = useState<string>("");
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const session = authClient.useSession();
   const router = useRouter();
 
@@ -24,13 +32,26 @@ const PostInput = () => {
     onSuccess: () => {
       toast.success("Post created successfully");
       queryClient.invalidateQueries({ queryKey: ["posts"] });
-      setPost("");
-      setSelectedFiles([]);
+      //mutation.ts
     },
     onError: () => {
       toast.error("An error occurred while creating post");
     },
   });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      setSelectedImage(file);
+    }
+  };
 
   const handleSubmit = async () => {
     if (post.trim() === "") {
@@ -38,7 +59,26 @@ const PostInput = () => {
       return;
     }
 
-    mutate({ content: post, files: selectedFiles });
+    try {
+      // Upload files to Cloudinary and get URLs
+      const fileUrls = await Promise.all(
+        files.map(async (file) => {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("upload_preset", cloudinaryUploadPreset); 
+
+          const response = await axios.post(cloudinaryUploadUrl, formData);
+
+          return response.data.secure_url;
+        })
+      );
+
+      mutate({ content: post, fileUrls });
+      setPost("");
+      setFiles([]);
+    } catch (error) {
+      toast.error("An error occurred while uploading files");
+    }
   };
 
   if (!session) {
@@ -46,14 +86,14 @@ const PostInput = () => {
   }
 
   return (
-    <div className="flex items-start justify-center gap-2 rounded-xl border p-4">
+    <div className="flex items-start justify-center gap-2 rounded-xl border p-2">
       <div>
         <Image
           src={session?.data?.user?.image || "/user.jpg"}
           alt="user"
           className="size-8 rounded-full"
-          height={40}
-          width={40}
+          height={200}
+          width={200}
         />
       </div>
 
@@ -65,9 +105,7 @@ const PostInput = () => {
           value={post}
           onChange={(e) => setPost(e.target.value)}
         />
-        <PostFileUploader
-          onFilesSelected={(files) => setSelectedFiles(files)}
-        />
+        <PostFileUploader onFilesSelected={setFiles} />
         <Button
           onClick={handleSubmit}
           className="my-2 border bg-transparent text-textAlternative shadow-none hover:bg-transparent dark:text-white"

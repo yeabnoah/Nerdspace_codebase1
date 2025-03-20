@@ -53,7 +53,8 @@ export async function GET(request: NextRequest) {
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { content }: { content: string } = await req.json();
+    const { content, fileUrls }: { content: string; fileUrls: string[] } =
+      await req.json();
     const session = await getUserSession();
 
     const validateContent = postSchema.safeParse({ content });
@@ -80,6 +81,9 @@ export const POST = async (req: NextRequest) => {
       data: {
         content: content,
         userId: session.user.id,
+        media: {
+          create: fileUrls.map((url) => ({ url, type: "IMAGE" })), // Adjust type as needed
+        },
       },
     });
 
