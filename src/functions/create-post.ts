@@ -1,10 +1,30 @@
 import axios from "axios";
 
-const createPost = async (data: { content: string }) => {
-  const response = await axios.post("/api/post", data, {
-    withCredentials: true,
+interface CreatePostData {
+  content: string;
+  files?: File[];
+}
+
+const createPost = async ({ content, files }: CreatePostData) => {
+  const formData = new FormData();
+  formData.append("content", content);
+
+  if (files) {
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
+  }
+
+  const response = await fetch("/api/posts", {
+    method: "POST",
+    body: formData,
   });
-  return response.data.data;
+
+  if (!response.ok) {
+    throw new Error("Failed to create post");
+  }
+
+  return response.json();
 };
 
 export default createPost;
