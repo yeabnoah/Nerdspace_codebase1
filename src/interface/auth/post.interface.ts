@@ -19,6 +19,7 @@ interface postInterface {
     updatedAt: Date | null;
     nerdAt: null | string;
   };
+  media: { id: string; url: string; type: string }[]; // Add media field
   replies?: PostCommentInterface[];
 }
 
