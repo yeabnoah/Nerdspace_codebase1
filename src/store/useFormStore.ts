@@ -3,13 +3,13 @@ import { Country } from "../components/ui/country-dropdown";
 
 interface FormState {
   selectedCountry: Country | null;
-  selectedImage: string;
+  selectedImage: File | null;
   nerdAt: string;
   bio: string;
   displayName: string;
   link: string;
   setSelectedCountry: (country: Country) => void;
-  setSelectedImage: (image: string) => void;
+  setSelectedImage: (image: File) => void;
   setNerdAt: (value: string) => void;
   setBio: (value: string) => void;
   setDisplayName: (value: string) => void;
@@ -18,7 +18,7 @@ interface FormState {
 
 export const useFormStore = create<FormState>((set) => ({
   selectedCountry: null,
-  selectedImage: "",
+  selectedImage: null,
   nerdAt: "",
   bio: "",
   displayName: "",

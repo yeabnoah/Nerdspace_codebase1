@@ -107,7 +107,7 @@ const ProfileSettings = () => {
     );
   }
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
 
@@ -117,16 +117,7 @@ const ProfileSettings = () => {
       };
       reader.readAsDataURL(file);
 
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", cloudinaryUploadPreset);
-
-      try {
-        const response = await axios.post(cloudinaryUploadUrl, formData);
-        setSelectedImage(response.data.secure_url);
-      } catch (error) {
-        console.error("Image upload failed:", error);
-      }
+      setSelectedImage(file);
     }
   };
 
@@ -138,8 +129,8 @@ const ProfileSettings = () => {
       </CardHeader>
       <CardContent>
         <div className="md:px-4">
-          <div className="flex md:items-center w-full md:gap-10 md:flex-row flex-col">
-            <div className="relative mb-4 ">
+          <div className="flex w-full flex-col md:flex-row md:items-center md:gap-10">
+            <div className="relative mb-4">
               <Image
                 src={
                   previewUrl ||
@@ -164,7 +155,7 @@ const ProfileSettings = () => {
               />
               <label
                 htmlFor="image-upload"
-                className="absolute bottom-0 left-[15%] md:left-[70%] cursor-pointer rounded-full bg-white p-1 text-white"
+                className="absolute bottom-0 left-[15%] cursor-pointer rounded-full bg-white p-1 text-white md:left-[70%]"
               >
                 <Edit size={13} color="black" />
               </label>
@@ -230,6 +221,24 @@ const ProfileSettings = () => {
         <div className="flex justify-end">
           <Button
             onClick={async () => {
+              if (selectedImage instanceof File) {
+                const formData = new FormData();
+                formData.append("file", selectedImage);
+                formData.append("upload_preset", cloudinaryUploadPreset);
+
+                try {
+                  const response = await axios.post(
+                    cloudinaryUploadUrl,
+                    formData,
+                  );
+                  setSelectedImage(response.data.secure_url);
+                } catch (error) {
+                  console.error("Image upload failed:", error);
+                  toast.error("Image upload failed");
+                  return;
+                }
+              }
+
               console.log({
                 country: selectedCountry,
                 image: selectedImage,
