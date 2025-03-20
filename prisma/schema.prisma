@@ -74,6 +74,7 @@ model Post {
   likes        Like[]
   bookmarks    Bookmark[]
   reports      Report[]
+  media        Media[] //
 
   @@map("posts")
 }
@@ -181,9 +182,25 @@ model Report {
   @@map("reports")
 }
 
+model Media {
+  id        String    @id @default(cuid())
+  url       String
+  type      MediaType
+  post      Post      @relation(fields: [postId], references: [id])
+  postId    String
+  createdAt DateTime  @default(now())
+}
+
 enum ReportStatus {
   PENDING
   REVIEWED
   RESOLVED
   REJECTED
+}
+
+// Enum to specify media type
+enum MediaType {
+  IMAGE
+  VIDEO
+  GIF
 }
