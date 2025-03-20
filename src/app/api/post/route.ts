@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
         user: true,
         likes: true,
         bookmarks: true,
+        media: true, // Include media relation
       },
       orderBy: { createdAt: "desc" },
       take: limit,

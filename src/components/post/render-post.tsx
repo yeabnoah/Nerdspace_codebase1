@@ -531,6 +531,36 @@ const RenderPost = () => {
                 </div>
               </div>
 
+              {each.media.length > 0 && (
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  {each.media.map((media) => (
+                    <div key={media.id} className="relative aspect-square">
+                      {media.type === "IMAGE" && (
+                        <img
+                          src={media.url}
+                          alt="Post media"
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                      {media.type === "VIDEO" && (
+                        <video
+                          src={media.url}
+                          className="h-full w-full object-cover"
+                          controls
+                        />
+                      )}
+                      {media.type === "GIF" && (
+                        <img
+                          src={media.url}
+                          alt="Post media"
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {commentShown[each.id] && (
                 <div>
                   <hr className="mb-2 mt-5" />
