@@ -1,16 +1,9 @@
 "use client";
 
-import { useState, useRef, type ChangeEvent } from "react";
+import { useRef, type ChangeEvent } from "react";
 import { X, ImageIcon, Film, File } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-
-type FileWithPreview = {
-  file: File;
-  id: string;
-  preview: string;
-  type: "image" | "video" | "gif";
-};
+import { useFileStore } from "@/store/fileStore";
 
 interface PostFileUploaderProps {
   maxFiles?: number;
@@ -31,16 +24,13 @@ export function PostFileUploader({
     "video/quicktime",
   ],
 }: PostFileUploaderProps) {
-  const [files, setFiles] = useState<FileWithPreview[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
+  const { files, addFiles, removeFile, clearFiles, setError, error } = useFileStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
     processFiles(selectedFiles);
 
-    // Reset the input value so the same file can be selected again if removed
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -49,20 +39,17 @@ export function PostFileUploader({
   const processFiles = (selectedFiles: File[]) => {
     setError(null);
 
-    // Check if adding these files would exceed the max number
     if (files.length + selectedFiles.length > maxFiles) {
       setError(`You can only upload up to ${maxFiles} files.`);
       return;
     }
 
     const validFiles = selectedFiles.filter((file) => {
-      // Check file type
       if (!acceptedFileTypes.includes(file.type)) {
         setError(`File type ${file.type} is not supported.`);
         return false;
       }
 
-      // Check file size
       if (file.size > maxSize * 1024 * 1024) {
         setError(`File ${file.name} exceeds the maximum size of ${maxSize}MB.`);
         return false;
@@ -71,7 +58,6 @@ export function PostFileUploader({
       return true;
     });
 
-    // Create preview for each file
     const newFilesWithPreview = validFiles.map((file) => {
       const id = crypto.randomUUID();
       let type: "image" | "video" | "gif" = "image";
@@ -90,27 +76,10 @@ export function PostFileUploader({
       };
     });
 
-    const updatedFiles = [...files, ...newFilesWithPreview].slice(0, maxFiles);
-    setFiles(updatedFiles);
+    addFiles(newFilesWithPreview);
 
-    // Call the callback with the raw File objects
     if (onFilesSelected) {
-      onFilesSelected(updatedFiles.map((f) => f.file));
-    }
-  };
-
-  const removeFile = (id: string) => {
-    const fileToRemove = files.find((f) => f.id === id);
-    if (fileToRemove) {
-      URL.revokeObjectURL(fileToRemove.preview);
-    }
-
-    const updatedFiles = files.filter((f) => f.id !== id);
-    setFiles(updatedFiles);
-
-    // Call the callback with the updated raw File objects
-    if (onFilesSelected) {
-      onFilesSelected(updatedFiles.map((f) => f.file));
+      onFilesSelected(newFilesWithPreview.map((f) => f.file));
     }
   };
 
@@ -120,9 +89,38 @@ export function PostFileUploader({
     return <File className="h-5 w-5" />;
   };
 
+  const getGridClasses = () => {
+    switch (files.length) {
+      case 1:
+        return "grid-cols-1";
+      case 2:
+        return "grid-cols-2";
+      case 3:
+        return "grid-cols-2 grid-rows-2";
+      case 4:
+        return "grid-cols-2";
+      default:
+        return "";
+    }
+  };
+
+  const getImageHeight = () => {
+    switch (files.length) {
+      case 1:
+        return "h-48";
+      case 2:
+        return "h-36";
+      case 3:
+        return "h-24";
+      case 4:
+        return "h-24";
+      default:
+        return "h-24";
+    }
+  };
+
   return (
     <div className="w-full space-y-4">
-      {/* Upload buttons */}
       <div className="flex gap-2">
         <Button
           variant="outline"
@@ -170,13 +168,12 @@ export function PostFileUploader({
         onChange={handleFileChange}
       />
 
-      {/* File list */}
       {files.length > 0 && (
-        <div className="grid grid-cols-2 gap-2">
-          {files.map((file) => (
+        <div className={`grid gap-2 ${getGridClasses()}`}>
+          {files.map((file, index) => (
             <div
               key={file.id}
-              className="group relative overflow-hidden h-36 rounded-lg border"
+              className={`relative overflow-hidden rounded-lg border ${getImageHeight()}`}
             >
               <div className="relative aspect-square bg-gray-100">
                 {file.type === "image" || file.type === "gif" ? (
