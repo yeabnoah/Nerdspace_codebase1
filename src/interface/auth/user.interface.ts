@@ -16,6 +16,7 @@ interface UserInterface {
   firstTime: boolean;
   country: Country;
   posts: postInterface[];
+  username: string;
 }
 
 export default UserInterface;

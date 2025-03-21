@@ -51,6 +51,9 @@ import ReportModal from "../modal/report.modal";
 import useReportStore from "@/store/report.strore";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import ImagePreviewDialog from "../image-preview";
+import useUserProfileStore from "@/store/userProfile.store";
+import { useRouter } from "next/navigation";
+// import { useRouter } from "next/n";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -60,6 +63,8 @@ const RenderPost = () => {
   const [editPostInput, setEditPostInput] = useState<String>();
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
+  const { setUserProfile } = useUserProfileStore();
+  const router = useRouter();
   const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>(
     {},
   );
@@ -395,6 +400,16 @@ const RenderPost = () => {
     await mutation.mutate();
   };
 
+  const handleUserProfileClick = async (userId: string) => {
+    try {
+      const response = await axios.get(`/api/user?userId=${userId}`);
+      setUserProfile(response.data.data);
+      router.push("/user-profile");
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
+
   return (
     <div>
       {data?.pages
@@ -419,15 +434,18 @@ const RenderPost = () => {
                   <Image
                     src={each.user.image || "/user.jpg"}
                     alt="user"
-                    className="size-10 rounded-full"
+                    className="size-10 cursor-pointer rounded-full"
                     height={200}
                     width={200}
+                    onClick={() => handleUserProfileClick(each.user.id)}
                   />
 
-                  <div>
+                  <div
+                    onClick={() => handleUserProfileClick(each.user.id)}
+                    className="cursor-pointer"
+                  >
                     <h1 className="text-sm">{each.user.name}</h1>
                     <h1 className="text-xs">Nerd@{each.user.nerdAt}</h1>
-                    {/* <h1 className="text-xs">{timeAgo(each.createdAt)}</h1> */}
                   </div>
                 </div>
 
@@ -549,7 +567,7 @@ const RenderPost = () => {
                           </div>
                         ))}
                       {each.media.length >= 3 && (
-                        <div className="grid h-[36vh] w-[36vw]  gap-2 md:grid-cols-[auto_120px]">
+                        <div className="grid h-[36vh] w-[36vw] gap-2 md:grid-cols-[auto_120px]">
                           {/* First column: Main Image (Takes all available space) */}
                           <div
                             className="relative h-full w-full"
