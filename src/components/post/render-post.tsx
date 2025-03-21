@@ -410,8 +410,11 @@ const RenderPost = () => {
           inView && hasNextPage && fetchNextPage();
 
           return (
-            <div className="my-5 rounded-xl border dark:border-gray-500/5 border-gray-100 p-4" key={index}>
-              <div className="mr-2 flex items-center justify-between pb-2">
+            <div
+              className="my-5 w-full flex-1 rounded-xl border border-gray-100 p-4 dark:border-gray-500/5"
+              key={index}
+            >
+              <div className="mr-2 flex w-full items-center justify-between pb-2">
                 <div className="flex flex-1 items-center gap-3">
                   <Image
                     src={each.user.image || "/user.jpg"}
@@ -500,12 +503,12 @@ const RenderPost = () => {
               </div>
 
               <div
-                className={`mt-2 flex flex-1 ${isShortContent && isTooShort ? "flex-col" : "flex-row"} items-start justify-center`}
+                className={`mt-2 flex w-full flex-1 ${isShortContent && isTooShort ? "flex-col" : "flex-row"} items-start justify-center`}
               >
-                <div className="flex w-full flex-1 flex-col justify-start gap-5">
+                <div className="flex w-[100%] flex-1 flex-col justify-start gap-5">
                   {each.media.length > 0 && (
                     <div
-                      className={`mt-4 grid w-full flex-1 gap-2 ${getGridClass(each.media.length)}`}
+                      className={`mt-4 grid w-[100%] flex-1 gap-2 ${getGridClass(each.media.length)}`}
                     >
                       {each.media.length === 1 && (
                         <div
@@ -521,7 +524,7 @@ const RenderPost = () => {
                             fill
                             src={each.media[0].url}
                             alt="Post media"
-                            className="h-full w-full rounded-xl object-cover"
+                            className="h-full w-[100%] rounded-xl object-cover"
                           />
                         </div>
                       )}
@@ -546,9 +549,10 @@ const RenderPost = () => {
                           </div>
                         ))}
                       {each.media.length >= 3 && (
-                        <div className="flex h-[24vh] w-[78vw] flex-1 gap-2 md:h-[32vh] md:w-[28.5vw]">
+                        <div className="grid h-[36vh] w-[36vw]  gap-2 md:grid-cols-[auto_120px]">
+                          {/* First column: Main Image (Takes all available space) */}
                           <div
-                            className="relative col-span-2 flex-1"
+                            className="relative h-full w-full"
                             onClick={() =>
                               handleMediaClick(
                                 0,
@@ -563,11 +567,13 @@ const RenderPost = () => {
                               className="h-full w-full rounded-xl object-cover"
                             />
                           </div>
-                          <div className="flex h-full w-24 flex-col gap-2">
+
+                          {/* Second column: Smaller stacked images */}
+                          <div className="flex w-full flex-col gap-2">
                             {each.media.slice(1, 4).map((media, mediaIndex) => (
                               <div
                                 key={media.id}
-                                className="relative h-28"
+                                className="relative h-full w-full"
                                 onClick={() =>
                                   handleMediaClick(
                                     mediaIndex + 1,
