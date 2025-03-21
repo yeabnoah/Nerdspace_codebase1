@@ -49,6 +49,8 @@ import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
 import ReportModal from "../modal/report.modal";
 import useReportStore from "@/store/report.strore";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import ImagePreviewDialog from "../image-preview";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -342,6 +344,16 @@ const RenderPost = () => {
     bookmarkMutation.mutate(postId);
   };
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(
+    null,
+  );
+
+  const handleMediaClick = (index: number) => {
+    setSelectedMediaIndex(index);
+    setIsDialogOpen(true);
+  };
+
   if (isLoading) {
     return <RenderPostSkeleton />;
   }
@@ -365,6 +377,21 @@ const RenderPost = () => {
   const changePostAccessType = async (currentPost: postInterface) => {
     setSelectedPost(currentPost);
     await mutation.mutate();
+  };
+
+  const getGridClass = (mediaCount: number) => {
+    switch (mediaCount) {
+      case 1:
+        return "grid-cols-1";
+      case 2:
+        return "grid-cols-2";
+      case 3:
+        return "grid-cols-1 md:grid-cols-2";
+      case 4:
+        return "grid-cols-2";
+      default:
+        return "";
+    }
   };
 
   return (
@@ -470,23 +497,65 @@ const RenderPost = () => {
                 </DropdownMenu>
               </div>
 
+              <div></div>
+
               <div
                 className={`mt-2 flex ${isShortContent && isTooShort ? "flex-col" : "flex-row"} items-start justify-center`}
               >
-                <div className="flex-1">
-                  <h4 className="text-xs md:text-sm">
-                    {expandedStates[index] || !isLongContent
-                      ? each.content
-                      : `${truncatedContent}...`}
-                  </h4>
-                  {isLongContent && (
-                    <button
-                      className="mt-2 text-xs underline"
-                      onClick={() => toggleExpand(index)}
+                <div>
+                  {each.media.length > 0 && (
+                    <div
+                      className={`mt-4 grid gap-2 ${getGridClass(each.media.length)}`}
                     >
-                      {expandedStates[index] ? "See less" : "See more"}
-                    </button>
+                      {each.media.map((media, mediaIndex) => (
+                        <div
+                          key={media.id}
+                          className="relative aspect-square"
+                          onClick={() => handleMediaClick(mediaIndex)}
+                        >
+                          {media.type === "IMAGE" && (
+                            <Image
+                              fill
+                              src={media.url}
+                              alt="Post media"
+                              className="h-full w-full rounded-xl object-cover"
+                            />
+                          )}
+                          {media.type === "VIDEO" && (
+                            <video
+                              src={media.url}
+                              className="h-full w-full object-cover"
+                              controls
+                            />
+                          )}
+                          {media.type === "GIF" && (
+                            <Image
+                              fill
+                              src={media.url}
+                              alt="Post media"
+                              className="h-full w-full object-cover"
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   )}
+
+                  <div className="flex-1">
+                    <h4 className="text-xs md:text-sm">
+                      {expandedStates[index] || !isLongContent
+                        ? each.content
+                        : `${truncatedContent}...`}
+                    </h4>
+                    {isLongContent && (
+                      <button
+                        className="mt-2 text-xs underline"
+                        onClick={() => toggleExpand(index)}
+                      >
+                        {expandedStates[index] ? "See less" : "See more"}
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div
@@ -531,43 +600,13 @@ const RenderPost = () => {
                 </div>
               </div>
 
-              {each.media.length > 0 && (
-                <div className="mt-4 grid grid-cols-2 gap-2">
-                  {each.media.map((media) => (
-                    <div key={media.id} className="relative aspect-square">
-                      {media.type === "IMAGE" && (
-                        <img
-                          src={media.url}
-                          alt="Post media"
-                          className="h-full w-full object-cover"
-                        />
-                      )}
-                      {media.type === "VIDEO" && (
-                        <video
-                          src={media.url}
-                          className="h-full w-full object-cover"
-                          controls
-                        />
-                      )}
-                      {media.type === "GIF" && (
-                        <img
-                          src={media.url}
-                          alt="Post media"
-                          className="h-full w-full object-cover"
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-
               {commentShown[each.id] && (
                 <div>
                   <hr className="mb-2 mt-5" />
                   <div className="itemc flex gap-2">
                     <input
                       placeholder="Comment here"
-                      className="w-full border-0 border-b dark:border-white/50 border-b-textAlternative/20 bg-transparent text-sm placeholder:font-instrument placeholder:text-lg focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0"
+                      className="w-full border-0 border-b border-b-textAlternative/20 bg-transparent text-sm placeholder:font-instrument placeholder:text-lg focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0 dark:border-white/50"
                       value={commentContent}
                       onChange={(e) => setCommentContent(e.target.value)}
                     />
@@ -575,7 +614,7 @@ const RenderPost = () => {
                       onClick={handleCommentSubmit}
                       className="border bg-transparent shadow-none hover:bg-transparent focus:outline-none focus:ring-0"
                     >
-                      <SendIcon className=" text-textAlternative dark:text-white" />
+                      <SendIcon className="text-textAlternative dark:text-white" />
                     </Button>
                   </div>
                   {commentLoading && <CommentSkeleton />}
@@ -620,6 +659,21 @@ const RenderPost = () => {
           );
         })}
       <div ref={ref}>{isFetchingNextPage && <MorePostsFetchSkeleton />}</div>
+
+      <ImagePreviewDialog
+        images={
+          data?.pages.flatMap((page) =>
+            page.data.flatMap((post: postInterface) =>
+              post.media
+                .filter((media) => media.type === "IMAGE")
+                .map((media) => media.url),
+            ),
+          ) || []
+        }
+        initialIndex={selectedMediaIndex || 0}
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
 
       <EditModal
         selectedPost={selectedPost}
