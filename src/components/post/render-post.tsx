@@ -410,6 +410,8 @@ const RenderPost = () => {
     }
   };
 
+  //console.log("this is about to work")
+
   return (
     <div>
       {data?.pages
