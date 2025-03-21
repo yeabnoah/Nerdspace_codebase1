@@ -39,6 +39,9 @@ import { queryClient } from "@/providers/tanstack-query-provider";
 import toast from "react-hot-toast";
 import fetchMyPosts from "@/functions/fetch-my-post";
 import fetchMyPrivatePosts from "@/functions/fetch-my-private-post";
+import { GoHeart, GoHeartFill } from "react-icons/go";
+import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
+import ImagePreviewDialog from "../image-preview";
 
 const RenderMyPrivatePost = () => {
   const { ref, inView } = useInView();
@@ -47,7 +50,35 @@ const RenderMyPrivatePost = () => {
   const { selectedPost, setSelectedPost, content, setContent } = usePostStore();
   const [editPostInput, setEditPostInput] = useState<String>();
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
-  // const [currentPostStatusm]
+  const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(
+    null,
+  );
+  const [selectedPostImages, setSelectedPostImages] = useState<string[]>([]);
+
+  const handleMediaClick = (index: number, images: string[]) => {
+    setSelectedMediaIndex(index);
+    setSelectedPostImages(images);
+    setIsDialogOpen(true);
+  };
+
+  const getGridClass = (mediaCount: number) => {
+    switch (mediaCount) {
+      case 1:
+        return "grid-cols-1";
+      case 2:
+        return "grid-cols-2";
+      case 3:
+      case 4:
+        return "grid-cols-2";
+      default:
+        return "";
+    }
+  };
 
   const {
     data,
@@ -218,6 +249,117 @@ const RenderMyPrivatePost = () => {
                 className={`mt-2 flex ${isShortContent && isTooShort ? "flex-col" : "flex-row"} items-start justify-center`}
               >
                 <div className="flex-1">
+                  {each.media && each.media.length > 0 && (
+                    <div
+                      className={`mt-4 grid w-full flex-1 gap-2 ${getGridClass(each.media.length)}`}
+                    >
+                      {each.media.length === 1 && (
+                        <div
+                          className="relative h-[30vh] md:h-[36vh]"
+                          onClick={() =>
+                            handleMediaClick(
+                              0,
+                              each.media.map(
+                                (media: { url: string }) => media.url,
+                              ),
+                            )
+                          }
+                        >
+                          <Image
+                            fill
+                            src={each.media[0].url}
+                            alt="Post media"
+                            className="h-full w-full rounded-xl object-cover"
+                          />
+                        </div>
+                      )}
+                      {each.media.length === 2 &&
+                        each.media.map(
+                          (
+                            media: { id: string; url: string },
+                            mediaIndex: number,
+                          ) => (
+                            <div
+                              key={media.id}
+                              className="relative h-[20vh] md:h-[28vh]"
+                              onClick={() =>
+                                handleMediaClick(
+                                  mediaIndex,
+                                  each.media.map(
+                                    (media: { url: string }) => media.url,
+                                  ),
+                                )
+                              }
+                            >
+                              <Image
+                                fill
+                                src={media.url}
+                                alt="Post media"
+                                className="h-full w-full rounded-xl object-cover"
+                              />
+                            </div>
+                          ),
+                        )}
+                      {each.media.length >= 3 && (
+                        <div className="flex h-[24vh] w-[78vw] flex-1 gap-2 md:h-[32vh] md:w-[28.5vw]">
+                          <div
+                            className="relative col-span-2 flex-1"
+                            onClick={() =>
+                              handleMediaClick(
+                                0,
+                                each.media.map(
+                                  (media: { url: string }) => media.url,
+                                ),
+                              )
+                            }
+                          >
+                            <Image
+                              fill
+                              src={each.media[0].url}
+                              alt="Post media"
+                              className="h-full w-full rounded-xl object-cover"
+                            />
+                          </div>
+                          <div className="flex h-full w-24 flex-col gap-2">
+                            {each.media
+                              .slice(1, 4)
+                              .map(
+                                (
+                                  media: { id: string; url: string },
+                                  mediaIndex: number,
+                                ) => (
+                                  <div
+                                    key={media.id}
+                                    className="relative h-28"
+                                    onClick={() =>
+                                      handleMediaClick(
+                                        mediaIndex + 1,
+                                        each.media.map(
+                                          (media: { url: string }) => media.url,
+                                        ),
+                                      )
+                                    }
+                                  >
+                                    <Image
+                                      fill
+                                      src={media.url}
+                                      alt="Post media"
+                                      className="h-full w-full rounded-xl object-cover"
+                                    />
+                                    {mediaIndex === 2 &&
+                                      each.media.length > 4 && (
+                                        <div className="absolute bottom-2 right-2 rounded-full bg-black/50 px-2 py-1 text-white">
+                                          +{each.media.length - 4}
+                                        </div>
+                                      )}
+                                  </div>
+                                ),
+                              )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <h4 className="text-xs md:text-sm">
                     {expandedStates[index] || !isLongContent
                       ? each.content
@@ -277,6 +419,13 @@ const RenderMyPrivatePost = () => {
           </div>
         )}
       </div>
+
+      <ImagePreviewDialog
+        images={selectedPostImages}
+        initialIndex={selectedMediaIndex || 0}
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
 
       <EditModal
         selectedPost={selectedPost}
