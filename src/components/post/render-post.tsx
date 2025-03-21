@@ -354,6 +354,20 @@ const RenderPost = () => {
     setIsDialogOpen(true);
   };
 
+  const getGridClass = (mediaCount: number) => {
+    switch (mediaCount) {
+      case 1:
+        return "grid-cols-1";
+      case 2:
+        return "grid-cols-2";
+      case 3:
+      case 4:
+        return "grid-cols-2";
+      default:
+        return "";
+    }
+  };
+
   if (isLoading) {
     return <RenderPostSkeleton />;
   }
@@ -379,21 +393,6 @@ const RenderPost = () => {
     await mutation.mutate();
   };
 
-  const getGridClass = (mediaCount: number) => {
-    switch (mediaCount) {
-      case 1:
-        return "grid-cols-1";
-      case 2:
-        return "grid-cols-2";
-      case 3:
-        return "grid-cols-1 md:grid-cols-2";
-      case 4:
-        return "grid-cols-2";
-      default:
-        return "";
-    }
-  };
-
   return (
     <div>
       {data?.pages
@@ -410,8 +409,8 @@ const RenderPost = () => {
 
           return (
             <div className="my-5 rounded-xl border p-4" key={index}>
-              <div className="mr-2 flex justify-between pb-2">
-                <div className="flex items-center gap-5">
+              <div className="mr-2 flex items-center justify-between pb-2">
+                <div className="flex flex-1 items-center gap-5">
                   <Image
                     src={each.user.image || "/user.jpg"}
                     alt="user"
@@ -427,7 +426,7 @@ const RenderPost = () => {
                 </div>
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="py-0 outline-none">
+                  <DropdownMenuTrigger className="mx-auto w-9 py-0 outline-none">
                     <MoreHorizontal />
                   </DropdownMenuTrigger>
                   {session?.data?.user?.id === each.user.id ? (
@@ -497,47 +496,77 @@ const RenderPost = () => {
                 </DropdownMenu>
               </div>
 
-              <div></div>
-
               <div
-                className={`mt-2 flex ${isShortContent && isTooShort ? "flex-col" : "flex-row"} items-start justify-center`}
+                className={`mt-2 flex flex-1 ${isShortContent && isTooShort ? "flex-col" : "flex-row"} items-start justify-center`}
               >
-                <div>
+                <div className="flex flex-1 flex-col w-full justify-start gap-5">
                   {each.media.length > 0 && (
-                    <div
-                      className={`mt-4 grid gap-2 ${getGridClass(each.media.length)}`}
-                    >
-                      {each.media.map((media, mediaIndex) => (
+                    <div className={`mt-4 w-full flex-1 grid gap-2 ${getGridClass(each.media.length)}`}>
+                      {each.media.length === 1 && (
                         <div
-                          key={media.id}
-                          className="relative aspect-square"
-                          onClick={() => handleMediaClick(mediaIndex)}
+                          className="relative h-56"
+                          onClick={() => handleMediaClick(0)}
                         >
-                          {media.type === "IMAGE" && (
+                          <Image
+                            fill
+                            src={each.media[0].url}
+                            alt="Post media"
+                            className="h-full w-full rounded-xl object-cover"
+                          />
+                        </div>
+                      )}
+                      {each.media.length === 2 && (
+                        each.media.map((media, mediaIndex) => (
+                          <div
+                            key={media.id}
+                            className="relative h-56"
+                            onClick={() => handleMediaClick(mediaIndex)}
+                          >
                             <Image
                               fill
                               src={media.url}
                               alt="Post media"
                               className="h-full w-full rounded-xl object-cover"
                             />
-                          )}
-                          {media.type === "VIDEO" && (
-                            <video
-                              src={media.url}
-                              className="h-full w-full object-cover"
-                              controls
-                            />
-                          )}
-                          {media.type === "GIF" && (
+                          </div>
+                        ))
+                      )}
+                      {each.media.length >= 3 && (
+                        <div className=" flex flex-1 w-[28vw] gap-2">
+                          <div
+                            className="relative col-span-2 flex-1"
+                            onClick={() => handleMediaClick(0)}
+                          >
                             <Image
                               fill
-                              src={media.url}
+                              src={each.media[0].url}
                               alt="Post media"
-                              className="h-full w-full object-cover"
+                              className="h-full w-full rounded-xl object-cover"
                             />
-                          )}
+                          </div>
+                          <div className="flex w-24 h-44 flex-col gap-2">
+                            {each.media.slice(1, 4).map((media, mediaIndex) => (
+                              <div
+                                key={media.id}
+                                className="relative h-28"
+                                onClick={() => handleMediaClick(mediaIndex + 1)}
+                              >
+                                <Image
+                                  fill
+                                  src={media.url}
+                                  alt="Post media"
+                                  className="h-full w-full rounded-xl object-cover"
+                                />
+                                {mediaIndex === 2 && each.media.length > 4 && (
+                                  <div className="absolute bottom-2 right-2 rounded-full bg-black/50 px-2 py-1 text-white">
+                                    +{each.media.length - 4}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      ))}
+                      )}
                     </div>
                   )}
 
@@ -559,10 +588,10 @@ const RenderPost = () => {
                 </div>
 
                 <div
-                  className={`flex ${isShortContent && isTooShort ? "mt-5 flex-row" : "flex-col"} gap-5`}
+                  className={`flex ${isShortContent && isTooShort ? "mt-5 flex-row" : "mt-5 flex-col"} w-16 gap-5`}
                 >
                   <div
-                    className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
+                    className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"} mx-auto`}
                     onClick={() => handleLike(each.id)}
                   >
                     {each.likes.some(
@@ -581,12 +610,12 @@ const RenderPost = () => {
                         queryKey: ["comment", each.id],
                       });
                     }}
-                    className={`cursor-pointer rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
+                    className={`mx-auto cursor-pointer rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
                   >
                     <MessageCircle className="size-5" />
                   </div>
                   <div
-                    className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
+                    className={`mx-auto rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
                     onClick={() => handleBookmark(each.id)}
                   >
                     {each.bookmarks.some(
