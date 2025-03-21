@@ -410,7 +410,7 @@ const RenderPost = () => {
           inView && hasNextPage && fetchNextPage();
 
           return (
-            <div className="my-5 rounded-xl border p-4" key={index}>
+            <div className="my-5 rounded-xl border dark:border-gray-500/5 border-gray-100 p-4" key={index}>
               <div className="mr-2 flex items-center justify-between pb-2">
                 <div className="flex flex-1 items-center gap-3">
                   <Image

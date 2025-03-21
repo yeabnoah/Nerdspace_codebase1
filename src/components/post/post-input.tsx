@@ -86,7 +86,7 @@ const PostInput = () => {
   }
 
   return (
-    <div className="flex items-start justify-center gap-2 rounded-xl border p-2">
+    <div className="flex items-start justify-center gap-2 dark:border-gray-500/5 rounded-xl border-gray-100 dark:border-textAlternative border p-2">
       <div>
         <Image
           src={session?.data?.user?.image || "/user.jpg"}
@@ -101,7 +101,7 @@ const PostInput = () => {
         <AutosizeTextarea
           maxHeight={300}
           placeholder="What's on your mind?"
-          className="h-14 w-full font-inter bg-transparent text-sm placeholder:text-sm md:text-base"
+          className="h-14 w-full font-inter border-gray-100 dark:border-gray-500/5 bg-transparent text-sm placeholder:text-sm md:text-base"
           value={post}
           onChange={(e) => setPost(e.target.value)}
         />
