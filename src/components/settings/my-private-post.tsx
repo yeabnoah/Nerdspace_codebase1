@@ -146,7 +146,7 @@ const RenderMyPrivatePost = () => {
   };
 
   return (
-    <div>
+    <div className="w-[80%]">
       {data?.pages
         .flatMap((page) => page.data)
         .map((each, index) => {
