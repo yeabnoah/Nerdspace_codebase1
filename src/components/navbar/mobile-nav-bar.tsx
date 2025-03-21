@@ -1,24 +1,42 @@
-import { HomeIcon, Search } from 'lucide-react'
-import React from 'react'
-import { Button } from '../ui/button'
+import { HammerIcon, HomeIcon, Search, Settings, Users } from "lucide-react";
+import React from "react";
+import { Button } from "../ui/button";
 
 const MobileNavBar = () => {
   return (
-    <div className="  md:hidden fixed bottom-0 flex flex-row bg-white dark:bg-textAlternative border px-3 mb-5 py-2 rounded-lg gap-2">
-        <Button variant="outline" className=" border-none justify-start bg-transparent">
-          <HomeIcon className="  md:block" size={20} />
-        </Button>
-        <Button variant="outline" className=" border-none justify-start bg-transparent">
-          <Search  className="  md:block" size={20} />
-        </Button>
-        <Button variant="outline" className=" border-none justify-start bg-transparent">
-          <HomeIcon  className="  md:block" size={20} />
-        </Button>
-        <Button variant="outline" className=" border-none justify-start bg-transparent">
-          <HomeIcon  className="  md:block" size={20} />
-        </Button>
-      </div>
-  )
-}
+    <div className="fixed bottom-0 flex h-12 w-full flex-row items-center justify-evenly gap-2 bg-white shadow-lg dark:bg-textAlternative md:hidden">
+      <Button
+        variant="outline"
+        className="flex-1 justify-center border-none bg-transparent"
+      >
+        <HomeIcon size={24} />
+      </Button>
+      <Button
+        variant="outline"
+        className="flex-1 justify-center border-none bg-transparent"
+      >
+        <Search size={24} />
+      </Button>
+      <Button
+        variant="outline"
+        className="flex-1 justify-center border-none bg-transparent"
+      >
+        <HammerIcon size={24} />
+      </Button>
+      <Button
+        variant="outline"
+        className="flex-1 justify-center border-none bg-transparent"
+      >
+        <Users size={24} />
+      </Button>
+      <Button
+        variant="outline"
+        className="flex-1 justify-center border-none bg-transparent"
+      >
+        <Settings size={24} />
+      </Button>
+    </div>
+  );
+};
 
-export default MobileNavBar
+export default MobileNavBar;
