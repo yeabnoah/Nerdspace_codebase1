@@ -51,7 +51,6 @@ import ReportModal from "../modal/report.modal";
 import useReportStore from "@/store/report.strore";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import ImagePreviewDialog from "../image-preview";
-import { Skeleton } from "../ui/skeleton";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
@@ -72,9 +71,6 @@ const RenderPost = () => {
     {},
   );
   const [commentContent, setCommentContent] = useState<string>("");
-  const [imageLoading, setImageLoading] = useState<{ [key: string]: boolean }>(
-    {},
-  );
 
   const toggleCommentExpand = (commentId: string) => {
     setExpandedComments((prev) => ({
@@ -374,14 +370,6 @@ const RenderPost = () => {
     }
   };
 
-  const handleImageLoad = (mediaId: string) => {
-    setImageLoading((prev) => ({ ...prev, [mediaId]: false }));
-  };
-
-  const handleImageLoadStart = (mediaId: string) => {
-    setImageLoading((prev) => ({ ...prev, [mediaId]: true }));
-  };
-
   if (isLoading) {
     return <RenderPostSkeleton />;
   }
@@ -529,18 +517,11 @@ const RenderPost = () => {
                             )
                           }
                         >
-                          {imageLoading[each.media[0].id] && (
-                            <Skeleton className="absolute inset-0 h-full w-full rounded-xl" />
-                          )}
                           <Image
                             fill
                             src={each.media[0].url}
                             alt="Post media"
-                            className={`h-full w-full rounded-xl object-cover ${imageLoading[each.media[0].id] ? "hidden" : "block"}`}
-                            onLoadStart={() =>
-                              handleImageLoadStart(each.media[0].id)
-                            }
-                            onLoad={() => handleImageLoad(each.media[0].id)}
+                            className="h-full w-full rounded-xl object-cover"
                           />
                         </div>
                       )}
@@ -556,16 +537,11 @@ const RenderPost = () => {
                               )
                             }
                           >
-                            {imageLoading[media.id] && (
-                              <Skeleton className="absolute inset-0 h-full w-full rounded-xl" />
-                            )}
                             <Image
                               fill
                               src={media.url}
                               alt="Post media"
-                              className={`h-full w-full rounded-xl object-cover ${imageLoading[media.id] ? "hidden" : "block"}`}
-                              onLoadStart={() => handleImageLoadStart(media.id)}
-                              onLoad={() => handleImageLoad(media.id)}
+                              className="h-full w-full rounded-xl object-cover"
                             />
                           </div>
                         ))}
@@ -580,18 +556,11 @@ const RenderPost = () => {
                               )
                             }
                           >
-                            {imageLoading[each.media[0].id] && (
-                              <Skeleton className="absolute inset-0 h-full w-full rounded-xl" />
-                            )}
                             <Image
                               fill
                               src={each.media[0].url}
                               alt="Post media"
-                              className={`h-full w-full rounded-xl object-cover ${imageLoading[each.media[0].id] ? "hidden" : "block"}`}
-                              onLoadStart={() =>
-                                handleImageLoadStart(each.media[0].id)
-                              }
-                              onLoad={() => handleImageLoad(each.media[0].id)}
+                              className="h-full w-full rounded-xl object-cover"
                             />
                           </div>
                           <div className="flex h-full w-24 flex-col gap-2">
@@ -606,18 +575,11 @@ const RenderPost = () => {
                                   )
                                 }
                               >
-                                {imageLoading[media.id] && (
-                                  <Skeleton className="absolute inset-0 h-full w-full rounded-xl" />
-                                )}
                                 <Image
                                   fill
                                   src={media.url}
                                   alt="Post media"
-                                  className={`h-full w-full rounded-xl object-cover ${imageLoading[media.id] ? "hidden" : "block"}`}
-                                  onLoadStart={() =>
-                                    handleImageLoadStart(media.id)
-                                  }
-                                  onLoad={() => handleImageLoad(media.id)}
+                                  className="h-full w-full rounded-xl object-cover"
                                 />
                                 {mediaIndex === 2 && each.media.length > 4 && (
                                   <div className="absolute bottom-2 right-2 rounded-full bg-black/50 px-2 py-1 text-white">

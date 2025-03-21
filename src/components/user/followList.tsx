@@ -1,33 +1,41 @@
 "use client";
 
-import { User } from "better-auth";
+import UserInterface from "@/interface/auth/user.interface";
 import { Button } from "../ui/button";
 import Image from "next/image";
 
-const FollowList = ({ users }: { users: User[] }) => {
+const FollowList = ({ users }: { users:  UserInterface[]  }) => {
   return (
-    <div className=" hidden gap-2 py-5 md:flex md:flex-col border px-3 my-5 rounded-xl lg:w-[19vw]">
+    <div className="my-5 hidden gap-2 rounded-xl border px-3 px-4 py-5 md:flex md:flex-col lg:w-[19vw]">
       <div>
-        <h1 className="text-lg ">Who to Follow</h1>
+        <h1 className="font-instrument text-2xl">Who to Follow</h1>
         <div className="space-y-3">
           {users.length > 0 ? (
             users.map((u) => (
-              <div key={u.id} className="flex items-center my-5 justify-between">
-                <div className=" flex items-center gap-2">
-                <Image
-                  src={u.image || "/user.jpg"}
-                  alt="user"
-                  className="size-10 rounded-full"
-                  height={200}
-                  width={200}
-                />
-                <div className="flex flex-col items-start">
-                  <span className="text-sm">{u.name.split(" ")[0]}</span>
-                  <span className="text-xs">{u.email.split("@")[0]}</span>
-                </div>
+              <div
+                key={u.id}
+                className="my-5 flex items-center justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={u.image || "/user.jpg"}
+                    alt="user"
+                    className="size-10 rounded-full"
+                    height={200}
+                    width={200}
+                  />
+                  <div className="flex flex-col items-start">
+                    <span className="text-sm">{u.visualName}</span>
+                    <span className="text-xs">{u.nerdAt}</span>
+                  </div>
                 </div>
 
-                <Button size="sm" className=" bg-transparent border dark:text-white hover:bg-transparent text-textAlternative shadow-none">Follow</Button>
+                <Button
+                  size="sm"
+                  className="border bg-transparent text-textAlternative shadow-none hover:bg-transparent dark:text-white"
+                >
+                  Follow
+                </Button>
               </div>
             ))
           ) : (

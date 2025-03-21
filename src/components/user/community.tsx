@@ -37,13 +37,15 @@ const communities = [
 export default function CommunitiesList() {
   return (
     <Card className="hidden min-h-32 rounded-2xl border bg-transparent pt-4 shadow-sm md:block">
-      <h2 className="px-6 mb-3 font-instrument text-textAlternative text-2xl">Communities to join</h2>
-      <CardContent className=" flex flex-col">
+      <h2 className="mb-3 px-6 font-instrument text-2xl text-textAlternative dark:text-white">
+        Communities to join
+      </h2>
+      <CardContent className="flex flex-col">
         {communities.map(({ name, slug, members, image }) => (
           <Link
             key={slug}
             href={`/community/${slug}`}
-            className="rounded-lg py-2 transition hover:bg-muted flex flex-row items-center gap-2"
+            className="flex flex-row items-center gap-2 rounded-lg py-2 transition hover:bg-muted"
           >
             <img
               src={image}
