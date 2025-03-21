@@ -348,9 +348,11 @@ const RenderPost = () => {
   const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(
     null,
   );
+  const [selectedPostImages, setSelectedPostImages] = useState<string[]>([]);
 
-  const handleMediaClick = (index: number) => {
+  const handleMediaClick = (index: number, images: string[]) => {
     setSelectedMediaIndex(index);
+    setSelectedPostImages(images);
     setIsDialogOpen(true);
   };
 
@@ -499,13 +501,20 @@ const RenderPost = () => {
               <div
                 className={`mt-2 flex flex-1 ${isShortContent && isTooShort ? "flex-col" : "flex-row"} items-start justify-center`}
               >
-                <div className="flex flex-1 flex-col w-full justify-start gap-5">
+                <div className="flex w-full flex-1 flex-col justify-start gap-5">
                   {each.media.length > 0 && (
-                    <div className={`mt-4 w-full flex-1 grid gap-2 ${getGridClass(each.media.length)}`}>
+                    <div
+                      className={`mt-4 grid w-full flex-1 gap-2 ${getGridClass(each.media.length)}`}
+                    >
                       {each.media.length === 1 && (
                         <div
                           className="relative h-56"
-                          onClick={() => handleMediaClick(0)}
+                          onClick={() =>
+                            handleMediaClick(
+                              0,
+                              each.media.map((media) => media.url),
+                            )
+                          }
                         >
                           <Image
                             fill
@@ -515,12 +524,17 @@ const RenderPost = () => {
                           />
                         </div>
                       )}
-                      {each.media.length === 2 && (
+                      {each.media.length === 2 &&
                         each.media.map((media, mediaIndex) => (
                           <div
                             key={media.id}
                             className="relative h-56"
-                            onClick={() => handleMediaClick(mediaIndex)}
+                            onClick={() =>
+                              handleMediaClick(
+                                mediaIndex,
+                                each.media.map((media) => media.url),
+                              )
+                            }
                           >
                             <Image
                               fill
@@ -529,13 +543,17 @@ const RenderPost = () => {
                               className="h-full w-full rounded-xl object-cover"
                             />
                           </div>
-                        ))
-                      )}
+                        ))}
                       {each.media.length >= 3 && (
-                        <div className=" flex flex-1 w-[28vw] gap-2">
+                        <div className="flex w-[28vw] flex-1 gap-2">
                           <div
                             className="relative col-span-2 flex-1"
-                            onClick={() => handleMediaClick(0)}
+                            onClick={() =>
+                              handleMediaClick(
+                                0,
+                                each.media.map((media) => media.url),
+                              )
+                            }
                           >
                             <Image
                               fill
@@ -544,12 +562,17 @@ const RenderPost = () => {
                               className="h-full w-full rounded-xl object-cover"
                             />
                           </div>
-                          <div className="flex w-24 h-44 flex-col gap-2">
+                          <div className="flex h-44 w-24 flex-col gap-2">
                             {each.media.slice(1, 4).map((media, mediaIndex) => (
                               <div
                                 key={media.id}
                                 className="relative h-28"
-                                onClick={() => handleMediaClick(mediaIndex + 1)}
+                                onClick={() =>
+                                  handleMediaClick(
+                                    mediaIndex + 1,
+                                    each.media.map((media) => media.url),
+                                  )
+                                }
                               >
                                 <Image
                                   fill
@@ -690,15 +713,7 @@ const RenderPost = () => {
       <div ref={ref}>{isFetchingNextPage && <MorePostsFetchSkeleton />}</div>
 
       <ImagePreviewDialog
-        images={
-          data?.pages.flatMap((page) =>
-            page.data.flatMap((post: postInterface) =>
-              post.media
-                .filter((media) => media.type === "IMAGE")
-                .map((media) => media.url),
-            ),
-          ) || []
-        }
+        images={selectedPostImages}
         initialIndex={selectedMediaIndex || 0}
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
