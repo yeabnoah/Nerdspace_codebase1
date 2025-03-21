@@ -16,6 +16,7 @@ import {
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import toast from "react-hot-toast";
 
 interface ImagePreviewDialogProps {
   images: string[];
@@ -68,12 +69,20 @@ export default function ImagePreviewDialog({
     const link = document.createElement("a");
     link.href = images[currentIndex];
     link.download = `image-${currentIndex + 1}.jpg`;
+    link.target = "_blank";
     link.click();
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(images[currentIndex]);
-    alert("Image URL copied to clipboard");
+  const handleCopy = async () => {
+    try {
+      const response = await fetch(images[currentIndex]);
+      const blob = await response.blob();
+      const item = new ClipboardItem({ [blob.type]: blob });
+      await navigator.clipboard.write([item]);
+      toast.success("Image copied to clipboard");
+    } catch (error) {
+      console.error("Failed to copy image: ", error);
+    }
   };
 
   return (
@@ -114,66 +123,66 @@ export default function ImagePreviewDialog({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-4 top-1/2 h-10 w-10 -translate-y-1/2 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
+              className="absolute left-2 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:left-4 md:h-10 md:w-10"
               onClick={goToPrevious}
             >
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
             </Button>
 
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-4 top-1/2 h-10 w-10 -translate-y-1/2 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
+              className="absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:right-4 md:h-10 md:w-10"
               onClick={goToNext}
             >
-              <ChevronRight className="h-6 w-6" />
+              <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
             </Button>
 
             {/* Feature buttons */}
-            <div className="absolute bottom-4 right-4 flex flex-col items-center gap-4 rounded-full border border-white/10 p-2 dark:border-black/10">
+            <div className="absolute bottom-4 right-2 flex flex-col items-center gap-2 rounded-full border border-white/10 p-1 dark:border-black/10 md:right-4 md:gap-4 md:p-2">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
+                className="h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:h-10 md:w-10"
                 onClick={handleZoomIn}
               >
-                <ZoomIn className="h-6 w-6" />
+                <ZoomIn className="h-5 w-5 md:h-6 md:w-6" />
               </Button>
 
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
+                className="h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:h-10 md:w-10"
                 onClick={handleZoomOut}
               >
-                <ZoomOut className="h-6 w-6" />
+                <ZoomOut className="h-5 w-5 md:h-6 md:w-6" />
               </Button>
 
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
+                className="h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:h-10 md:w-10"
                 onClick={handleRotate}
               >
-                <RotateCw className="h-6 w-6" />
+                <RotateCw className="h-5 w-5 md:h-6 md:w-6" />
               </Button>
 
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
+                className="h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:h-10 md:w-10"
                 onClick={handleDownload}
               >
-                <Download className="h-6 w-6" />
+                <Download className="h-5 w-5 md:h-6 md:w-6" />
               </Button>
 
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
+                className="h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:h-10 md:w-10"
                 onClick={handleCopy}
               >
-                <Copy className="h-6 w-6" />
+                <Copy className="h-5 w-5 md:h-6 md:w-6" />
               </Button>
             </div>
 
