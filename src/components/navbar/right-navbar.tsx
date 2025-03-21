@@ -1,7 +1,9 @@
-import { authClient } from "@/lib/auth-client";
 import { prisma } from "@/lib/prisma";
-import CommunitiesList from "../user/community";
 import FollowList from "../user/followList";
+import { authClient } from "@/lib/auth-client";
+import { auth } from "@/lib/auth";
+import { TrendingTopics } from "../user/trending";
+import CommunitiesList from "../user/community";
 
 const RightNavbar = async () => {
   const user = await authClient.getSession();
