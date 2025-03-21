@@ -412,7 +412,7 @@ const RenderPost = () => {
           return (
             <div className="my-5 rounded-xl border p-4" key={index}>
               <div className="mr-2 flex items-center justify-between pb-2">
-                <div className="flex flex-1 items-center gap-5">
+                <div className="flex flex-1 items-center gap-3">
                   <Image
                     src={each.user.image || "/user.jpg"}
                     alt="user"
@@ -423,7 +423,8 @@ const RenderPost = () => {
 
                   <div>
                     <h1 className="text-sm">{each.user.name}</h1>
-                    <h1 className="text-xs">{timeAgo(each.createdAt)}</h1>
+                    <h1 className="text-xs">Nerd@{each.user.nerdAt}</h1>
+                    {/* <h1 className="text-xs">{timeAgo(each.createdAt)}</h1> */}
                   </div>
                 </div>
 
@@ -501,13 +502,20 @@ const RenderPost = () => {
               <div
                 className={`mt-2 flex flex-1 ${isShortContent && isTooShort ? "flex-col" : "flex-row"} items-start justify-center`}
               >
-                <div className="flex flex-1 flex-col w-full justify-start gap-5">
+                <div className="flex w-full flex-1 flex-col justify-start gap-5">
                   {each.media.length > 0 && (
-                    <div className={`mt-4 w-full flex-1 grid gap-2 ${getGridClass(each.media.length)}`}>
+                    <div
+                      className={`mt-4 grid w-full flex-1 gap-2 ${getGridClass(each.media.length)}`}
+                    >
                       {each.media.length === 1 && (
                         <div
-                          className="relative h-56"
-                          onClick={() => handleMediaClick(0, each.media.map(media => media.url))}
+                          className="relative h-[30vh] md:h-[36vh]"
+                          onClick={() =>
+                            handleMediaClick(
+                              0,
+                              each.media.map((media) => media.url),
+                            )
+                          }
                         >
                           <Image
                             fill
@@ -517,12 +525,17 @@ const RenderPost = () => {
                           />
                         </div>
                       )}
-                      {each.media.length === 2 && (
+                      {each.media.length === 2 &&
                         each.media.map((media, mediaIndex) => (
                           <div
                             key={media.id}
-                            className="relative h-56"
-                            onClick={() => handleMediaClick(mediaIndex, each.media.map(media => media.url))}
+                            className="relative h-[20vh] md:h-[28vh]"
+                            onClick={() =>
+                              handleMediaClick(
+                                mediaIndex,
+                                each.media.map((media) => media.url),
+                              )
+                            }
                           >
                             <Image
                               fill
@@ -531,13 +544,17 @@ const RenderPost = () => {
                               className="h-full w-full rounded-xl object-cover"
                             />
                           </div>
-                        ))
-                      )}
+                        ))}
                       {each.media.length >= 3 && (
-                        <div className=" flex flex-1 h-56 w-[28vw] gap-2">
+                        <div className="flex h-[24vh] w-[78vw] flex-1 gap-2 md:h-[32vh] md:w-[28.5vw]">
                           <div
                             className="relative col-span-2 flex-1"
-                            onClick={() => handleMediaClick(0, each.media.map(media => media.url))}
+                            onClick={() =>
+                              handleMediaClick(
+                                0,
+                                each.media.map((media) => media.url),
+                              )
+                            }
                           >
                             <Image
                               fill
@@ -546,12 +563,17 @@ const RenderPost = () => {
                               className="h-full w-full rounded-xl object-cover"
                             />
                           </div>
-                          <div className="flex w-24 h-full flex-col gap-2">
+                          <div className="flex h-full w-24 flex-col gap-2">
                             {each.media.slice(1, 4).map((media, mediaIndex) => (
                               <div
                                 key={media.id}
                                 className="relative h-28"
-                                onClick={() => handleMediaClick(mediaIndex + 1, each.media.map(media => media.url))}
+                                onClick={() =>
+                                  handleMediaClick(
+                                    mediaIndex + 1,
+                                    each.media.map((media) => media.url),
+                                  )
+                                }
                               >
                                 <Image
                                   fill
@@ -590,10 +612,10 @@ const RenderPost = () => {
                 </div>
 
                 <div
-                  className={`flex ${isShortContent && isTooShort ? "mt-5 flex-row" : "mt-5 flex-col"} w-16 gap-5`}
+                  className={`flex ${isShortContent && isTooShort ? "mt-5 flex-row" : "mt-5 flex-col"} gap-5 md:w-16`}
                 >
                   <div
-                    className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"} mx-auto`}
+                    className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"} md:mx-auto`}
                     onClick={() => handleLike(each.id)}
                   >
                     {each.likes.some(
