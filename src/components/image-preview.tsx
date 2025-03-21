@@ -79,13 +79,13 @@ export default function ImagePreviewDialog({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogTitle className="sr-only">Image Preview</DialogTitle>
-      <DialogContent className="flex h-screen w-[100vw] items-center justify-center border-none bg-black/40 p-0">
+      <DialogContent className="flex h-screen max-w-[100vw] items-center justify-center border-none bg-black/30 p-0 dark:bg-black/10">
         <div className="relative flex h-full w-full flex-col items-center justify-center">
           {/* Close button */}
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-4 top-4 z-50 rounded-full bg-black/50 text-white hover:bg-black/70"
+            className="absolute right-4 top-4 z-50 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
             onClick={onClose}
           >
             <X className="h-6 w-6" />
@@ -105,7 +105,7 @@ export default function ImagePreviewDialog({
                 alt={`Image ${currentIndex + 1}`}
                 width={1000}
                 height={1000}
-                className="max-h-full max-w-full object-contain"
+                className="h-fit w-fit rounded-xl object-contain"
                 priority
               />
             </div>
@@ -114,7 +114,7 @@ export default function ImagePreviewDialog({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-4 top-1/2 h-10 w-10 -translate-y-1/2 rounded-full bg-black/50 text-white hover:bg-black/70"
+              className="absolute left-4 top-1/2 h-10 w-10 -translate-y-1/2 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
               onClick={goToPrevious}
             >
               <ChevronLeft className="h-6 w-6" />
@@ -123,18 +123,18 @@ export default function ImagePreviewDialog({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-4 top-1/2 h-10 w-10 -translate-y-1/2 rounded-full bg-black/50 text-white hover:bg-black/70"
+              className="absolute right-4 top-1/2 h-10 w-10 -translate-y-1/2 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
               onClick={goToNext}
             >
               <ChevronRight className="h-6 w-6" />
             </Button>
 
             {/* Feature buttons */}
-            <div className="absolute border p-2 bottom-4 right-4 flex flex-col items-center gap-4">
+            <div className="absolute bottom-4 right-4 flex flex-col items-center gap-4 rounded-full border border-white/10 p-2 dark:border-black/10">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70"
+                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
                 onClick={handleZoomIn}
               >
                 <ZoomIn className="h-6 w-6" />
@@ -143,7 +143,7 @@ export default function ImagePreviewDialog({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70"
+                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
                 onClick={handleZoomOut}
               >
                 <ZoomOut className="h-6 w-6" />
@@ -152,7 +152,7 @@ export default function ImagePreviewDialog({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70"
+                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
                 onClick={handleRotate}
               >
                 <RotateCw className="h-6 w-6" />
@@ -161,7 +161,7 @@ export default function ImagePreviewDialog({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70"
+                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
                 onClick={handleDownload}
               >
                 <Download className="h-6 w-6" />
@@ -170,7 +170,7 @@ export default function ImagePreviewDialog({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70"
+                className="h-10 w-10 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
                 onClick={handleCopy}
               >
                 <Copy className="h-6 w-6" />
@@ -194,7 +194,7 @@ export default function ImagePreviewDialog({
             </div>
 
             {/* Image counter */}
-            <div className="absolute bottom-4 left-4 rounded-full bg-black/50 px-2.5 py-1 text-sm text-white">
+            <div className="absolute bottom-4 left-4 rounded-full bg-black/50 px-2.5 py-1 text-sm text-white dark:bg-white/20 dark:text-black">
               {currentIndex + 1} / {images.length}
             </div>
           </div>
