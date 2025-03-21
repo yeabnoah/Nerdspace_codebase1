@@ -9,11 +9,15 @@ const RenderPostSkeleton = () => {
         <div className="flex items-center gap-5">
           <Skeleton className="size-10 rounded-full" />
           <div>
-            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-4 w-28" />
             <Skeleton className="mt-1 h-3 w-16" />
           </div>
         </div>
         <Skeleton className="mt-4 h-16 w-full" />
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <Skeleton className="h-28 w-full rounded-xl" />
+          <Skeleton className="h-28 w-full rounded-xl" />
+        </div>
         <div className="mt-4 flex gap-3">
           <Skeleton className="h-6 w-6 rounded-full" />
           <Skeleton className="h-6 w-6 rounded-full" />
@@ -24,11 +28,15 @@ const RenderPostSkeleton = () => {
         <div className="flex items-center gap-5">
           <Skeleton className="size-10 rounded-full" />
           <div>
-            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-4 w-28" />
             <Skeleton className="mt-1 h-3 w-16" />
           </div>
         </div>
         <Skeleton className="mt-4 h-16 w-full" />
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <Skeleton className="h-28 w-full rounded-xl" />
+          <Skeleton className="h-28 w-full rounded-xl" />
+        </div>
         <div className="mt-4 flex gap-3">
           <Skeleton className="h-6 w-6 rounded-full" />
           <Skeleton className="h-6 w-6 rounded-full" />
@@ -39,11 +47,15 @@ const RenderPostSkeleton = () => {
         <div className="flex items-center gap-5">
           <Skeleton className="size-10 rounded-full" />
           <div>
-            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-4 w-28" />
             <Skeleton className="mt-1 h-3 w-16" />
           </div>
         </div>
         <Skeleton className="mt-4 h-16 w-full" />
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <Skeleton className="h-28 w-full rounded-xl" />
+          <Skeleton className="h-28 w-full rounded-xl" />
+        </div>
         <div className="mt-4 flex gap-3">
           <Skeleton className="h-6 w-6 rounded-full" />
           <Skeleton className="h-6 w-6 rounded-full" />
