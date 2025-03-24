@@ -1,4 +1,5 @@
 import PostCommentInterface from "./comment.interface";
+import UserInterface from "./user.interface";
 
 interface postInterface {
   id: string;
@@ -9,16 +10,7 @@ interface postInterface {
   access: postAccess;
   likes: { id: string; postId: string; userId: string }[];
   bookmarks: { id: string; postId: string; userId: string }[];
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    emailVerified: boolean;
-    image: string;
-    createdAt: Date | null;
-    updatedAt: Date | null;
-    nerdAt: null | string;
-  };
+  user: UserInterface;
   media: { id: string; url: string; type: string }[]; // Add media field
   replies?: PostCommentInterface[];
 }
