@@ -24,11 +24,11 @@ export default function UserProfile() {
   const { userProfile } = useUserProfileStore();
 
   return (
-    <div className="mx-auto min-h-screen w-[70%] px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto min-h-screen md:px-4 sm:px-6 md:w-[70%] lg:px-8">
       <div className="relative h-40 overflow-hidden rounded-xl border bg-transparent">
         <Image
           src={"/obsession.jpg"}
-          className="w-full"
+          className="md:w-full w-full h-full md:max-h-max object-cover"
           height={1000}
           width={1000}
           alt="test"
@@ -95,20 +95,6 @@ export default function UserProfile() {
             >
               <UsersRound className="mr-2 h-4 w-4" />
               Community
-            </TabsTrigger>
-            <TabsTrigger
-              value="bookmarks"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              <Bookmark className="mr-2 h-4 w-4" />
-              Bookmarks
-            </TabsTrigger>
-            <TabsTrigger
-              value="private"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              <Lock className="mr-2 h-4 w-4" />
-              Private
             </TabsTrigger>
           </TabsList>
 

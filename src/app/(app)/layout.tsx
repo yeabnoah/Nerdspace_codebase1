@@ -10,7 +10,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
       enableSystem
       disableTransitionOnChange
     >
-      <div className="full h-full w-full flex-col p-3 dark:bg-textAlternative">
+      <div className="full h-full w-full flex-col md:p-3 dark:bg-textAlternative">
         <Navbar />
         <div className="">{children}</div>
       </div>
