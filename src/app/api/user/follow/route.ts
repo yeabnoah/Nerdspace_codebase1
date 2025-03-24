@@ -17,7 +17,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     if (!session) {
-      return Response.json(
+      return NextResponse.json(
         {
           message: "unauthorized | not logged in",
         },
@@ -38,23 +38,29 @@ export const POST = async (req: NextRequest) => {
           id: user.id,
         },
       });
+      return NextResponse.json(
+        {
+          message: "Unfollowed successfully",
+        },
+        { status: 200 },
+      );
+    } else {
+      const following = await prisma.follow.create({
+        data: {
+          followerId: session.user.id,
+          followingId: userId,
+        },
+      });
+      return NextResponse.json(
+        {
+          data: following,
+          message: "Followed successfully",
+        },
+        { status: 201 },
+      );
     }
-
-    const following = await prisma.follow.create({
-      data: {
-        followerId: session.user.id,
-        followingId: userId,
-      },
-    });
-
-    return NextResponse.json(
-      {
-        data: following,
-      },
-      { status: 201 },
-    );
   } catch (error) {
-    console.error("Error following user:", error);
+    console.error("Error following/unfollowing user:", error);
     return NextResponse.json({ error: "error" }, { status: 500 });
   }
 };
