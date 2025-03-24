@@ -163,19 +163,6 @@ const RenderPost = () => {
     },
   });
 
-   const followMutation = useMutation({
-    mutationFn: async (userId: string) => {
-      const response = await axios.post(`/api/user/follow?userId=${userId}`);
-      return response.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
-    },
-    onError: () => {
-      toast.error("Error occurred while following/unfollowing user");
-    },
-  });
-
   const replyMutation = useMutation({
     mutationKey: ["reply-comment"],
     mutationFn: async ({
@@ -421,12 +408,6 @@ const RenderPost = () => {
     router.push(`/user-profile/${userId}`);
   };
 
- 
-
-  const handleFollow = async (userId: string) => {
-    await followMutation.mutate(userId);
-  };
-
   return (
     <div>
       {data?.pages
@@ -467,12 +448,10 @@ const RenderPost = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Button
-                    className="h-8 w-24 rounded-full bg-textAlternative shadow-none"
-                    onClick={() => handleFollow(each.user.id)}
-                  >
+                  <Button className="h-8 w-24 rounded-full bg-textAlternative shadow-none">
                     <Plus size={15} />
-                    {each.user.isFollowing ? "Unfollow" : "Follow"}
+                    {/* {each.user?.isFollowingAuthor ? "Following" : "Follow"} */}
+                    {String(each.user?.isFollowingAuthor)}
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger className="mx-auto w-9 py-0 outline-none">

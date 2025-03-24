@@ -25,7 +25,14 @@ export async function GET(request: NextRequest) {
         access: "public",
       },
       include: {
-        user: true,
+        user: {
+          include: {
+            followers: {
+              where: { followerId: session.user.id },
+              select: { id: true },
+            },
+          },
+        },
         likes: true,
         bookmarks: true,
         media: true,
@@ -36,11 +43,19 @@ export async function GET(request: NextRequest) {
       cursor: cursor ? { id: cursor } : undefined,
     });
 
+    const modifiedPosts = posts.map((post) => ({
+      ...post,
+      user: {
+        ...post.user,
+        isFollowingAuthor: post.user.followers.length > 0,
+      },
+    }));
+
     const nextCursor = posts.length > 0 ? posts[posts.length - 1].id : null;
 
     return NextResponse.json(
       {
-        data: posts,
+        data: modifiedPosts,
         nextCursor: nextCursor,
         message: "posts fetched successfully",
       },

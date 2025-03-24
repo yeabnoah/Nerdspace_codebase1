@@ -41,22 +41,24 @@ model User {
   bookmarks     Bookmark[]
   reports       Report[]
   coverImage    String?
-  following     Follow[]      @relation("Following")
-  followers     Follow[]      @relation("Followers")
+  followers     Follows[]     @relation("UserFollowers")
+  following     Follows[]     @relation("UserFollowing")
 
   @@unique([email])
   @@map("user")
 }
 
-model Follow {
-  id          String @id @default(cuid())
+model Follows {
+  id          String @id @default(uuid())
   followerId  String
   followingId String
 
-  follower  User @relation("Followers", fields: [followerId], references: [id])
-  following User @relation("Following", fields: [followingId], references: [id])
+  follower  User @relation("UserFollowers", fields: [followerId], references: [id])
+  following User @relation("UserFollowing", fields: [followingId], references: [id])
 
-  @@unique([followerId, followingId])
+  createdAt DateTime @default(now())
+
+  @@unique([followerId, followingId]) // Prevent duplicate follows
 }
 
 model Country {
