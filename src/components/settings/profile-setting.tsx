@@ -55,8 +55,8 @@ const ProfileSettings = () => {
         "/api/onboarding",
         {
           country: user?.country ? undefined : selectedCountry,
-          image: selectedImage,
-          coverImage: selectedCoverImage,
+          image: selectedImage || user.image || "",
+          coverImage: selectedCoverImage ? selectedCoverImage : "",
           nerdAt,
           bio,
           displayName,
@@ -149,13 +149,11 @@ const ProfileSettings = () => {
         <div className="md:px-4">
           <div className="relative mb-4">
             <Image
-              src={
-                coverPreviewUrl || user.coverImage || "/obsession.jpg"
-              }
+              src={coverPreviewUrl || user.coverImage || "/obsession.jpg"}
               alt="Cover Preview"
               width={800}
               height={200}
-              className="mt-2 h-36 rounded-xl w-full object-cover"
+              className="mt-2 h-36 w-full rounded-xl object-cover"
             />
 
             <Input
@@ -167,7 +165,7 @@ const ProfileSettings = () => {
             />
             <label
               htmlFor="cover-image-upload"
-              className="absolute -bottom-5 right-[5%] cursor-pointer p-3 rounded-full bg-white p-1 text-white"
+              className="absolute -bottom-5 right-[5%] cursor-pointer rounded-full bg-white p-1 p-3 text-white"
             >
               <Edit size={24} color="black" className="" />
             </label>
