@@ -17,6 +17,7 @@ interface UserInterface {
   country: Country;
   posts: postInterface[];
   username: string;
+  coverImage?: string;
 }
 
 export default UserInterface;

@@ -24,11 +24,11 @@ export default function UserProfile() {
   const { userProfile } = useUserProfileStore();
 
   return (
-    <div className="mx-auto min-h-screen md:px-4 sm:px-6 md:w-[70%] lg:px-8">
+    <div className="mx-auto min-h-screen sm:px-6 md:w-[70%] md:px-4 lg:px-8">
       <div className="relative h-40 overflow-hidden rounded-xl border bg-transparent">
         <Image
-          src={"/obsession.jpg"}
-          className="md:w-full w-full h-full md:max-h-max object-cover"
+          src={userProfile?.coverImage || "/obsession.jpg"}
+          className="h-full w-full object-cover md:max-h-max md:w-full"
           height={1000}
           width={1000}
           alt="test"

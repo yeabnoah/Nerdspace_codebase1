@@ -20,6 +20,7 @@ export const OnboardingSchema = z.object({
   image: z.string().url(),
   firstTime: z.boolean(),
   link: z.string().url(),
+  coverImage: z.string().url(),
 });
 
 export type OnboardingType = z.infer<typeof OnboardingSchema>;

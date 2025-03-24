@@ -26,12 +26,14 @@ const ProfileSettings = () => {
   const {
     selectedCountry,
     selectedImage,
+    selectedCoverImage,
     nerdAt,
     bio,
     displayName,
     link,
     setSelectedCountry,
     setSelectedImage,
+    setSelectedCoverImage,
     setNerdAt,
     setBio,
     setDisplayName,
@@ -42,6 +44,7 @@ const ProfileSettings = () => {
   const cloudinaryUploadPreset =
     process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
   const session = authClient.useSession();
   const { user, isloading } = useUserStore();
 
@@ -53,6 +56,7 @@ const ProfileSettings = () => {
         {
           country: user?.country ? undefined : selectedCountry,
           image: selectedImage,
+          coverImage: selectedCoverImage,
           nerdAt,
           bio,
           displayName,
@@ -121,6 +125,20 @@ const ProfileSettings = () => {
     }
   };
 
+  const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        setCoverPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      setSelectedCoverImage(file);
+    }
+  };
+
   return (
     <Card className="preview-card border-none bg-transparent shadow-none">
       <CardHeader>
@@ -129,6 +147,32 @@ const ProfileSettings = () => {
       </CardHeader>
       <CardContent>
         <div className="md:px-4">
+          <div className="relative mb-4">
+            <Image
+              src={
+                coverPreviewUrl || user.coverImage || "/obsession.jpg"
+              }
+              alt="Cover Preview"
+              width={800}
+              height={200}
+              className="mt-2 h-36 rounded-xl w-full object-cover"
+            />
+
+            <Input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              id="cover-image-upload"
+              onChange={handleCoverFileChange}
+            />
+            <label
+              htmlFor="cover-image-upload"
+              className="absolute -bottom-5 right-[5%] cursor-pointer p-3 rounded-full bg-white p-1 text-white"
+            >
+              <Edit size={24} color="black" className="" />
+            </label>
+          </div>
+
           <div className="flex w-full flex-col md:flex-row md:items-center md:gap-10">
             <div className="relative mb-4">
               <Image
@@ -239,9 +283,28 @@ const ProfileSettings = () => {
                 }
               }
 
+              if (selectedCoverImage instanceof File) {
+                const formData = new FormData();
+                formData.append("file", selectedCoverImage);
+                formData.append("upload_preset", cloudinaryUploadPreset);
+
+                try {
+                  const response = await axios.post(
+                    cloudinaryUploadUrl,
+                    formData,
+                  );
+                  setSelectedCoverImage(response.data.secure_url);
+                } catch (error) {
+                  console.error("Cover image upload failed:", error);
+                  toast.error("Cover image upload failed");
+                  return;
+                }
+              }
+
               console.log({
                 country: selectedCountry,
                 image: selectedImage,
+                coverImage: selectedCoverImage,
                 nerdAt,
                 bio,
                 displayName,
