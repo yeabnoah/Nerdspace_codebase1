@@ -21,6 +21,7 @@ import {
   DialogDescription,
   DialogClose,
 } from "../ui/dialog";
+import { X } from "lucide-react";
 
 const cloudinaryUploadUrl = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!;
 const cloudinaryUploadPreset =
@@ -43,6 +44,10 @@ const PostInput = () => {
       toast.error("An error occurred while creating post");
     },
   });
+
+  const handleRemoveFile = (fileName: string) => {
+    setDialogFiles(dialogFiles.filter((file) => file.name !== fileName));
+  };
 
   const handleSubmit = async () => {
     if (dialogPost.trim() === "") {
@@ -133,6 +138,16 @@ const PostInput = () => {
                       alt={file.name}
                       className="h-full w-full object-cover"
                     />
+                    <div className="absolute right-2 top-2 flex gap-1">
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        className="h-7 w-7"
+                        onClick={() => handleRemoveFile(file.name)}
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
