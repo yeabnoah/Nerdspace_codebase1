@@ -72,7 +72,7 @@ const PostInput = () => {
       mutate({ content: dialogPost, fileUrls });
       setDialogPost("");
       setDialogFiles([]);
-      setIsDialogOpen(false); // Close the dialog after posting
+      setIsDialogOpen(false);
     } catch (error) {
       toast.error("An error occurred while uploading files");
     }
@@ -114,7 +114,7 @@ const PostInput = () => {
             </Button>
           </div>
         </DialogTrigger>
-        <DialogContent className="bg-textAlternative">
+        <DialogContent className="dark:bg-textAlternative">
           <DialogTitle>Create a new post</DialogTitle>
           <DialogDescription>
             Share your thoughts or upload an image.
@@ -155,17 +155,22 @@ const PostInput = () => {
               ))}
             </div>
           )}
-          <div className="flex items-center gap-2">
+          <div className="mt-4 flex justify-end gap-2">
+            <DialogClose asChild>
+              <Button
+                variant="outline"
+                className="text-sm dark:bg-textAlternative"
+              >
+                Cancel
+              </Button>
+            </DialogClose>
             <Button
               onClick={handleSubmit}
-              className="my-2 flex-1 border bg-transparent text-textAlternative shadow-none hover:bg-transparent dark:text-white"
+              className="text-sm"
               disabled={isPending || dialogPost.trim() === ""}
             >
               {isPending ? "Posting..." : "Post"}
             </Button>
-            <DialogClose asChild className="flex-1">
-              <Button className="mt-2">Close</Button>
-            </DialogClose>
           </div>
         </DialogContent>
       </Dialog>
