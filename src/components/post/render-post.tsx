@@ -612,21 +612,21 @@ const RenderPost = () => {
                     </div>
                   )}
 
-                  <div className="flex-1">
-                    <h4 className="text-xs md:text-sm">
+                    <div className="flex-1 break-words">
+                    <h4 className="text-xs md:text-sm break-all">
                       {expandedStates[index] || !isLongContent
-                        ? each.content
-                        : `${truncatedContent}...`}
+                      ? each.content
+                      : `${truncatedContent}...`}
                     </h4>
                     {isLongContent && (
                       <button
-                        className="mt-2 text-xs underline"
-                        onClick={() => toggleExpand(index)}
+                      className="mt-2 text-xs underline"
+                      onClick={() => toggleExpand(index)}
                       >
-                        {expandedStates[index] ? "See less" : "See more"}
+                      {expandedStates[index] ? "See less" : "See more"}
                       </button>
                     )}
-                  </div>
+                    </div>
                 </div>
 
                 <div
