@@ -25,7 +25,7 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-    const user = await prisma.follow.findFirst({
+    const user = await prisma.follows.findFirst({
       where: {
         followerId: session.user.id,
         followingId: userId,
@@ -33,7 +33,7 @@ export const POST = async (req: NextRequest) => {
     });
 
     if (user) {
-      await prisma.follow.delete({
+      await prisma.follows.delete({
         where: {
           id: user.id,
         },
@@ -45,7 +45,7 @@ export const POST = async (req: NextRequest) => {
         { status: 200 },
       );
     } else {
-      const following = await prisma.follow.create({
+      const following = await prisma.follows.create({
         data: {
           followerId: session.user.id,
           followingId: userId,

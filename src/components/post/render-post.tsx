@@ -1,24 +1,22 @@
 "use client";
 
 import changePostAccess from "@/functions/access-change-post";
-import { timeAgo } from "@/functions/calculate-time-difference";
 import fetchPosts from "@/functions/fetch-post";
 import { getTrimLimit } from "@/functions/render-helper";
+import PostCommentInterface from "@/interface/auth/comment.interface";
 import postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import usePostStore from "@/store/post.store";
+import useReportStore from "@/store/report.strore";
+import useUserProfileStore from "@/store/userProfile.store";
 import { PostAccess } from "@prisma/client";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import {
   BanIcon,
-  BookmarkIcon,
-  CheckCheckIcon,
-  CheckIcon,
   Edit,
-  Heart,
   LockIcon,
   LockOpen,
   MessageCircle,
@@ -27,14 +25,18 @@ import {
   SendIcon,
   Share2Icon,
   TrashIcon,
-  X,
 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { GoHeart, GoHeartFill } from "react-icons/go";
+import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
 import { useInView } from "react-intersection-observer";
+import ImagePreviewDialog from "../image-preview";
 import DeleteModal from "../modal/delete.modal";
 import EditModal from "../modal/edit.modal";
+import ReportModal from "../modal/report.modal";
 import CommentSkeleton from "../skeleton/comment.skelton";
 import MorePostsFetchSkeleton from "../skeleton/morepostFetch.skeleton";
 import RenderPostSkeleton from "../skeleton/render-post.skeleton";
@@ -44,19 +46,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
-import { renderComments } from "./comment/render-comments";
-import EditCommentModal from "./comment/EditCommentModal";
 import DeleteCommentModal from "./comment/DeleteCommentModal";
-import PostCommentInterface from "@/interface/auth/comment.interface";
-import { GoHeart, GoHeartFill } from "react-icons/go";
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
-import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
-import ReportModal from "../modal/report.modal";
-import useReportStore from "@/store/report.strore";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
-import ImagePreviewDialog from "../image-preview";
-import useUserProfileStore from "@/store/userProfile.store";
-import { useRouter } from "next/navigation";
+import EditCommentModal from "./comment/EditCommentModal";
+import { renderComments } from "./comment/render-comments";
 // import { useRouter } from "next/n";
 
 const RenderPost = () => {
@@ -160,6 +152,19 @@ const RenderPost = () => {
     },
     onError: () => {
       toast.error("error occured while updating post");
+    },
+  });
+
+  const followMutation = useMutation({
+    mutationKey: ["follow-user", selectedPost.user.id],
+    mutationFn: async () => {
+      const response = await axios.post(
+        `/api/user/follow?userId=${selectedPost.user.id}`,
+      );
+
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.success(response.data.message);
+      return response.data.message;
     },
   });
 
@@ -408,6 +413,12 @@ const RenderPost = () => {
     router.push(`/user-profile/${userId}`);
   };
 
+  const handleFollow = async (post: postInterface) => {
+    await setSelectedPost(post);
+    console.log(selectedPost.user.id);
+    // await followMutation.mutate();
+  };
+
   return (
     <div>
       {data?.pages
@@ -448,10 +459,15 @@ const RenderPost = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Button className="h-8 w-24 rounded-full bg-textAlternative shadow-none">
-                    <Plus size={15} />
-                    {/* {each.user?.isFollowingAuthor ? "Following" : "Follow"} */}
-                    {String(each.user?.isFollowingAuthor)}
+                  <Button
+                    variant={"outline"}
+                    className={`mx-0 rounded-lg px-3 shadow-none`}
+                    onClick={() => {
+                      handleFollow(each);
+                    }}
+                  >
+                    {!each.user?.isFollowingAuthor && <Plus size={15} />}
+                    {each.user?.isFollowingAuthor ? "Following" : "Follow"}
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger className="mx-auto w-9 py-0 outline-none">
