@@ -30,6 +30,7 @@ const cloudinaryUploadPreset =
 const PostInput = () => {
   const [dialogPost, setDialogPost] = useState<string>("");
   const [dialogFiles, setDialogFiles] = useState<File[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const session = authClient.useSession();
   const router = useRouter();
 
@@ -71,6 +72,7 @@ const PostInput = () => {
       mutate({ content: dialogPost, fileUrls });
       setDialogPost("");
       setDialogFiles([]);
+      setIsDialogOpen(false); // Close the dialog after posting
     } catch (error) {
       toast.error("An error occurred while uploading files");
     }
@@ -92,7 +94,7 @@ const PostInput = () => {
         />
       </div>
 
-      <Dialog>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
           <div className="flex flex-1 flex-col items-end">
             <AutosizeTextarea
@@ -102,7 +104,7 @@ const PostInput = () => {
               value=""
               readOnly
             />
-            <PostFileUploader onFilesSelected={() => {}} />
+            {/* <PostFileUploader onFilesSelected={() => {}} /> */}
             <Button
               onClick={() => {}}
               className="my-2 border bg-transparent text-textAlternative shadow-none hover:bg-transparent dark:text-white"
