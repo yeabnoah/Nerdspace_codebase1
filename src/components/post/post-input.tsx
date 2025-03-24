@@ -13,14 +13,22 @@ import { Textarea } from "../ui/textarea";
 import { AutosizeTextarea } from "../ui/resizeble-text-area";
 import { PostFileUploader } from "../media/post-file-uploader";
 import axios from "axios";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "../ui/dialog";
 
 const cloudinaryUploadUrl = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!;
-const cloudinaryUploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
+const cloudinaryUploadPreset =
+  process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
 
 const PostInput = () => {
-  
-  const [post, setPost] = useState<string>("");
-  const [files, setFiles] = useState<File[]>([]);
+  const [dialogPost, setDialogPost] = useState<string>("");
+  const [dialogFiles, setDialogFiles] = useState<File[]>([]);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const session = authClient.useSession();
@@ -32,7 +40,6 @@ const PostInput = () => {
     onSuccess: () => {
       toast.success("Post created successfully");
       queryClient.invalidateQueries({ queryKey: ["posts"] });
-      //mutation.ts
     },
     onError: () => {
       toast.error("An error occurred while creating post");
@@ -42,6 +49,11 @@ const PostInput = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+
+      if (!file.type.startsWith("image/")) {
+        toast.error("Only image files are allowed.");
+        return;
+      }
 
       const reader = new FileReader();
       reader.onload = () => {
@@ -54,28 +66,27 @@ const PostInput = () => {
   };
 
   const handleSubmit = async () => {
-    if (post.trim() === "") {
+    if (dialogPost.trim() === "") {
       toast.error("Post content cannot be empty.");
       return;
     }
 
     try {
-      // Upload files to Cloudinary and get URLs
       const fileUrls = await Promise.all(
-        files.map(async (file) => {
+        dialogFiles.map(async (file) => {
           const formData = new FormData();
           formData.append("file", file);
-          formData.append("upload_preset", cloudinaryUploadPreset); 
+          formData.append("upload_preset", cloudinaryUploadPreset);
 
           const response = await axios.post(cloudinaryUploadUrl, formData);
 
           return response.data.secure_url;
-        })
+        }),
       );
 
-      mutate({ content: post, fileUrls });
-      setPost("");
-      setFiles([]);
+      mutate({ content: dialogPost, fileUrls });
+      setDialogPost("");
+      setDialogFiles([]);
     } catch (error) {
       toast.error("An error occurred while uploading files");
     }
@@ -86,7 +97,7 @@ const PostInput = () => {
   }
 
   return (
-    <div className="flex items-start justify-center gap-2 dark:border-gray-500/5 rounded-xl border-gray-100 dark:border-textAlternative border p-2">
+    <div className="flex items-start justify-center gap-2 rounded-xl border border-gray-100 p-2 dark:border-gray-500/5 dark:border-textAlternative">
       <div>
         <Image
           src={session?.data?.user?.image || "/user.jpg"}
@@ -97,23 +108,64 @@ const PostInput = () => {
         />
       </div>
 
-      <div className="flex flex-1 flex-col items-end">
-        <AutosizeTextarea
-          maxHeight={300}
-          placeholder="What's on your mind?"
-          className="h-14 w-full font-inter border-gray-100 dark:border-gray-500/5 bg-transparent text-sm placeholder:text-sm md:text-base"
-          value={post}
-          onChange={(e) => setPost(e.target.value)}
-        />
-        <PostFileUploader onFilesSelected={setFiles} />
-        <Button
-          onClick={handleSubmit}
-          className="my-2 border bg-transparent text-textAlternative shadow-none hover:bg-transparent dark:text-white"
-          disabled={isPending || post.trim() === ""}
-        >
-          {isPending ? "Posting..." : "Post"}
-        </Button>
-      </div>
+      <Dialog>
+        <DialogTrigger asChild>
+          <div className="flex flex-1 flex-col items-end">
+            <AutosizeTextarea
+              maxHeight={300}
+              placeholder="What's on your mind?"
+              className="h-14 w-full border-gray-100 bg-transparent font-inter text-sm placeholder:text-sm dark:border-gray-500/5 md:text-base"
+              value=""
+              readOnly
+            />
+            <PostFileUploader onFilesSelected={() => {}} />
+            <Button
+              onClick={() => {}}
+              className="my-2 border bg-transparent text-textAlternative shadow-none hover:bg-transparent dark:text-white"
+              disabled
+            >
+              Post
+            </Button>
+          </div>
+        </DialogTrigger>
+        <DialogContent className="bg-textAlternative">
+          <DialogTitle>Create a new post</DialogTitle>
+          <DialogDescription>
+            Share your thoughts or upload an image.
+          </DialogDescription>
+          <AutosizeTextarea
+            maxHeight={300}
+            placeholder="What's on your mind?"
+            className="h-14 w-full border-gray-100 bg-transparent font-inter text-sm placeholder:text-sm dark:border-gray-500/5 md:text-base"
+            value={dialogPost}
+            onChange={(e) => setDialogPost(e.target.value)}
+          />
+          <PostFileUploader onFilesSelected={setDialogFiles} />
+          {previewUrl && (
+            <div className="mt-2">
+              <Image
+                src={previewUrl}
+                alt="Preview"
+                className="rounded"
+                height={200}
+                width={200}
+              />
+            </div>
+          )}
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={handleSubmit}
+              className="my-2 flex-1 border bg-transparent text-textAlternative shadow-none hover:bg-transparent dark:text-white"
+              disabled={isPending || dialogPost.trim() === ""}
+            >
+              {isPending ? "Posting..." : "Post"}
+            </Button>
+            <DialogClose asChild className="flex-1">
+              <Button className="mt-2">Close</Button>
+            </DialogClose>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
