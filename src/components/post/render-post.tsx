@@ -163,9 +163,9 @@ const RenderPost = () => {
       );
       return response.data.message;
     },
-    onSuccess: () => {
+    onSuccess: (message) => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
-      // toast.success(response.data.message);
+      toast.success(message);
     },
   });
 
