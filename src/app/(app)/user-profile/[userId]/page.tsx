@@ -101,7 +101,7 @@ export default function Page({
   }
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start justify-center">
+    <div className="mx-auto flex md:max-w-6xl flex-1 flex-row items-start justify-center">
       <LeftNavbar />
       <UserProfile />
       <MobileNavBar />
