@@ -18,6 +18,7 @@ interface UserInterface {
   posts: postInterface[];
   username: string;
   coverImage?: string;
+  isFollowing?: boolean;
 }
 
 export default UserInterface;

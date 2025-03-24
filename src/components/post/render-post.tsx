@@ -15,15 +15,19 @@ import axios from "axios";
 import {
   BanIcon,
   BookmarkIcon,
+  CheckCheckIcon,
+  CheckIcon,
   Edit,
   Heart,
   LockIcon,
   LockOpen,
   MessageCircle,
   MoreHorizontal,
+  Plus,
   SendIcon,
   Share2Icon,
   TrashIcon,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -156,6 +160,19 @@ const RenderPost = () => {
     },
     onError: () => {
       toast.error("error occured while updating post");
+    },
+  });
+
+   const followMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await axios.post(`/api/user/follow?userId=${userId}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+    onError: () => {
+      toast.error("Error occurred while following/unfollowing user");
     },
   });
 
@@ -404,6 +421,12 @@ const RenderPost = () => {
     router.push(`/user-profile/${userId}`);
   };
 
+ 
+
+  const handleFollow = async (userId: string) => {
+    await followMutation.mutate(userId);
+  };
+
   return (
     <div>
       {data?.pages
@@ -443,75 +466,84 @@ const RenderPost = () => {
                   </div>
                 </div>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="mx-auto w-9 py-0 outline-none">
-                    <MoreHorizontal />
-                  </DropdownMenuTrigger>
-                  {session?.data?.user?.id === each.user.id ? (
-                    <DropdownMenuContent className="mr-5 flex flex-row bg-white dark:bg-textAlternative md:mr-0 md:block">
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setSelectedPost(each);
-                          setContent(each.content);
-                          console.log(each);
-                          setEditModal(true);
-                        }}
-                      >
-                        <Edit />
-                        <span className="hidden md:block">Edit</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setSelectedPost(each);
-                          setContent(each.content);
-                          console.log(each);
-                          setDeleteModal(true);
-                        }}
-                      >
-                        <TrashIcon />
-                        <span className="hidden md:block">Delete</span>
-                      </DropdownMenuItem>
-                      {(each?.access as unknown as string) ===
-                      (PostAccess.public as unknown as string) ? (
+                <div className="flex items-center gap-2">
+                  <Button
+                    className="h-8 w-24 rounded-full bg-textAlternative shadow-none"
+                    onClick={() => handleFollow(each.user.id)}
+                  >
+                    <Plus size={15} />
+                    {each.user.isFollowing ? "Unfollow" : "Follow"}
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="mx-auto w-9 py-0 outline-none">
+                      <MoreHorizontal />
+                    </DropdownMenuTrigger>
+                    {session?.data?.user?.id === each.user.id ? (
+                      <DropdownMenuContent className="mr-5 flex flex-row bg-white dark:bg-textAlternative md:mr-0 md:block">
                         <DropdownMenuItem
                           onClick={() => {
-                            changePostAccessType(each);
+                            setSelectedPost(each);
+                            setContent(each.content);
+                            console.log(each);
+                            setEditModal(true);
                           }}
                         >
-                          <LockIcon />
-                          <span className="hidden md:block">Go Private</span>
+                          <Edit />
+                          <span className="hidden md:block">Edit</span>
                         </DropdownMenuItem>
-                      ) : (
                         <DropdownMenuItem
                           onClick={() => {
-                            changePostAccessType(each);
+                            setSelectedPost(each);
+                            setContent(each.content);
+                            console.log(each);
+                            setDeleteModal(true);
                           }}
                         >
-                          <LockOpen />
-                          <span className="hidden md:block">Go Public</span>
+                          <TrashIcon />
+                          <span className="hidden md:block">Delete</span>
                         </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem>
-                        <Share2Icon />
-                        <span className="hidden md:block">share</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  ) : (
-                    <DropdownMenuContent className="mr-5 flex flex-row justify-center bg-white dark:bg-textAlternative md:mr-0 md:block">
-                      <DropdownMenuItem>
-                        <Share2Icon />
-                        <span className="hidden md:block">share</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleReport(each.id)}
-                        disabled={session?.data?.user?.id === each.user.id}
-                      >
-                        <BanIcon />
-                        <span className="hidden md:block">Report</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  )}
-                </DropdownMenu>
+                        {(each?.access as unknown as string) ===
+                        (PostAccess.public as unknown as string) ? (
+                          <DropdownMenuItem
+                            onClick={() => {
+                              changePostAccessType(each);
+                            }}
+                          >
+                            <LockIcon />
+                            <span className="hidden md:block">Go Private</span>
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem
+                            onClick={() => {
+                              changePostAccessType(each);
+                            }}
+                          >
+                            <LockOpen />
+                            <span className="hidden md:block">Go Public</span>
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem>
+                          <Share2Icon />
+                          <span className="hidden md:block">share</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    ) : (
+                      <DropdownMenuContent className="mr-5 flex flex-row justify-center bg-white dark:bg-textAlternative md:mr-0 md:block">
+                        <DropdownMenuItem>
+                          <Share2Icon />
+                          <span className="hidden md:block">share</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleReport(each.id)}
+                          disabled={session?.data?.user?.id === each.user.id}
+                        >
+                          <BanIcon />
+                          <span className="hidden md:block">Report</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    )}
+                  </DropdownMenu>
+                </div>
               </div>
 
               <div
@@ -612,21 +644,21 @@ const RenderPost = () => {
                     </div>
                   )}
 
-                    <div className="flex-1 break-words">
-                    <h4 className="text-xs md:text-sm break-all">
+                  <div className="flex-1 break-words">
+                    <h4 className="break-all text-xs md:text-sm">
                       {expandedStates[index] || !isLongContent
-                      ? each.content
-                      : `${truncatedContent}...`}
+                        ? each.content
+                        : `${truncatedContent}...`}
                     </h4>
                     {isLongContent && (
                       <button
-                      className="mt-2 text-xs underline"
-                      onClick={() => toggleExpand(index)}
+                        className="mt-2 text-xs underline"
+                        onClick={() => toggleExpand(index)}
                       >
-                      {expandedStates[index] ? "See less" : "See more"}
+                        {expandedStates[index] ? "See less" : "See more"}
                       </button>
                     )}
-                    </div>
+                  </div>
                 </div>
 
                 <div
