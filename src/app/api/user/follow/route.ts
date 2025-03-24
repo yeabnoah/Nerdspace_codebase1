@@ -25,6 +25,15 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
+    if (session.user.id === userId) {
+      return NextResponse.json(
+        {
+          message: "You cannot follow yourself",
+        },
+        { status: 400 },
+      );
+    }
+
     const user = await prisma.follows.findFirst({
       where: {
         followerId: session.user.id,

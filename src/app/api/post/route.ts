@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       include: {
         user: {
           include: {
-            followers: {
+            following: {
               where: { followerId: session.user.id },
               select: { id: true },
             },
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
       ...post,
       user: {
         ...post.user,
-        isFollowingAuthor: post.user.followers.length > 0,
+        isFollowingAuthor: post.user.following.length > 0,
       },
     }));
 

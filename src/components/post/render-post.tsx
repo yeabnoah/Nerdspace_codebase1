@@ -161,10 +161,11 @@ const RenderPost = () => {
       const response = await axios.post(
         `/api/user/follow?userId=${selectedPost.user.id}`,
       );
-
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
-      toast.success(response.data.message);
       return response.data.message;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      // toast.success(response.data.message);
     },
   });
 
@@ -359,8 +360,12 @@ const RenderPost = () => {
   };
 
   const handleFollow = async (post: postInterface) => {
+    if (session.data?.user.id === post.user.id) {
+      toast.error("You cannot follow yourself");
+      return;
+    }
     await setSelectedPost(post);
-    followMutation.mutate();
+    await followMutation.mutate();
   };
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -458,16 +463,18 @@ const RenderPost = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant={"outline"}
-                    className={`mx-0 rounded-lg px-3 shadow-none`}
-                    onClick={() => {
-                      handleFollow(each);
-                    }}
-                  >
-                    {!each.user?.isFollowingAuthor && <Plus size={15} />}
-                    {each.user?.isFollowingAuthor ? "Following" : "Follow"}
-                  </Button>
+                  {session?.data?.user?.id !== each.user.id && (
+                    <Button
+                      variant={"outline"}
+                      className={`mx-0 rounded-lg px-3 text-xs shadow-none dark:bg-textAlternative md:text-sm`}
+                      onClick={() => {
+                        handleFollow(each);
+                      }}
+                    >
+                      {!each.user?.isFollowingAuthor && <Plus size={15} />}
+                      {each.user?.isFollowingAuthor ? "Following" : "Follow"}
+                    </Button>
+                  )}
                   <DropdownMenu>
                     <DropdownMenuTrigger className="mx-auto w-9 py-0 outline-none">
                       <MoreHorizontal />
@@ -541,12 +548,16 @@ const RenderPost = () => {
               </div>
 
               <div
-                className={`mt-2 flex w-full flex-1 ${isShortContent && isTooShort ? "flex-col" : "flex-row"} items-start justify-center`}
+                className={`mt-2 flex w-full flex-1 ${
+                  isShortContent && isTooShort ? "flex-col" : "flex-row"
+                } items-start justify-center`}
               >
                 <div className="flex w-[100%] flex-1 flex-col justify-start gap-5">
                   {each.media.length > 0 && (
                     <div
-                      className={`mt-4 grid w-[100%] flex-1 gap-2 ${getGridClass(each.media.length)}`}
+                      className={`mt-4 grid w-[100%] flex-1 gap-2 ${getGridClass(
+                        each.media.length,
+                      )}`}
                     >
                       {each.media.length === 1 && (
                         <div
@@ -656,10 +667,16 @@ const RenderPost = () => {
                 </div>
 
                 <div
-                  className={`flex ${isShortContent && isTooShort ? "mt-5 flex-row" : "mt-5 flex-col"} gap-5 md:w-16`}
+                  className={`flex ${
+                    isShortContent && isTooShort
+                      ? "mt-5 flex-row"
+                      : "mt-5 flex-col"
+                  } gap-5 md:w-16`}
                 >
                   <div
-                    className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"} md:mx-auto`}
+                    className={`rounded-full ${
+                      isShortContent && isTooShort ? "pr-2" : "px-2"
+                    } md:mx-auto`}
                     onClick={() => handleLike(each.id)}
                   >
                     {each.likes.some(
@@ -678,12 +695,16 @@ const RenderPost = () => {
                         queryKey: ["comment", each.id],
                       });
                     }}
-                    className={`mx-auto cursor-pointer rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
+                    className={`mx-auto cursor-pointer rounded-full ${
+                      isShortContent && isTooShort ? "pr-2" : "px-2"
+                    }`}
                   >
                     <MessageCircle className="size-5" />
                   </div>
                   <div
-                    className={`mx-auto rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}
+                    className={`mx-auto rounded-full ${
+                      isShortContent && isTooShort ? "pr-2" : "px-2"
+                    }`}
                     onClick={() => handleBookmark(each.id)}
                   >
                     {each.bookmarks.some(
