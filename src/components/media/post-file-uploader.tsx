@@ -25,7 +25,8 @@ export function PostFileUploader({
     "video/quicktime",
   ],
 }: PostFileUploaderProps) {
-  const { files, addFiles, removeFile, clearFiles, setError, error } = useFileStore();
+  const { files, addFiles, removeFile, clearFiles, setError, error } =
+    useFileStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -61,13 +62,7 @@ export function PostFileUploader({
 
     const newFilesWithPreview = validFiles.map((file) => {
       const id = crypto.randomUUID();
-      let type: "image" | "video" | "gif" = "image";
-
-      if (file.type.startsWith("video/")) {
-        type = "video";
-      } else if (file.type === "image/gif") {
-        type = "gif";
-      }
+      let type: "image" = "image";
 
       return {
         file,
@@ -86,8 +81,6 @@ export function PostFileUploader({
 
   const getFileIcon = (fileType: string) => {
     if (fileType.startsWith("image/")) return <ImageIcon className="h-5 w-5" />;
-    if (fileType.startsWith("video/")) return <Film className="h-5 w-5" />;
-    return <File className="h-5 w-5" />;
   };
 
   return (
@@ -106,29 +99,6 @@ export function PostFileUploader({
         >
           <ImageIcon className="mx-2 h-5 w-5" />
         </Button>
-        <Button
-          variant="outline"
-          className="m-0 border-none bg-transparent p-0 shadow-none"
-          onClick={() => {
-            fileInputRef.current?.setAttribute(
-              "accept",
-              "video/mp4,video/quicktime",
-            );
-            fileInputRef.current?.click();
-          }}
-        >
-          <Film className="mx-2 h-5 w-5" />
-        </Button>
-        <Button
-          variant="outline"
-          className="m-0 border-none bg-transparent p-0 shadow-none"
-          onClick={() => {
-            fileInputRef.current?.setAttribute("accept", "image/gif");
-            fileInputRef.current?.click();
-          }}
-        >
-          <File className="mx-2 h-5 w-5" />
-        </Button>
       </div>
 
       <input
@@ -138,47 +108,6 @@ export function PostFileUploader({
         className="hidden"
         onChange={handleFileChange}
       />
-
-      {files.length > 0 && (
-        <div className="grid grid-cols-2 gap-2">
-          {files.map((file) => (
-            <div
-              key={file.id}
-              className="group relative overflow-hidden h-36 rounded-lg border"
-            >
-              <div className="relative aspect-square bg-gray-100">
-                {file.type === "image" || file.type === "gif" ? (
-                  <img
-                    src={file.preview || "/placeholder.svg"}
-                    alt={file.file.name}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <video
-                    src={file.preview}
-                    className=" h-full w-full object-cover"
-                    controls
-                  />
-                )}
-
-                <div className="absolute right-2 top-2 flex gap-1 ">
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="h-7 w-7"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeFile(file.id);
-                    }}
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
 
       {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
     </div>
