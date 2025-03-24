@@ -29,8 +29,6 @@ const cloudinaryUploadPreset =
 const PostInput = () => {
   const [dialogPost, setDialogPost] = useState<string>("");
   const [dialogFiles, setDialogFiles] = useState<File[]>([]);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const session = authClient.useSession();
   const router = useRouter();
 
@@ -45,25 +43,6 @@ const PostInput = () => {
       toast.error("An error occurred while creating post");
     },
   });
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-
-      if (!file.type.startsWith("image/")) {
-        toast.error("Only image files are allowed.");
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-
-      setSelectedImage(file);
-    }
-  };
 
   const handleSubmit = async () => {
     if (dialogPost.trim() === "") {
@@ -141,15 +120,22 @@ const PostInput = () => {
             onChange={(e) => setDialogPost(e.target.value)}
           />
           <PostFileUploader onFilesSelected={setDialogFiles} />
-          {previewUrl && (
-            <div className="mt-2">
-              <Image
-                src={previewUrl}
-                alt="Preview"
-                className="rounded"
-                height={200}
-                width={200}
-              />
+          {dialogFiles.length > 0 && (
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {dialogFiles.map((file) => (
+                <div
+                  key={file.name}
+                  className="group relative h-36 overflow-hidden rounded-lg border"
+                >
+                  <div className="relative aspect-square bg-gray-100">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={file.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           )}
           <div className="flex items-center gap-2">
