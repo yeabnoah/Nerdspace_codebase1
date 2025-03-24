@@ -400,18 +400,9 @@ const RenderPost = () => {
     await mutation.mutate();
   };
 
-  const handleUserProfileClick = async (userId: string) => {
-    // try {
-    //   const response = await axios.get(`/api/user?userId=${userId}`);
-    //   setUserProfile(response.data.data);
-    //   router.push("/user-profile");
-    // } catch (error) {
-    //   console.error("Error fetching user profile:", error);
-    // }
+  const handleUserProfileClick = (userId: string) => {
     router.push(`/user-profile/${userId}`);
   };
-
-  //console.log("this is about to work")
 
   return (
     <div>
