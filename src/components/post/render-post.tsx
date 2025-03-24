@@ -358,6 +358,11 @@ const RenderPost = () => {
     bookmarkMutation.mutate(postId);
   };
 
+  const handleFollow = async (post: postInterface) => {
+    await setSelectedPost(post);
+    followMutation.mutate();
+  };
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(
     null,
@@ -411,12 +416,6 @@ const RenderPost = () => {
 
   const handleUserProfileClick = (userId: string) => {
     router.push(`/user-profile/${userId}`);
-  };
-
-  const handleFollow = async (post: postInterface) => {
-    await setSelectedPost(post);
-    console.log(selectedPost.user.id);
-    // await followMutation.mutate();
   };
 
   return (
