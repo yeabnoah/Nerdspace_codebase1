@@ -41,9 +41,22 @@ model User {
   bookmarks     Bookmark[]
   reports       Report[]
   coverImage    String?
+  following     Follow[]      @relation("Following")
+  followers     Follow[]      @relation("Followers")
 
   @@unique([email])
   @@map("user")
+}
+
+model Follow {
+  id          String @id @default(cuid())
+  followerId  String
+  followingId String
+
+  follower  User @relation("Followers", fields: [followerId], references: [id])
+  following User @relation("Following", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
 }
 
 model Country {
