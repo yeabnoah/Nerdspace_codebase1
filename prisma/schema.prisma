@@ -40,6 +40,7 @@ model User {
   likes         Like[]
   bookmarks     Bookmark[]
   reports       Report[]
+  coverImage    String?
 
   @@unique([email])
   @@map("user")
@@ -74,7 +75,7 @@ model Post {
   likes        Like[]
   bookmarks    Bookmark[]
   reports      Report[]
-  media        Media[] //
+  media        Media[]
 
   @@map("posts")
 }

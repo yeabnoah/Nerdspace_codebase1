@@ -24,7 +24,7 @@ const useUserStore = create<userStoreInterface>((set) => ({
       bio: newUser.bio!,
       displayName: newUser.visualName!,
       link: newUser.link!,
-      selectedImage: newUser.image!,
+      // selectedImage: newUser.image!,
       // selectedCountry: newUser.country,
     });
   },

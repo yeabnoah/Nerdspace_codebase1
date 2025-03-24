@@ -18,19 +18,50 @@ import ProjectsTab from "./tabs/ProjectsTab";
 import CollectionsTab from "./tabs/CollectionsTab";
 import BookmarksTab from "./tabs/BookmarksTab";
 import PrivateTab from "./tabs/PrivateTab";
+import { Skeleton } from "../ui/skeleton";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("posts");
-  const { user } = useUserStore();
+  const { user, isloading } = useUserStore();
+
+  if (isloading) {
+    return (
+      <div className="mx-auto flex max-w-7xl flex-1 flex-row items-start justify-center">
+        {/* <LeftNavbar /> */}
+        <div className="mx-auto min-h-screen w-[90%] px-4 sm:px-6 lg:px-8">
+          <div className="relative h-40 overflow-hidden rounded-xl border">
+            <Skeleton className="h-full w-full" />
+          </div>
+          <div className="relative px-6 pb-6">
+            <div className="-mt-16 flex flex-col">
+              <div className="relative">
+                <Skeleton className="size-24 rounded-full" />
+              </div>
+              <Skeleton className="mb-2 mt-2 h-10 w-1/2" />
+              {/* <Skeleton className="h-4 w-1/3" /> */}
+              <Skeleton className="mb-4 h-4 w-3/4" />
+            </div>
+          </div>
+          <div className="px-6 pb-20">
+            <Skeleton className="h-10 w-full" />
+            <div className="mt-4">
+              <Skeleton className="h-64 w-full" />
+            </div>
+          </div>
+        </div>
+        {/* <MobileNavBar /> */}
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto min-h-screen w-[70%] px-4 sm:px-6 lg:px-8">
       <div className="relative h-40 overflow-hidden rounded-xl border bg-transparent">
         <Image
-          src={"/obsession.jpg"}
-          className="w-full"
-          height={1000}
-          width={1000}
+          src={user.coverImage || "/obsession.jpg"}
+          className="w-full bg-cover bg-center"
+          height={800}
+          width={800}
           alt="test"
         />
         <Button

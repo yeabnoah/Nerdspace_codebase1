@@ -35,6 +35,7 @@ export const PATCH = async (req: NextRequest) => {
       firstTime: rest.firstTime,
       link: rest.link,
       nerdAt: rest.nerdAt,
+      coverImage: rest.coverImage,
     };
 
     const transaction = country
