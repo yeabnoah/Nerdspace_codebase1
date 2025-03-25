@@ -157,7 +157,7 @@ const RenderMyPost = () => {
           inView && hasNextPage && fetchNextPage();
 
           return (
-            <div className="my-5 rounded-xl border p-4" key={index}>
+            <div className="my-5 rounded-xl border dark:border-gray-500/5 p-4" key={index}>
               <div className="mr-2 flex justify-between pb-2">
                 <div className="flex items-center gap-5">
                   <Image
@@ -398,7 +398,7 @@ const RenderMyPost = () => {
       <div ref={ref}>
         {isFetchingNextPage && (
           <div className="">
-            <Card className="my-5 rounded-xl border bg-transparent p-4 shadow-none">
+            <Card className="my-5 rounded-xl border dark:border-gray-500/5 bg-transparent p-4 shadow-none">
               <div className="flex items-center gap-5">
                 <Skeleton className="size-10 rounded-full" />
                 <div>

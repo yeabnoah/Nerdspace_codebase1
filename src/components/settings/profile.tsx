@@ -31,7 +31,7 @@ export default function ProfilePage() {
       <div className="mx-auto flex max-w-7xl flex-1 flex-row items-start justify-center">
         {/* <LeftNavbar /> */}
         <div className="mx-auto min-h-screen w-[90%] px-4 sm:px-6 lg:px-8">
-          <div className="relative h-40 overflow-hidden rounded-xl border">
+          <div className="relative h-40 overflow-hidden rounded-xl border dark:border-gray-500/5">
             <Skeleton className="h-full w-full" />
           </div>
           <div className="relative px-6 pb-6">
@@ -58,7 +58,7 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto min-h-screen w-full px-4 md:w-[70%] md:px-8">
-      <div className="relative h-40 overflow-hidden rounded-xl border bg-transparent">
+      <div className="relative h-40 overflow-hidden rounded-xl border dark:border-gray-500/5 bg-transparent">
         <Image
           src={user.coverImage || "/obsession.jpg"}
           className="w-full bg-cover bg-center"
