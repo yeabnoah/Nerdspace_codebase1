@@ -1,21 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import UserInterface from "@/interface/auth/user.interface";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { authClient } from "@/lib/auth-client";
+import toast from "react-hot-toast";
+import UserListSkeleton from "@/components/UserListSkeleton";
 
 interface UserListProps {
-  users: UserInterface[];
-  nextCursor: string | null;
   handleFollow: (userId: string) => void;
-  setCursor: (cursor: string | null) => void;
 }
 
-const UserList: React.FC<UserListProps> = ({
-  users,
-  nextCursor,
-  handleFollow,
-  setCursor,
-}) => {
+const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
+  const [cursor, setCursor] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const session = authClient.useSession();
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["users", cursor],
+    queryFn: async () => {
+      const response = await axios.get(
+        `/api/user/follow/recommendation?curosr=${cursor}`,
+      );
+      return response.data;
+    },
+  });
+
+  const followMutation = useMutation({
+    mutationKey: ["follow-user"],
+    mutationFn: async (userId: string) => {
+      const response = await axios.post(`/api/user/follow?userId=${userId}`);
+      return response.data.message;
+    },
+    onSuccess: (message) => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.success(message);
+    },
+  });
+
+  const handleFollowClick = (userId: string) => {
+    if (session.data?.user.id === userId) {
+      toast.error("You cannot follow yourself");
+      return;
+    }
+    followMutation.mutate(userId);
+  };
+
+  if (isLoading) return <UserListSkeleton />;
+  if (isError) return <p>Error loading users</p>;
+
+  const users: UserInterface[] = data?.data || [];
+  const nextCursor: string | null = data?.nextCursor || null;
+
   return (
     <div className="container mx-auto my-5 max-w-4xl">
       <h1 className="mb-5 font-instrument text-3xl">Who to Follow</h1>
@@ -45,7 +83,7 @@ const UserList: React.FC<UserListProps> = ({
                 <Button
                   size="sm"
                   className="border bg-transparent text-blue-500 shadow-none hover:bg-blue-50"
-                  onClick={() => handleFollow(u.id)}
+                  onClick={() => handleFollowClick(u.id)}
                 >
                   Follow
                 </Button>
