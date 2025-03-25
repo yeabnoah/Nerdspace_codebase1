@@ -55,7 +55,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto min-h-screen w-[70%] px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto min-h-screen w-full px-4 md:w-[70%] md:px-8">
       <div className="relative h-40 overflow-hidden rounded-xl border bg-transparent">
         <Image
           src={user.coverImage || "/obsession.jpg"}
@@ -75,7 +75,7 @@ export default function ProfilePage() {
 
       {/* Profile Info Section */}
       <div className="relative px-6 pb-6">
-        <div className="-mt-16 flex flex-col">
+        <div className="-mt-16 flex flex-col items-start">
           <div className="relative">
             <div className="size-24 overflow-hidden rounded-full border">
               <Image
@@ -88,20 +88,26 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <h1 className="mt-2 text-lg">{user.visualName || user.name}</h1>
-          <p className="text-muted-foreground">Nerd@{user.nerdAt}</p>
-          <p className="mb-4 text-sm text-muted-foreground">{user.bio}</p>
+          <h1 className="mt-2 text-center text-lg md:text-left">
+            {user.visualName || user.name}
+          </h1>
+          <p className="text-center text-muted-foreground md:text-left">
+            Nerd@{user.nerdAt}
+          </p>
+          <p className="mb-4 text-center text-sm text-muted-foreground md:text-left">
+            {user.bio}
+          </p>
         </div>
       </div>
 
       {/* Content Tabs */}
-      <div className="px-6 pb-20">
+      <div className="px-4 pb-20 md:px-6">
         <Tabs
           defaultValue="posts"
           className="w-full"
           onValueChange={setActiveTab}
         >
-          <TabsList className="mb-2 flex justify-start bg-transparent">
+          <TabsList className="mb-2 flex justify-start overflow-x-auto bg-transparent">
             <TabsTrigger
               value="posts"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
