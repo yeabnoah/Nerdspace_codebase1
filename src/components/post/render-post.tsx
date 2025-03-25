@@ -600,7 +600,7 @@ const RenderPost = () => {
                           </div>
                         ))}
                       {each.media.length >= 3 && (
-                        <div className="grid h-[36vh] w-[36vw] gap-2 md:grid-cols-[auto_120px]">
+                        <div className="grid h-[36vh] w-[82vw]  md:w-[36vw] gap-2 grid-cols-[auto_120px]">
                           {/* First column: Main Image (Takes all available space) */}
                           <div
                             className="relative h-full w-full"
