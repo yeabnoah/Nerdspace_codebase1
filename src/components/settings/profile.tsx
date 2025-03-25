@@ -19,10 +19,12 @@ import CollectionsTab from "./tabs/CollectionsTab";
 import BookmarksTab from "./tabs/BookmarksTab";
 import PrivateTab from "./tabs/PrivateTab";
 import { Skeleton } from "../ui/skeleton";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("posts");
   const { user, isloading } = useUserStore();
+  const router = useRouter()
 
   if (isloading) {
     return (
@@ -65,6 +67,9 @@ export default function ProfilePage() {
           alt="test"
         />
         <Button
+        onClick={()=>{
+          router.push('/settings')
+        }}
           variant="ghost"
           size="icon"
           className="absolute right-4 top-4 bg-background/20 text-white backdrop-blur-sm hover:bg-background/30"
@@ -74,10 +79,10 @@ export default function ProfilePage() {
       </div>
 
       {/* Profile Info Section */}
-      <div className="relative px-6 pb-6">
-        <div className="-mt-16 flex flex-col items-start">
+      <div className="relative mx-4 md:px-6 pb-6">
+        <div className="md:-mt-16 -mt-12 flex flex-col items-start">
           <div className="relative">
-            <div className="size-24 overflow-hidden rounded-full border">
+            <div className="md:size-24 size-20 overflow-hidden rounded-full border">
               <Image
                 src={user.image || "/user.jpg?height=128&width=128"}
                 alt="Emma Smith"
@@ -88,10 +93,10 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <h1 className="mt-2 text-center text-lg md:text-left">
+          <h1 className="mt-2 text-center md:text-lg md:text-left">
             {user.visualName || user.name}
           </h1>
-          <p className="text-center text-muted-foreground md:text-left">
+          <p className="text-center text-sm text-muted-foreground md:text-left">
             Nerd@{user.nerdAt}
           </p>
           <p className="mb-4 text-center text-sm text-muted-foreground md:text-left">
@@ -101,7 +106,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Content Tabs */}
-      <div className="px-4 pb-20 md:px-6">
+      <div className="pb-20 md:px-6">
         <Tabs
           defaultValue="posts"
           className="w-full"
