@@ -9,6 +9,7 @@ import axios from "axios";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import FollowListSkeleton from "./FollowListSkeleton";
 
 const FollowList = () => {
   const [cursor, setCursor] = useState<string | null>(null);
@@ -47,7 +48,7 @@ const FollowList = () => {
     followMutation.mutate(userId);
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <FollowListSkeleton />;
   if (isError) return <p>Error loading users</p>;
 
   const users: UserInterface[] = data?.data || [];

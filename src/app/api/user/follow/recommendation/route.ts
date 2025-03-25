@@ -22,6 +22,9 @@ export const GET = async (req: NextRequest) => {
 
     const users = await prisma.user.findMany({
       where: {
+        id: {
+          not: session.user.id,
+        },
         NOT: {
           following: {
             some: {
