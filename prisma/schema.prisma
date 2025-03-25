@@ -19,30 +19,37 @@ model test {
 }
 
 model User {
-  id            String        @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
-  nerdAt        String?
-  posts         Post[]
-  bio           String?
-  countryId     String?
-  country       Country?
-  link          String?
-  visualName    String?
-  firstTime     Boolean       @default(true)
-  PostComment   PostComment[]
-  likes         Like[]
-  bookmarks     Bookmark[]
-  reports       Report[]
-  coverImage    String?
-  followers     Follows[]     @relation("UserFollowers")
-  following     Follows[]     @relation("UserFollowing")
+  id                   String                 @id
+  name                 String
+  email                String
+  emailVerified        Boolean
+  image                String?
+  createdAt            DateTime
+  updatedAt            DateTime
+  sessions             Session[]
+  accounts             Account[]
+  nerdAt               String?
+  posts                Post[]
+  bio                  String?
+  countryId            String?
+  country              Country?
+  link                 String?
+  visualName           String?
+  firstTime            Boolean                @default(true)
+  PostComment          PostComment[]
+  likes                Like[]
+  bookmarks            Bookmark[]
+  reports              Report[]
+  coverImage           String?
+  followers            Follows[]              @relation("UserFollowers")
+  following            Follows[]              @relation("UserFollowing")
+  Project              Project[]
+  ProjectUpdateLike    ProjectUpdateLike[]
+  ProjectUpdateComment ProjectUpdateComment[]
+  ProjectFollow        ProjectFollow[]
+  ProjectStar          ProjectStar[]
+  ProjectRating        ProjectRating[]
+  ProjectReview        ProjectReview[]
 
   @@unique([email])
   @@map("user")
@@ -207,6 +214,103 @@ model Media {
   createdAt DateTime  @default(now())
 }
 
+model Project {
+  id          String          @id @default(uuid())
+  name        String
+  description String
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status      projectStatus   @default(ONGOING)
+  category    String
+  access      PostAccess      @default(private)
+  updates     ProjectUpdate[]
+  createdAt   DateTime        @default(now())
+  stars       ProjectStar[]
+  ratings     ProjectRating[]
+  reviews     ProjectReview[]
+  followers   ProjectFollow[]
+}
+
+model ProjectUpdate {
+  id        String                 @id @default(uuid())
+  title     String
+  image     String?
+  content   String
+  projectId String
+  project   Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime               @default(now())
+  likes     ProjectUpdateLike[]
+  comments  ProjectUpdateComment[]
+}
+
+model ProjectStar {
+  id        String  @id @default(uuid())
+  userId    String
+  projectId String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+model ProjectRating {
+  id        String  @id @default(uuid())
+  userId    String
+  projectId String
+  rating    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+model ProjectReview {
+  id        String   @id @default(uuid())
+  userId    String
+  projectId String
+  content   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProjectUpdateLike {
+  id       String        @id @default(uuid())
+  userId   String
+  updateId String
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  update   ProjectUpdate @relation(fields: [updateId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, updateId])
+}
+
+model ProjectUpdateComment {
+  id        String        @id @default(uuid())
+  userId    String
+  updateId  String
+  content   String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  update    ProjectUpdate @relation(fields: [updateId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model ProjectFollow {
+  id        String  @id @default(uuid())
+  userId    String
+  projectId String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+enum ProjectAccessStatus {
+  public
+  private
+}
+
 enum ReportStatus {
   PENDING
   REVIEWED
@@ -219,4 +323,11 @@ enum MediaType {
   IMAGE
   VIDEO
   GIF
+}
+
+enum projectStatus {
+  ONGOING
+  COMPLETED
+  CANCELLED
+  PAUSED
 }
