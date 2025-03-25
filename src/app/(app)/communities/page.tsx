@@ -53,7 +53,7 @@ export default function CommunityCards() {
     <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start justify-center bg-card">
       <LeftNavbar />
       <div className="min-h-screen   p-5">
-        <h1 className="mb-8 text-3xl font-bold tracking-tight">Communities</h1>
+        <h1 className="mb-8 text-3xl font-instrument tracking-tight">Communities</h1>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {communities.map((community, index) => (
             <Card

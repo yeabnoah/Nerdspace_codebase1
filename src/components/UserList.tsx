@@ -57,7 +57,7 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
   return (
     <div className="container mx-auto my-5 max-w-4xl px-4 sm:px-6 lg:px-8">
       <h1 className="mb-5 text-center font-instrument text-3xl sm:text-left">
-        Who to Follow
+        Who to Follow 
       </h1>
       <div className="rounded-lg">
         <div className="space-y-4">
