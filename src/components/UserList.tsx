@@ -83,7 +83,7 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
                   </div>
                 </div>
                 <Button
-                  variant={"outlined"}
+                  variant={"outline"}
                   className="mt-2 border bg-transparent shadow-none sm:mt-0"
                   onClick={() => handleFollowClick(u.id)}
                 >
