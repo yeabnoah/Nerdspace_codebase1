@@ -115,7 +115,7 @@ const PostInput = () => {
           </div>
         </DialogTrigger>
         <DialogContent className="dark:bg-textAlternative">
-          <DialogTitle>Create a new post</DialogTitle>
+          <DialogTitle className=" font-instrument text-3xl font-thin">Create a new post</DialogTitle>
           <DialogDescription>
             Share your thoughts or upload an image.
           </DialogDescription>
