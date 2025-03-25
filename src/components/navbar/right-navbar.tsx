@@ -16,9 +16,8 @@ const RightNavbar = async () => {
 
   return (
     <div className="sticky left-0 top-20 md:pr-5 lg:pr-0">
-      <FollowList users={users} />
+      <FollowList />
       <CommunitiesList />
-      {/* <TrendingTopics /> */}
     </div>
   );
 };
