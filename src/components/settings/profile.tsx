@@ -107,7 +107,7 @@ export default function ProfilePage() {
           className="w-full"
           onValueChange={setActiveTab}
         >
-          <TabsList className="mb-2 flex justify-start overflow-x-auto bg-transparent">
+          <TabsList className="scrollbar-hide mb-2 flex justify-start overflow-x-auto bg-transparent">
             <TabsTrigger
               value="posts"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
