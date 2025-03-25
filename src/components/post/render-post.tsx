@@ -734,7 +734,7 @@ const RenderPost = () => {
                       onClick={handleCommentSubmit}
                       className="border bg-transparent shadow-none hover:bg-transparent focus:outline-none focus:ring-0"
                     >
-                      <SendIcon className="text-textAlternative dark:text-white" />
+                      <SendIcon className="text-card-foreground dark:text-white" />
                     </Button>
                   </div>
                   {commentLoading && <CommentSkeleton />}

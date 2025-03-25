@@ -92,13 +92,13 @@ export function LoginForm({
     <form
       onSubmit={handleSubmit(onSubmit)}
       className={cn(
-        "mx-auto flex max-w-sm flex-col gap-3 text-textAlternative",
+        "mx-auto flex max-w-sm flex-col gap-3 text-card-foreground",
         className,
       )}
       {...props}
     >
       <div className="mb-3 flex flex-col items-center gap-2 text-center">
-        <h1 className="font-playfair text-3xl text-textAlternative ">
+        <h1 className="font-playfair text-3xl text-card-foreground ">
           <span className="mx-1 font-itcThinItalic text-4xl">Welcome</span> Back
         </h1>
       </div>

@@ -16,25 +16,25 @@ export default function SettingsScreen() {
     {
       id: "profile",
       label: "Profile",
-      icon: <IdCard className="h-5 w-5 text-textAlternative dark:text-white" />,
+      icon: <IdCard className="h-5 w-5 text-card-foreground dark:text-white" />,
       component: <ProfileSettings />,
     },
     {
       id: "account",
       label: "Account",
-      icon: <User2 className="h-5 w-5 text-textAlternative dark:text-white" />,
+      icon: <User2 className="h-5 w-5 text-card-foreground dark:text-white" />,
       component: <AccountSetting />,
     },
     {
       id: "Therms & conditions",
       label: "Therms & conditions",
-      icon: <File className="h-5 w-5 text-textAlternative dark:text-white" />,
+      icon: <File className="h-5 w-5 text-card-foreground dark:text-white" />,
       component: <ThermsConditions />,
     },
     {
       id: "notification",
       label: "Notification",
-      icon: <Bell className="h-5 w-5 text-textAlternative dark:text-white" />,
+      icon: <Bell className="h-5 w-5 text-card-foreground dark:text-white" />,
       component: <NotificationSetting />,
     },
   ];
@@ -44,7 +44,7 @@ export default function SettingsScreen() {
       {/* Left sidebar */}
       <div className="flex w-full md:w-16 justify-evenly flex-row border-r dark:border-zinc-800 md:min-w-60 md:flex-col">
         <div className="hidden items-center justify-between border-b p-4 dark:border-zinc-800 md:flex">
-          <h1 className="font-instrument text-2xl text-textAlternative dark:text-white">
+          <h1 className="font-instrument text-2xl text-card-foreground dark:text-white">
             Settings
           </h1>
           <button className="rounded-full p-1 hover:bg-zinc-800">
@@ -59,12 +59,12 @@ export default function SettingsScreen() {
               className={cn(
                 "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-zinc-800/50",
                 activeTab === tab.id &&
-                  "bg-textAlternative/20 text-textAlternative dark:bg-zinc-800",
+                  "bg-textAlternative/20 text-card-foreground dark:bg-zinc-800",
               )}
               onClick={() => setActiveTab(tab.id)}
             >
               {tab.icon}
-              <span className="hidden text-textAlternative dark:text-white lg:inline">
+              <span className="hidden text-card-foreground dark:text-white lg:inline">
                 {tab.label}
               </span>
             </button>

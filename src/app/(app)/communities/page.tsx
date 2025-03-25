@@ -50,7 +50,7 @@ export default function CommunityCards() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start justify-center">
+    <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start justify-center bg-card">
       <LeftNavbar />
       <div className="min-h-screen   p-5">
         <h1 className="mb-8 text-3xl font-bold tracking-tight">Communities</h1>
