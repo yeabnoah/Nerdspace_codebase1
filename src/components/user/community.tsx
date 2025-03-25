@@ -26,7 +26,7 @@ const communities = [
 export default function CommunitiesList() {
   return (
     <Card className="hidden min-h-32 rounded-2xl border border-gray-100 shadow-none dark:border-gray-500/5 bg-transparent pt-4  md:block">
-      <h2 className="mb-3 px-6 font-instrument italic text-2xl text-textAlternative dark:text-white">
+      <h2 className="mb-3 px-6 font-instrument italic text-2xl text-card-foreground dark:text-white">
         Communities to join
       </h2>
       <CardContent className="flex flex-col">

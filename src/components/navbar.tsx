@@ -56,12 +56,12 @@ const Navbar = () => {
   };
 
   return (
-    <div className="sticky top-0 mx-auto z-10 flex max-w-6xl flex-row items-center justify-between bg-white px-2 py-4 dark:bg-textAlternative md:px-6">
+    <div className="sticky top-0 mx-auto z-10 flex max-w-6xl flex-row items-center justify-between bg-white px-2 py-4 dark:bg-card md:px-6">
       <div
         onClick={() => {
           router.push("/");
         }}
-        className="cursor-pointer font-instrument text-3xl text-textAlternative transition-opacity hover:opacity-80 dark:text-white"
+        className="cursor-pointer font-instrument text-3xl text-card-foreground transition-opacity hover:opacity-80 dark:text-white"
       >
         NerdSpace
       </div>

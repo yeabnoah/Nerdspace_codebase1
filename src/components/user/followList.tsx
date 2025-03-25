@@ -86,7 +86,7 @@ const FollowList = () => {
                 </div>
                 <Button
                   size="sm"
-                  className="border bg-transparent text-textAlternative shadow-none hover:bg-transparent dark:text-white"
+                  className="border bg-transparent text-card-foreground shadow-none hover:bg-transparent dark:text-white"
                   onClick={() => handleFollow(u.id)}
                 >
                   Follow

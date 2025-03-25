@@ -107,7 +107,7 @@ const PostInput = () => {
             {/* <PostFileUploader onFilesSelected={() => {}} /> */}
             <Button
               onClick={() => {}}
-              className="my-2 border bg-transparent text-textAlternative shadow-none hover:bg-transparent dark:text-white"
+              className="my-2 border bg-transparent text-card-foreground shadow-none hover:bg-transparent dark:text-white"
               disabled
             >
               Post

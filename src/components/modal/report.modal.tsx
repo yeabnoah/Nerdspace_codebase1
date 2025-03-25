@@ -57,7 +57,7 @@ const ReportModal = ({
                 key={r.value}
                 onClick={() => setReason(r.value)}
                 className={cn(
-                  "w-full hover:text-white hover:dark:bg-primary/90 hover:dark:text-textAlternative",
+                  "w-full hover:text-white hover:dark:bg-primary/90 hover:dark:text-card-foreground",
                   reason === r.value
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary text-secondary-foreground",

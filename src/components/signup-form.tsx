@@ -95,7 +95,7 @@ export function SignUpForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={cn("mx-auto flex max-w-sm flex-col gap-6 text-textAlternative", className)}
+      className={cn("mx-auto flex max-w-sm flex-col gap-6 text-card-foreground", className)}
       {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">

@@ -19,8 +19,8 @@ export default {
         inter: ["var(--font-inter)"],
       },
       colors: {
-        // textAlternative: "hsl(var(--background))",
-        textAlternative: "#201e1d",
+        textAlternative: "hsl(var(--card))",
+        // textAlternative: "#201e1d",
         // main: "#7864f6",
         main: "hsl(var(--foreground))",
         labelColor: "#555555",
