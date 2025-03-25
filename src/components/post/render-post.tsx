@@ -156,15 +156,16 @@ const RenderPost = () => {
   });
 
   const followMutation = useMutation({
-    mutationKey: ["follow-user", selectedPost.user.id],
+    mutationKey: ["follow-user", selectedPost?.user.id],
     mutationFn: async () => {
       const response = await axios.post(
-        `/api/user/follow?userId=${selectedPost.user.id}`,
+        `/api/user/follow?userId=${selectedPost?.user.id}`,
       );
       return response.data.message;
     },
     onSuccess: (message) => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success(message);
     },
   });
@@ -366,6 +367,7 @@ const RenderPost = () => {
     }
     await setSelectedPost(post);
     await followMutation.mutate();
+    queryClient.invalidateQueries({ queryKey: ["posts"] });
   };
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
