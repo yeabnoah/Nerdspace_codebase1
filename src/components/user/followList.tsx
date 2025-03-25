@@ -8,10 +8,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import { queryClient } from "@/providers/tanstack-query-provider";
 
 const FollowList = () => {
   const [cursor, setCursor] = useState<string | null>(null);
-  const queryClient = useQueryClient();
   const session = authClient.useSession();
 
   const { data, isLoading, isError } = useQuery({
@@ -31,7 +31,7 @@ const FollowList = () => {
       return response.data.message;
     },
     onSuccess: (message) => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["follow-user"] });
       toast.success(message);
     },
   });
