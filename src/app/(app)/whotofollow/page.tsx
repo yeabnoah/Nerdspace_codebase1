@@ -19,7 +19,6 @@ const Whotofollow = () => {
       toast.error("You cannot follow yourself");
       return;
     }
-    // ...existing code...
   };
 
   return (
