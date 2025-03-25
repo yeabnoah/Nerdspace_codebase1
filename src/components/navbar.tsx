@@ -61,7 +61,7 @@ const Navbar = () => {
         onClick={() => {
           router.push("/");
         }}
-        className="cursor-pointer font-instrument text-3xl text-labelColor transition-opacity hover:opacity-80 dark:text-white"
+        className="cursor-pointer font-instrument text-3xl text-textAlternative transition-opacity hover:opacity-80 dark:text-white"
       >
         NerdSpace
       </div>

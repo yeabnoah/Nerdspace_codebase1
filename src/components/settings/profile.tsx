@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("posts");
   const { user, isloading } = useUserStore();
-  const router = useRouter()
+  const router = useRouter();
 
   if (isloading) {
     return (
@@ -67,9 +67,9 @@ export default function ProfilePage() {
           alt="test"
         />
         <Button
-        onClick={()=>{
-          router.push('/settings')
-        }}
+          onClick={() => {
+            router.push("/settings");
+          }}
           variant="ghost"
           size="icon"
           className="absolute right-4 top-4 bg-background/20 text-white backdrop-blur-sm hover:bg-background/30"
@@ -79,10 +79,10 @@ export default function ProfilePage() {
       </div>
 
       {/* Profile Info Section */}
-      <div className="relative mx-4 md:px-6 pb-6">
-        <div className="md:-mt-16 -mt-12 flex flex-col items-start">
+      <div className="relative mx-4 pb-6 md:px-6">
+        <div className="-mt-12 flex flex-col items-start md:-mt-16">
           <div className="relative">
-            <div className="md:size-24 size-20 overflow-hidden rounded-full border">
+            <div className="size-20 overflow-hidden rounded-full border md:size-24">
               <Image
                 src={user.image || "/user.jpg?height=128&width=128"}
                 alt="Emma Smith"
@@ -93,7 +93,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <h1 className="mt-2 text-center md:text-lg md:text-left">
+          <h1 className="mt-2 text-center md:text-left md:text-lg">
             {user.visualName || user.name}
           </h1>
           <p className="text-center text-sm text-muted-foreground md:text-left">
@@ -118,35 +118,35 @@ export default function ProfilePage() {
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Grid3X3 className="mr-2 h-4 w-4" />
-              Posts
+              <span className="hidden sm:inline">Posts</span>
             </TabsTrigger>
             <TabsTrigger
               value="projects"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Hammer className="mr-2 h-4 w-4" />
-              Projects
+              <span className="hidden sm:inline">Projects</span>
             </TabsTrigger>
             <TabsTrigger
               value="collections"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <UsersRound className="mr-2 h-4 w-4" />
-              Community
+              <span className="hidden sm:inline">Community</span>
             </TabsTrigger>
             <TabsTrigger
               value="bookmarks"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Bookmark className="mr-2 h-4 w-4" />
-              Bookmarks
+              <span className="hidden sm:inline">Bookmarks</span>
             </TabsTrigger>
             <TabsTrigger
               value="private"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Lock className="mr-2 h-4 w-4" />
-              Private
+              <span className="hidden sm:inline">Private</span>
             </TabsTrigger>
           </TabsList>
 
