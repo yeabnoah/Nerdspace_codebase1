@@ -8,11 +8,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const FollowList = () => {
   const [cursor, setCursor] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const session = authClient.useSession();
+  const router = useRouter();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["users", cursor],
@@ -54,7 +56,14 @@ const FollowList = () => {
   return (
     <div className="my-5 hidden gap-2 rounded-xl border border-gray-100 px-4 py-5 shadow-none dark:border-gray-500/5 md:flex md:flex-col lg:w-[19vw]">
       <div>
-        <h1 className="font-instrument text-2xl italic">Who to Follow</h1>
+        <h1
+          className="font-instrument text-2xl italic hover:cursor-pointer hover:underline"
+          onClick={() => {
+            router.push("/whotofollow");
+          }}
+        >
+          Who to Follow
+        </h1>
         <div className="space-y-3">
           {users.length > 0 ? (
             users.map((u) => (
