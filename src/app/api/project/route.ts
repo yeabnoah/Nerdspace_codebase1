@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import {
   ProjectInterface,
   projectSchema,
+  projectSchemaPtach,
 } from "@/validation/project.validation";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -10,7 +11,7 @@ export const POST = async (request: NextRequest) => {
   try {
     const session = await getUserSession();
     if (!session) {
-      return Response.json(
+      return NextResponse.json(
         {
           message: "unauthorized | not logged in",
         },
@@ -121,7 +122,7 @@ export const PATCH = async (request: NextRequest) => {
     }
 
     const body: ProjectInterface = await request.json();
-    const validation = projectSchema.safeParse(body);
+    const validation = projectSchemaPtach.safeParse(body);
 
     if (validation.error || !validation.success) {
       return NextResponse.json(
@@ -141,6 +142,8 @@ export const PATCH = async (request: NextRequest) => {
         name: body.name,
         description: body.description,
         category: body.category,
+        access: body.access,
+        status: body.status,
       },
     });
 
