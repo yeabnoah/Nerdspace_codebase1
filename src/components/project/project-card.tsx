@@ -34,13 +34,13 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const formattedStars = project._count.stars.toLocaleString();
 
   return (
-    <Card className="flex flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition-shadow hover:shadow-md">
-      <CardHeader className="relative h-32 w-full flex-shrink-0 sm:h-36">
+    <Card className="flex flex-col overflow-hidden my-2 rounded-xl border bg-card shadow-sm transition-shadow hover:shadow-md">
+      <CardHeader className="relative h-32 w-full flex-shrink-0 sm:h-12">
         <Image
           src={project.image || "/placeholder.svg"}
           alt={project.name}
           fill
-          className="object-cover"
+          className="object-cover h-12"
         />
       </CardHeader>
 
@@ -48,8 +48,21 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         <div className="mb-1 text-sm text-muted-foreground">
           {primaryCategory}
         </div>
+        
         <h3 className="mb-1 text-lg font-semibold leading-tight">
           {project.name}
+          <Badge
+          variant="outline"
+          className={`ml-auto ${
+            project.status.toLowerCase() === "completed"
+              ? "border-green-200 text-green-700"
+              : project.status.toLowerCase() === "paused"
+                ? "border-amber-200 text-amber-700"
+                : "border-blue-200 text-blue-700"
+          }`}
+        >
+          {project.status}
+        </Badge>
         </h3>
         <div className="mb-2 flex items-center text-sm text-muted-foreground">
           <MapPin className="mr-1 h-3.5 w-3.5" />
@@ -82,18 +95,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </span>
         </div>
 
-        <Badge
-          variant="outline"
-          className={`ml-auto ${
-            project.status.toLowerCase() === "completed"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : project.status.toLowerCase() === "paused"
-                ? "border-amber-200 bg-amber-50 text-amber-700"
-                : "border-blue-200 bg-blue-50 text-blue-700"
-          }`}
-        >
-          {project.status}
-        </Badge>
+        
       </CardFooter>
     </Card>
   );
