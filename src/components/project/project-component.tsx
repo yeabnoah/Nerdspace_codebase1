@@ -145,7 +145,7 @@ const mockProjects = [
     status: "PAUSED",
     category: ["Gaming", "VR", "3D Modeling"],
     createdAt: new Date("2023-03-12"),
-    image: "adawa.webp?q=80&w=1000",
+    image: "?q=80&w=1000",
     user: {
       name: "Olivia Martinez",
       image: "/placeholder.svg?height=40&width=40",
@@ -275,17 +275,17 @@ export default function ProjectsPage() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search projects..."
-              className="rounded-lg border border-white/5 bg-card-foreground/5 pl-8 backdrop-blur-2xl"
+              className="pl-8"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-40 bg-white/5 backdrop-blur-3xl">
+            <SelectTrigger className="w-full sm:w-40">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent className=" bg-white/5 backdrop-blur-3xl">
+            <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="ongoing">Ongoing</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
@@ -296,14 +296,14 @@ export default function ProjectsPage() {
 
           <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
             <DialogTrigger asChild>
-              <Button className="w-full font-normal px-2 hover:bg-white/5 sm:w-auto bg-white/5 text-white backdrop-blur-3xl">
-                <Plus className="h-4 w-4" />
+              <Button className="w-full sm:w-auto">
+                <Plus className="mr-2 h-4 w-4" />
                 Create Project
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] border-white/5 bg-white/5 backdrop-blur-3xl overflow-y-auto sm:max-w-[550px]">
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[550px]">
               <DialogHeader>
-                <DialogTitle className=" text-white font-instrument text-2xl font-normal">Create New Project</DialogTitle>
+                <DialogTitle>Create New Project</DialogTitle>
                 <DialogDescription>
                   Fill in the details to create a new project. Click save when
                   you're done.
@@ -312,7 +312,7 @@ export default function ProjectsPage() {
 
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="name" className=" text-white">Project Name</Label>
+                  <Label htmlFor="name">Project Name</Label>
                   <Input
                     id="name"
                     value={newProject.name}
@@ -341,44 +341,6 @@ export default function ProjectsPage() {
 
                 <div className="grid gap-2">
                   <Label>Project Image</Label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {sampleImages.map((image, index) => (
-                      <div
-                        key={index}
-                        className={`relative aspect-video cursor-pointer overflow-hidden rounded-md transition-all ${
-                          selectedImage === image
-                            ? "ring-2 ring-primary ring-offset-2"
-                            : "hover:opacity-80"
-                        }`}
-                        onClick={() => setSelectedImage(image)}
-                      >
-                        <img
-                          src={image || "/placeholder.svg"}
-                          alt={`Sample ${index + 1}`}
-                          className="h-full w-full object-cover"
-                        />
-                        {selectedImage === image && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-primary/20">
-                            <div className="rounded-full bg-primary p-1 text-primary-foreground">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                              </svg>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
                   <div className="mt-2 flex items-center justify-center">
                     <div className="relative h-10 w-full">
                       <Button
@@ -441,58 +403,6 @@ export default function ProjectsPage() {
                       <SelectItem value="private">Private</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between">
-                    <Label>Categories</Label>
-                    {selectedCategories.length > 0 && (
-                      <span className="text-xs text-muted-foreground">
-                        {selectedCategories.length} selected
-                      </span>
-                    )}
-                  </div>
-
-                  {selectedCategories.length > 0 && (
-                    <div className="mb-2 flex flex-wrap gap-1">
-                      {selectedCategories.map((category) => (
-                        <Badge
-                          key={category}
-                          variant="secondary"
-                          className="gap-1 pr-0.5"
-                        >
-                          {category}
-                          <button
-                            onClick={() => toggleCategory(category)}
-                            className="ml-1 rounded-full p-0.5 hover:bg-muted"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="mt-1 grid max-h-40 grid-cols-2 gap-2 overflow-y-auto pr-1">
-                    {categoryOptions.map((category) => (
-                      <div
-                        key={category}
-                        className="flex items-center space-x-2"
-                      >
-                        <Checkbox
-                          id={`category-${category}`}
-                          checked={selectedCategories.includes(category)}
-                          onCheckedChange={() => toggleCategory(category)}
-                        />
-                        <label
-                          htmlFor={`category-${category}`}
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {category}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
 
