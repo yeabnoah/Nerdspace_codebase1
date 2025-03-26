@@ -6,7 +6,13 @@ import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { ArrowBigRight, LogOut, Search, Settings, UserIcon } from "lucide-react";
+import {
+  ArrowBigRight,
+  LogOut,
+  Search,
+  Settings,
+  UserIcon,
+} from "lucide-react";
 import { ModeToggle } from "./theme-toggle";
 import {
   DropdownMenu,
@@ -56,7 +62,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="sticky top-0 mx-auto z-10 flex max-w-6xl flex-row items-center justify-between bg-white px-2 py-4 dark:bg-card md:px-6">
+    <div className="sticky top-0 z-50 mx-auto flex max-w-6xl flex-row items-center justify-between bg-white px-2 py-4 dark:bg-card md:px-6">
       <div
         onClick={() => {
           router.push("/");
