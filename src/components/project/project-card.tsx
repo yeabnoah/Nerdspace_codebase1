@@ -14,32 +14,52 @@ export default function ProjectCard(project: ProjectInterface) {
 
   // Truncate description to 100 characters
   const truncatedDescription =
-    project.description.length > 100 ? `${project.description.substring(0, 100)}...` : project.description;
+    project.description.length > 100
+      ? `${project.description.substring(0, 100)}...`
+      : project.description;
 
   return (
     <Card
-      className="my-2 flex flex-col overflow-hidden rounded-2xl border shadow-lg hover:cursor-pointer"
+      className="my-2 flex flex-col overflow-hidden rounded-lg border shadow-none hover:cursor-pointer dark:border-gray-500/5"
       onClick={() => {
         router.push(`/project/${project.id}`);
       }}
     >
-      <div className="relative w-full h-48 overflow-hidden">
+      <div className="relative h-20 w-full overflow-hidden bg-black">
         <Image
           src={project.image || "/placeholder.svg"}
           alt={project.name}
           fill
-          className="object-cover transition-transform hover:scale-105"
+          className="object-cover opacity-50 transition-transform hover:scale-105 dark:opacity-10"
         />
-        <div className="absolute top-3 left-3">
-          <Badge variant="outline" className="bg-primary/20 text-primary-foreground border-primary/30">
+        <div className="absolute left-3 top-3 flex w-[90%] flex-row items-center justify-between">
+          <Badge
+            variant="outline"
+            className="border-white/15 text-white dark:border-primary/5 dark:text-white"
+          >
             {project.status}
           </Badge>
+
+          <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1">
+              <span className="text-base font-medium text-yellow-500">
+                {project._count.stars}
+              </span>
+              <Star className="h-4 w-4 text-yellow-500" />
+            </div>
+            <div className="ml-2 flex items-center gap-1">
+              <span className="text-base font-medium text-red-500">
+                {project._count.followers}
+              </span>
+              <Heart className="h-4 w-4 text-red-500" />
+            </div>
+          </div>
         </div>
       </div>
 
       <CardContent className="p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="relative w-6 h-6 rounded-full overflow-hidden">
+        <div className="mb-2 flex items-center gap-2">
+          <div className="relative h-6 w-6 overflow-hidden rounded-full">
             <Image
               src={project.user.image || "/placeholder.svg"}
               alt="test"
@@ -48,16 +68,20 @@ export default function ProjectCard(project: ProjectInterface) {
             />
           </div>
           <span className="text-sm font-medium">{project.user.visualName}</span>
-          <div className="flex items-center text-muted-foreground text-xs ml-auto">
-            <CalendarIcon className="w-3 h-3 mr-1" />
+          <div className="ml-auto flex items-center text-xs text-muted-foreground">
+            <CalendarIcon className="mr-1 h-3 w-3" />
             <span>{timeAgo}</span>
           </div>
         </div>
 
-        <h3 className="font-bold text-lg mb-1 line-clamp-1">{project.name}</h3>
-        <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{truncatedDescription}</p>
+        <h3 className="mb-1 line-clamp-1 text-lg font-medium">
+          {project.name}
+        </h3>
+        <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
+          {truncatedDescription}
+        </p>
 
-        <div className="flex flex-wrap gap-1 mb-2">
+        <div className="mb-2 flex flex-wrap gap-1">
           {project.category.slice(0, 3).map((cat) => (
             <Badge key={cat} variant="secondary" className="text-xs">
               {cat}
@@ -70,19 +94,6 @@ export default function ProjectCard(project: ProjectInterface) {
           )}
         </div>
       </CardContent>
-
-      <CardFooter className="p-4 pt-0 flex justify-between border-t">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-yellow-500" />
-            <span className="text-sm">{project._count.stars}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Heart className="w-4 h-4 text-red-500" />
-            <span className="text-sm">{project._count.followers}</span>
-          </div>
-        </div>
-      </CardFooter>
     </Card>
   );
 }
