@@ -44,18 +44,20 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-8">
-      {/* Hero Section */}
-      <div className="relative mb-8 h-[300px] w-full overflow-hidden rounded-xl md:h-[400px]">
+    <div className="container mx-auto max-w-6xl px-4">
+      <div className="relative mb-8 h-[300px] w-full overflow-hidden rounded-xl md:h-[300px]">
         <Image
           src={project.image || "/placeholder.svg"}
           alt={project.name}
           fill
+          quality={100}
           className="object-cover"
-          priority
+          priority={true}
         />
         <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 to-transparent p-6">
-          <div className="mb-2 flex items-center gap-2">
+          {/* Bottom Gradient Shadow */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent"></div>
+          <div className="relative z-10 mb-2 flex items-center gap-2">
             <Badge
               variant="outline"
               className="border-primary/30 bg-primary/20 text-primary-foreground"
@@ -69,10 +71,10 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               {project.access}
             </Badge>
           </div>
-          <h1 className="mb-2 text-3xl font-bold text-white md:text-4xl">
+          <h1 className="relative z-10 mb-2 text-3xl font-bold text-white md:text-4xl">
             {project.name}
           </h1>
-          <div className="flex items-center gap-3">
+          <div className="relative z-10 flex items-center gap-3">
             <div className="flex items-center gap-2">
               <div className="relative h-8 w-8 overflow-hidden rounded-full">
                 <Image
