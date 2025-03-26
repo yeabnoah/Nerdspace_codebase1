@@ -4,11 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,30 +20,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { fetchProject } from "@/functions/fetchProject";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth-client";
+import { queryClient } from "@/providers/tanstack-query-provider";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
 import {
   CalendarIcon,
-  ExternalLink,
   Flag,
   Heart,
   MessageSquare,
   PaintBucket,
+  SettingsIcon,
   Share2,
   Star,
-  Edit,
   Upload,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import ProjectDetailSkeleton from "../skeleton/project-detail.skeleton";
 import { useState } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
-import { queryClient } from "@/providers/tanstack-query-provider";
-import { authClient } from "@/lib/auth-client";
+import ProjectDetailSkeleton from "../skeleton/project-detail.skeleton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import { Separator } from "../ui/separator";
 
 const ProjectDetail = ({ projectId }: { projectId: string }) => {
@@ -53,6 +57,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const session = authClient.useSession();
 
   const {
@@ -89,6 +94,28 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       toast.error(errorMessage);
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationKey: ["delete-project"],
+    mutationFn: async () => {
+      const response = await axios.delete(`/api/project?id=${projectId}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Project successfully deleted");
+      router.push("/projects"); // Redirect to projects list after deletion
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred while deleting the project";
+      toast.error(errorMessage);
+    },
+  });
+
+  const handleDeleteProject = async () => {
+    await deleteMutation.mutate();
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -216,13 +243,19 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </div>
           {project.user.id === session.data?.user.id && (
             <div className="absolute right-4 top-4">
-              <Button
-                variant="outline"
-                onClick={() => setIsEditModalOpen(true)}
-              >
-                <Edit className="h-4 w-4" />
-                Edit
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <SettingsIcon />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => setIsEditModalOpen(true)}>
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setIsDeleteModalOpen(true)}>
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           )}
         </div>
@@ -352,7 +385,6 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-primary hover:underline"
                 >
-                  {/* <ExternalLink className="h-4 w-4" /> */}
                   Connect with {project.user.visualName}
                 </Link>
               </div>
@@ -564,6 +596,33 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               Cancel
             </Button>
             <Button onClick={handleEditProject}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Project Modal */}
+      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <DialogTrigger asChild>
+          <Button className="hidden">Open Dialog</Button>
+        </DialogTrigger>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[550px]">
+          <DialogHeader>
+            <DialogTitle>Delete Project</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this project? This action cannot
+              be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteProject}>
+              Delete
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
