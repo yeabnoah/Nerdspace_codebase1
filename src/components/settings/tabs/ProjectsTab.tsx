@@ -1,7 +1,8 @@
+import ProjectsPage from "@/components/project/project-component";
+
 export default function ProjectsTab() {
   return (
     <div>
-      <p>Projects content goes here && uuu.</p>
     </div>
   );
 }

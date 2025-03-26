@@ -52,6 +52,17 @@ export default function ProjectsPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>();
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+    }
+  };
+
+  const handleImageCancel = () => {
+    setSelectedImage(null);
+  };
+
   const [projects, setProjects] = useState<ProjectInterface[]>([]);
   const { data: projecter, isLoading } = useQuery<ProjectInterface[]>({
     queryKey: ["projects"],
@@ -159,7 +170,7 @@ export default function ProjectsPage() {
         `https://images.unsplash.com/photo-1617791160505-6f00504e3519?q=80&w=1000`,
     };
 
-    await mutation.mutate();
+    await mutation.mutate(newProjectData as any);
 
     // Reset form and close modal
     setNewProject({
@@ -181,6 +192,16 @@ export default function ProjectsPage() {
         ? prev.filter((c) => c !== category)
         : [...prev, category],
     );
+  };
+
+  const handleCategoryInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === " ") {
+      const category = e.currentTarget.value.trim();
+      if (category && !selectedCategories.includes(category)) {
+        setSelectedCategories([...selectedCategories, category]);
+      }
+      e.currentTarget.value = "";
+    }
   };
 
   return (
@@ -273,15 +294,26 @@ export default function ProjectsPage() {
                         type="file"
                         className="absolute inset-0 cursor-pointer opacity-0"
                         accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setSelectedImage(file);
-                          }
-                        }}
+                        onChange={handleImageChange}
                       />
                     </div>
                   </div>
+                  {selectedImage && (
+                    <div className="mt-4 flex flex-col items-center">
+                      <img
+                        src={URL.createObjectURL(selectedImage)}
+                        alt="Selected"
+                        className="h-40 w-40 object-cover"
+                      />
+                      <Button
+                        variant="outline"
+                        className="mt-2"
+                        onClick={handleImageCancel}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid gap-2">
@@ -330,6 +362,25 @@ export default function ProjectsPage() {
                       <SelectItem value="private">Private</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="category">Categories</Label>
+                  <Input
+                    id="category"
+                    placeholder="Type a category and press space"
+                    onKeyDown={handleCategoryInput}
+                  />
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {selectedCategories.map((category) => (
+                      <span
+                        key={category}
+                        className="rounded-full bg-white px-2 py-1 text-xs dark:bg-white/50 dark:text-black"
+                      >
+                        {category}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
 
