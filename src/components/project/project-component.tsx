@@ -1,9 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Search, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -20,18 +19,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import ProjectCard from "./project-card";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { Plus, Search, Upload } from "lucide-react";
+import { useState } from "react";
+// import ProjectCard, { ProjectCardSkeleton } from "./project-card";
 import ProjectInterface, {
   ProjectInterfaceToSubmit,
 } from "@/interface/auth/project.interface";
 import { queryClient } from "@/providers/tanstack-query-provider";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { ProjectCardSkeleton } from "../skeleton/project-card";
+import ProjectCard from "./project-card";
 
 const cloudinaryUploadUrl = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!;
 const cloudinaryUploadPreset =
@@ -53,7 +53,7 @@ export default function ProjectsPage() {
   const [selectedImage, setSelectedImage] = useState<File | null>();
 
   const [projects, setProjects] = useState<ProjectInterface[]>([]);
-  const { data: projecter } = useQuery<ProjectInterface[]>({
+  const { data: projecter, isLoading } = useQuery<ProjectInterface[]>({
     queryKey: ["projects"],
     queryFn: async () => {
       const response = await axios.get("/api/project");
@@ -174,14 +174,6 @@ export default function ProjectsPage() {
     setSelectedImage(null);
     setIsCreateModalOpen(false);
   };
-
-  // const handleUpdateProject = async (projectId, updatedProjectData) => {
-  //   await updateMutation.mutate({ id: projectId, ...updatedProjectData });
-  // };
-
-  // const handleDeleteProject = async (projectId) => {
-  //   await deleteMutation.mutate(projectId);
-  // };
 
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
@@ -360,7 +352,15 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      {filteredProjects?.length === 0 ? (
+      {isLoading && (
+        <div className="grid grid-rows-3 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <ProjectCardSkeleton key={i} />
+          ))}
+        </div>
+      )}
+
+      {!isLoading && filteredProjects?.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12">
           <div className="text-center">
             <h3 className="text-lg font-medium">No projects found</h3>
