@@ -85,6 +85,9 @@ export const GET = async (request: NextRequest) => {
       where: {
         userId: session.user.id,
       },
+      include: {
+        _count: true,
+      },
     });
 
     return NextResponse.json(
@@ -145,6 +148,9 @@ export const PATCH = async (request: NextRequest) => {
         category: body.category,
         access: body.access,
         status: body.status,
+      },
+      include: {
+        _count: true,
       },
     });
 
