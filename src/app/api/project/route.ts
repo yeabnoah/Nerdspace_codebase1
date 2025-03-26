@@ -74,7 +74,7 @@ export const GET = async (request: NextRequest) => {
   try {
     const session = await getUserSession();
     if (!session) {
-      return Response.json(
+      return NextResponse.json(
         {
           message: "unauthorized | not logged in",
         },
@@ -82,22 +82,53 @@ export const GET = async (request: NextRequest) => {
       );
     }
 
-    const projects = await prisma.project.findMany({
-      where: {
-        userId: session.user.id,
-      },
-      include: {
-        _count: true,
-        user: true,
-      },
-    });
+    const id = request.nextUrl.searchParams.get("id");
 
-    return NextResponse.json(
-      {
-        data: projects,
-      },
-      { status: 200 },
-    );
+    if (id) {
+      const project = await prisma.project.findFirst({
+        where: {
+          id: id,
+          userId: session.user.id,
+        },
+        include: {
+          _count: true,
+          user: true,
+        },
+      });
+
+      if (!project) {
+        return NextResponse.json(
+          {
+            message: "Project not found",
+          },
+          { status: 404 },
+        );
+      }
+
+      return NextResponse.json(
+        {
+          data: project,
+        },
+        { status: 200 },
+      );
+    } else {
+      const projects = await prisma.project.findMany({
+        where: {
+          userId: session.user.id,
+        },
+        include: {
+          _count: true,
+          user: true,
+        },
+      });
+
+      return NextResponse.json(
+        {
+          data: projects,
+        },
+        { status: 200 },
+      );
+    }
   } catch (error: any) {
     console.error("Error fetching projects:", error);
     return NextResponse.json({ error: "error" }, { status: 500 });
