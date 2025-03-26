@@ -26,18 +26,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import ProjectCard from "./project-card";
 
-
 const mockProjects = [
   {
     id: "1",
-    name: "AI Image Generator",
+    name: "Hope Music",
     description:
       "A tool that generates images using AI models with advanced style transfer capabilities and custom training options.",
     status: "ONGOING",
     category: ["AI", "Machine Learning", "Computer Vision"],
     createdAt: new Date("2023-01-15"),
-    image:
-      "https://images.unsplash.com/photo-1617791160505-6f00504e3519?q=80&w=1000",
+    image: "music.jpg?q=80&w=1000",
     user: {
       name: "John Doe",
       image: "/placeholder.svg?height=40&width=40",
@@ -49,14 +47,13 @@ const mockProjects = [
   },
   {
     id: "2",
-    name: "E-commerce Platform",
+    name: "Gwax Photography",
     description:
       "A full-featured e-commerce solution with payment integration, inventory management, and analytics dashboard.",
     status: "COMPLETED",
     category: ["Web Development", "E-commerce", "Fintech"],
     createdAt: new Date("2023-03-22"),
-    image:
-      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1000",
+    image: "gwax.jpg?q=80&w=1000",
     user: {
       name: "Jane Smith",
       image: "/placeholder.svg?height=40&width=40",
@@ -68,14 +65,13 @@ const mockProjects = [
   },
   {
     id: "3",
-    name: "Task Management App",
+    name: "Shalom Collection",
     description:
       "A productivity app for managing tasks and projects with team collaboration features and progress tracking.",
     status: "ONGOING",
     category: ["Productivity", "Mobile App", "SaaS"],
     createdAt: new Date("2023-05-10"),
-    image:
-      "https://images.unsplash.com/photo-1540350394557-8d14678e7f91?q=80&w=1000",
+    image: "art.jpg?q=80&w=1000",
     user: {
       name: "Alex Johnson",
       image: "/placeholder.svg?height=40&width=40",
@@ -87,14 +83,13 @@ const mockProjects = [
   },
   {
     id: "4",
-    name: "Social Media Dashboard",
+    name: "Miro Robot project",
     description:
       "Analytics dashboard for social media accounts with content scheduling and performance metrics visualization.",
     status: "PAUSED",
     category: ["Analytics", "Social Media", "Marketing"],
     createdAt: new Date("2023-02-05"),
-    image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000",
+    image: "robot.jpg?q=80&w=1000",
     user: {
       name: "Sarah Williams",
       image: "/placeholder.svg?height=40&width=40",
@@ -106,14 +101,13 @@ const mockProjects = [
   },
   {
     id: "5",
-    name: "Fitness Tracker",
+    name: "Shemane shirt",
     description:
       "Mobile app for tracking workouts and nutrition with personalized recommendations and progress visualization.",
     status: "ONGOING",
     category: ["Health", "Mobile App", "IoT"],
     createdAt: new Date("2023-04-18"),
-    image:
-      "https://images.unsplash.com/photo-1576678927484-cc907957088c?q=80&w=1000",
+    image: "fashion.jpg?q=80&w=1000",
     user: {
       name: "Michael Brown",
       image: "/placeholder.svg?height=40&width=40",
@@ -126,7 +120,7 @@ const mockProjects = [
 
   {
     id: "7",
-    name: "Blockchain Wallet",
+    name: "Deep AI",
     description:
       "Secure wallet for cryptocurrency transactions with multi-signature support and real-time market data integration.",
     status: "ONGOING",
@@ -145,14 +139,14 @@ const mockProjects = [
   },
   {
     id: "8",
-    name: "Virtual Reality Game",
+    name: "Adawa Game",
     description:
       "Immersive VR gaming experience with realistic physics, multiplayer capabilities, and cross-platform compatibility.",
     status: "PAUSED",
     category: ["Gaming", "VR", "3D Modeling"],
     createdAt: new Date("2023-03-12"),
     image:
-      "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?q=80&w=1000",
+      "adawa.webp?q=80&w=1000",
     user: {
       name: "Olivia Martinez",
       image: "/placeholder.svg?height=40&width=40",
@@ -163,7 +157,6 @@ const mockProjects = [
     },
   },
 ];
-
 
 const categoryOptions = [
   "Web Development",
@@ -214,7 +207,6 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState(mockProjects);
   const [selectedImage, setSelectedImage] = useState("");
 
-  
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
       project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -277,7 +269,7 @@ export default function ProjectsPage() {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-        <h1 className="text-4xl font-instrument">Projects</h1>
+        <h1 className="font-instrument text-4xl">Projects</h1>
 
         <div className="flex w-full flex-col gap-4 sm:flex-row md:w-auto">
           <div className="relative w-full sm:w-80">
