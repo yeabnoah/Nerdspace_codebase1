@@ -25,15 +25,23 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import ProjectCard from "./project-card";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import ProjectInterface from "@/interface/auth/project.interface";
+import toast from "react-hot-toast";
+import ProjectInterface, {
+  ProjectInterfaceToSubmit,
+} from "@/interface/auth/project.interface";
+import { queryClient } from "@/providers/tanstack-query-provider";
+
+const cloudinaryUploadUrl = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!;
+const cloudinaryUploadPreset =
+  process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
 
 export default function ProjectsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [newProject, setNewProject] = useState({
+  const [newProject, setNewProject] = useState<ProjectInterfaceToSubmit>({
     name: "",
     description: "",
     status: "ONGOING",
@@ -42,8 +50,7 @@ export default function ProjectsPage() {
     image: "",
   });
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  // const [projects, setProjects] = useState(mockProjects);
-  const [selectedImage, setSelectedImage] = useState("");
+  const [selectedImage, setSelectedImage] = useState<File | null>();
 
   const [projects, setProjects] = useState<ProjectInterface[]>([]);
   const { data: projecter } = useQuery<ProjectInterface[]>({
@@ -52,6 +59,62 @@ export default function ProjectsPage() {
       const response = await axios.get("/api/project");
       setProjects(response.data.data);
       return response.data.data;
+    },
+  });
+
+  const mutation = useMutation({
+    mutationKey: ["create-project"],
+    mutationFn: async (newProjectData) => {
+      const response = await axios.post("/api/project", newProjectData);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Project successfully created");
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred while creating the project";
+      toast.error(errorMessage);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationKey: ["update-project"],
+    mutationFn: async (updatedProjectData: ProjectInterfaceToSubmit) => {
+      const response = await axios.patch("/api/project", updatedProjectData);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Project successfully updated");
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred while updating the project";
+      toast.error(errorMessage);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationKey: ["delete-project"],
+    mutationFn: async (projectId) => {
+      const response = await axios.delete("/api/project", {
+        data: { id: projectId },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Project successfully deleted");
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred while deleting the project";
+      toast.error(errorMessage);
     },
   });
 
@@ -67,30 +130,36 @@ export default function ProjectsPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const handleCreateProject = () => {
-    const newProjectData = {
-      id: `${(projects?.length || 0) + 1}`,
+  const handleCreateProject = async () => {
+    let imageUrl = selectedImage;
+
+    if (selectedImage instanceof File) {
+      const formData = new FormData();
+      formData.append("file", selectedImage);
+      formData.append("upload_preset", cloudinaryUploadPreset);
+
+      try {
+        const response = await axios.post(cloudinaryUploadUrl, formData);
+        imageUrl = response.data.secure_url;
+      } catch (error) {
+        console.error("Image upload failed:", error);
+        toast.error("Image upload failed");
+        return;
+      }
+    }
+
+    const newProjectData: ProjectInterfaceToSubmit = {
       name: newProject.name,
       description: newProject.description,
       status: newProject.status,
       category: selectedCategories,
-      createdAt: new Date(),
-      image:
-        selectedImage ||
-        `https://images.unsplash.com/photo-1617791160505-6f00504e3519?q=80&w=1000`,
-      user: {
-        name: "Current User",
-        image: "/placeholder.svg?height=40&width=40",
-      },
       access: newProject.access,
-      _count: {
-        stars: 0,
-        followers: 0,
-      },
+      image:
+        imageUrl ||
+        `https://images.unsplash.com/photo-1617791160505-6f00504e3519?q=80&w=1000`,
     };
 
-    setProjects([newProjectData, ...(projecter || [])]);
-    setProjects([newProjectData, ...projects]);
+    await mutation.mutate();
 
     // Reset form and close modal
     setNewProject({
@@ -102,8 +171,16 @@ export default function ProjectsPage() {
       image: "",
     });
     setSelectedCategories([]);
-    setSelectedImage("");
+    setSelectedImage(null);
     setIsCreateModalOpen(false);
+  };
+
+  const handleUpdateProject = async (projectId, updatedProjectData) => {
+    await updateMutation.mutate({ id: projectId, ...updatedProjectData });
+  };
+
+  const handleDeleteProject = async (projectId) => {
+    await deleteMutation.mutate(projectId);
   };
 
   const toggleCategory = (category: string) => {
@@ -204,12 +281,11 @@ export default function ProjectsPage() {
                         type="file"
                         className="absolute inset-0 cursor-pointer opacity-0"
                         accept="image/*"
-                        onChange={() => {
-                          // In a real app, you would handle file upload here
-                          // For this demo, we'll just use a placeholder
-                          setSelectedImage(
-                            `https://images.unsplash.com/photo-1639762681057-408e52192e55?q=80&w=1000`,
-                          );
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setSelectedImage(file);
+                          }
                         }}
                       />
                     </div>
@@ -286,7 +362,14 @@ export default function ProjectsPage() {
       ) : (
         <div className="grid grid-rows-3 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProjects?.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+            <ProjectCard
+              key={project.id}
+              project={project}
+              onUpdate={(updatedData) =>
+                handleUpdateProject(project.id, updatedData)
+              }
+              onDelete={() => handleDeleteProject(project.id)}
+            />
           ))}
         </div>
       )}

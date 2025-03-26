@@ -218,6 +218,7 @@ model Project {
   id          String          @id @default(uuid())
   name        String
   description String
+  image       String
   userId      String
   user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   status      projectStatus   @default(ONGOING)
