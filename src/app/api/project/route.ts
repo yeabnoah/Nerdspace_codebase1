@@ -48,6 +48,7 @@ export const POST = async (request: NextRequest) => {
 
     const newProject = await prisma.project.create({
       data: {
+        image: body.image,
         name: body.name,
         description: body.description,
         category: body.category,
@@ -87,6 +88,7 @@ export const GET = async (request: NextRequest) => {
       },
       include: {
         _count: true,
+        user: true,
       },
     });
 

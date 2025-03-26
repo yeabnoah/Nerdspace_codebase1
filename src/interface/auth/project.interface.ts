@@ -8,15 +8,22 @@ interface ProjectInterface {
   category: string[];
   createdAt: Date;
   image: string;
-  user: {
-    name: string;
-    image: string;
-  };
+  userId: string;
+  user: UserInterface;
   access: string;
   _count: {
     stars: number;
     followers: number;
   };
+}
+
+export interface ProjectInterfaceToSubmit {
+  name: string;
+  description: string;
+  category: string[];
+  access: "public" | "private";
+  status: "ONGOING" | "COMPLETED" | "PAUSED" | "CANCELLED";
+  image: string;
 }
 
 export default ProjectInterface;
