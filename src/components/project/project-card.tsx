@@ -5,12 +5,21 @@ import Image from "next/image";
 import ProjectInterface from "@/interface/auth/project.interface";
 import { StarHalf } from "lucide-react";
 import { GoStarFill } from "react-icons/go";
+import { useRouter } from "next/navigation";
 
 export default function ProjectCard(project: ProjectInterface) {
   const primaryCategory = project.category[0] || "Project";
+  const router = useRouter();
+
+  
 
   return (
-    <Card className="my-2 flex flex-col overflow-hidden rounded-2xl border shadow-lg">
+    <Card
+      className="my-2 flex flex-col overflow-hidden rounded-2xl border shadow-lg hover:cursor-pointer"
+      onClick={() => {
+        router.push(`/project/${project.id}`);
+      }}
+    >
       <CardContent
         className="relative flex h-64 flex-col justify-end bg-cover p-4"
         style={{
