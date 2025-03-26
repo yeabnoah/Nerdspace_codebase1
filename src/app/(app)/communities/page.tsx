@@ -11,7 +11,6 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import LeftNavbar from "@/components/navbar/left-navbar";
 
@@ -60,31 +59,20 @@ export default function CommunityCards() {
           {communities.map((community, index) => (
             <Card
               key={index}
-              className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg"
+              className="group relative transition-all duration-300 hover:shadow-lg"
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-              <div className="absolute left-0 top-0 h-24 w-full bg-gradient-to-br from-primary/20 to-primary/5" />
-
               <CardHeader className="relative pt-6">
                 <div className="flex items-start gap-4">
-                  <Avatar className="h-16 w-16 border-4 border-background shadow-md">
+                  <Avatar className="h-16 w-16 border-2 border-background">
                     <AvatarImage src={community.image} alt={community.name} />
                     <AvatarFallback>
                       {community.name.substring(0, 2)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-semibold">
-                        {community.name}
-                      </h3>
-                      {/* <Badge variant="secondary" className="text-xs">
-                        Community
-                      </Badge> */}
-                    </div>
+                    <h3 className="text-lg font-semibold">{community.name}</h3>
                     <CardDescription className="text-xs text-muted-foreground">
                       {community.description}
                     </CardDescription>
@@ -104,7 +92,7 @@ export default function CommunityCards() {
                 </div>
               </CardContent>
 
-              <CardFooter className="border-t bg-muted/30 px-6 py-4">
+              <CardFooter className="border-t px-6 py-4">
                 <div className="grid w-full grid-cols-4 gap-2">
                   <div className="flex flex-col items-center">
                     <div className="mb-1 flex items-center text-muted-foreground">
