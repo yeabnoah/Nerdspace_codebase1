@@ -4,6 +4,7 @@ import {
   Bookmark,
   Clock,
   Computer,
+  FolderKanbanIcon,
   HomeIcon,
   Search,
   TrendingUp,
@@ -35,6 +36,16 @@ const LeftNavbar = () => {
       >
         <Search className="hidden md:block" size={20} />
         <span className="hidden lg:block">search</span>
+      </Button>
+      <Button
+        onClick={() => {
+          router.push("/project");
+        }}
+        variant="outline"
+        className="justify-start gap-3 border-gray-100 bg-transparent shadow-none dark:border-gray-500/5"
+      >
+        <FolderKanbanIcon className="hidden md:block" size={20} />
+        <span className="hidden lg:block">Project</span>
       </Button>
       <Button
         onClick={() => {
