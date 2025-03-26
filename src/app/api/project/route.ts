@@ -181,6 +181,7 @@ export const PATCH = async (request: NextRequest) => {
         category: body.category,
         access: body.access,
         status: body.status,
+        image: body.image,
       },
       include: {
         _count: true,

@@ -186,6 +186,49 @@ export default function ProjectsPage() {
     setIsCreateModalOpen(false);
   };
 
+  const handleUpdateProject = async () => {
+    let imageUrl = "";
+
+    if (selectedImage instanceof File) {
+      const formData = new FormData();
+      formData.append("file", selectedImage);
+      formData.append("upload_preset", cloudinaryUploadPreset);
+
+      try {
+        const response = await axios.post(cloudinaryUploadUrl, formData);
+        imageUrl = response.data.secure_url;
+      } catch (error) {
+        console.error("Image upload failed:", error);
+        toast.error("Image upload failed");
+        return;
+      }
+    }
+
+    const updatedProjectData: ProjectInterfaceToSubmit = {
+      name: newProject.name,
+      description: newProject.description,
+      status: newProject.status,
+      category: selectedCategories,
+      access: newProject.access,
+      image: imageUrl || newProject.image,
+    };
+
+    await updateMutation.mutate(updatedProjectData as any);
+
+    // Reset form and close modal
+    setNewProject({
+      name: "",
+      description: "",
+      status: "ONGOING",
+      category: [],
+      access: "private",
+      image: "",
+    });
+    setSelectedCategories([]);
+    setSelectedImage(null);
+    setIsCreateModalOpen(false);
+  };
+
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
       prev.includes(category)
