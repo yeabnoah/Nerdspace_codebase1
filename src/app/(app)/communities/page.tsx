@@ -64,7 +64,7 @@ export default function CommunityCards() {
               onMouseLeave={() => setHoveredIndex(null)}
             >
               <CardHeader className="relative pt-6">
-                <div className="flex items-start gap-4">
+                <div className="flex items-center gap-4">
                   <Avatar className="h-16 w-16 border-2 border-background">
                     <AvatarImage src={community.image} alt={community.name} />
                     <AvatarFallback>
@@ -80,20 +80,14 @@ export default function CommunityCards() {
                 </div>
               </CardHeader>
 
-              <CardContent>
-                <div className="flex h-24 items-center justify-center">
-                  <div
-                    className={`transition-all duration-500 ${hoveredIndex === index ? "scale-110" : "scale-100"}`}
-                  >
-                    <Button variant="outline" className="rounded-full">
-                      Join Community
-                    </Button>
-                  </div>
-                </div>
+              <CardContent className="flex flex-col items-center">
+                <Button variant="outline" className="mt-4 rounded-full">
+                  Join Community
+                </Button>
               </CardContent>
 
               <CardFooter className="border-t px-6 py-4">
-                <div className="grid w-full grid-cols-4 gap-2">
+                <div className=" flex justify-between w-full gap-2">
                   <div className="flex flex-col items-center">
                     <div className="mb-1 flex items-center text-muted-foreground">
                       <Users className="mr-1 h-3 w-3" />
@@ -124,15 +118,6 @@ export default function CommunityCards() {
                     </span>
                   </div>
 
-                  <div className="flex flex-col items-center">
-                    <div className="mb-1 flex items-center text-muted-foreground">
-                      <Clock className="mr-1 h-3 w-3" />
-                      <span className="text-xs">Last</span>
-                    </div>
-                    <span className="text-sm font-medium">
-                      {community.lastActive}
-                    </span>
-                  </div>
                 </div>
               </CardFooter>
             </Card>
