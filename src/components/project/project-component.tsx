@@ -26,7 +26,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import ProjectCard from "./project-card";
 
-// Mock data for demonstration
+
 const mockProjects = [
   {
     id: "1",
@@ -164,7 +164,7 @@ const mockProjects = [
   },
 ];
 
-// Category options for the create project form
+
 const categoryOptions = [
   "Web Development",
   "Mobile App",
@@ -189,7 +189,6 @@ const categoryOptions = [
   "Computer Vision",
 ];
 
-// Sample project images for selection
 const sampleImages = [
   "https://images.unsplash.com/photo-1617791160505-6f00504e3519?q=80&w=1000",
   "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1000",
@@ -215,7 +214,7 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState(mockProjects);
   const [selectedImage, setSelectedImage] = useState("");
 
-  // Filter projects based on search query and status
+  
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
       project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -278,7 +277,7 @@ export default function ProjectsPage() {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-        <h1 className="text-3xl font-bold">Projects</h1>
+        <h1 className="text-4xl font-instrument">Projects</h1>
 
         <div className="flex w-full flex-col gap-4 sm:flex-row md:w-auto">
           <div className="relative w-full sm:w-80">

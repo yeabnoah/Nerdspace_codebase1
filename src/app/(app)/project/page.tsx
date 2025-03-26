@@ -5,7 +5,7 @@ import React from "react";
 
 const Project = () => {
   return (
-    <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start">
+    <div className="mx-auto flex max-w-6xl gap-5 flex-1 flex-row items-start">
       <LeftNavbar />
       <ProjectsPage />
     </div>
