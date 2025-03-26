@@ -2,24 +2,9 @@ import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
+import ProjectInterface from "@/interface/auth/project.interface";
 
-interface ProjectCardProps {
-  project: {
-    id: string;
-    name: string;
-    description: string;
-    status: string;
-    category: string[];
-    createdAt: Date;
-    image?: string;
-    user: {
-      name: string;
-      image: string;
-    };
-  };
-}
-
-export default function ProjectCard({ project }: ProjectCardProps) {
+export default function ProjectCard(project: ProjectInterface) {
   const primaryCategory = project.category[0] || "Project";
 
   return (
@@ -34,7 +19,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           className="absolute inset-0 h-full bg-gradient-to-t from-black via-black/50 to-transparent"
           style={{ filter: "blur(8px)" }}
         ></div>
-        <div className="absolute top-0 z-10 w-full mt-2 flex flex-row items-center justify-between text-sm text-white">
+        <div className="absolute top-0 z-10 mt-2 flex w-full flex-row items-center justify-between text-sm text-white">
           <span className="flex items-center">
             <svg
               className={`h-4 w-4 fill-current text-white`}
@@ -46,7 +31,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             {/* <span className="ml-1">{project._count.stars}</span> */}
           </span>
 
-          <Badge variant="secondary" className=" text-xs mr-6">{project.status}</Badge>
+          <Badge variant="secondary" className="mr-6 text-xs">
+            {project.status}
+          </Badge>
         </div>
         <h3 className="relative z-10 mb-1 text-center font-instrument text-4xl leading-tight text-white">
           {project.name}
