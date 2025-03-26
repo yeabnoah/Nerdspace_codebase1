@@ -1,24 +1,23 @@
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { fetchProject } from "@/functions/fetchProject";
+import { useQuery } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
 import {
   CalendarIcon,
   ExternalLink,
   Flag,
   Heart,
   MessageSquare,
+  PaintBucket,
   Share2,
   Star,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
-import { fetchProject } from "@/functions/fetchProject";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
 import ProjectDetailSkeleton from "../skeleton/project-detail.skeleton";
 
 const ProjectDetail = ({ projectId }: { projectId: string }) => {
@@ -60,7 +59,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           <div className="relative z-10 mb-2 flex items-center gap-2">
             <Badge
               variant="outline"
-              className="border-primary/30 bg-primary/20 text-primary-foreground"
+              className="border-primary/30 bg-primary/10 text-xs text-white"
             >
               {project.status}
             </Badge>
@@ -71,7 +70,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               {project.access}
             </Badge>
           </div>
-          <h1 className="relative z-10 mb-2 text-3xl font-bold text-white md:text-4xl">
+          <h1 className="relative z-10 mb-2 font-instrument text-3xl text-white md:text-4xl">
             {project.name}
           </h1>
           <div className="relative z-10 flex items-center gap-3">
@@ -96,31 +95,34 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Left Column - Project Details */}
         <div className="space-y-8 lg:col-span-2">
-          {/* Categories */}
           <div className="flex flex-wrap gap-2">
             {project.category.map((cat: any) => (
-              <Badge key={cat} variant="secondary" className="text-sm">
+              <Badge
+                key={cat}
+                variant="outline"
+                className="text-sm font-normal"
+              >
                 {cat}
               </Badge>
             ))}
           </div>
 
           {/* Description */}
-          <Card>
+          <Card className="rounded-lg border-card-foreground/5 shadow-none dark:border-gray-500/5">
             <CardContent className="p-6">
-              <h2 className="mb-4 text-2xl font-bold">About This Project</h2>
+              <h2 className="mb-4 font-instrument text-3xl">
+                About This Project
+              </h2>
               <p className="text-muted-foreground">{project.description}</p>
             </CardContent>
           </Card>
 
           {/* Stats */}
-          <Card>
+          <Card className="rounded-lg border-card-foreground/5 shadow-none dark:border-gray-500/5">
             <CardContent className="p-6">
-              <h2 className="mb-4 text-2xl font-bold">Project Stats</h2>
+              <h2 className="mb-4 font-instrument text-3xl">Project Stats</h2>
               <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-5">
                 <div className="flex flex-col items-center">
                   <Star className="mb-1 h-5 w-5 text-yellow-500" />
@@ -154,12 +156,12 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Updates Section (Empty State) */}
-          <Card>
+          <Card className="rounded-lg border-card-foreground/5 shadow-none dark:border-gray-500/5">
             <CardContent className="p-6">
-              <h2 className="mb-4 text-2xl font-bold">Project Updates</h2>
+              <h2 className="mb-4 font-instrument text-3xl">Project Updates</h2>
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                  <Flag className="h-8 w-8 text-muted-foreground" />
+                  <PaintBucket className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="text-lg font-medium">No updates yet</h3>
                 <p className="mt-2 max-w-md text-muted-foreground">
@@ -174,7 +176,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         {/* Right Column - Sidebar */}
         <div className="space-y-8">
           {/* Action Buttons */}
-          <Card>
+          <Card className="rounded-lg border-card-foreground/10 shadow-none dark:border-gray-500/5">
             <CardContent className="space-y-4 p-6">
               <Button className="w-full gap-2">
                 <Heart className="h-4 w-4" />
@@ -192,11 +194,13 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Creator Profile */}
-          <Card>
-            <CardContent className="p-6">
-              <h2 className="mb-4 text-xl font-bold">Creator</h2>
+          <Card className="rounded-lg border-card-foreground/10 shadow-none dark:border-gray-500/5">
+            <CardContent className="px-6 py-3">
+              <h2 className="mb-2 text-center font-instrument text-xl font-bold">
+                Creator
+              </h2>
               <div className="flex flex-col items-center text-center">
-                <div className="relative mb-4 h-24 w-24 overflow-hidden rounded-full">
+                <div className="relative h-24 w-24 overflow-hidden rounded-full">
                   <Image
                     src={project.user.image || "/placeholder.svg"}
                     alt={project.user.visualName}
@@ -208,15 +212,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                 <span className="mb-2 text-sm text-muted-foreground">
                   Nerd at: {project.user.nerdAt}
                 </span>
-                <p className="mb-4 text-sm">{project.user.bio}</p>
+                <p className="text-sm">{project.user.bio}</p>
                 <Separator className="my-4" />
                 <Link
-                  href={project.user.link}
-                  target="_blank"
+                  href={`/user-profile/${project.userId}`}
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-primary hover:underline"
                 >
-                  <ExternalLink className="h-4 w-4" />
+                  {/* <ExternalLink className="h-4 w-4" /> */}
                   Connect with {project.user.visualName}
                 </Link>
               </div>
@@ -224,9 +227,11 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Similar Projects Placeholder */}
-          <Card>
+          <Card className="rounded-lg border-card-foreground/10 shadow-none dark:border-gray-500/5">
             <CardContent className="p-6">
-              <h2 className="mb-4 text-xl font-bold">Similar Projects</h2>
+              <h2 className="mb-4 font-instrument text-3xl">
+                Similar Projects
+              </h2>
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-16 rounded-md bg-muted"></div>
