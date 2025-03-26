@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import {
   ProjectInterface,
   projectSchema,
-  projectSchemaPtach,
 } from "@/validation/project.validation";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -53,6 +52,8 @@ export const POST = async (request: NextRequest) => {
         description: body.description,
         category: body.category,
         userId: session.user.id,
+        access: body.access,
+        status: body.status,
       },
     });
 
@@ -122,7 +123,7 @@ export const PATCH = async (request: NextRequest) => {
     }
 
     const body: ProjectInterface = await request.json();
-    const validation = projectSchemaPtach.safeParse(body);
+    const validation = projectSchema.safeParse(body);
 
     if (validation.error || !validation.success) {
       return NextResponse.json(
