@@ -123,25 +123,7 @@ const mockProjects = [
       followers: 28,
     },
   },
-  {
-    id: "6",
-    name: "Smart Home Controller",
-    description:
-      "IoT system for controlling home devices with voice commands, automation rules, and energy consumption monitoring.",
-    status: "COMPLETED",
-    category: ["IoT", "Smart Home", "Mobile App"],
-    createdAt: new Date("2023-01-30"),
-    image:
-      "https://images.unsplash.com/photo-1558002038-bb0237f4e204?q=80&w=1000",
-    user: {
-      name: "Emily Davis",
-      image: "/placeholder.svg?height=40&width=40",
-    },
-    _count: {
-      stars: 31,
-      followers: 19,
-    },
-  },
+
   {
     id: "7",
     name: "Blockchain Wallet",
@@ -553,7 +535,7 @@ export default function ProjectsPage() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-wrap justify-between my-3">
+        <div className="grid grid-rows-3 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
