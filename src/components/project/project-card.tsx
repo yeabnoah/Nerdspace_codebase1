@@ -16,10 +16,6 @@ interface ProjectCardProps {
       name: string;
       image: string;
     };
-    _count: {
-      stars: number;
-      followers: number;
-    };
   };
 }
 
@@ -47,7 +43,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             >
               <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.869 1.4-8.168L.132 9.21l8.2-1.192z" />
             </svg>
-            <span className="ml-1">{project._count.stars}</span>
+            {/* <span className="ml-1">{project._count.stars}</span> */}
           </span>
 
           <Badge variant="secondary" className=" text-xs mr-6">{project.status}</Badge>
