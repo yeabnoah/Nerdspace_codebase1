@@ -25,6 +25,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import ProjectCard from "./project-card";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import ProjectInterface from "@/interface/auth/project.interface";
 
 const mockProjects = [
   {
@@ -203,10 +206,25 @@ export default function ProjectsPage() {
     image: "",
   });
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [projects, setProjects] = useState(mockProjects);
+  // const [projects, setProjects] = useState(mockProjects);
   const [selectedImage, setSelectedImage] = useState("");
 
-  const filteredProjects = projects.filter((project) => {
+  const [projects, setProjects] = useState<ProjectInterface[]>([]);
+  const { data } = useQuery<ProjectInterface[]>({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const response = await axios.get("/api/project");
+      return response.data.data.map((project: ProjectInterface) => ({
+        ...project,
+        user: {
+          ...project.user,
+          image: project.user.image || "/placeholder.svg", // Ensure image is always a string
+        },
+      }));
+    },
+  });
+
+  const filteredProjects = projects?.filter((project) => {
     const matchesSearch =
       project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -219,9 +237,8 @@ export default function ProjectsPage() {
   });
 
   const handleCreateProject = () => {
-    // Create a new project with dummy data
     const newProjectData = {
-      id: `${projects.length + 1}`,
+      id: `${(projects?.length || 0) + 1}`,
       name: newProject.name,
       description: newProject.description,
       status: newProject.status,
@@ -234,13 +251,14 @@ export default function ProjectsPage() {
         name: "Current User",
         image: "/placeholder.svg?height=40&width=40",
       },
+      access: newProject.access,
       _count: {
         stars: 0,
         followers: 0,
       },
     };
 
-    // Add the new project to the list
+    setProjects([newProjectData, ...(data || [])]);
     setProjects([newProjectData, ...projects]);
 
     // Reset form and close modal
@@ -425,7 +443,7 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      {filteredProjects.length === 0 ? (
+      {filteredProjects?.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12">
           <div className="text-center">
             <h3 className="text-lg font-medium">No projects found</h3>
@@ -436,7 +454,7 @@ export default function ProjectsPage() {
         </div>
       ) : (
         <div className="grid grid-rows-3 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredProjects.map((project) => (
+          {filteredProjects?.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>
