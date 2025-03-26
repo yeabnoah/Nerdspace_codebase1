@@ -131,7 +131,7 @@ export default function ProjectsPage() {
   });
 
   const handleCreateProject = async () => {
-    let imageUrl = selectedImage;
+    let imageUrl = "";
 
     if (selectedImage instanceof File) {
       const formData = new FormData();
@@ -175,13 +175,13 @@ export default function ProjectsPage() {
     setIsCreateModalOpen(false);
   };
 
-  const handleUpdateProject = async (projectId, updatedProjectData) => {
-    await updateMutation.mutate({ id: projectId, ...updatedProjectData });
-  };
+  // const handleUpdateProject = async (projectId, updatedProjectData) => {
+  //   await updateMutation.mutate({ id: projectId, ...updatedProjectData });
+  // };
 
-  const handleDeleteProject = async (projectId) => {
-    await deleteMutation.mutate(projectId);
-  };
+  // const handleDeleteProject = async (projectId) => {
+  //   await deleteMutation.mutate(projectId);
+  // };
 
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
@@ -297,7 +297,14 @@ export default function ProjectsPage() {
                   <Select
                     value={newProject.status}
                     onValueChange={(value) =>
-                      setNewProject({ ...newProject, status: value })
+                      setNewProject({
+                        ...newProject,
+                        status: value as
+                          | "ONGOING"
+                          | "COMPLETED"
+                          | "PAUSED"
+                          | "CANCELLED",
+                      })
                     }
                   >
                     <SelectTrigger id="status">
@@ -317,7 +324,10 @@ export default function ProjectsPage() {
                   <Select
                     value={newProject.access}
                     onValueChange={(value) =>
-                      setNewProject({ ...newProject, access: value })
+                      setNewProject({
+                        ...newProject,
+                        access: value as "public" | "private",
+                      })
                     }
                   >
                     <SelectTrigger id="access">
@@ -362,14 +372,7 @@ export default function ProjectsPage() {
       ) : (
         <div className="grid grid-rows-3 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProjects?.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              onUpdate={(updatedData) =>
-                handleUpdateProject(project.id, updatedData)
-              }
-              onDelete={() => handleDeleteProject(project.id)}
-            />
+            <ProjectCard key={project.id} {...project} />
           ))}
         </div>
       )}
