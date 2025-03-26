@@ -145,8 +145,7 @@ const mockProjects = [
     status: "PAUSED",
     category: ["Gaming", "VR", "3D Modeling"],
     createdAt: new Date("2023-03-12"),
-    image:
-      "adawa.webp?q=80&w=1000",
+    image: "adawa.webp?q=80&w=1000",
     user: {
       name: "Olivia Martinez",
       image: "/placeholder.svg?height=40&width=40",
@@ -276,17 +275,17 @@ export default function ProjectsPage() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search projects..."
-              className="pl-8"
+              className="rounded-lg border border-white/5 bg-card-foreground/5 pl-8 backdrop-blur-2xl"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-40">
+            <SelectTrigger className="w-full sm:w-40 bg-white/5 backdrop-blur-3xl">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className=" bg-white/5 backdrop-blur-3xl">
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="ongoing">Ongoing</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
@@ -297,14 +296,14 @@ export default function ProjectsPage() {
 
           <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
             <DialogTrigger asChild>
-              <Button className="w-full sm:w-auto">
-                <Plus className="mr-2 h-4 w-4" />
+              <Button className="w-full font-normal px-2 hover:bg-white/5 sm:w-auto bg-white/5 text-white backdrop-blur-3xl">
+                <Plus className="h-4 w-4" />
                 Create Project
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[550px]">
+            <DialogContent className="max-h-[90vh] border-white/5 bg-white/5 backdrop-blur-3xl overflow-y-auto sm:max-w-[550px]">
               <DialogHeader>
-                <DialogTitle>Create New Project</DialogTitle>
+                <DialogTitle className=" text-white font-instrument text-2xl font-normal">Create New Project</DialogTitle>
                 <DialogDescription>
                   Fill in the details to create a new project. Click save when
                   you're done.
@@ -313,7 +312,7 @@ export default function ProjectsPage() {
 
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Project Name</Label>
+                  <Label htmlFor="name" className=" text-white">Project Name</Label>
                   <Input
                     id="name"
                     value={newProject.name}
