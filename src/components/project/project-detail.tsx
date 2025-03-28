@@ -251,6 +251,12 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       });
       toast.success("Update shared successfully!");
       setIsShareUpdateDialogOpen(false);
+
+      // Reset the state for creating an update
+      setUpdateTitle("");
+      setUpdateContent("");
+      setUpdateImage(null);
+
       queryClient.invalidateQueries({ queryKey: ["project", projectId] });
     } catch (error) {
       console.error("Error sharing update:", error);
