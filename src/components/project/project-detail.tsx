@@ -70,26 +70,13 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     isLoading,
     error,
   } = useQuery<ProjectInterface>({
-    queryKey: ["project", projectId],
+    queryKey: ["project", projectId], // Ensure queryKey matches the one used in invalidateQueries
     queryFn: async () => {
       const response = await axios.get(`/api/project/${projectId}`);
       return response.data.data;
     },
     enabled: !!projectId,
   });
-
-  // const {
-  //   data: updates,
-  //   isLoading: updatesLoading,
-  //   error: updatesError,
-  // } = useQuery<UpdateInterface[]>({
-  //   queryKey: ["updates", projectId],
-  //   queryFn: async () => {
-  //     const response = await axios.get(`/api/project/${projectId}/updates`);
-  //     return response.data.data;
-  //   },
-  //   enabled: !!projectId,
-  // });
 
   const updateMutation = useMutation({
     mutationKey: ["update-project"],
@@ -210,6 +197,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     };
 
     await updateMutation.mutate(finalProjectData);
+  };
+
+  const handleDeleteUpdate = (updateId: string) => {
+    if (project) {
+      project.updates = project.updates.filter(
+        (update) => update.id !== updateId,
+      );
+    }
   };
 
   if (isLoading) {
@@ -361,7 +356,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               <h2 className="mb-4 font-instrument text-3xl">Project Updates</h2>
               {project?.updates ? (
                 project.updates.map((update, index) => {
-                  return <UpdateCard update={update} key={index} />;
+                  return (
+                    <UpdateCard
+                      update={update}
+                      key={index}
+                      isOwner={project?.user.id === session.data?.user.id}
+                      // onDelete={handleDeleteUpdate}
+                    />
+                  );
                 })
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center">

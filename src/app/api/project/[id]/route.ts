@@ -142,61 +142,36 @@ export const DELETE = async (
     const session = await getUserSession();
     if (!session) {
       return NextResponse.json(
-        {
-          message: "unauthorized | not logged in",
-        },
-        { status: 400 },
+        { message: "Unauthorized | Not logged in" },
+        { status: 401 },
       );
     }
 
     const { id } = params;
-    const updateId = await req.nextUrl.searchParams.get("updateId");
 
-    if (!updateId) {
-      return NextResponse.json(
-        {
-          message: "please select project",
-        },
-        { status: 400 },
-      );
-    }
-
-    const projectUpdate = await prisma.projectUpdate.findFirst({
+    const project = await prisma.project.findFirst({
       where: {
-        id: updateId as string,
-        projectId: id,
-        userId: session.user.id,
+        id,
+        userId: session.user.id, // Ensure the user owns the project
       },
     });
 
-    if (!projectUpdate) {
+    if (!project) {
       return NextResponse.json(
-        {
-          message:
-            "Unauthorized | Update does not belong to the user or does not exist",
-        },
+        { message: "Unauthorized | Project does not belong to the user" },
         { status: 403 },
       );
     }
 
-    await prisma.projectUpdate.delete({
-      where: {
-        id: updateId,
-      },
+    await prisma.project.delete({
+      where: { id },
     });
 
-    return NextResponse.json(
-      {
-        message: "Project update deleted successfully",
-      },
-      { status: 200 },
-    );
+    return NextResponse.json({ message: "Project deleted successfully" });
   } catch (error) {
-    console.error("Error deleting project update:", error);
+    console.error("Error deleting project:", error);
     return NextResponse.json(
-      {
-        message: "Internal server error",
-      },
+      { message: "Internal server error" },
       { status: 500 },
     );
   }

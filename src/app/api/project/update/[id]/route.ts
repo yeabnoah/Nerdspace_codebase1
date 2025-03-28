@@ -95,3 +95,46 @@ export const POST = async (
     );
   }
 };
+
+export const DELETE = async (
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) => {
+  try {
+    const session = await getUserSession();
+    if (!session) {
+      return NextResponse.json(
+        { message: "Unauthorized | Not logged in" },
+        { status: 401 },
+      );
+    }
+
+    const { id } = params;
+
+    const update = await prisma.projectUpdate.findFirst({
+      where: {
+        id,
+        userId: session.user.id,
+      },
+    });
+
+    if (!update) {
+      return NextResponse.json(
+        { message: "Unauthorized | Update does not belong to the user" },
+        { status: 403 },
+      );
+    }
+
+    await prisma.projectUpdate.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ message: "Update deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting update:", error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 },
+    );
+  }
+};
