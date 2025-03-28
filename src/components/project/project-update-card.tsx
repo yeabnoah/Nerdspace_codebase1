@@ -135,7 +135,8 @@ export default function UpdateCard({
       queryClient.invalidateQueries({
         queryKey: ["updateComments", update.id],
       });
-      toast.success("Comment deleted successfully.");
+      setIsCommentDeleteDialogOpen(false); // Close the delete dialog
+      toast.success("Comment deleted successfully."); // Single toast
     },
     onError: () => {
       toast.error("Failed to delete comment. Please try again.");
@@ -159,7 +160,8 @@ export default function UpdateCard({
       queryClient.invalidateQueries({
         queryKey: ["updateComments", update.id],
       });
-      toast.success("Comment updated successfully.");
+      setIsEditDialogOpen(false); // Close the edit dialog
+      toast.success("Comment updated successfully."); // Single toast
     },
     onError: () => {
       toast.error("Failed to update comment. Please try again.");
@@ -202,11 +204,11 @@ export default function UpdateCard({
         toast.error("Failed to delete comment. Please try again.");
       },
       onSuccess: () => {
-        toast.success("Comment deleted successfully.");
         queryClient.invalidateQueries({
           queryKey: ["updateComments", update.id],
         });
-        setIsCommentDeleteDialogOpen(false); // Close the delete dialog
+        setIsCommentDeleteDialogOpen(false); 
+        toast.success("Comment deleted successfully."); 
       },
     });
   };
@@ -219,11 +221,11 @@ export default function UpdateCard({
           toast.error("Failed to update comment. Please try again.");
         },
         onSuccess: () => {
-          toast.success("Comment updated successfully.");
           queryClient.invalidateQueries({
             queryKey: ["updateComments", update.id],
           });
           setIsEditDialogOpen(false); // Close the edit dialog
+          toast.success("Comment updated successfully.");
         },
       },
     );
