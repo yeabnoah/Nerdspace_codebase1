@@ -11,6 +11,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import { Heart, MessageSquare, MoreHorizontal, Trash } from "lucide-react";
@@ -43,6 +52,7 @@ export default function UpdateCard({
 }) {
   const [likes, setLikes] = useState(initialLikes);
   const [liked, setLiked] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -61,6 +71,7 @@ export default function UpdateCard({
 
   const handleDelete = () => {
     deleteMutation.mutate(update.id);
+    setIsDeleteDialogOpen(false); // Close the dialog after deletion
   };
 
   // Format the date to be more readable
@@ -97,32 +108,49 @@ export default function UpdateCard({
             </div>
             <div className="mb-2 flex items-start justify-between">
               <div className="flex items-center gap-2">
-                <Avatar className="h-6 w-6">
-                  <AvatarImage
-                    src={`https://avatar.vercel.sh/${update.userId}`}
-                  />
-                  <AvatarFallback className="text-[10px]">
-                    {userInitials}
-                  </AvatarFallback>
-                </Avatar>
                 <h3 className="line-clamp-1 text-sm font-medium">
                   {update.title}
                 </h3>
-                <Badge variant="outline" className="h-4 px-1 text-[10px]">
-                  v1.0
-                </Badge>
               </div>
               <div className="flex items-center gap-1 text-muted-foreground">
                 <span className="text-xs">{formattedDate}</span>
                 {isOwner && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 text-destructive"
-                    onClick={handleDelete}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
+                  <>
+                    <Dialog
+                      open={isDeleteDialogOpen}
+                      onOpenChange={setIsDeleteDialogOpen}
+                    >
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 text-destructive"
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[550px]">
+                        <DialogHeader>
+                          <DialogTitle>Delete Update</DialogTitle>
+                          <DialogDescription>
+                            Are you sure you want to delete this update? This
+                            action cannot be undone.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                          <Button
+                            variant="outline"
+                            onClick={() => setIsDeleteDialogOpen(false)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button variant="destructive" onClick={handleDelete}>
+                            Delete
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </>
                 )}
                 <Button variant="ghost" size="icon" className="h-6 w-6">
                   <MoreHorizontal className="h-3 w-3" />

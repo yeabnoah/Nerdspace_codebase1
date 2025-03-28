@@ -354,14 +354,13 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           <Card className="rounded-lg border-card-foreground/5 shadow-none dark:border-gray-500/5">
             <CardContent className="p-6">
               <h2 className="mb-4 font-instrument text-3xl">Project Updates</h2>
-              {project?.updates ? (
+              {project?.updates && project.updates.length > 0 ? (
                 project.updates.map((update, index) => {
                   return (
                     <UpdateCard
                       update={update}
                       key={index}
                       isOwner={project?.user.id === session.data?.user.id}
-                      // onDelete={handleDeleteUpdate}
                     />
                   );
                 })
