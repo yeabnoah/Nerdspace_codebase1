@@ -296,7 +296,7 @@ export default function ProjectsPage() {
                 Fill in the details to create a new project.
               </p>
               <div className="flex h-[85vh] max-h-[85vh] flex-col md:flex-row">
-              <DialogTitle></DialogTitle>
+                <DialogTitle></DialogTitle>
                 <div className="flex w-full flex-col bg-gradient-to-b from-primary/10 to-primary/5 p-6 md:w-1/3">
                   <div className="mb-2 font-instrument text-3xl">
                     New Project
@@ -338,11 +338,18 @@ export default function ProjectsPage() {
                     </div>
 
                     {selectedImage && (
-                      <div className="mt-2">
-                        <p>Selected Image: {selectedImage.name}</p>
-                        <Button variant="outline" onClick={handleImageCancel}>
+                      <div className="mt-2 w-full">
+                        <Button
+                          variant="outline"
+                          className=" w-[87%] ml-4"
+                          onClick={handleImageCancel}
+                        >
                           Remove Image
                         </Button>
+
+                        <p className="text-wrap my-2 text-xs">
+                          {selectedImage.name}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -594,7 +601,7 @@ export default function ProjectsPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-rows-3 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className=" flex flex-row gap-2 flex-wrap">
           {filteredProjects?.map((project) => (
             <ProjectCard key={project.id} {...project} />
           ))}
