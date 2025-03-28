@@ -24,7 +24,11 @@ export const GET = async (
       },
       include: {
         likes: true,
-        comments: true,
+        comments: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
 

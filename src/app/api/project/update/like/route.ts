@@ -60,21 +60,34 @@ export const POST = async (req: NextRequest) => {
 
 export const GET = async (req: NextRequest) => {
   try {
-    const projectId = req.nextUrl.searchParams.get("projectId");
-    if (!projectId) {
+    const session = await getUserSession();
+    if (!session) {
       return NextResponse.json(
-        { message: "Please provide projectId" },
+        { message: "Unauthorized | Not logged in" },
+        { status: 401 },
+      );
+    }
+
+    const updateId = req.nextUrl.searchParams.get("updateId");
+    if (!updateId) {
+      return NextResponse.json(
+        { message: "Please provide updateId" },
         { status: 400 },
       );
     }
 
-    const likesCount = await prisma.projectUpdateLike.count({
-      where: { updateId: projectId },
+    const existingLike = await prisma.projectUpdateLike.findUnique({
+      where: {
+        userId_updateId: {
+          userId: session.user.id,
+          updateId: updateId,
+        },
+      },
     });
 
-    return NextResponse.json({ likesCount });
+    return NextResponse.json({ liked: !!existingLike });
   } catch (error) {
-    console.error("Error fetching likes count:", error);
+    console.error("Error fetching like status:", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 },
