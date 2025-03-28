@@ -23,7 +23,6 @@ export async function GET(
     const project = await prisma.project.findFirst({
       where: {
         id: id,
-        userId: session.user.id,
       },
       include: {
         _count: true,

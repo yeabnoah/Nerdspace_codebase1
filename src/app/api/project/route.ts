@@ -113,9 +113,6 @@ export const GET = async (request: NextRequest) => {
       );
     } else {
       const projects = await prisma.project.findMany({
-        where: {
-          userId: session.user.id,
-        },
         include: {
           _count: true,
           user: true,

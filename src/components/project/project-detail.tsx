@@ -75,7 +75,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     isLoading,
     error,
   } = useQuery<ProjectInterface>({
-    queryKey: ["project", projectId], // Ensure queryKey matches the one used in invalidateQueries
+    queryKey: ["project", projectId],
     queryFn: async () => {
       const response = await axios.get(`/api/project/${projectId}`);
       return response.data.data;
@@ -260,7 +260,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   const handleUpdateImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setUpdateImage(file);
+    if (file) {
+      setUpdateImage(file);
+    }
   };
 
   if (isLoading) {
@@ -271,6 +273,8 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   const createdDate = new Date(project?.createdAt || Date.now());
   const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
+
+  const isuserAuthor = session.data?.user.id === project?.userId;
 
   return (
     <div className="container mx-auto max-w-6xl px-4">
@@ -325,14 +329,19 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           {project?.user.id === session.data?.user.id && (
             <div className="absolute right-4 top-4">
               <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <SettingsIcon />
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="p-2">
+                    <SettingsIcon />
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={() => setIsEditModalOpen(true)}>
                     Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setIsDeleteModalOpen(true)}>
+                  <DropdownMenuItem
+                    onClick={() => setIsDeleteModalOpen(true)}
+                    className="text-red-500"
+                  >
                     Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -441,26 +450,32 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           {/* Action Buttons */}
           <Card className="rounded-lg border-card-foreground/10 shadow-none dark:border-gray-500/5">
             <CardContent className="space-y-4 p-6">
-              <Button className="w-full gap-2">
-                <Heart className="h-4 w-4" />
-                Follow Project
-              </Button>
+              {!isuserAuthor && (
+                <Button className="w-full gap-2">
+                  <Heart className="h-4 w-4" />
+                  Follow Project
+                </Button>
+              )}
+
               <Button variant="outline" className="w-full gap-2">
                 <Star className="h-4 w-4" />
                 Star Project
               </Button>
               <Button variant="outline" className="w-full gap-2">
                 <Share2 className="h-4 w-4" />
-                Share
+                Share project
               </Button>
-              <Button
-                variant="outline"
-                className="w-full gap-2"
-                onClick={() => setIsShareUpdateDialogOpen(true)}
-              >
-                <PlusIcon className="h-4 w-4" />
-                Share Update
-              </Button>
+
+              {isuserAuthor && (
+                <Button
+                  variant="outline"
+                  className="w-full gap-2"
+                  onClick={() => setIsShareUpdateDialogOpen(true)}
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  Share Update
+                </Button>
+              )}
             </CardContent>
           </Card>
 
@@ -541,7 +556,6 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         onSave={handleEditProject}
       />
 
-      {/* Delete Project Modal */}
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <DialogTrigger asChild>
           <Button className="hidden">Open Dialog</Button>
@@ -550,7 +564,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           <DialogHeader>
             <DialogTitle>Delete Project</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this project? This action cannot
+              Are you sure you want to delete this project? This action cannot``
               be undone.
             </DialogDescription>
           </DialogHeader>
@@ -593,6 +607,16 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               accept="image/*"
               onChange={handleUpdateImageChange}
             />
+            {updateImage && (
+              <div className="relative h-40 w-full overflow-hidden rounded-md">
+                <Image
+                  src={URL.createObjectURL(updateImage)}
+                  alt="Preview"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button
