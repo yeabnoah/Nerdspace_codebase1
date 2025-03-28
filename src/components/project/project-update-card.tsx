@@ -70,6 +70,7 @@ export default function UpdateCard({
   const [deletingCommentId, setDeletingCommentId] = useState<string | null>(
     null,
   ); // State for comment to delete
+  const [newComment, setNewComment] = useState(""); // State for new comment input
   const session = authClient.useSession();
 
   // Fetch if the user has liked the update
@@ -194,8 +195,11 @@ export default function UpdateCard({
     setShowComments((prev) => !prev);
   };
 
-  const handleAddComment = (content: string) => {
-    addCommentMutation.mutate(content);
+  const handleAddComment = () => {
+    if (newComment.trim()) {
+      addCommentMutation.mutate(newComment.trim());
+      setNewComment(""); // Clear the input field after submission
+    }
   };
 
   const handleDeleteComment = (commentId: string) => {
@@ -356,9 +360,25 @@ export default function UpdateCard({
             </div>
           </CardContent>
 
-          {/* Render comments if showComments is true */}
           {showComments && (
             <div className="border-t bg-muted/10 p-4">
+              <div className="mb-4 flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Add a comment..."
+                  className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:border-primary focus:ring focus:ring-primary/30"
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddComment}
+                  disabled={addCommentMutation.isPending}
+                >
+                  Send
+                </Button>
+              </div>
               {isCommentsLoading ? (
                 <p className="text-sm text-muted-foreground">
                   Loading comments...
@@ -415,19 +435,6 @@ export default function UpdateCard({
                   No comments yet.
                 </p>
               )}
-              <div className="mt-4">
-                <input
-                  type="text"
-                  placeholder="Add a comment..."
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:border-primary focus:ring focus:ring-primary/30"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && e.currentTarget.value.trim()) {
-                      handleAddComment(e.currentTarget.value.trim());
-                      e.currentTarget.value = "";
-                    }
-                  }}
-                />
-              </div>
             </div>
           )}
 
