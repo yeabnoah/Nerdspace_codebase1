@@ -103,6 +103,7 @@ export const DELETE = async (req: NextRequest) => {
 export const GET = async (req: NextRequest) => {
   try {
     const comments = await prisma.projectUpdateComment.findMany({
+      //   where: { updateId: updateId },
       include: {
         user: {
           select: {

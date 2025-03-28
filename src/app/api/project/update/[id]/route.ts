@@ -22,6 +22,10 @@ export const GET = async (
       where: {
         projectId: id,
       },
+      include: {
+        likes: true,
+        comments: true,
+      },
     });
 
     return NextResponse.json({

@@ -31,18 +31,7 @@ import { Heart, MessageSquare, MoreHorizontal, Trash } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-interface UpdateProps {
-  id: string;
-  title: string;
-  image: string;
-  content: string;
-  projectId: string;
-  createdAt: string;
-  userId: string;
-  initialLikes?: number;
-  initialComments?: number;
-}
+import { UpdateInterface } from "@/interface/auth/project.interface";
 
 export default function UpdateCard({
   update,
@@ -50,7 +39,7 @@ export default function UpdateCard({
   initialComments = 0,
   isOwner,
 }: {
-  update: UpdateProps;
+  update: UpdateInterface;
   initialLikes?: number;
   initialComments?: number;
   isOwner: boolean;
@@ -184,7 +173,7 @@ export default function UpdateCard({
                           liked ? "fill-destructive text-destructive" : ""
                         }`}
                       />
-                      <span>{likes > 0 ? likes : "Like"}</span>
+                      <span>{update?.likes.length}</span>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
@@ -201,7 +190,8 @@ export default function UpdateCard({
                     >
                       <MessageSquare className="h-3 w-3" />
                       <span>
-                        {initialComments > 0 ? initialComments : "Comment"}
+                        {update?.comments.length}
+                        {/* {initialComments > 0 ? initialComments : "Comment"} */}
                       </span>
                     </Button>
                   </TooltipTrigger>
