@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -50,6 +51,9 @@ import {
 } from "../ui/dropdown-menu";
 import { Separator } from "../ui/separator";
 import { EditProjectDialog } from "@/components/ui/edit-project-dialog";
+import ProjectInterface from "@/interface/auth/project.interface";
+import { UpdateInterface } from "@/interface/auth/project.interface";
+import UpdateCard from "./project-update-card";
 
 const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
@@ -65,7 +69,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     data: project,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<ProjectInterface>({
     queryKey: ["project", projectId],
     queryFn: async () => {
       const response = await axios.get(`/api/project/${projectId}`);
@@ -73,6 +77,19 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     },
     enabled: !!projectId,
   });
+
+  // const {
+  //   data: updates,
+  //   isLoading: updatesLoading,
+  //   error: updatesError,
+  // } = useQuery<UpdateInterface[]>({
+  //   queryKey: ["updates", projectId],
+  //   queryFn: async () => {
+  //     const response = await axios.get(`/api/project/${projectId}/updates`);
+  //     return response.data.data;
+  //   },
+  //   enabled: !!projectId,
+  // });
 
   const updateMutation = useMutation({
     mutationKey: ["update-project"],
@@ -151,7 +168,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const handleEditProject = async (
     updatedProjectData: Partial<typeof project>,
   ) => {
-    let imageUrl = project.image;
+    let imageUrl = project?.image;
 
     if (selectedImage) {
       const formData = new FormData();
@@ -181,12 +198,12 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
     const finalProjectData = {
       ...updatedProjectData,
-      name: updatedProjectData.name || project.name,
-      description: updatedProjectData.description || project.description,
+      name: updatedProjectData?.name || project?.name,
+      description: updatedProjectData?.description || project?.description,
       category: [
         ...new Set([
-          ...project.category,
-          ...(updatedProjectData.category || []),
+          ...(project?.category as string[]),
+          ...(updatedProjectData?.category || []),
         ]),
       ],
       image: imageUrl,
@@ -201,15 +218,15 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   if (error) return <div>Error loading project data</div>;
 
-  const createdDate = new Date(project.createdAt);
+  const createdDate = new Date(project?.createdAt || Date.now());
   const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
 
   return (
     <div className="container mx-auto max-w-6xl px-4">
       <div className="relative mb-8 h-[300px] w-full overflow-hidden rounded-xl md:h-[300px]">
         <Image
-          src={project.image || "/placeholder.svg"}
-          alt={project.name}
+          src={project?.image || "/placeholder.svg"}
+          alt={(project?.name as string) || ""}
           fill
           quality={100}
           className="object-cover"
@@ -223,30 +240,30 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               variant="outline"
               className="border-primary/30 bg-primary/10 text-xs text-white"
             >
-              {project.status}
+              {project?.status}
             </Badge>
             <Badge
               variant="outline"
               className="border-secondary/30 bg-secondary/20 text-secondary-foreground"
             >
-              {project.access}
+              {project?.access}
             </Badge>
           </div>
           <h1 className="relative z-10 mb-2 font-instrument text-3xl text-white md:text-4xl">
-            {project.name}
+            {project?.name}
           </h1>
           <div className="relative z-10 flex items-center gap-3">
             <div className="flex items-center gap-2">
               <div className="relative h-8 w-8 overflow-hidden rounded-full">
                 <Image
-                  src={project.user.image || "/placeholder.svg"}
-                  alt={project.user.visualName}
+                  src={project?.user.image || "/placeholder.svg"}
+                  alt={project?.user.visualName as string}
                   fill
                   className="object-cover"
                 />
               </div>
               <span className="font-medium text-white">
-                {project.user.visualName}
+                {project?.user.visualName}
               </span>
             </div>
             <div className="flex items-center text-sm text-white/80">
@@ -254,7 +271,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               <span>{timeAgo}</span>
             </div>
           </div>
-          {project.user.id === session.data?.user.id && (
+          {project?.user.id === session.data?.user.id && (
             <div className="absolute right-4 top-4">
               <DropdownMenu>
                 <DropdownMenuTrigger>
@@ -277,7 +294,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
           <div className="flex flex-wrap gap-2">
-            {project.category.map((cat: any) => (
+            {project?.category.map((cat: any) => (
               <Badge
                 key={cat}
                 variant="outline"
@@ -294,7 +311,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               <h2 className="mb-4 font-instrument text-3xl">
                 About This Project
               </h2>
-              <p className="text-muted-foreground">{project.description}</p>
+              <p className="text-muted-foreground">{project?.description}</p>
             </CardContent>
           </Card>
 
@@ -305,49 +322,59 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-5">
                 <div className="flex flex-col items-center">
                   <Star className="mb-1 h-5 w-5 text-yellow-500" />
-                  <span className="font-bold">{project._count.stars}</span>
+                  <span className="font-bold">{project?._count.stars}</span>
                   <span className="text-xs text-muted-foreground">Stars</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <Heart className="mb-1 h-5 w-5 text-red-500" />
-                  <span className="font-bold">{project._count.followers}</span>
+                  <span className="font-bold">{project?._count.followers}</span>
                   <span className="text-xs text-muted-foreground">
                     Followers
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
                   <MessageSquare className="mb-1 h-5 w-5 text-blue-500" />
-                  <span className="font-bold">{project._count.reviews}</span>
+                  <span className="font-bold">{project?._count.reviews}</span>
                   <span className="text-xs text-muted-foreground">Reviews</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <Flag className="mb-1 h-5 w-5 text-green-500" />
-                  <span className="font-bold">{project._count.updates}</span>
+                  <span className="font-bold">
+                    {project?._count?.updates as number}
+                  </span>
                   <span className="text-xs text-muted-foreground">Updates</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <Star className="mb-1 h-5 w-5 text-purple-500" />
-                  <span className="font-bold">{project._count.ratings}</span>
+                  <span className="font-bold">
+                    {project?._count?.ratings as number}
+                  </span>
                   <span className="text-xs text-muted-foreground">Ratings</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Updates Section (Empty State) */}
+          {/* Updates Section */}
           <Card className="rounded-lg border-card-foreground/5 shadow-none dark:border-gray-500/5">
             <CardContent className="p-6">
               <h2 className="mb-4 font-instrument text-3xl">Project Updates</h2>
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                  <PaintBucket className="h-8 w-8 text-muted-foreground" />
+              {project?.updates ? (
+                project.updates.map((update, index) => {
+                  return <UpdateCard update={update} key={index} />;
+                })
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                    <PaintBucket className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-medium">No updates yet</h3>
+                  <p className="mt-2 max-w-md text-muted-foreground">
+                    This project hasn't posted any updates. Check back later for
+                    progress on this mission to Mars.
+                  </p>
                 </div>
-                <h3 className="text-lg font-medium">No updates yet</h3>
-                <p className="mt-2 max-w-md text-muted-foreground">
-                  This project hasn't posted any updates. Check back later for
-                  progress on this mission to Mars.
-                </p>
-              </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -381,24 +408,26 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               <div className="flex flex-col items-center text-center">
                 <div className="relative h-24 w-24 overflow-hidden rounded-full">
                   <Image
-                    src={project.user.image || "/placeholder.svg"}
-                    alt={project.user.visualName}
+                    src={project?.user.image || "/placeholder.svg"}
+                    alt={(project?.user.visualName as string) || ""}
                     fill
                     className="object-cover"
                   />
                 </div>
-                <h3 className="text-lg font-bold">{project.user.visualName}</h3>
+                <h3 className="text-lg font-bold">
+                  {project?.user.visualName}
+                </h3>
                 <span className="mb-2 text-sm text-muted-foreground">
-                  Nerd at: {project.user.nerdAt}
+                  Nerd at: {project?.user.nerdAt}
                 </span>
-                <p className="text-sm">{project.user.bio}</p>
+                <p className="text-sm">{project?.user.bio}</p>
                 <Separator className="my-4" />
                 <Link
-                  href={`/user-profile/${project.userId}`}
+                  href={`/user-profile/${project?.userId}`}
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-primary hover:underline"
                 >
-                  Connect with {project.user.visualName}
+                  Connect with {project?.user.visualName}
                 </Link>
               </div>
             </CardContent>
@@ -441,7 +470,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       <EditProjectDialog
         selectedImage={selectedImage}
         setSelectedImage={setSelectedImage}
-        project={project}
+        project={project as ProjectInterface}
         isOpen={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         onSave={handleEditProject}

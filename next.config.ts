@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       "avatars.githubusercontent.com",
       "res.cloudinary.com",
       "images.unsplash.com",
+      "play-lh.googleusercontent.com",
     ],
   },
   experimental: {
