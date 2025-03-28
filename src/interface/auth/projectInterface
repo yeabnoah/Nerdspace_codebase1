@@ -1,0 +1,15 @@
+// import UserInterface from "./user.interface";
+
+// interface UpdateInterface {
+//   id: string;
+//   title: string;
+//   image: string;
+//   content: string;
+//   projectId: string;
+//   createdAt: string;
+//   userId: string;
+//   likes?: number; // Optional likes field
+//   comments?: number; // Optional comments field
+// }
+
+// export default UpdateInterface;

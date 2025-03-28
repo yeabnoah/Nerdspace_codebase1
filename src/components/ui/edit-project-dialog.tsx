@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import axios from "axios";
 import toast from "react-hot-toast";
+import ProjectInterface from "@/interface/auth/project.interface";
 
 interface Project {
   name: string;
@@ -32,13 +33,20 @@ interface Project {
   category: string[];
 }
 
+interface PartialProjectUpdate {
+  name: string;
+  description: string;
+  category: string[];
+  image: string;
+}
+
 interface EditProjectDialogProps {
   selectedImage: File | null;
   setSelectedImage: (image: File | null) => void;
-  project: Project;
+  project: ProjectInterface;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onSave: (updatedProjectData: Partial<Project>) => void;
+  onSave: (updatedProjectData: Partial<ProjectInterface>) => void; // Updated to accept ProjectInterface
 }
 
 export function EditProjectDialog({
@@ -113,12 +121,11 @@ export function EditProjectDialog({
       }
     }
 
-    const updatedProject = {
-      ...editedProject,
+    const updatedProject: PartialProjectUpdate = {
       name: editedProject.name || project.name,
       description: editedProject.description || project.description,
       category: selectedCategories,
-      image: imageUrl, // Ensure the uploaded image URL is included
+      image: imageUrl,
     };
 
     onSave(updatedProject); // Pass the updated project with the image URL
@@ -153,7 +160,7 @@ export function EditProjectDialog({
           Update your project details and settings.
         </p>
         <div className="flex h-[85vh] max-h-[85vh] flex-col md:flex-row">
-        <DialogTitle></DialogTitle>
+          <DialogTitle></DialogTitle>
           <div className="flex w-full flex-col bg-gradient-to-b from-primary/10 to-primary/5 p-6 md:w-1/3">
             <div className="mb-2 font-instrument text-3xl">Edit Project</div>
             <p className="mb-6 text-muted-foreground">
@@ -219,7 +226,7 @@ export function EditProjectDialog({
                     getStatusColor(editedProject?.status || project.status),
                   )}
                 ></div>
-                <span className="font-medium text-xs">
+                <span className="text-xs font-medium">
                   {editedProject?.status || project.status}
                 </span>
               </div>
@@ -241,7 +248,7 @@ export function EditProjectDialog({
               </TabsList>
 
               <TabsContent value="details" className="space-y-6">
-                <div className="rounded-lg border dark:border-gray-500/5 border-gray-100 shadow-none bg-card p-4">
+                <div className="rounded-lg border border-gray-100 bg-card p-4 shadow-none dark:border-gray-500/5">
                   <h3 className="mb-4 text-lg font-medium">
                     Basic Information
                   </h3>
@@ -265,7 +272,7 @@ export function EditProjectDialog({
                           }))
                         }
                         placeholder="Enter project name"
-                        className="border-input/50 dark:border-gray-500/5 shadow-none focus-visible:ring-primary/50"
+                        className="border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
                       />
                     </div>
 
@@ -291,7 +298,7 @@ export function EditProjectDialog({
                         }
                         placeholder="Describe your project"
                         rows={6}
-                        className="resize-none border-input/50 shadow-none dark:border-gray-500/5 focus-visible:ring-primary/50"
+                        className="resize-none border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
                       />
                     </div>
                   </div>
@@ -299,7 +306,7 @@ export function EditProjectDialog({
               </TabsContent>
 
               <TabsContent value="settings" className="space-y-6">
-                <div className="rounded-lg border dark:border-gray-500/5  border-gray-100 bg-card p-4">
+                <div className="rounded-lg border border-gray-100 bg-card p-4 dark:border-gray-500/5">
                   <h3 className="mb-4 text-lg font-medium">Project Status</h3>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -320,10 +327,13 @@ export function EditProjectDialog({
                           }))
                         }
                       >
-                        <SelectTrigger id="status" className="w-full shadow-none border dark:border-gray-500/5">
+                        <SelectTrigger
+                          id="status"
+                          className="w-full border shadow-none dark:border-gray-500/5"
+                        >
                           <SelectValue placeholder="Select status" />
                         </SelectTrigger>
-                        <SelectContent className=" border shadow-none dark:border-gray-500/5">
+                        <SelectContent className="border shadow-none dark:border-gray-500/5">
                           <SelectItem
                             value="ONGOING"
                             className="flex items-center"
@@ -368,10 +378,13 @@ export function EditProjectDialog({
                           }))
                         }
                       >
-                        <SelectTrigger id="access" className="w-full shadow-none border dark:border-gray-500/5">
+                        <SelectTrigger
+                          id="access"
+                          className="w-full border shadow-none dark:border-gray-500/5"
+                        >
                           <SelectValue placeholder="Select access" />
                         </SelectTrigger>
-                        <SelectContent className=" dark:border-gray-500/5 border shadow-none">
+                        <SelectContent className="border shadow-none dark:border-gray-500/5">
                           <SelectItem value="public">
                             <div className="flex items-center">
                               <Globe className="mr-2 h-4 w-4 text-blue-500" />
@@ -390,7 +403,7 @@ export function EditProjectDialog({
                   </div>
                 </div>
 
-                <div className="rounded-lg border dark:border-gray-500/5 bg-card border-gray-100 p-4 ">
+                <div className="rounded-lg border border-gray-100 bg-card p-4 dark:border-gray-500/5">
                   <h3 className="mb-4 text-lg font-medium">Categories</h3>
 
                   <div className="space-y-4">
@@ -400,11 +413,11 @@ export function EditProjectDialog({
                         id="category"
                         placeholder="Type a category and press Enter or Space"
                         onKeyDown={handleCategoryInput}
-                        className="pl-10 border dark:border-gray-500/5 shadow-none"
+                        className="border pl-10 shadow-none dark:border-gray-500/5"
                       />
                     </div>
 
-                    <div className="min-h-[100px] rounded-md border dark:border-gray-500/5 bg-background/50 p-3">
+                    <div className="min-h-[100px] rounded-md border bg-background/50 p-3 dark:border-gray-500/5">
                       {selectedCategories.length > 0 ? (
                         <div className="flex flex-wrap gap-2">
                           {selectedCategories.map((category) => (
@@ -436,7 +449,7 @@ export function EditProjectDialog({
               </TabsContent>
             </Tabs>
 
-            <div className="mt-8 flex justify-end gap-3 border-t dark:border-gray-500/5 pt-4">
+            <div className="mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5">
               <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
