@@ -1,12 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import getUserSession from "@/functions/get-user";
-import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
+export const GET = async (
   req: NextRequest,
   { params }: { params: { id: string } },
-) {
+) => {
   try {
     const session = await getUserSession();
     if (!session) {
@@ -19,36 +18,17 @@ export async function GET(
     }
 
     const { id } = params;
-
-    const project = await prisma.project.findFirst({
+    const projectUpdates = await prisma.projectUpdate.findMany({
       where: {
-        id: id,
-        userId: session.user.id,
-      },
-      include: {
-        _count: true,
-        user: true,
-        updates: true,
+        projectId: id,
       },
     });
 
-    if (!project) {
-      return NextResponse.json(
-        {
-          message: "Project not found",
-        },
-        { status: 404 },
-      );
-    }
-
-    return NextResponse.json(
-      {
-        data: project,
-      },
-      { status: 200 },
-    );
-  } catch (error: any) {
-    console.error("Error fetching project data:", error);
+    return NextResponse.json({
+      data: projectUpdates,
+    });
+  } catch (error) {
+    console.error("Error creating project update:", error);
     return NextResponse.json(
       {
         message: "Internal server error",
@@ -56,13 +36,7 @@ export async function GET(
       { status: 500 },
     );
   }
-}
-
-const productUpdateSchema = z.object({
-  image: z.string(),
-  title: z.string(),
-  content: z.string(),
-});
+};
 
 export const POST = async (
   req: NextRequest,
@@ -80,19 +54,7 @@ export const POST = async (
     }
 
     const { id } = params;
-    const body = await req.json();
-
-    const validation = productUpdateSchema.safeParse(body);
-
-    if (validation.error || !validation.success) {
-      return NextResponse.json(
-        {
-          message: "validation error",
-          error: validation.error.message,
-        },
-        { status: 402 },
-      );
-    }
+    const { image, title, content } = await req.json();
 
     const project = await prisma.project.findFirst({
       where: {
@@ -113,9 +75,9 @@ export const POST = async (
     const newUpdate = await prisma.projectUpdate.create({
       data: {
         projectId: id,
-        title: body.title,
-        image: body.image,
-        content: body.content,
+        title,
+        image,
+        content,
         userId: session.user.id,
       },
     });
