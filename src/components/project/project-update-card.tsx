@@ -207,8 +207,8 @@ export default function UpdateCard({
         queryClient.invalidateQueries({
           queryKey: ["updateComments", update.id],
         });
-        setIsCommentDeleteDialogOpen(false); 
-        toast.success("Comment deleted successfully."); 
+        setIsCommentDeleteDialogOpen(false);
+        toast.success("Comment deleted successfully.");
       },
     });
   };
@@ -391,7 +391,7 @@ export default function UpdateCard({
                               }
                               className="text-red-500 hover:underline"
                             >
-                              Delete
+                              <TrashIcon size={14} />
                             </button>
                             <button
                               onClick={() =>
@@ -402,7 +402,7 @@ export default function UpdateCard({
                               }
                               className="text-blue-500 hover:underline"
                             >
-                              Edit
+                              <EditIcon size={14} />
                             </button>
                           </div>
                         )}
