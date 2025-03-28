@@ -50,6 +50,7 @@ model User {
   ProjectStar          ProjectStar[]
   ProjectRating        ProjectRating[]
   ProjectReview        ProjectReview[]
+  ProjectUpdate        ProjectUpdate[]
 
   @@unique([email])
   @@map("user")
@@ -242,6 +243,8 @@ model ProjectUpdate {
   createdAt DateTime               @default(now())
   likes     ProjectUpdateLike[]
   comments  ProjectUpdateComment[]
+  User      User?                  @relation(fields: [userId], references: [id])
+  userId    String?
 }
 
 model ProjectStar {
