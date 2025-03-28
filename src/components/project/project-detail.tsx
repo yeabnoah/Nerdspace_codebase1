@@ -49,6 +49,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Separator } from "../ui/separator";
+import { EditProjectDialog } from "@/components/ui/edit-project-dialog";
 
 const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
@@ -120,6 +121,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      console.log("Image selected:", file); // Debugging log
       setSelectedImage(file);
     }
   };
@@ -146,10 +148,12 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     setSelectedCategories((prev) => prev.filter((c) => c !== category));
   };
 
-  const handleEditProject = async () => {
+  const handleEditProject = async (
+    updatedProjectData: Partial<typeof project>,
+  ) => {
     let imageUrl = project.image;
 
-    if (selectedImage instanceof File) {
+    if (selectedImage) {
       const formData = new FormData();
       formData.append("file", selectedImage);
       formData.append(
@@ -161,25 +165,34 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         const response = await axios.post(
           process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!,
           formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
         );
         imageUrl = response.data.secure_url;
       } catch (error) {
         console.error("Image upload failed:", error);
-        toast.error("Image upload failed");
+        toast.error("Image upload failed. Please try again.");
         return;
       }
     }
 
-    const updatedProjectData = {
-      name: editedProject?.name || project.name,
-      description: editedProject?.description || project.description,
+    const finalProjectData = {
+      ...updatedProjectData,
+      name: updatedProjectData.name || project.name,
+      description: updatedProjectData.description || project.description,
+      category: [
+        ...new Set([
+          ...project.category,
+          ...(updatedProjectData.category || []),
+        ]),
+      ],
       image: imageUrl,
-      status: editedProject?.status || project.status,
-      access: editedProject?.access || project.access,
-      category: [...new Set([...project.category, ...selectedCategories])],
     };
 
-    await updateMutation.mutate(updatedProjectData);
+    await updateMutation.mutate(finalProjectData);
   };
 
   if (isLoading) {
@@ -425,180 +438,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         </div>
       </div>
 
-      {/* Edit Project Modal */}
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogTrigger asChild>
-          <Button className="hidden">Open Dialog</Button>
-        </DialogTrigger>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[550px]">
-          <DialogHeader>
-            <DialogTitle>Edit Project</DialogTitle>
-            <DialogDescription>
-              Fill in the details to edit the project. Click save when you're
-              done.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Project Name</Label>
-              <Input
-                id="name"
-                value={editedProject?.name || project.name}
-                onChange={(e) =>
-                  setEditedProject((prev: any) => ({
-                    ...prev,
-                    name: e.target.value,
-                  }))
-                }
-                placeholder="Enter project name"
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={editedProject?.description || project.description}
-                onChange={(e) =>
-                  setEditedProject((prev: any) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
-                placeholder="Describe your project"
-                rows={4}
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Project Image</Label>
-              <div className="mt-2 flex items-center justify-center">
-                <div className="relative h-10 w-full">
-                  <Button variant="outline" className="w-full" type="button">
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload Custom Image
-                  </Button>
-                  <Input
-                    type="file"
-                    className="absolute inset-0 cursor-pointer opacity-0"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                </div>
-              </div>
-              {selectedImage && (
-                <div className="mt-4 flex flex-col items-center">
-                  <img
-                    src={URL.createObjectURL(selectedImage)}
-                    alt="Selected"
-                    className="h-40 w-40 object-cover"
-                  />
-                  <Button
-                    variant="outline"
-                    className="mt-2"
-                    onClick={handleImageCancel}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              )}
-              {!selectedImage && project.image && (
-                <div className="mt-4 flex flex-col items-center">
-                  <img
-                    src={project.image}
-                    alt="Existing"
-                    className="h-40 w-40 object-cover"
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={editedProject?.status || project.status}
-                onValueChange={(value) =>
-                  setEditedProject((prev: any) => ({
-                    ...prev,
-                    status: value as
-                      | "ONGOING"
-                      | "COMPLETED"
-                      | "PAUSED"
-                      | "CANCELLED",
-                  }))
-                }
-              >
-                <SelectTrigger id="status">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ONGOING">Ongoing</SelectItem>
-                  <SelectItem value="COMPLETED">Completed</SelectItem>
-                  <SelectItem value="PAUSED">Paused</SelectItem>
-                  <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="access">Access</Label>
-              <Select
-                value={editedProject?.access || project.access}
-                onValueChange={(value) =>
-                  setEditedProject((prev: any) => ({
-                    ...prev,
-                    access: value as "public" | "private",
-                  }))
-                }
-              >
-                <SelectTrigger id="access">
-                  <SelectValue placeholder="Select access" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="public">Public</SelectItem>
-                  <SelectItem value="private">Private</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="category">Categories</Label>
-              <Input
-                id="category"
-                placeholder="Type a category and press space"
-                onKeyDown={handleCategoryInput}
-              />
-              <div className="mt-2 flex flex-wrap gap-2">
-                {[...new Set([...project.category, ...selectedCategories])].map(
-                  (category) => (
-                    <span
-                      key={category}
-                      className="flex items-center gap-1 rounded-full bg-white px-2 py-1 text-xs dark:bg-white/50 dark:text-black"
-                    >
-                      {category}
-                      <button
-                        type="button"
-                        className="text-red-500"
-                        onClick={() => handleRemoveCategory(category)}
-                      >
-                        &times;
-                      </button>
-                    </span>
-                  ),
-                )}
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleEditProject}>Save Changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <EditProjectDialog
+        selectedImage={selectedImage}
+        setSelectedImage={setSelectedImage}
+        project={project}
+        isOpen={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        onSave={handleEditProject}
+      />
 
       {/* Delete Project Modal */}
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
