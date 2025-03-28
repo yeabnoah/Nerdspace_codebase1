@@ -20,9 +20,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Search, Upload } from "lucide-react";
+import { Plus, Search, Upload, Check, X } from "lucide-react";
 import { useState } from "react";
-// import ProjectCard, { ProjectCardSkeleton } from "./project-card";
+import { Badge } from "@/components/ui/badge";
 import ProjectInterface, {
   ProjectInterfaceToSubmit,
 } from "@/interface/auth/project.interface";
@@ -64,7 +64,11 @@ export default function ProjectsPage() {
   };
 
   const [projects, setProjects] = useState<ProjectInterface[]>([]);
-  const { data: projecter, isLoading } = useQuery<ProjectInterface[]>({
+  const {
+    data: projecter,
+    isLoading,
+    isError,
+  } = useQuery<ProjectInterface[]>({
     queryKey: ["projects"],
     queryFn: async () => {
       const response = await axios.get("/api/project");
@@ -283,55 +287,46 @@ export default function ProjectsPage() {
                 Create Project
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[550px]">
-              <DialogHeader>
-                <DialogTitle>Create New Project</DialogTitle>
-                <DialogDescription>
-                  Fill in the details to create a new project. Click save when
-                  you're done.
-                </DialogDescription>
-              </DialogHeader>
+            <DialogContent
+              className="max-w-4xl overflow-hidden rounded-xl border-none p-0 shadow-xl"
+              aria-describedby="create-project-description"
+            >
+              <DialogTitle>Create New Project</DialogTitle>
+              <p id="create-project-description" className="sr-only">
+                Fill in the details to create a new project.
+              </p>
+              <div className="flex h-[85vh] max-h-[85vh] flex-col md:flex-row">
+                <div className="flex w-full flex-col bg-gradient-to-b from-primary/10 to-primary/5 p-6 md:w-1/3">
+                  <div className="mb-2 font-instrument text-3xl">
+                    New Project
+                  </div>
+                  <p className="mb-6 text-muted-foreground">
+                    Fill in the details to create a new project.
+                  </p>
 
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Project Name</Label>
-                  <Input
-                    id="name"
-                    value={newProject.name}
-                    onChange={(e) =>
-                      setNewProject({ ...newProject, name: e.target.value })
-                    }
-                    placeholder="Enter project name"
-                  />
-                </div>
+                  <div className="mt-4 flex flex-1 flex-col items-center justify-center">
+                    <div className="relative mb-4 aspect-square w-full max-w-[220px] overflow-hidden rounded-xl border-2 border-dashed border-primary/20 bg-background/50">
+                      {selectedImage ? (
+                        <img
+                          src={URL.createObjectURL(selectedImage)}
+                          alt="Selected"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                          No image
+                        </div>
+                      )}
+                    </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={newProject.description}
-                    onChange={(e) =>
-                      setNewProject({
-                        ...newProject,
-                        description: e.target.value,
-                      })
-                    }
-                    placeholder="Describe your project"
-                    rows={4}
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <Label>Project Image</Label>
-                  <div className="mt-2 flex items-center justify-center">
-                    <div className="relative h-10 w-full">
+                    <div className="relative w-full max-w-[220px]">
                       <Button
                         variant="outline"
                         className="w-full"
                         type="button"
                       >
                         <Upload className="mr-2 h-4 w-4" />
-                        Upload Custom Image
+                        {selectedImage ? "Change Image" : "Upload Image"}
                       </Button>
                       <Input
                         type="file"
@@ -340,107 +335,197 @@ export default function ProjectsPage() {
                         onChange={handleImageChange}
                       />
                     </div>
+
+                    {selectedImage && (
+                      <div className="mt-2">
+                        <p>Selected Image: {selectedImage.name}</p>
+                        <Button variant="outline" onClick={handleImageCancel}>
+                          Remove Image
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                  {selectedImage && (
-                    <div className="mt-4 flex flex-col items-center">
-                      <img
-                        src={URL.createObjectURL(selectedImage)}
-                        alt="Selected"
-                        className="h-40 w-40 object-cover"
-                      />
-                      <Button
-                        variant="outline"
-                        className="mt-2"
-                        onClick={handleImageCancel}
-                      >
-                        Cancel
-                      </Button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-6">
+                  <div className="space-y-6">
+                    <div className="rounded-lg border bg-card p-4 shadow-sm">
+                      <h3 className="mb-4 text-lg font-medium">
+                        Basic Information
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="name" className="text-sm font-medium">
+                            Project Name
+                          </Label>
+                          <Input
+                            id="name"
+                            value={newProject.name}
+                            onChange={(e) =>
+                              setNewProject({
+                                ...newProject,
+                                name: e.target.value,
+                              })
+                            }
+                            placeholder="Enter project name"
+                            className="border-input/50 focus-visible:ring-primary/50"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="description"
+                            className="text-sm font-medium"
+                          >
+                            Description
+                          </Label>
+                          <Textarea
+                            id="description"
+                            value={newProject.description}
+                            onChange={(e) =>
+                              setNewProject({
+                                ...newProject,
+                                description: e.target.value,
+                              })
+                            }
+                            placeholder="Describe your project"
+                            rows={6}
+                            className="resize-none border-input/50 focus-visible:ring-primary/50"
+                          />
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="status">Status</Label>
-                  <Select
-                    value={newProject.status}
-                    onValueChange={(value) =>
-                      setNewProject({
-                        ...newProject,
-                        status: value as
-                          | "ONGOING"
-                          | "COMPLETED"
-                          | "PAUSED"
-                          | "CANCELLED",
-                      })
-                    }
-                  >
-                    <SelectTrigger id="status">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ONGOING">Ongoing</SelectItem>
-                      <SelectItem value="COMPLETED">Completed</SelectItem>
-                      <SelectItem value="PAUSED">Paused</SelectItem>
-                      <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <div className="rounded-lg border bg-card p-4 shadow-sm">
+                      <h3 className="mb-4 text-lg font-medium">
+                        Project Settings
+                      </h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="status"
+                            className="text-sm font-medium"
+                          >
+                            Status
+                          </Label>
+                          <Select
+                            value={newProject.status}
+                            onValueChange={(value) =>
+                              setNewProject({
+                                ...newProject,
+                                status: value as
+                                  | "ONGOING"
+                                  | "COMPLETED"
+                                  | "PAUSED"
+                                  | "CANCELLED",
+                              })
+                            }
+                          >
+                            <SelectTrigger id="status" className="w-full">
+                              <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="ONGOING">Ongoing</SelectItem>
+                              <SelectItem value="COMPLETED">
+                                Completed
+                              </SelectItem>
+                              <SelectItem value="PAUSED">Paused</SelectItem>
+                              <SelectItem value="CANCELLED">
+                                Cancelled
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="access">Access</Label>
-                  <Select
-                    value={newProject.access}
-                    onValueChange={(value) =>
-                      setNewProject({
-                        ...newProject,
-                        access: value as "public" | "private",
-                      })
-                    }
-                  >
-                    <SelectTrigger id="access">
-                      <SelectValue placeholder="Select access" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="public">Public</SelectItem>
-                      <SelectItem value="private">Private</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="access"
+                            className="text-sm font-medium"
+                          >
+                            Access
+                          </Label>
+                          <Select
+                            value={newProject.access}
+                            onValueChange={(value) =>
+                              setNewProject({
+                                ...newProject,
+                                access: value as "public" | "private",
+                              })
+                            }
+                          >
+                            <SelectTrigger id="access" className="w-full">
+                              <SelectValue placeholder="Select access" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="public">Public</SelectItem>
+                              <SelectItem value="private">Private</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="category">Categories</Label>
-                  <Input
-                    id="category"
-                    placeholder="Type a category and press space"
-                    onKeyDown={handleCategoryInput}
-                  />
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {selectedCategories.map((category) => (
-                      <span
-                        key={category}
-                        className="rounded-full bg-white px-2 py-1 text-xs dark:bg-white/50 dark:text-black"
-                      >
-                        {category}
-                      </span>
-                    ))}
+                    <div className="rounded-lg border bg-card p-4 shadow-sm">
+                      <h3 className="mb-4 text-lg font-medium">Categories</h3>
+                      <div className="space-y-4">
+                        <Input
+                          id="category"
+                          placeholder="Type a category and press space"
+                          onKeyDown={handleCategoryInput}
+                          className="pl-10"
+                        />
+                        <div className="min-h-[100px] rounded-md border bg-background/50 p-3">
+                          {selectedCategories.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                              {selectedCategories.map((category) => (
+                                <Badge
+                                  key={category}
+                                  variant="secondary"
+                                  className="group flex items-center gap-1 px-2 py-1"
+                                >
+                                  {category}
+                                  <button
+                                    type="button"
+                                    className="text-muted-foreground transition-colors hover:text-foreground"
+                                    onClick={() =>
+                                      setSelectedCategories((prev) =>
+                                        prev.filter((c) => c !== category),
+                                      )
+                                    }
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </Badge>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                              No categories added yet
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 flex justify-end gap-3 border-t pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsCreateModalOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleCreateProject}
+                      disabled={!newProject.name || !newProject.description}
+                      className="gap-2"
+                    >
+                      <Check className="h-4 w-4" />
+                      Create Project
+                    </Button>
                   </div>
                 </div>
               </div>
-
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsCreateModalOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleCreateProject}
-                  disabled={!newProject.name || !newProject.description}
-                >
-                  Create Project
-                </Button>
-              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
