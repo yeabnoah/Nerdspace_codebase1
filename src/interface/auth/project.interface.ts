@@ -6,13 +6,14 @@ type likeType = {
   updateId: string;
 };
 
-type commentType = {
+export type commentType = {
   id: string;
   userId: string;
   updateId: string;
   content: string;
   createdAt: string;
   updatedAt: String;
+  user: UserInterface;
 };
 
 export interface UpdateInterface {
