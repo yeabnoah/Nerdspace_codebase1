@@ -32,6 +32,7 @@ import {
   Heart,
   MessageSquare,
   PaintBucket,
+  PlusIcon,
   SettingsIcon,
   Share2,
   Star,
@@ -63,6 +64,10 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isShareUpdateDialogOpen, setIsShareUpdateDialogOpen] = useState(false);
+  const [updateTitle, setUpdateTitle] = useState("");
+  const [updateContent, setUpdateContent] = useState("");
+  const [updateImage, setUpdateImage] = useState<File | null>(null);
   const session = authClient.useSession();
 
   const {
@@ -205,6 +210,57 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         (update) => update.id !== updateId,
       );
     }
+  };
+
+  const handleShareUpdate = async () => {
+    if (!updateTitle || !updateContent) {
+      toast.error("Title and content are required.");
+      return;
+    }
+
+    let imageUrl = null;
+    if (updateImage) {
+      const formData = new FormData();
+      formData.append("file", updateImage);
+      formData.append(
+        "upload_preset",
+        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!,
+      );
+
+      try {
+        const response = await axios.post(
+          process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          },
+        );
+        imageUrl = response.data.secure_url;
+      } catch (error) {
+        console.error("Image upload failed:", error);
+        toast.error("Image upload failed. Please try again.");
+        return;
+      }
+    }
+
+    try {
+      await axios.post(`/api/project/update/${projectId}`, {
+        title: updateTitle,
+        content: updateContent,
+        image: imageUrl,
+      });
+      toast.success("Update shared successfully!");
+      setIsShareUpdateDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+    } catch (error) {
+      console.error("Error sharing update:", error);
+      toast.error("Failed to share update. Please try again.");
+    }
+  };
+
+  const handleUpdateImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) setUpdateImage(file);
   };
 
   if (isLoading) {
@@ -397,6 +453,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                 <Share2 className="h-4 w-4" />
                 Share
               </Button>
+              <Button
+                variant="outline"
+                className="w-full gap-2"
+                onClick={() => setIsShareUpdateDialogOpen(true)}
+              >
+                <PlusIcon className="h-4 w-4" />
+                Share Update
+              </Button>
             </CardContent>
           </Card>
 
@@ -500,6 +564,44 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
             <Button variant="destructive" onClick={handleDeleteProject}>
               Delete
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Update Dialog */}
+      <Dialog
+        open={isShareUpdateDialogOpen}
+        onOpenChange={setIsShareUpdateDialogOpen}
+      >
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Share a New Update</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              placeholder="Update Title"
+              value={updateTitle}
+              onChange={(e) => setUpdateTitle(e.target.value)}
+            />
+            <Textarea
+              placeholder="Update Content"
+              value={updateContent}
+              onChange={(e) => setUpdateContent(e.target.value)}
+            />
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={handleUpdateImageChange}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsShareUpdateDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleShareUpdate}>Share</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
