@@ -1,5 +1,20 @@
 import UserInterface from "./user.interface";
 
+type likeType = {
+  id: string;
+  userId: string;
+  updateId: string;
+};
+
+type commentType = {
+  id: string;
+  userId: string;
+  updateId: string;
+  content: string;
+  createdAt: string;
+  updatedAt: String;
+};
+
 export interface UpdateInterface {
   id: string;
   title: string;
@@ -8,6 +23,8 @@ export interface UpdateInterface {
   projectId: string;
   createdAt: string;
   userId: string;
+  likes: likeType[];
+  comments: commentType[];
 }
 
 interface ProjectInterface {

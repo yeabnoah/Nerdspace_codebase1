@@ -83,6 +83,33 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     enabled: !!projectId,
   });
 
+  const { data: likesCount, refetch: refetchLikes } = useQuery<number>({
+    queryKey: ["projectLikes", projectId],
+    queryFn: async () => {
+      const response = await axios.get(
+        `/api/project/update/like?projectId=${projectId}`,
+      );
+      return response.data.likesCount;
+    },
+    enabled: !!projectId,
+  });
+
+  const likeMutation = useMutation({
+    mutationFn: async () => {
+      await axios.post(`/api/project/update/like?projectId=${projectId}`);
+    },
+    onSuccess: () => {
+      refetchLikes(); // Refetch likes count after mutation
+    },
+    onError: () => {
+      toast.error("Failed to update like. Please try again.");
+    },
+  });
+
+  const handleLikeProject = () => {
+    likeMutation.mutate();
+  };
+
   const updateMutation = useMutation({
     mutationKey: ["update-project"],
     mutationFn: async (updatedProjectData: any) => {
@@ -457,9 +484,11 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           <Card className="rounded-lg border-card-foreground/10 shadow-none dark:border-gray-500/5">
             <CardContent className="space-y-4 p-6">
               {!isuserAuthor && (
-                <Button className="w-full gap-2">
+                <Button className="w-full gap-2" onClick={handleLikeProject}>
                   <Heart className="h-4 w-4" />
-                  Follow Project
+                  {likesCount !== undefined
+                    ? `${likesCount} Likes`
+                    : "Loading..."}
                 </Button>
               )}
 

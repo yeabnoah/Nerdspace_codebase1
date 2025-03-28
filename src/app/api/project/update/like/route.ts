@@ -57,3 +57,27 @@ export const POST = async (req: NextRequest) => {
     );
   }
 };
+
+export const GET = async (req: NextRequest) => {
+  try {
+    const projectId = req.nextUrl.searchParams.get("projectId");
+    if (!projectId) {
+      return NextResponse.json(
+        { message: "Please provide projectId" },
+        { status: 400 },
+      );
+    }
+
+    const likesCount = await prisma.projectUpdateLike.count({
+      where: { updateId: projectId },
+    });
+
+    return NextResponse.json({ likesCount });
+  } catch (error) {
+    console.error("Error fetching likes count:", error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 },
+    );
+  }
+};

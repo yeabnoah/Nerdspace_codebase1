@@ -27,7 +27,12 @@ export async function GET(
       include: {
         _count: true,
         user: true,
-        updates: true,
+        updates: {
+          include: {
+            likes: true, // Include likes for each update
+            comments: true, // Include comments for each update
+          },
+        },
       },
     });
 
