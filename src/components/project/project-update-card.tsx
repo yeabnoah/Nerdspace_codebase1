@@ -13,7 +13,10 @@ import {
 } from "@/components/ui/tooltip";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
-import { Heart, MessageSquare, MoreHorizontal } from "lucide-react";
+import { Heart, MessageSquare, MoreHorizontal, Trash } from "lucide-react";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface UpdateProps {
   id: string;
@@ -31,13 +34,34 @@ export default function UpdateCard({
   update,
   initialLikes = 0,
   initialComments = 0,
+  isOwner,
 }: {
   update: UpdateProps;
   initialLikes?: number;
   initialComments?: number;
+  isOwner: boolean;
 }) {
   const [likes, setLikes] = useState(initialLikes);
   const [liked, setLiked] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await axios.delete(`/api/project/update/${id}`);
+    },
+    onSuccess: () => {
+      toast.success("Update deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["project"] }); // Invalidate project query
+    },
+    onError: () => {
+      toast.error("Failed to delete update. Please try again.");
+    },
+  });
+
+  const handleDelete = () => {
+    deleteMutation.mutate(update.id);
+  };
 
   // Format the date to be more readable
   const formattedDate = formatDistanceToNow(new Date(update.createdAt), {
@@ -58,17 +82,16 @@ export default function UpdateCard({
 
   return (
     <TooltipProvider>
-      <Card className="my-2 overflow-hidden border-border bg-card rounded-lg">
+      <Card className="my-2 overflow-hidden rounded-lg border border-gray-100 bg-card dark:border-gray-500/5">
         <div className="flex items-start">
-          {/* Main content */}
-          <CardContent className="flex-1 p-3">
-            <div className="relative h-44 my-2 shrink-0 border-r border-border bg-muted/30">
+          <CardContent className="flex-1 border-none bg-transparent p-3">
+            <div className="relative my-2 h-44 shrink-0 border-r border-border bg-transparent">
               <Image
                 src={update.image || "/placeholder.svg"}
                 alt={update.title}
                 width={1000}
                 height={1000}
-                className="h-full w-full object-cover grayscale"
+                className="h-full w-full rounded-lg object-cover grayscale"
                 priority
               />
             </div>
@@ -91,6 +114,16 @@ export default function UpdateCard({
               </div>
               <div className="flex items-center gap-1 text-muted-foreground">
                 <span className="text-xs">{formattedDate}</span>
+                {isOwner && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-destructive"
+                    onClick={handleDelete}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                )}
                 <Button variant="ghost" size="icon" className="h-6 w-6">
                   <MoreHorizontal className="h-3 w-3" />
                 </Button>
