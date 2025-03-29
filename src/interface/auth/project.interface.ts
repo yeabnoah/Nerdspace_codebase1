@@ -12,13 +12,13 @@ interface starProject {
   projectId: String;
 }
 
-type ProjectFollowers = {
+export type ProjectFollowers = {
   id: String;
   userId: String;
   projectId: String;
 };
 
-type reviewFollowers = {
+export type reviewProject = {
   id: String;
   userId: String;
   projectId: String;
@@ -68,7 +68,7 @@ interface ProjectInterface {
   updates: UpdateInterface[];
   stars: starProject[];
   followers: ProjectFollowers[];
-  reviews: reviewFollowers[];
+  reviews: reviewProject[];
 }
 
 export interface ProjectInterfaceToSubmit {
