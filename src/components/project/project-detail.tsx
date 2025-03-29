@@ -42,7 +42,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import ProjectDetailSkeleton from "../skeleton/project-detail.skeleton";
 import {
@@ -96,6 +96,37 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     },
     enabled: !!projectId,
   });
+
+  const [updates, setUpdates] = useState(project?.updates || []);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  useEffect(() => {
+    if (project?.updates) {
+      setUpdates(project.updates);
+      setNextCursor(project.nextCursor); // Set initial cursor from backend
+    }
+  }, [project]);
+
+  const fetchMoreUpdates = async () => {
+    if (!nextCursor) return;
+
+    setIsLoadingMore(true);
+    try {
+      const response = await axios.get(`/api/project/${projectId}`, {
+        params: { cursor: nextCursor, limit: 3 }, // Fetch 3 updates at a time
+      });
+      const { data, nextCursor: newCursor } = response.data;
+
+      setUpdates((prev) => [...prev, ...data.updates]);
+      setNextCursor(newCursor);
+    } catch (error) {
+      console.error("Error fetching more updates:", error);
+      toast.error("Failed to load more updates.");
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
 
   const likeMutation = useMutation({
     mutationFn: async () => {
@@ -445,6 +476,17 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     }
   };
 
+  const handleSaveEditedReview = () => {
+    if (!editingReviewContent.trim()) {
+      toast.error("Review content cannot be empty.");
+      return;
+    }
+    editReviewMutation.mutate({
+      reviewId: editingReviewId!,
+      content: editingReviewContent,
+    });
+  };
+
   if (isLoading) {
     return <ProjectDetailSkeleton />;
   }
@@ -614,14 +656,25 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
                 {/* Updates Tab */}
                 <TabsContent value="updates">
-                  {project?.updates && project.updates.length > 0 ? (
-                    project.updates.map((update, index) => (
-                      <UpdateCard
-                        update={update}
-                        key={index}
-                        isOwner={project?.user.id === session.data?.user.id}
-                      />
-                    ))
+                  {updates.length > 0 ? (
+                    <>
+                      {updates.map((update, index) => (
+                        <UpdateCard
+                          update={update}
+                          key={index}
+                          isOwner={project?.user.id === session.data?.user.id}
+                        />
+                      ))}
+                      {nextCursor && (
+                        <Button
+                          onClick={fetchMoreUpdates}
+                          disabled={isLoadingMore}
+                          className="mt-4"
+                        >
+                          {isLoadingMore ? "Loading..." : "Load More"}
+                        </Button>
+                      )}
+                    </>
                   ) : (
                     <div className="flex flex-col items-center justify-center py-8 text-center">
                       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">

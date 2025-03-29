@@ -19,54 +19,53 @@ export async function GET(
     }
 
     const { id } = params;
+    const url = new URL(req.url);
+    const cursor = url.searchParams.get("cursor");
+    const limit = parseInt(url.searchParams.get("limit") || "3", 10); // Default to 3 updates per page
 
     const project = await prisma.project.findFirst({
-      where: {
-        id: id,
-      },
+      where: { id },
       include: {
         _count: true,
         user: true,
         stars: true,
         followers: true,
         reviews: {
-          include: {
-            user: true,
-          },
+          include: { user: true },
         },
         updates: {
-          orderBy: {
-            createdAt: "desc",
-          },
-          include: {
-            likes: true,
-            comments: true,
-          },
+          take: limit,
+          skip: cursor ? 1 : 0,
+          cursor: cursor ? { id: cursor } : undefined,
+          orderBy: { createdAt: "desc" },
+          include: { likes: true, comments: true },
         },
       },
     });
 
     if (!project) {
       return NextResponse.json(
-        {
-          message: "Project not found",
-        },
+        { message: "Project not found" },
         { status: 404 },
       );
     }
 
+    const nextCursor =
+      project.updates.length === limit
+        ? project.updates[project.updates.length - 1].id
+        : null;
+
     return NextResponse.json(
       {
-        data: project,
+        data: { ...project, updates: project.updates },
+        nextCursor,
       },
       { status: 200 },
     );
   } catch (error: any) {
     console.error("Error fetching project data:", error);
     return NextResponse.json(
-      {
-        message: "Internal server error",
-      },
+      { message: "Internal server error" },
       { status: 500 },
     );
   }
