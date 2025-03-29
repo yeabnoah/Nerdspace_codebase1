@@ -85,13 +85,6 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       return response.data.data;
     },
     enabled: !!projectId,
-    // onSuccess: (data) => {
-    //   // Check if the user is in followers or stars
-    //   const userId = session.data?.user.id;
-    //   setIsLiked(data.followers.some((follower) => follower.id === userId));
-    //   setIsFollowing(data.followers.some((follower) => follower.id === userId));
-    //   setIsStarred(data.stars.some((star) => star.userId === userId));
-    // },
   });
 
   const likeMutation = useMutation({
@@ -117,6 +110,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     },
     onSuccess: () => {
       toast.success("Star status updated!");
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
     },
     onError: () => {
       toast.error("Failed to update star status. Please try again.");
@@ -545,19 +539,6 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           {/* Action Buttons */}
           <Card className="rounded-lg border-card-foreground/10 shadow-none dark:border-gray-500/5">
             <CardContent className="space-y-4 p-6">
-              {!isuserAuthor && (
-                <Button
-                  variant={isLiked ? "outline" : "default"}
-                  className="w-full gap-2"
-                  onClick={handleLikeProject}
-                >
-                  <Heart
-                    className={`h-4 w-4 ${isLiked ? "text-red-500" : ""}`}
-                  />
-                  {isLiked ? "Unlike" : "Like"}
-                </Button>
-              )}
-
               <Button
                 variant={"outline"}
                 className="w-full gap-2"
@@ -577,13 +558,17 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                   : "Star Project"}
               </Button>
 
-              <Button
-                variant={isFollowing ? "outline" : "default"}
-                className="w-full gap-2"
-                onClick={handleFollowProject}
-              >
-                {isFollowing ? "Unfollow" : "Follow"}
-              </Button>
+              {!isuserAuthor && (
+                <>
+                  <Button
+                    variant={isFollowing ? "outline" : "default"}
+                    className="w-full gap-2"
+                    onClick={handleFollowProject}
+                  >
+                    {isFollowing ? "Unfollow" : "Follow"}
+                  </Button>
+                </>
+              )}
 
               <Button
                 onClick={async () => {
