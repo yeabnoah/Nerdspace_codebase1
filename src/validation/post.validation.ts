@@ -8,6 +8,10 @@ const postSchema = z.object({
     .refine((val) => val.split(/\s+/).length <= 500, {
       message: "Content cannot exceed 500 words",
     }),
+  fileUrls: z.array(z.string()).optional(),
+  projectId: z.string().optional(),
 });
+
+export type PostType = z.infer<typeof postSchema>;
 
 export { postSchema };
