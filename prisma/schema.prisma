@@ -99,6 +99,9 @@ model Post {
   bookmarks    Bookmark[]
   reports      Report[]
   media        Media[]
+  shared       Boolean?      @default(false)
+  projectId    String?
+  project      Project?      @relation(fields: [projectId], references: [id])
 
   @@map("posts")
 }
@@ -231,6 +234,7 @@ model Project {
   ratings     ProjectRating[]
   reviews     ProjectReview[]
   followers   ProjectFollow[]
+  Post        Post[]
 }
 
 model ProjectUpdate {

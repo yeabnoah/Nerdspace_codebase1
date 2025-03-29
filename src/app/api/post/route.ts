@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
         likes: true,
         bookmarks: true,
         media: true,
+        project: true,
       },
       orderBy: { createdAt: "desc" },
       take: limit,
