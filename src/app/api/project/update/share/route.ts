@@ -31,6 +31,20 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
+    // Validate if the projectId exists
+    const projectExists = await prisma.project.findUnique({
+      where: { id: body.projectId },
+    });
+
+    if (!projectExists) {
+      return NextResponse.json(
+        {
+          message: "Invalid projectId. Project does not exist.",
+        },
+        { status: 404 },
+      );
+    }
+
     const newShare = await prisma.post.create({
       data: {
         content: body.content,
