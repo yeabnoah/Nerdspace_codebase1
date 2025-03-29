@@ -58,7 +58,7 @@ export async function GET(
     return NextResponse.json(
       {
         data: { ...project, updates: project.updates },
-        nextCursor,
+        nextCursor, // Include nextCursor in the response
       },
       { status: 200 },
     );

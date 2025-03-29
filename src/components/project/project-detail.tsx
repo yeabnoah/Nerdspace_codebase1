@@ -42,7 +42,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import ProjectDetailSkeleton from "../skeleton/project-detail.skeleton";
 import {
@@ -79,9 +79,6 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const [isEditingReview, setIsEditingReview] = useState(false); // State for editing review
   const [editingReviewContent, setEditingReviewContent] = useState(""); // State for edited review content
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null); // State for review being edited
-  const [isDeleteReviewDialogOpen, setIsDeleteReviewDialogOpen] =
-    useState(false); // State for delete review dialog
-  const [reviewToDelete, setReviewToDelete] = useState<string | null>(null); // State for review ID to delete
   const session = authClient.useSession();
 
   const {
@@ -96,37 +93,6 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     },
     enabled: !!projectId,
   });
-
-  const [updates, setUpdates] = useState(project?.updates || []);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  useEffect(() => {
-    if (project?.updates) {
-      setUpdates(project.updates);
-      setNextCursor(project.nextCursor); // Set initial cursor from backend
-    }
-  }, [project]);
-
-  const fetchMoreUpdates = async () => {
-    if (!nextCursor) return;
-
-    setIsLoadingMore(true);
-    try {
-      const response = await axios.get(`/api/project/${projectId}`, {
-        params: { cursor: nextCursor, limit: 3 }, // Fetch 3 updates at a time
-      });
-      const { data, nextCursor: newCursor } = response.data;
-
-      setUpdates((prev) => [...prev, ...data.updates]);
-      setNextCursor(newCursor);
-    } catch (error) {
-      console.error("Error fetching more updates:", error);
-      toast.error("Failed to load more updates.");
-    } finally {
-      setIsLoadingMore(false);
-    }
-  };
 
   const likeMutation = useMutation({
     mutationFn: async () => {
@@ -463,19 +429,6 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     setEditingReviewContent(content);
   };
 
-  const handleDeleteReview = (reviewId: string) => {
-    setReviewToDelete(reviewId);
-    setIsDeleteReviewDialogOpen(true);
-  };
-
-  const confirmDeleteReview = () => {
-    if (reviewToDelete) {
-      deleteReviewMutation.mutate(reviewToDelete);
-      setIsDeleteReviewDialogOpen(false);
-      setReviewToDelete(null);
-    }
-  };
-
   const handleSaveEditedReview = () => {
     if (!editingReviewContent.trim()) {
       toast.error("Review content cannot be empty.");
@@ -485,6 +438,10 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       reviewId: editingReviewId!,
       content: editingReviewContent,
     });
+  };
+
+  const handleDeleteReview = (reviewId: string) => {
+    deleteReviewMutation.mutate(reviewId);
   };
 
   if (isLoading) {
@@ -656,25 +613,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
                 {/* Updates Tab */}
                 <TabsContent value="updates">
-                  {updates.length > 0 ? (
-                    <>
-                      {updates.map((update, index) => (
-                        <UpdateCard
-                          update={update}
-                          key={index}
-                          isOwner={project?.user.id === session.data?.user.id}
-                        />
-                      ))}
-                      {nextCursor && (
-                        <Button
-                          onClick={fetchMoreUpdates}
-                          disabled={isLoadingMore}
-                          className="mt-4"
-                        >
-                          {isLoadingMore ? "Loading..." : "Load More"}
-                        </Button>
-                      )}
-                    </>
+                  {project?.updates && project.updates.length > 0 ? (
+                    project.updates.map((update, index) => (
+                      <UpdateCard
+                        update={update}
+                        key={index}
+                        isOwner={project?.user.id === session.data?.user.id}
+                      />
+                    ))
                   ) : (
                     <div className="flex flex-col items-center justify-center py-8 text-center">
                       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
@@ -791,36 +737,6 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                       </DialogContent>
                     </Dialog>
                   )}
-
-                  {/* Delete Review Confirmation Dialog */}
-                  <Dialog
-                    open={isDeleteReviewDialogOpen}
-                    onOpenChange={setIsDeleteReviewDialogOpen}
-                  >
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Delete Review</DialogTitle>
-                        <DialogDescription>
-                          Are you sure you want to delete this review? This
-                          action cannot be undone.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter>
-                        <Button
-                          variant="outline"
-                          onClick={() => setIsDeleteReviewDialogOpen(false)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          onClick={confirmDeleteReview}
-                        >
-                          Delete
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
                 </TabsContent>
               </Tabs>
             </CardContent>
