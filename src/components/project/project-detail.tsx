@@ -79,6 +79,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const [isEditingReview, setIsEditingReview] = useState(false); // State for editing review
   const [editingReviewContent, setEditingReviewContent] = useState(""); // State for edited review content
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null); // State for review being edited
+  const [isDeleteReviewDialogOpen, setIsDeleteReviewDialogOpen] =
+    useState(false); // State for delete review dialog
+  const [reviewToDelete, setReviewToDelete] = useState<string | null>(null); // State for review ID to delete
   const session = authClient.useSession();
 
   const {
@@ -386,7 +389,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       reviewId: string;
       content: string;
     }) => {
-      await axios.patch(`/api/project/review/${reviewId}`, { content });
+      await axios.put(`/api/project/review`, { reviewId, content });
     },
     onSuccess: () => {
       toast.success("Review updated successfully!");
@@ -402,7 +405,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   const deleteReviewMutation = useMutation({
     mutationFn: async (reviewId: string) => {
-      await axios.delete(`/api/project/review/${reviewId}`);
+      await axios.delete(`/api/project/review`, {
+        data: { reviewId },
+      });
     },
     onSuccess: () => {
       toast.success("Review deleted successfully!");
@@ -427,19 +432,17 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     setEditingReviewContent(content);
   };
 
-  const handleSaveEditedReview = () => {
-    if (!editingReviewContent.trim()) {
-      toast.error("Review content cannot be empty.");
-      return;
-    }
-    editReviewMutation.mutate({
-      reviewId: editingReviewId!,
-      content: editingReviewContent,
-    });
+  const handleDeleteReview = (reviewId: string) => {
+    setReviewToDelete(reviewId);
+    setIsDeleteReviewDialogOpen(true);
   };
 
-  const handleDeleteReview = (reviewId: string) => {
-    deleteReviewMutation.mutate(reviewId);
+  const confirmDeleteReview = () => {
+    if (reviewToDelete) {
+      deleteReviewMutation.mutate(reviewToDelete);
+      setIsDeleteReviewDialogOpen(false);
+      setReviewToDelete(null);
+    }
   };
 
   if (isLoading) {
@@ -735,6 +738,36 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                       </DialogContent>
                     </Dialog>
                   )}
+
+                  {/* Delete Review Confirmation Dialog */}
+                  <Dialog
+                    open={isDeleteReviewDialogOpen}
+                    onOpenChange={setIsDeleteReviewDialogOpen}
+                  >
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Delete Review</DialogTitle>
+                        <DialogDescription>
+                          Are you sure you want to delete this review? This
+                          action cannot be undone.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button
+                          variant="outline"
+                          onClick={() => setIsDeleteReviewDialogOpen(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={confirmDeleteReview}
+                        >
+                          Delete
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </TabsContent>
               </Tabs>
             </CardContent>
