@@ -23,6 +23,7 @@ export type reviewProject = {
   userId: String;
   projectId: String;
   content: String;
+  user: UserInterface;
 };
 
 export type commentType = {
