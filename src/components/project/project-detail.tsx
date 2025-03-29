@@ -55,6 +55,7 @@ import { EditProjectDialog } from "@/components/ui/edit-project-dialog";
 import ProjectInterface from "@/interface/auth/project.interface";
 import { UpdateInterface } from "@/interface/auth/project.interface";
 import UpdateCard from "./project-update-card";
+import { GoStarFill } from "react-icons/go";
 
 const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
@@ -83,24 +84,11 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     enabled: !!projectId,
   });
 
-  const { data: likesCount, refetch: refetchLikes } = useQuery<number>({
-    queryKey: ["projectLikes", projectId],
-    queryFn: async () => {
-      const response = await axios.get(
-        `/api/project/update/like?projectId=${projectId}`,
-      );
-      return response.data.likesCount;
-    },
-    enabled: !!projectId,
-  });
-
   const likeMutation = useMutation({
     mutationFn: async () => {
       await axios.post(`/api/project/update/like?projectId=${projectId}`);
     },
-    onSuccess: () => {
-      refetchLikes(); // Refetch likes count after mutation
-    },
+    onSuccess: () => {},
     onError: () => {
       toast.error("Failed to update like. Please try again.");
     },
@@ -109,6 +97,64 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const handleLikeProject = () => {
     likeMutation.mutate();
   };
+
+  const starMutation = useMutation({
+    mutationFn: async () => {
+      await axios.post(`/api/project/star?projectId=${projectId}`);
+    },
+    onSuccess: () => {
+      toast.success("Star status updated!");
+    },
+    onError: () => {
+      toast.error("Failed to update star status. Please try again.");
+    },
+  });
+
+  const handleStarProject = () => {
+    starMutation.mutate();
+  };
+
+  const followMutation = useMutation({
+    mutationFn: async () => {
+      await axios.post(`/api/project/follow?projectId=${projectId}`);
+    },
+    onSuccess: () => {
+      toast.success("Follow status updated!");
+    },
+    onError: () => {
+      toast.error("Failed to update follow status. Please try again.");
+    },
+  });
+
+  const handleFollowProject = () => {
+    followMutation.mutate();
+  };
+
+  const postAsPostMutation = useMutation({
+    mutationKey: ["postaspost", projectId],
+    mutationFn: async () => {
+      const response = await axios.post(
+        `/api/project/update/share`,
+        {
+          content:
+            project?.userId === session.data?.user.id
+              ? "This is my project and I'd  like to share it with you"
+              : "I saw this project and wanted to share it :)",
+          fileUrls: [],
+          projectId: projectId,
+        },
+        { withCredentials: true },
+      );
+
+      return response.data.data;
+    },
+    onSuccess: () => {
+      toast.success("Update posted as post");
+    },
+    onError: () => {
+      toast.error("Error occurred while trying to post update as post");
+    },
+  });
 
   const updateMutation = useMutation({
     mutationKey: ["update-project"],
@@ -486,17 +532,43 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               {!isuserAuthor && (
                 <Button className="w-full gap-2" onClick={handleLikeProject}>
                   <Heart className="h-4 w-4" />
-                  {likesCount !== undefined
+                  {/* {likesCount !== undefined
                     ? `${likesCount} Likes`
-                    : "Loading..."}
+                    : "Loading..."} */}
                 </Button>
               )}
 
-              <Button variant="outline" className="w-full gap-2">
-                <Star className="h-4 w-4" />
-                Star Project
+              <Button
+                variant={
+                  project?.stars.some(
+                    (each) => each.userId === session.data?.user.id,
+                  )
+                    ? "outline"
+                    : "default"
+                }
+                className="w-full gap-2"
+                onClick={handleStarProject}
+              >
+                {/* {isStarred ? <GoStarFill /> : <Star className="h-4 w-4" />} */}
+
+                {/* {isStarred ? "Unstar Project" : "Star Project"} */}
               </Button>
-              <Button variant="outline" className="w-full gap-2">
+
+              <Button
+                // variant={isFollowing ? "outline" : "default"}
+                className="w-full gap-2"
+                onClick={handleFollowProject}
+              >
+                {/* {isFollowing ? "Following" : "Follow"} */}
+              </Button>
+
+              <Button
+                onClick={async () => {
+                  await postAsPostMutation.mutate();
+                }}
+                variant="outline"
+                className="w-full gap-2"
+              >
                 <Share2 className="h-4 w-4" />
                 Share project
               </Button>
