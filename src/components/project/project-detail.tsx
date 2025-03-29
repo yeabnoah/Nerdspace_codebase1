@@ -56,6 +56,7 @@ import ProjectInterface from "@/interface/auth/project.interface";
 import { UpdateInterface } from "@/interface/auth/project.interface";
 import UpdateCard from "./project-update-card";
 import { GoStar, GoStarFill } from "react-icons/go";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
@@ -71,6 +72,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const [updateImage, setUpdateImage] = useState<File | null>(null);
   const [isLiked, setIsLiked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isShareProjectDialogOpen, setIsShareProjectDialogOpen] =
+    useState(false);
+  const [reviewText, setReviewText] = useState(""); // State for review input
   // const [isStarred, setIsStarred] = useState(false);
   const session = authClient.useSession();
 
@@ -354,6 +358,25 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     }
   };
 
+  const handleReviewSubmit = async () => {
+    if (!reviewText.trim()) {
+      toast.error("Review cannot be empty.");
+      return;
+    }
+
+    try {
+      await axios.post(`/api/project/review/${projectId}`, {
+        content: reviewText,
+      });
+      toast.success("Review submitted successfully!");
+      setReviewText(""); // Clear input
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+    } catch (error) {
+      console.error("Error submitting review:", error);
+      toast.error("Failed to submit review. Please try again.");
+    }
+  };
+
   if (isLoading) {
     return <ProjectDetailSkeleton />;
   }
@@ -504,32 +527,73 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
             </CardContent>
           </Card>
 
-          {/* Updates Section */}
+          {/* Updates and Reviews Section */}
           <Card className="rounded-lg border-card-foreground/5 shadow-none dark:border-gray-500/5">
             <CardContent className="p-6">
-              <h2 className="mb-4 font-instrument text-3xl">Project Updates</h2>
-              {project?.updates && project.updates.length > 0 ? (
-                project.updates.map((update, index) => {
-                  return (
-                    <UpdateCard
-                      update={update}
-                      key={index}
-                      isOwner={project?.user.id === session.data?.user.id}
-                    />
-                  );
-                })
-              ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                    <PaintBucket className="h-8 w-8 text-muted-foreground" />
+              <Tabs defaultValue="updates">
+                <TabsList>
+                  <TabsTrigger value="updates">Updates</TabsTrigger>
+                  <TabsTrigger value="reviews">Reviews</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="updates">
+                  <h2 className="mb-4 font-instrument text-3xl">
+                    Project Updates
+                  </h2>
+                  {project?.updates && project.updates.length > 0 ? (
+                    project.updates.map((update, index) => (
+                      <UpdateCard
+                        update={update}
+                        key={index}
+                        isOwner={project?.user.id === session.data?.user.id}
+                      />
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-8 text-center">
+                      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                        <PaintBucket className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                      <h3 className="text-lg font-medium">No updates yet</h3>
+                      <p className="mt-2 max-w-md text-muted-foreground">
+                        This project hasn't posted any updates. Check back
+                        later for progress.
+                      </p>
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="reviews">
+                  <h2 className="mb-4 font-instrument text-3xl">Reviews</h2>
+                  <div className="space-y-4">
+                    {project?.reviews && project.reviews.length > 0 ? (
+                      project.reviews.map((review, index) => (
+                        <div key={index} className="border-b pb-4">
+                          <p className="text-sm text-muted-foreground">
+                            {review.content}
+                          </p>
+                          {/* <span className="text-xs text-muted-foreground">
+                            - {review.visualName}
+                          </span> */}
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-muted-foreground">
+                        No reviews yet. Be the first to leave one!
+                      </p>
+                    )}
                   </div>
-                  <h3 className="text-lg font-medium">No updates yet</h3>
-                  <p className="mt-2 max-w-md text-muted-foreground">
-                    This project hasn't posted any updates. Check back later for
-                    progress on this mission to Mars.
-                  </p>
-                </div>
-              )}
+                  <div className="mt-6">
+                    <Textarea
+                      placeholder="Write your review here..."
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                    />
+                    <Button className="mt-2" onClick={handleReviewSubmit}>
+                      Submit Review
+                    </Button>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         </div>
@@ -571,9 +635,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               )}
 
               <Button
-                onClick={async () => {
-                  await postAsPostMutation.mutate();
-                }}
+                onClick={() => setIsShareProjectDialogOpen(true)}
                 variant="outline"
                 className="w-full gap-2"
               >
@@ -741,6 +803,38 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               Cancel
             </Button>
             <Button onClick={handleShareUpdate}>Share</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Project Dialog */}
+      <Dialog
+        open={isShareProjectDialogOpen}
+        onOpenChange={setIsShareProjectDialogOpen}
+      >
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Share Project</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to share this project? This will make it
+              visible to others.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsShareProjectDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={async () => {
+                await postAsPostMutation.mutate();
+                setIsShareProjectDialogOpen(false);
+              }}
+            >
+              Share
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
