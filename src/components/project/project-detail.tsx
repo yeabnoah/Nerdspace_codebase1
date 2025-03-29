@@ -55,7 +55,7 @@ import { EditProjectDialog } from "@/components/ui/edit-project-dialog";
 import ProjectInterface from "@/interface/auth/project.interface";
 import { UpdateInterface } from "@/interface/auth/project.interface";
 import UpdateCard from "./project-update-card";
-import { GoStarFill } from "react-icons/go";
+import { GoStar, GoStarFill } from "react-icons/go";
 
 const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
@@ -69,6 +69,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const [updateTitle, setUpdateTitle] = useState("");
   const [updateContent, setUpdateContent] = useState("");
   const [updateImage, setUpdateImage] = useState<File | null>(null);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  // const [isStarred, setIsStarred] = useState(false);
   const session = authClient.useSession();
 
   const {
@@ -82,13 +85,22 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       return response.data.data;
     },
     enabled: !!projectId,
+    // onSuccess: (data) => {
+    //   // Check if the user is in followers or stars
+    //   const userId = session.data?.user.id;
+    //   setIsLiked(data.followers.some((follower) => follower.id === userId));
+    //   setIsFollowing(data.followers.some((follower) => follower.id === userId));
+    //   setIsStarred(data.stars.some((star) => star.userId === userId));
+    // },
   });
 
   const likeMutation = useMutation({
     mutationFn: async () => {
       await axios.post(`/api/project/update/like?projectId=${projectId}`);
     },
-    onSuccess: () => {},
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+    },
     onError: () => {
       toast.error("Failed to update like. Please try again.");
     },
@@ -96,6 +108,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   const handleLikeProject = () => {
     likeMutation.mutate();
+    setIsLiked((prev) => !prev); // Toggle like state
   };
 
   const starMutation = useMutation({
@@ -112,6 +125,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   const handleStarProject = () => {
     starMutation.mutate();
+    // setIsStarred((prev) => !prev); // Toggle star state
   };
 
   const followMutation = useMutation({
@@ -119,6 +133,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       await axios.post(`/api/project/follow?projectId=${projectId}`);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
       toast.success("Follow status updated!");
     },
     onError: () => {
@@ -128,6 +143,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   const handleFollowProject = () => {
     followMutation.mutate();
+    setIsFollowing((prev) => !prev); // Toggle follow state
   };
 
   const postAsPostMutation = useMutation({
@@ -530,36 +546,43 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           <Card className="rounded-lg border-card-foreground/10 shadow-none dark:border-gray-500/5">
             <CardContent className="space-y-4 p-6">
               {!isuserAuthor && (
-                <Button className="w-full gap-2" onClick={handleLikeProject}>
-                  <Heart className="h-4 w-4" />
-                  {/* {likesCount !== undefined
-                    ? `${likesCount} Likes`
-                    : "Loading..."} */}
+                <Button
+                  variant={isLiked ? "outline" : "default"}
+                  className="w-full gap-2"
+                  onClick={handleLikeProject}
+                >
+                  <Heart
+                    className={`h-4 w-4 ${isLiked ? "text-red-500" : ""}`}
+                  />
+                  {isLiked ? "Unlike" : "Like"}
                 </Button>
               )}
 
               <Button
-                variant={
-                  project?.stars.some(
-                    (each) => each.userId === session.data?.user.id,
-                  )
-                    ? "outline"
-                    : "default"
-                }
+                variant={"outline"}
                 className="w-full gap-2"
                 onClick={handleStarProject}
               >
-                {/* {isStarred ? <GoStarFill /> : <Star className="h-4 w-4" />} */}
-
-                {/* {isStarred ? "Unstar Project" : "Star Project"} */}
+                {project?.stars?.some(
+                  (each) => each.userId === session.data?.user.id,
+                ) ? (
+                  <GoStarFill className="h-4 w-4 text-yellow-500" />
+                ) : (
+                  <GoStar className="h-4 w-4" />
+                )}
+                {project?.stars?.some(
+                  (each) => each.userId === session.data?.user.id,
+                )
+                  ? "Remove Star"
+                  : "Star Project"}
               </Button>
 
               <Button
-                // variant={isFollowing ? "outline" : "default"}
+                variant={isFollowing ? "outline" : "default"}
                 className="w-full gap-2"
                 onClick={handleFollowProject}
               >
-                {/* {isFollowing ? "Following" : "Follow"} */}
+                {isFollowing ? "Unfollow" : "Follow"}
               </Button>
 
               <Button
