@@ -31,7 +31,6 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-    // Validate if the projectId exists
     const projectExists = await prisma.project.findUnique({
       where: { id: body.projectId },
     });

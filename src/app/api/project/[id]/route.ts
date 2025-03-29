@@ -28,6 +28,9 @@ export async function GET(
         _count: true,
         user: true,
         updates: {
+          orderBy: {
+            createdAt: "desc", // Order updates from latest to oldest
+          },
           include: {
             likes: true, // Include likes for each update
             comments: true, // Include comments for each update
