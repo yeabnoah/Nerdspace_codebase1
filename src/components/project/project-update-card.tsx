@@ -74,6 +74,7 @@ export default function UpdateCard({
   ); // State for comment to delete
   const [newComment, setNewComment] = useState(""); // State for new comment input
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false); // State for share dialog
+  const [isDeleteCardDialogOpen, setIsDeleteCardDialogOpen] = useState(false); // State for delete card dialog
   const session = authClient.useSession();
 
   const { setProjectUpdate, projectUpdate } = useProjectUpdateStore();
@@ -217,8 +218,29 @@ export default function UpdateCard({
   });
 
   const handleDelete = () => {
-    deleteMutation.mutate(update.id);
-    setIsDeleteDialogOpen(false); // Close the dialog after deletion
+    deleteMutation.mutate(update.id, {
+      onSuccess: () => {
+        setIsDeleteDialogOpen(false); // Close the dialog after successful deletion
+        queryClient.invalidateQueries({ queryKey: ["project"] }); // Invalidate project query
+        toast.success("Update deleted successfully");
+      },
+      onError: () => {
+        toast.error("Failed to delete update. Please try again.");
+      },
+    });
+  };
+
+  const handleDeleteCard = () => {
+    deleteMutation.mutate(update.id, {
+      onSuccess: () => {
+        setIsDeleteCardDialogOpen(false); // Close the dialog after successful deletion
+        queryClient.invalidateQueries({ queryKey: ["project"] }); // Invalidate project query
+        toast.success("Update deleted successfully");
+      },
+      onError: () => {
+        toast.error("Failed to delete update. Please try again.");
+      },
+    });
   };
 
   const handleLike = () => {
@@ -336,7 +358,7 @@ export default function UpdateCard({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem
-                        onClick={() => setIsDeleteDialogOpen(true)}
+                        onClick={() => setIsDeleteCardDialogOpen(true)} // Open delete card dialog
                         className="text-red-500"
                       >
                         <TrashIcon />
@@ -586,6 +608,33 @@ export default function UpdateCard({
                   }}
                 >
                   share as post
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Delete Card Confirmation Dialog */}
+          <Dialog
+            open={isDeleteCardDialogOpen}
+            onOpenChange={setIsDeleteCardDialogOpen}
+          >
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Delete Update</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this update? This action
+                  cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsDeleteCardDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDeleteCard}>
+                  Delete
                 </Button>
               </DialogFooter>
             </DialogContent>
