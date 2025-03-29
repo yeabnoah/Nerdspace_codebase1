@@ -29,14 +29,18 @@ export async function GET(
         user: true,
         stars: true,
         followers: true,
-        reviews: true,
+        reviews: {
+          include: {
+            user: true,
+          },
+        },
         updates: {
           orderBy: {
-            createdAt: "desc", // Order updates from latest to oldest
+            createdAt: "desc",
           },
           include: {
-            likes: true, // Include likes for each update
-            comments: true, // Include comments for each update
+            likes: true,
+            comments: true,
           },
         },
       },
