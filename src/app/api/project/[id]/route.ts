@@ -27,6 +27,9 @@ export async function GET(
       include: {
         _count: true,
         user: true,
+        stars: true,
+        followers: true,
+        reviews: true,
         updates: {
           orderBy: {
             createdAt: "desc", // Order updates from latest to oldest

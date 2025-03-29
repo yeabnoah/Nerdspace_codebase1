@@ -6,6 +6,25 @@ type likeType = {
   updateId: string;
 };
 
+interface starProject {
+  id: String;
+  userId: String;
+  projectId: String;
+}
+
+type ProjectFollowers = {
+  id: String;
+  userId: String;
+  projectId: String;
+};
+
+type reviewFollowers = {
+  id: String;
+  userId: String;
+  projectId: String;
+  content: String;
+};
+
 export type commentType = {
   id: string;
   userId: string;
@@ -34,7 +53,7 @@ interface ProjectInterface {
   description: string;
   image: string;
   userId: string;
-  status: "COMPLETED" | "IN_PROGRESS" | "DRAFT"; // Add more statuses if needed
+  status: "COMPLETED" | "IN_PROGRESS" | "DRAFT";
   category: string[];
   access: "public" | "private";
   createdAt: string;
@@ -47,6 +66,9 @@ interface ProjectInterface {
   };
   user: UserInterface;
   updates: UpdateInterface[];
+  stars: starProject[];
+  followers: ProjectFollowers[];
+  reviews: reviewFollowers[];
 }
 
 export interface ProjectInterfaceToSubmit {
