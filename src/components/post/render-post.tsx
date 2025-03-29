@@ -16,14 +16,17 @@ import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import {
   BanIcon,
+  Clock,
   Edit,
   LockIcon,
   LockOpen,
   MessageCircle,
+  MessageSquare,
   MoreHorizontal,
   Plus,
   SendIcon,
   Share2Icon,
+  Star,
   TrashIcon,
 } from "lucide-react";
 import Image from "next/image";
@@ -40,7 +43,9 @@ import ReportModal from "../modal/report.modal";
 import CommentSkeleton from "../skeleton/comment.skelton";
 import MorePostsFetchSkeleton from "../skeleton/morepostFetch.skeleton";
 import RenderPostSkeleton from "../skeleton/render-post.skeleton";
+import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -555,9 +560,67 @@ const RenderPost = () => {
                 } items-start justify-center`}
               >
                 <div className="flex w-[100%] flex-1 flex-col justify-start gap-5">
+                  {each?.shared && (
+                    <Card
+                      onClick={() => {
+                        router.push(`project/${each.project?.id}`);
+                      }}
+                      className="overflow-hidden border-gray-100 opacity-80 shadow-none transition-all hover:cursor-pointer hover:opacity-100 dark:border-gray-500/5"
+                    >
+                      <div className="flex gap-3">
+                        <div className="relative h-48 w-full sm:h-auto sm:w-1/3">
+                          <Image
+                            fill
+                            src={each?.project?.image || "/placeholder.svg"}
+                            alt={each?.project?.name as string}
+                            className="object-cover"
+                            sizes="(max-width: 640px) 100vw, 33vw"
+                          />
+                        </div>
+                        <div className="flex flex-1 flex-col justify-between p-4">
+                          <div className="space-y-2">
+                            <h3 className="font-medium tracking-tight">
+                              {each?.project?.name}
+                            </h3>
+                            <div className="flex flex-wrap gap-2">
+                              <Badge
+                                variant="outline"
+                                className="bg-primary/5 text-xs font-normal"
+                              >
+                                {each?.project?.status}
+                              </Badge>
+                              {each?.project?.category && (
+                                <Badge
+                                  variant="outline"
+                                  className="bg-primary/5 text-xs font-normal"
+                                >
+                                  {each?.project?.category}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-3.5 w-3.5" />
+                              <span>{each?.project?._count.updates}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Star className="h-3.5 w-3.5" />
+                              <span>{each?.project?._count.stars}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <MessageSquare className="h-3.5 w-3.5" />
+                              <span>{each?.project?._count.reviews}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  )}
                   {each.media.length > 0 && (
                     <div
-                      className={`mt-4 grid w-[100%] flex-1 gap-2 ${getGridClass(
+                      className={`${!each.shared && "mt-4"} grid w-[100%] flex-1 gap-2 ${getGridClass(
                         each.media.length,
                       )}`}
                     >
@@ -575,7 +638,7 @@ const RenderPost = () => {
                             fill
                             src={each.media[0].url}
                             alt="Post media"
-                            className="h-full w-[100%] rounded-xl object-cover"
+                            className="w-full rounded-xl object-cover"
                           />
                         </div>
                       )}
@@ -600,7 +663,7 @@ const RenderPost = () => {
                           </div>
                         ))}
                       {each.media.length >= 3 && (
-                        <div className="grid h-[36vh] w-[82vw]  md:w-[36vw] gap-2 grid-cols-[auto_120px]">
+                        <div className="grid h-[36vh] w-[82vw] grid-cols-[auto_120px] gap-2 md:w-[36vw]">
                           {/* First column: Main Image (Takes all available space) */}
                           <div
                             className="relative h-full w-full"
