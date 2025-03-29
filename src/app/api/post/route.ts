@@ -36,7 +36,11 @@ export async function GET(request: NextRequest) {
         likes: true,
         bookmarks: true,
         media: true,
-        project: true,
+        project: {
+          include: {
+            _count: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
       take: limit,
