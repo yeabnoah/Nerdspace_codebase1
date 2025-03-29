@@ -32,6 +32,7 @@ import {
   Heart,
   MessageSquare,
   MoreHorizontal,
+  ShareIcon,
   Trash,
   Trash2Icon,
   TrashIcon,
@@ -46,6 +47,7 @@ import {
 import { queryClient } from "@/providers/tanstack-query-provider";
 import useUserStore from "@/store/user.store";
 import { authClient } from "@/lib/auth-client";
+import useProjectUpdateStore from "@/store/project-update.store";
 
 export default function UpdateCard({
   update,
@@ -71,7 +73,10 @@ export default function UpdateCard({
     null,
   ); // State for comment to delete
   const [newComment, setNewComment] = useState(""); // State for new comment input
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false); // State for share dialog
   const session = authClient.useSession();
+
+  const { setProjectUpdate, projectUpdate } = useProjectUpdateStore();
 
   // Fetch if the user has liked the update
   const { data: liked, isLoading: isLikedLoading } = useQuery({
@@ -144,6 +149,35 @@ export default function UpdateCard({
     },
   });
 
+  const postAsPostMutation = useMutation({
+    mutationKey: ["postaspost", projectUpdate?.id],
+    mutationFn: async () => {
+      if (!projectUpdate) {
+        throw new Error("Project update is not defined.");
+      }
+
+      const response = await axios.post(
+        `/api/project/update/share`,
+        {
+          content: `${projectUpdate.title || ""} ${projectUpdate.content || ""}`,
+          fileUrls: projectUpdate.image ? [projectUpdate.image] : [],
+          projectId: projectUpdate.projectId,
+        },
+        { withCredentials: true },
+      );
+
+      return response.data.data;
+    },
+
+    onSuccess: () => {
+      toast.success("Update posted as post");
+    },
+
+    onError: () => {
+      toast.error("Error occurred while trying to post update as post");
+    },
+  });
+
   // Mutation for updating a comment
   const updateCommentMutation = useMutation({
     mutationFn: async ({
@@ -212,6 +246,7 @@ export default function UpdateCard({
           queryKey: ["updateComments", update.id],
         });
         setIsCommentDeleteDialogOpen(false);
+        setProjectUpdate;
         toast.success("Comment deleted successfully.");
       },
     });
@@ -304,7 +339,19 @@ export default function UpdateCard({
                         onClick={() => setIsDeleteDialogOpen(true)}
                         className="text-red-500"
                       >
+                        <TrashIcon />
                         Delete
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setProjectUpdate(update);
+                          setIsShareDialogOpen(true);
+
+                          console.log();
+                        }} // Open share dialog
+                      >
+                        <ShareIcon />
+                        Share
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -510,6 +557,35 @@ export default function UpdateCard({
                   }}
                 >
                   Save
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Share Update Dialog */}
+          <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Share Update</DialogTitle>
+                <DialogDescription>
+                  Do you wanna share the update as a post ??
+                </DialogDescription>
+              </DialogHeader>
+
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsShareDialogOpen(false)}
+                >
+                  Close
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    await postAsPostMutation.mutate();
+                  }}
+                >
+                  share as post
                 </Button>
               </DialogFooter>
             </DialogContent>
