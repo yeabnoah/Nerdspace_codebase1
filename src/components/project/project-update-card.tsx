@@ -169,11 +169,10 @@ export default function UpdateCard({
 
       return response.data.data;
     },
-
     onSuccess: () => {
       toast.success("Update posted as post");
+      setIsShareDialogOpen(false); // Close the share dialog on success
     },
-
     onError: () => {
       toast.error("Error occurred while trying to post update as post");
     },
