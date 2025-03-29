@@ -70,6 +70,7 @@ interface ProjectInterface {
   stars: starProject[];
   followers: ProjectFollowers[];
   reviews: reviewProject[];
+  nextCursor: string;
 }
 
 export interface ProjectInterfaceToSubmit {
