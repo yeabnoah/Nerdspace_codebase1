@@ -42,7 +42,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Add useEffect for fetching follow status
 import toast from "react-hot-toast";
 import ProjectDetailSkeleton from "../skeleton/project-detail.skeleton";
 import {
@@ -80,6 +80,21 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const [editingReviewContent, setEditingReviewContent] = useState(""); // State for edited review content
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null); // State for review being edited
   const session = authClient.useSession();
+
+  useEffect(() => {
+    const fetchFollowStatus = async () => {
+      try {
+        const response = await axios.get(
+          `/api/project/follow?projectId=${projectId}`,
+        );
+        setIsFollowing(response.data.isFollowing); // Update follow state
+      } catch (error) {
+        console.error("Error fetching follow status:", error);
+      }
+    };
+
+    fetchFollowStatus();
+  }, [projectId]);
 
   const {
     data: project,
