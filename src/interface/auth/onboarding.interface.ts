@@ -14,13 +14,13 @@ const CountrySchema = z.object({
 
 export const OnboardingSchema = z.object({
   country: CountrySchema.optional(),
-  bio: z.string(),
-  displayName: z.string(),
-  nerdAt: z.string(),
-  image: z.string().url(),
+  bio: z.string().optional(),
+  displayName: z.string().optional(),
+  nerdAt: z.string().optional(),
+  image: z.string().url().optional(),
   firstTime: z.boolean(),
-  link: z.string().url(),
-  coverImage: z.string().url(),
+  link: z.string().url().optional(),
+  coverImage: z.string().url().optional(),
 });
 
 export type OnboardingType = z.infer<typeof OnboardingSchema>;

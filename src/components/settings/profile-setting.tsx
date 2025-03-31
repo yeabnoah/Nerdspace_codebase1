@@ -50,21 +50,10 @@ const ProfileSettings = () => {
 
   const mutation = useMutation({
     mutationKey: ["update-user"],
-    mutationFn: async () => {
-      const response = await axios.patch(
-        "/api/onboarding",
-        {
-          country: user?.country ? undefined : selectedCountry,
-          image: selectedImage || user.image || "",
-          coverImage: selectedCoverImage ? selectedCoverImage : "",
-          nerdAt,
-          bio,
-          displayName,
-          link,
-          firstTime: false,
-        },
-        { withCredentials: true },
-      );
+    mutationFn: async (data: any) => {
+      const response = await axios.patch("/api/onboarding", data, {
+        withCredentials: true,
+      });
 
       return response.data;
     },
@@ -263,6 +252,9 @@ const ProfileSettings = () => {
         <div className="flex justify-end">
           <Button
             onClick={async () => {
+              let uploadedImageUrl = selectedImage;
+              let uploadedCoverImageUrl = selectedCoverImage;
+
               if (selectedImage instanceof File) {
                 const formData = new FormData();
                 formData.append("file", selectedImage);
@@ -273,7 +265,7 @@ const ProfileSettings = () => {
                     cloudinaryUploadUrl,
                     formData,
                   );
-                  setSelectedImage(response.data.secure_url);
+                  uploadedImageUrl = response.data.secure_url;
                 } catch (error) {
                   console.error("Image upload failed:", error);
                   toast.error("Image upload failed");
@@ -291,7 +283,7 @@ const ProfileSettings = () => {
                     cloudinaryUploadUrl,
                     formData,
                   );
-                  setSelectedCoverImage(response.data.secure_url);
+                  uploadedCoverImageUrl = response.data.secure_url;
                 } catch (error) {
                   console.error("Cover image upload failed:", error);
                   toast.error("Cover image upload failed");
@@ -299,17 +291,16 @@ const ProfileSettings = () => {
                 }
               }
 
-              console.log({
-                country: selectedCountry,
-                image: selectedImage,
-                coverImage: selectedCoverImage,
+              await mutation.mutate({
+                country: user?.country ? undefined : selectedCountry,
+                image: uploadedImageUrl || user.image || "",
+                coverImage: uploadedCoverImageUrl || user.coverImage || "",
                 nerdAt,
                 bio,
                 displayName,
                 link,
                 firstTime: false,
               });
-              await mutation.mutate();
             }}
           >
             Update my info
