@@ -12,7 +12,7 @@ export const GET = async (req: NextRequest) => {
       );
     }
 
-    const limit = parseInt(req.nextUrl.searchParams.get("limit") || "5", 10); // Default limit set to 5
+    const limit = parseInt(req.nextUrl.searchParams.get("limit") || "5", 10);
     const cursor = req.nextUrl.searchParams.get("cursor");
 
     const projects = await prisma.project.findMany({
@@ -26,7 +26,12 @@ export const GET = async (req: NextRequest) => {
       },
       include: {
         _count: {
-          select: { stars: true },
+          select: {
+            stars: true,
+            followers: true,
+            updates: true,
+            reviews: true,
+          },
         },
       },
     });
@@ -40,6 +45,10 @@ export const GET = async (req: NextRequest) => {
         name: project.name,
         description: project.description,
         stars: project._count.stars,
+        image: project.image,
+        follower: project._count.followers,
+        review: project._count.reviews,
+        update: project._count.updates,
       })),
       nextCursor,
     });
