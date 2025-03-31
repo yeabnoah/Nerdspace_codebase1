@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Upload } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,9 +49,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-// import { toast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import toast from "react-hot-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Form schema
 const formSchema = z.object({
@@ -59,11 +65,6 @@ const formSchema = z.object({
   description: z
     .string()
     .min(10, { message: "Description must be at least 10 characters" }),
-  image: z
-    .string()
-    .url({ message: "Please enter a valid URL" })
-    .optional()
-    .or(z.literal("")),
   categoryId: z.string().optional().or(z.literal("")),
 });
 
@@ -75,12 +76,14 @@ const fetchCommunities = async () => {
   return response.data;
 };
 
-const createCommunity = async (data: FormValues) => {
+const createCommunity = async (data: FormValues & { image: string }) => {
   const response = await axios.post("/api/community", data);
   return response.data;
 };
 
-const updateCommunity = async (data: FormValues & { id: string }) => {
+const updateCommunity = async (
+  data: FormValues & { id: string; image: string },
+) => {
   const response = await axios.patch("/api/community", data);
   return response.data;
 };
@@ -98,6 +101,10 @@ interface Community {
   categoryId?: string;
 }
 
+const cloudinaryUploadUrl = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!;
+const cloudinaryUploadPreset =
+  process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
+
 export default function CommunityManager() {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
@@ -108,6 +115,38 @@ export default function CommunityManager() {
   const [communityToDelete, setCommunityToDelete] = useState<string | null>(
     null,
   );
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
+    [],
+  );
+
+  useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const response = await axios.get("/api/community/category");
+      setCategories(data.data);
+      return response.data;
+    },
+
+    // onSuccess: (data) => {
+    //   ; // Ensure valid categories are set
+    // },
+    // onError: (error) => {
+    //   console.error("Error fetching categories:", error);
+    //   toast.error("Failed to fetch categories");
+    // },
+  });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+    }
+  };
+
+  const handleImageCancel = () => {
+    setSelectedImage(null);
+  };
 
   // Form setup
   const form = useForm<FormValues>({
@@ -115,7 +154,6 @@ export default function CommunityManager() {
     defaultValues: {
       name: "",
       description: "",
-      image: "",
       categoryId: "",
     },
   });
@@ -188,11 +226,30 @@ export default function CommunityManager() {
   });
 
   // Handlers
-  const onSubmit = (values: FormValues) => {
+  const onSubmit = async (values: FormValues) => {
+    let imageUrl = "";
+
+    if (selectedImage instanceof File) {
+      const formData = new FormData();
+      formData.append("file", selectedImage);
+      formData.append("upload_preset", cloudinaryUploadPreset);
+
+      try {
+        const response = await axios.post(cloudinaryUploadUrl, formData);
+        imageUrl = response.data.secure_url;
+      } catch (error) {
+        console.error("Image upload failed:", error);
+        toast.error("Image upload failed");
+        return;
+      }
+    }
+
+    const payload = { ...values, image: imageUrl };
+
     if (selectedCommunity) {
-      updateMutation.mutate({ ...values, id: selectedCommunity.id });
+      updateMutation.mutate({ ...payload, id: selectedCommunity.id });
     } else {
-      createMutation.mutate(values);
+      createMutation.mutate(payload);
     }
   };
 
@@ -201,9 +258,9 @@ export default function CommunityManager() {
     form.reset({
       name: community.name,
       description: community.description,
-      image: community.image || "",
       categoryId: community.categoryId || "",
     });
+    setSelectedImage(null);
     setIsOpen(true);
   };
 
@@ -225,9 +282,9 @@ export default function CommunityManager() {
       form.reset({
         name: "",
         description: "",
-        image: "",
         categoryId: "",
       });
+      setSelectedImage(null);
     }
   };
 
@@ -346,36 +403,73 @@ export default function CommunityManager() {
                 />
                 <FormField
                   control={form.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Image URL</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="https://example.com/image.jpg"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Provide a URL for your community image
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
                   name="categoryId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category ID</FormLabel>
+                      <FormLabel>Category</FormLabel>
                       <FormControl>
-                        <Input placeholder="Category identifier" {...field} />
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                <div className="space-y-2">
+                  <FormLabel>Image</FormLabel>
+                  <div className="relative mb-4 aspect-square w-full max-w-[220px] overflow-hidden rounded-xl border-2 border-dashed border-primary/20 bg-background/50">
+                    {selectedImage ? (
+                      <img
+                        src={URL.createObjectURL(selectedImage)}
+                        alt="Selected"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                        No image
+                      </div>
+                    )}
+                  </div>
+                  <div className="relative w-full max-w-[220px]">
+                    <Button variant="outline" className="w-full" type="button">
+                      <Upload className="mr-2 h-4 w-4" />
+                      {selectedImage ? "Change Image" : "Upload Image"}
+                    </Button>
+                    <Input
+                      type="file"
+                      className="absolute inset-0 cursor-pointer opacity-0"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </div>
+                  {selectedImage && (
+                    <div className="mt-2 w-full">
+                      <Button
+                        variant="outline"
+                        className="ml-4 w-[87%]"
+                        onClick={handleImageCancel}
+                      >
+                        Remove Image
+                      </Button>
+                      <p className="my-2 text-wrap text-xs">
+                        {selectedImage.name}
+                      </p>
+                    </div>
+                  )}
+                </div>
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button type="button" variant="outline">

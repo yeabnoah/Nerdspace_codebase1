@@ -52,62 +52,59 @@ export const POST = async (request: NextRequest) => {
     const session = await getUserSession();
     if (!session) {
       return NextResponse.json(
-        {
-          message: "unauthorized | not logged in",
-        },
+        { message: "unauthorized | not logged in" },
         { status: 400 },
       );
     }
 
     const body = await request.json();
-    const { name, description, image, categoryId } =
-      createCommunitySchema.parse(body);
+    const { name, description, categoryId, image } = body;
 
-    const existingCommunity = await prisma.community.findUnique({
-      where: { name },
-    });
-    if (existingCommunity) {
+    if (!name || typeof name !== "string") {
       return NextResponse.json(
-        {
-          message: "Community with this name already exists",
-        },
+        { message: "Invalid community name" },
         { status: 400 },
       );
+    }
+
+    if (!description || typeof description !== "string") {
+      return NextResponse.json(
+        { message: "Invalid community description" },
+        { status: 400 },
+      );
+    }
+
+    if (categoryId) {
+      const categoryExists = await prisma.communityCategory.findUnique({
+        where: { id: categoryId },
+      });
+
+      if (!categoryExists) {
+        return NextResponse.json(
+          { message: `Invalid category ID: ${categoryId}` },
+          { status: 400 },
+        );
+      }
     }
 
     const newCommunity = await prisma.community.create({
       data: {
         name,
         description,
-        image,
-        categoryId,
-        creatorId: session.user.id,
+        categoryId: categoryId || null,
+        image: image || null,
+        creator: {
+          connect: { id: session.user.id },
+        },
       },
     });
 
     return NextResponse.json(
-      {
-        message: "Community created successfully",
-        community: newCommunity,
-      },
+      { message: "Community created successfully", data: newCommunity },
       { status: 201 },
     );
   } catch (error: any) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        {
-          message: "Validation error",
-          errors: error.errors,
-        },
-        { status: 400 },
-      );
-    }
-    return NextResponse.json(
-      {
-        message: error.message,
-      },
-      { status: 500 },
-    );
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 };
 
@@ -175,19 +172,16 @@ export const PATCH = async (request: NextRequest) => {
     const session = await getUserSession();
     if (!session) {
       return NextResponse.json(
-        {
-          message: "unauthorized | not logged in",
-        },
+        { message: "unauthorized | not logged in" },
         { status: 400 },
       );
     }
 
     const { id, name, description, image, categoryId } = await request.json();
+
     if (!id) {
       return NextResponse.json(
-        {
-          message: "Community ID is required",
-        },
+        { message: "Community ID is required" },
         { status: 400 },
       );
     }
@@ -195,20 +189,29 @@ export const PATCH = async (request: NextRequest) => {
     const community = await prisma.community.findUnique({ where: { id } });
     if (!community) {
       return NextResponse.json(
-        {
-          message: "Community not found",
-        },
+        { message: "Community not found" },
         { status: 404 },
       );
     }
 
     if (community.creatorId !== session.user.id) {
       return NextResponse.json(
-        {
-          message: "You are not authorized to update this community",
-        },
+        { message: "You are not authorized to update this community" },
         { status: 403 },
       );
+    }
+
+    if (categoryId) {
+      const categoryExists = await prisma.communityCategory.findUnique({
+        where: { id: categoryId },
+      });
+
+      if (!categoryExists) {
+        return NextResponse.json(
+          { message: `Invalid category ID: ${categoryId}` },
+          { status: 400 },
+        );
+      }
     }
 
     const updatedCommunity = await prisma.community.update({
@@ -230,11 +233,6 @@ export const PATCH = async (request: NextRequest) => {
       { status: 200 },
     );
   } catch (error: any) {
-    return NextResponse.json(
-      {
-        message: error.message,
-      },
-      { status: 500 },
-    );
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 };

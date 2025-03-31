@@ -14,7 +14,10 @@ export const GET = async (request: NextRequest) => {
     }
 
     const categories = await prisma.communityCategory.findMany({
-      include: { communities: true },
+      select: {
+        id: true,
+        name: true,
+      },
     });
 
     return NextResponse.json(
