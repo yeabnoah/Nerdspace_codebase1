@@ -9,7 +9,7 @@ export const GET = async (request: NextRequest) => {
     if (!session) {
       return NextResponse.json(
         { message: "unauthorized | not logged in" },
-        { status: 400 },
+        { status: 401 }, // Changed status to 401 for unauthorized
       );
     }
 
@@ -25,6 +25,7 @@ export const GET = async (request: NextRequest) => {
       { status: 200 },
     );
   } catch (error: any) {
+    console.error("Error fetching categories:", error); // Added logging for debugging
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 };
