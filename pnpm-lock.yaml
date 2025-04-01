@@ -238,7 +238,7 @@ importers:
         specifier: ^0.6.11
         version: 0.6.11(prettier@3.5.0)
       tailwindcss:
-        specifier: ^3.4.1
+        specifier: ^3.4.17
         version: 3.4.17
       typescript:
         specifier: ^5
