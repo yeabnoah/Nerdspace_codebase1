@@ -24,7 +24,7 @@ export function CommunityDetail({ onEditCommunity }: CommunityDetailProps) {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <CommunityHeader community={selectedCommunity} onEditCommunity={onEditCommunity} />
+      {/* <CommunityHeader community={selectedCommunity} onEditCommunity={onEditCommunity} /> */}
       <div className="flex-1 overflow-auto">
         {activeTab === "posts" ? (
           <CommunityFeed community={selectedCommunity} />
