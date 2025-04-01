@@ -40,7 +40,7 @@ export function CommunityNavbar({
     <header className="sticky top-0 z-10 border-b bg-background">
       <div className="container flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-4">
-          <h1 className="text-xl font-bold">Communities</h1>
+          <h1 className="font-instrument text-3xl">Communities</h1>
           <div className="flex items-center gap-2">
             <Button
               variant={activeView === "my-communities" ? "default" : "ghost"}
@@ -63,7 +63,7 @@ export function CommunityNavbar({
         </div>
 
         <div className="flex items-center gap-2">
-          {activeView === "my-communities" && (
+          {/* {activeView === "my-communities" && (
             <form
               onSubmit={handleSearch}
               className="relative mr-2 hidden md:block"
@@ -77,7 +77,7 @@ export function CommunityNavbar({
                 onChange={(e) => setSearchValue(e.target.value)}
               />
             </form>
-          )}
+          )} */}
 
           <Button
             onClick={onCreateCommunity}
