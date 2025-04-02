@@ -3,6 +3,7 @@ import LeftNavbar from "@/components/navbar/left-navbar";
 import MobileNavBar from "@/components/navbar/mobile-nav-bar";
 
 const Project = () => {
+  console.log("Project page loaded");
   return (
     <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start">
       <LeftNavbar />
@@ -16,3 +17,4 @@ const Project = () => {
 };
 
 export default Project;
+
