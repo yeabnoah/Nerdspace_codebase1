@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-const createCommunitySchema = z.object({
+const createGroupSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().min(1, "Description is required"),
   image: z.string().optional(),
@@ -22,7 +22,7 @@ export const GET = async (request: NextRequest) => {
       );
     }
 
-    const communities = await prisma.community.findMany({
+    const groups = await prisma.group.findMany({
       include: {
         creator: true,
         members: true,
@@ -32,8 +32,8 @@ export const GET = async (request: NextRequest) => {
 
     return NextResponse.json(
       {
-        message: "Communities fetched successfully",
-        data: communities,
+        message: "Groups fetched successfully",
+        data: groups,
       },
       { status: 200 },
     );
@@ -62,20 +62,20 @@ export const POST = async (request: NextRequest) => {
 
     if (!name || typeof name !== "string") {
       return NextResponse.json(
-        { message: "Invalid community name" },
+        { message: "Invalid group name" },
         { status: 400 },
       );
     }
 
     if (!description || typeof description !== "string") {
       return NextResponse.json(
-        { message: "Invalid community description" },
+        { message: "Invalid group description" },
         { status: 400 },
       );
     }
 
     if (categoryId) {
-      const categoryExists = await prisma.communityCategory.findUnique({
+      const categoryExists = await prisma.groupCategory.findUnique({
         where: { id: categoryId },
       });
 
@@ -87,12 +87,12 @@ export const POST = async (request: NextRequest) => {
       }
     }
 
-    const newCommunity = await prisma.community.create({
+    const newGroup = await prisma.group.create({
       data: {
         name,
         description,
+        categoryId: categoryId || null,
         image: image || null,
-        category: categoryId ? { connect: { id: categoryId } } : undefined,
         creator: {
           connect: { id: session.user.id },
         },
@@ -100,7 +100,7 @@ export const POST = async (request: NextRequest) => {
     });
 
     return NextResponse.json(
-      { message: "Community created successfully", data: newCommunity },
+      { message: "Group created successfully", data: newGroup },
       { status: 201 },
     );
   } catch (error: any) {
@@ -124,36 +124,36 @@ export const DELETE = async (request: NextRequest) => {
     if (!id) {
       return NextResponse.json(
         {
-          message: "Community ID is required",
+          message: "Group ID is required",
         },
         { status: 400 },
       );
     }
 
-    const community = await prisma.community.findUnique({ where: { id } });
-    if (!community) {
+    const group = await prisma.group.findUnique({ where: { id } });
+    if (!group) {
       return NextResponse.json(
         {
-          message: "Community not found",
+          message: "Group not found",
         },
         { status: 404 },
       );
     }
 
-    if (community.creatorId !== session.user.id) {
+    if (group.creatorId !== session.user.id) {
       return NextResponse.json(
         {
-          message: "You are not authorized to delete this community",
+          message: "You are not authorized to delete this group",
         },
         { status: 403 },
       );
     }
 
-    await prisma.community.delete({ where: { id } });
+    await prisma.group.delete({ where: { id } });
 
     return NextResponse.json(
       {
-        message: "Community deleted successfully",
+        message: "Group deleted successfully",
       },
       { status: 200 },
     );
@@ -181,28 +181,25 @@ export const PATCH = async (request: NextRequest) => {
 
     if (!id) {
       return NextResponse.json(
-        { message: "Community ID is required" },
+        { message: "Group ID is required" },
         { status: 400 },
       );
     }
 
-    const community = await prisma.community.findUnique({ where: { id } });
-    if (!community) {
-      return NextResponse.json(
-        { message: "Community not found" },
-        { status: 404 },
-      );
+    const group = await prisma.group.findUnique({ where: { id } });
+    if (!group) {
+      return NextResponse.json({ message: "Group not found" }, { status: 404 });
     }
 
-    if (community.creatorId !== session.user.id) {
+    if (group.creatorId !== session.user.id) {
       return NextResponse.json(
-        { message: "You are not authorized to update this community" },
+        { message: "You are not authorized to update this group" },
         { status: 403 },
       );
     }
 
     if (categoryId) {
-      const categoryExists = await prisma.communityCategory.findUnique({
+      const categoryExists = await prisma.groupCategory.findUnique({
         where: { id: categoryId },
       });
 
@@ -214,21 +211,21 @@ export const PATCH = async (request: NextRequest) => {
       }
     }
 
-    const updatedCommunity = await prisma.community.update({
+    const updatedGroup = await prisma.group.update({
       where: { id },
       data: {
         name,
         description,
         image,
-        category: categoryId ? { connect: { id: categoryId } } : undefined,
+        categoryId,
         updatedAt: new Date(),
       },
     });
 
     return NextResponse.json(
       {
-        message: "Community updated successfully",
-        community: updatedCommunity,
+        message: "Group updated successfully",
+        group: updatedGroup,
       },
       { status: 200 },
     );
