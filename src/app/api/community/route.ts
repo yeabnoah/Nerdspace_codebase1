@@ -22,7 +22,14 @@ export const GET = async (request: NextRequest) => {
       );
     }
 
+    const { searchParams } = new URL(request.url);
+    const cursor = searchParams.get("cursor");
+    const limit = parseInt(searchParams.get("limit") || "9", 10);
+
     const communities = await prisma.community.findMany({
+      take: limit + 1,
+      skip: cursor ? 1 : 0,
+      cursor: cursor ? { id: cursor } : undefined,
       include: {
         creator: true,
         members: true,
@@ -30,10 +37,16 @@ export const GET = async (request: NextRequest) => {
       },
     });
 
+    const hasMore = communities.length > limit;
+    if (hasMore) {
+      communities.pop();
+    }
+
     return NextResponse.json(
       {
         message: "Communities fetched successfully",
         data: communities,
+        hasMore,
       },
       { status: 200 },
     );

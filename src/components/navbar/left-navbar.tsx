@@ -49,7 +49,7 @@ const LeftNavbar = () => {
       </Button>
       <Button
         onClick={() => {
-          router.push("/communities");
+          router.push("/community");
         }}
         variant="outline"
         className="justify-start gap-3 border-gray-100 bg-transparent shadow-none dark:border-gray-500/5"
