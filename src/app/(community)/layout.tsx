@@ -1,16 +1,17 @@
+"use client";
+
 import { CommunityNavbar } from "@/components/community-navbar";
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CommunityProvider } from "@/components/community-provider";
-import React from "react";
+import React, { useState } from "react";
+import useCommunityStore from "@/store/community.store";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
-  const handleCreateCommunity = () => {
-    // Logic for creating a community
-  };
+  const handleCreateCommunity = () => {};
 
-  const [activeView, setActiveView] = React.useState<string>("defaultView");
-// thiosadds asddfjkasbdkjasd
+  const { activeView, setActiveView } = useCommunityStore();
+
   return (
     <CommunityProvider>
       <ThemeProvider
@@ -19,7 +20,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
         enableSystem
         disableTransitionOnChange
       >
-        <div className="full h-full w-full flex-col md:p-3 dark:bg-card">
+        <div className="full h-full w-full flex-col dark:bg-card md:p-3">
           <CommunityNavbar
             onCreateCommunity={handleCreateCommunity}
             activeView={activeView}
