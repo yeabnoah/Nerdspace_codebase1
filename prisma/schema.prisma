@@ -361,7 +361,7 @@ model CommunityPost {
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   community   Community     @relation(fields: [communityId], references: [id], onDelete: Cascade)
   likes       Like[]
-  comments    PostComment[]
+  comments    PostComment[] // Ensure this relation exists for fetching comments
 
   @@map("community_posts")
 }
