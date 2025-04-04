@@ -4,7 +4,7 @@ import { create } from "zustand";
 interface CommunityStore {
   activeView: "my-communities" | "discover";
   setActiveView: (view: "my-communities" | "discover") => void;
-  communityToEdit: CommunityInterface;
+  communityToEdit: CommunityInterface | null;
   setCommunityToEdit: (community: any | undefined) => void;
   isFormModalOpen: boolean;
   setFormModalOpen: (isOpen: boolean) => void;
