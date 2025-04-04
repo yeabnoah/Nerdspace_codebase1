@@ -68,7 +68,7 @@ export default function CommentForm({ postId, communityId, user, onCommentAdded 
             {createCommentMutation.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                Posting...
+                Posting... hopefully
               </>
             ) : (
               <>
