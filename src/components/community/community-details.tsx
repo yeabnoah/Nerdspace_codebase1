@@ -94,6 +94,16 @@ const CommunityDetails = ({ communityId }: { communityId: string }) => {
                       <MessageSquare className="h-4 w-4" />
                       <span>{post.comments?.length || 0} comments</span>
                     </div>
+                    <div className="flex items-center gap-1">
+                      <Image
+                        src={post.user.image || "/default-avatar.png"}
+                        alt={post.user.name}
+                        width={24}
+                        height={24}
+                        className="rounded-full"
+                      />
+                      <span>{post.user.name}</span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

@@ -18,7 +18,7 @@ export async function GET(
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { createdAt: "desc" },
       include: {
-        user: { select: { id: true, name: true, email: true, image: true } },
+        user: true,
         comments: true,
       },
     });
