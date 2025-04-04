@@ -73,7 +73,29 @@ const CommunityDetails = ({ communityId }: { communityId: string }) => {
             <Users className="h-4 w-4" />
             <span>{community.members?.length || 0} members</span>
           </div>
+          <div>
+            <p>Created by: {community.creator?.name || "Unknown"}</p>
+            <p>
+              Created on: {new Date(community.createdAt).toLocaleDateString()}
+            </p>
+          </div>
         </div>
+      </div>
+
+      {/* Community Members */}
+      <div className="mb-8">
+        <h2 className="mb-4 text-2xl font-semibold">Members</h2>
+        {community.members && community.members.length > 0 ? (
+          <ul className="list-disc pl-5">
+            {community.members.map((member: any) => (
+              <li key={member.id}>
+                {member.name} ({member.email})
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-muted-foreground">No members found.</p>
+        )}
       </div>
 
       {/* Community Posts */}
