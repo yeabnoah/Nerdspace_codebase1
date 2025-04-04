@@ -8,15 +8,12 @@ import { CommunityDetail } from "@/components/community-detail";
 import { CommunityDiscover } from "@/components/community-discover";
 import { CommunityFormModal } from "@/components/community-form-modal";
 import type { Community } from "@/lib/types";
+import useCommunityStore from "@/store/community.store";
 
 export function CommunityDashboard() {
   const [formModalOpen, setFormModalOpen] = useState(false);
-  const [communityToEdit, setCommunityToEdit] = useState<Community | undefined>(
-    undefined,
-  );
-  const [activeView, setActiveView] = useState<"my-communities" | "discover">(
-    "my-communities",
-  );
+
+  const { activeView, setActiveView, setCommunityToEdit , communityToEdit} = useCommunityStore();
 
   const handleOpenCreateModal = () => {
     setCommunityToEdit(undefined);
@@ -31,11 +28,11 @@ export function CommunityDashboard() {
   return (
     <CommunityProvider>
       <div className="flex min-h-screen flex-col bg-background">
-        <CommunityNavbar
+        {/* <CommunityNavbar
           onCreateCommunity={handleOpenCreateModal}
           activeView={activeView}
           setActiveView={setActiveView}
-        />
+        /> */}
         <main className="flex flex-1 flex-col md:flex-row">
           {activeView === "my-communities" ? (
             <div className="flex flex-row gap-5">
