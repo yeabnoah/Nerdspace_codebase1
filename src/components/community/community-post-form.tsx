@@ -1,40 +1,43 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Image, X, Loader2 } from "lucide-react"
-import type { CommunityInterface } from "@/interface/community.interface"
-import { useCreatePostMutation } from "@/hooks/use-community-posts"
-import { useToastNotifications } from "@/hooks/use-toast-notifications"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Image, X, Loader2 } from "lucide-react";
+import { useCreatePostMutation } from "@/hooks/use-community-posts";
+import { useToastNotifications } from "@/hooks/use-toast-notifications";
+import { CommunityInterface } from "@/interface/auth/community.interface";
 
 interface CommunityPostFormProps {
-  community: CommunityInterface
+  community: CommunityInterface;
   user: {
-    id: string
-    name?: string
-    image?: string
-  }
+    id: string;
+    name?: string;
+    image?: string;
+  };
 }
 
-export default function CommunityPostForm({ community, user }: CommunityPostFormProps) {
-  const [content, setContent] = useState("")
-  const [imageUrl, setImageUrl] = useState("")
-  const [isUploading, setIsUploading] = useState(false)
+export default function CommunityPostForm({
+  community,
+  user,
+}: CommunityPostFormProps) {
+  const [content, setContent] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   // Use the mutation hook
-  const createPostMutation = useCreatePostMutation(community.id)
-  const toast = useToastNotifications()
+  const createPostMutation = useCreatePostMutation(community.id);
+  const toast = useToastNotifications();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!content.trim()) {
-      return
+      return;
     }
 
     createPostMutation.mutate(
@@ -44,32 +47,37 @@ export default function CommunityPostForm({ community, user }: CommunityPostForm
       },
       {
         onSuccess: () => {
-          toast.postCreated()
-          setContent("")
-          setImageUrl("")
+          toast.postCreated();
+          setContent("");
+          setImageUrl("");
         },
         onError: (error) => {
-          toast.postCreationFailed(error instanceof Error ? error.message : "An error occurred")
+          toast.postCreationFailed(
+            error instanceof Error ? error.message : "An error occurred",
+          );
         },
       },
-    )
-  }
+    );
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     // This is a placeholder for actual image upload functionality
     // In a real app, you would upload to a storage service
-    setIsUploading(true)
+    setIsUploading(true);
 
     // Simulate upload delay
     setTimeout(() => {
-      setImageUrl(`/placeholder.svg?height=300&width=400&text=${file.name}`)
-      setIsUploading(false)
-      toast.success("Image uploaded", "Your image has been uploaded successfully.")
-    }, 1500)
-  }
+      setImageUrl(`/placeholder.svg?height=300&width=400&text=${file.name}`);
+      setIsUploading(false);
+      toast.success(
+        "Image uploaded",
+        "Your image has been uploaded successfully.",
+      );
+    }, 1500);
+  };
 
   return (
     <Card className="mb-6">
@@ -78,7 +86,9 @@ export default function CommunityPostForm({ community, user }: CommunityPostForm
           <div className="flex gap-3">
             <Avatar className="h-10 w-10">
               <AvatarImage src={user.image || ""} alt={user.name || ""} />
-              <AvatarFallback>{user.name?.substring(0, 2).toUpperCase() || "UN"}</AvatarFallback>
+              <AvatarFallback>
+                {user.name?.substring(0, 2).toUpperCase() || "UN"}
+              </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <Textarea
@@ -89,7 +99,7 @@ export default function CommunityPostForm({ community, user }: CommunityPostForm
               />
 
               {imageUrl && (
-                <div className="relative mt-2 rounded-md overflow-hidden border">
+                <div className="relative mt-2 overflow-hidden rounded-md border">
                   <img
                     src={imageUrl || "/placeholder.svg"}
                     alt="Post attachment"
@@ -99,7 +109,7 @@ export default function CommunityPostForm({ community, user }: CommunityPostForm
                     type="button"
                     variant="destructive"
                     size="icon"
-                    className="absolute top-2 right-2 h-8 w-8 rounded-full"
+                    className="absolute right-2 top-2 h-8 w-8 rounded-full"
                     onClick={() => setImageUrl("")}
                   >
                     <X className="h-4 w-4" />
@@ -108,8 +118,10 @@ export default function CommunityPostForm({ community, user }: CommunityPostForm
               )}
 
               {createPostMutation.error && (
-                <p className="text-sm text-destructive mt-2">
-                  {createPostMutation.error instanceof Error ? createPostMutation.error.message : "An error occurred"}
+                <p className="mt-2 text-sm text-destructive">
+                  {createPostMutation.error instanceof Error
+                    ? createPostMutation.error.message
+                    : "An error occurred"}
                 </p>
               )}
             </div>
@@ -146,7 +158,12 @@ export default function CommunityPostForm({ community, user }: CommunityPostForm
               disabled={isUploading || createPostMutation.isPending}
             />
           </div>
-          <Button type="submit" disabled={!content.trim() || createPostMutation.isPending || isUploading}>
+          <Button
+            type="submit"
+            disabled={
+              !content.trim() || createPostMutation.isPending || isUploading
+            }
+          >
             {createPostMutation.isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -159,6 +176,5 @@ export default function CommunityPostForm({ community, user }: CommunityPostForm
         </CardFooter>
       </form>
     </Card>
-  )
+  );
 }
-
