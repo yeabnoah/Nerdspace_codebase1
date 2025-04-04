@@ -69,7 +69,11 @@ const isValidUrl = (url: string) => {
   }
 };
 
-const CommunityManager = () => {
+const CommunityManager = ({
+  onCommunityClick,
+}: {
+  onCommunityClick: (communityId: string) => void;
+}) => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedCommunity, setSelectedCommunity] =
