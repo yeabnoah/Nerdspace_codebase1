@@ -56,6 +56,7 @@ import {
 import { EditCommunityDialog } from "./edit-community-dialog";
 import { CreateCommunityDialog } from "./create-community-dialog";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 // Utility function to validate URLs
 const isValidUrl = (url: string) => {
@@ -79,6 +80,8 @@ const CommunityManager = () => {
   const [filteredCommunities, setFilteredCommunities] = useState<
     CommunityInterface[] | null
   >(null);
+
+  const push = useRouter();
 
   const session = authClient.useSession();
 
@@ -209,7 +212,7 @@ const CommunityManager = () => {
   return (
     <div className="container mx-auto py-6">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-3xl font-instrument">Community</h1>
+        <h1 className="font-instrument text-3xl">Community</h1>
         <Button onClick={() => setIsCreateDialogOpen(true)} className="gap-2">
           <Plus className="h-4 w-4" /> Create Community
         </Button>
@@ -264,7 +267,13 @@ const CommunityManager = () => {
       {displayCommunities && displayCommunities.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {displayCommunities.map((community) => (
-            <Card key={community.id} className="overflow-hidden">
+            <Card
+              key={community.id}
+              className="overflow-hidden hover:cursor-pointer"
+              onClick={() => {
+                push.push(`/community/${community.id}`);
+              }}
+            >
               <div className="relative h-48 w-full">
                 {community.image && isValidUrl(community.image) ? (
                   <Image
@@ -308,12 +317,22 @@ const CommunityManager = () => {
                 </p>
                 <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
-                    <MessageSquare className="h-4 w-4" />
-                    <span>{community.posts?.length || 0} posts</span>
+                    <Users className="h-4 w-4" />
+                    <span>{community.members?.length || 0} members</span>
                   </div>
-                  <div className="text-xs">
-                    Created:{" "}
-                    {new Date(community.createdAt).toLocaleDateString()}
+                  <div className="flex flex-wrap gap-2">
+                    {community.members?.map((member) => (
+                      <div key={member.id} className="flex items-center gap-1">
+                        <Image
+                          src={member?.user.image || "/default-avatar.png"}
+                          alt={member?.user.visualName as string}
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
+                        <span>{member?.user.visualName}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </CardContent>
