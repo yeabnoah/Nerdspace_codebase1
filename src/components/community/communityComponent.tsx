@@ -1,43 +1,42 @@
 "use client";
 
-import { CommunityInterface } from "@/interface/auth/community.interface";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import axios from "axios";
-import React from "react";
+import type { CommunityInterface } from "@/interface/auth/community.interface";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
 import CommunityCard from "./communityCard";
 
 const CommunityComponent = () => {
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-    error,
-    refetch,
-  } = useInfiniteQuery({
-    queryKey: ["community"],
-    queryFn: async ({ pageParam }) => {
-      const response = await axios.get(`/api/community`, {
-        params: { cursor: pageParam, limit: 5 },
-      });
-      return response.data;
-    },
-    initialPageParam: null,
-    getNextPageParam: (lastPage) =>
-      lastPage.data.length > 0
-        ? lastPage.data[lastPage.data.length - 1].id
-        : null,
-  });
+  const [data, setData] = useState<CommunityInterface[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/community");
+        if (!response.ok) {
+          throw new Error("Failed to fetch communities");
+        }
+        const result = await response.json();
+        setData(result.data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   if (isLoading) {
     return (
-      <div className="p-4">
-        {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="mb-4 h-20 w-full animate-pulse rounded bg-gray-300"
-          ></div>
+      <div className="space-y-4 p-4">
+        {[...Array(3)].map((_, i) => (
+          <SkeletonCard key={i} />
         ))}
       </div>
     );
@@ -45,50 +44,67 @@ const CommunityComponent = () => {
 
   if (error) {
     return (
-      <div className="p-4 text-center text-red-500">
-        <p>Error: {error.message}</p>
-        <button
-          onClick={() => refetch()}
-          className="mt-2 rounded bg-red-500 px-4 py-2 text-white"
-        >
-          Retry
-        </button>
+      <div className="p-4">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-2"
+            onClick={() => {
+              setIsLoading(true);
+              setError(null);
+              setData(null);
+            }}
+          >
+            Retry
+          </Button>
+        </Alert>
       </div>
     );
   }
 
   return (
-    <div className="">
-      {data?.pages.length ? (
-        <div className="">
-          {data.pages.map((page) =>
-            page.data.map((community: CommunityInterface) => (
-              <CommunityCard key={community.id} community={community} />
-            )),
-          )}
+    <div className="container mx-auto p-4">
+      <h1 className="mb-6 text-2xl font-bold">Communities</h1>
+
+      {data && data.length > 0 ? (
+        <div className="grid grid-cols-1 gap-4 md:gap-6">
+          {data.map((community: CommunityInterface) => (
+            <CommunityCard key={community.id} community={community} />
+          ))}
         </div>
       ) : (
-        <p className="p-4 text-center text-gray-500">No communities found.</p>
+        <div className="rounded-lg bg-accent/10 py-12 text-center">
+          <h3 className="mb-2 text-xl font-medium">No communities found</h3>
+          <p className="mb-4 text-muted-foreground">
+            Be the first to create a community!
+          </p>
+        </div>
       )}
-
-      <div className="mt-4 text-center">
-        {hasNextPage && (
-          <button
-            onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage}
-            aria-busy={isFetchingNextPage}
-            className={`rounded px-4 py-2 ${
-              isFetchingNextPage
-                ? "cursor-not-allowed bg-gray-400"
-                : "bg-blue-500 hover:bg-blue-600"
-            } text-white`}
-          >
-            {isFetchingNextPage ? "Loading more..." : "Load More"}
-          </button>
-        )}
-      </div>
     </div>
   );
 };
+
+const SkeletonCard = () => (
+  <div className="space-y-3 rounded-lg border p-4">
+    <div className="flex items-center gap-3">
+      <Skeleton className="h-10 w-10 rounded-full" />
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-40" />
+        <Skeleton className="h-4 w-20" />
+      </div>
+    </div>
+    <Skeleton className="h-4 w-full" />
+    <Skeleton className="h-4 w-3/4" />
+    <div className="flex justify-between pt-2">
+      <Skeleton className="h-4 w-24" />
+      <Skeleton className="h-4 w-24" />
+      <Skeleton className="h-4 w-24" />
+    </div>
+  </div>
+);
 
 export default CommunityComponent;
