@@ -50,6 +50,7 @@
     "country-data-list": "^1.4.0",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.5.2",
+    "framer-motion": "^12.6.3",
     "input-otp": "^1.4.2",
     "intl-messageformat": "^10.7.15",
     "intl-messageformat-parser": "^6.4.4",

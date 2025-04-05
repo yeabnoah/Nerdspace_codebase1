@@ -464,8 +464,10 @@ const RenderPost = () => {
                     onClick={() => handleUserProfileClick(each.user.id)}
                     className="cursor-pointer"
                   >
-                    <h1 className="text-sm">{each.user.name}</h1>
-                    <h1 className="text-xs">Nerd@{each.user.nerdAt}</h1>
+                    <h1 className="text-sm font-medium">{each.user.name}</h1>
+                    <h1 className="text-xs text-muted-foreground">
+                      Nerd@{each.user.nerdAt}
+                    </h1>
                   </div>
                 </div>
 
@@ -492,22 +494,20 @@ const RenderPost = () => {
                           onClick={() => {
                             setSelectedPost(each);
                             setContent(each.content);
-                            console.log(each);
                             setEditModal(true);
                           }}
                         >
-                          <Edit />
+                          <Edit className="mr-2 h-4 w-4" />
                           <span className="hidden md:block">Edit</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => {
                             setSelectedPost(each);
                             setContent(each.content);
-                            console.log(each);
                             setDeleteModal(true);
                           }}
                         >
-                          <TrashIcon />
+                          <TrashIcon className="mr-2 h-4 w-4" />
                           <span className="hidden md:block">Delete</span>
                         </DropdownMenuItem>
                         {(each?.access as unknown as string) ===
@@ -517,7 +517,7 @@ const RenderPost = () => {
                               changePostAccessType(each);
                             }}
                           >
-                            <LockIcon />
+                            <LockIcon className="mr-2 h-4 w-4" />
                             <span className="hidden md:block">Go Private</span>
                           </DropdownMenuItem>
                         ) : (
@@ -526,26 +526,26 @@ const RenderPost = () => {
                               changePostAccessType(each);
                             }}
                           >
-                            <LockOpen />
+                            <LockOpen className="mr-2 h-4 w-4" />
                             <span className="hidden md:block">Go Public</span>
                           </DropdownMenuItem>
                         )}
                         <DropdownMenuItem>
-                          <Share2Icon />
-                          <span className="hidden md:block">share</span>
+                          <Share2Icon className="mr-2 h-4 w-4" />
+                          <span className="hidden md:block">Share</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     ) : (
                       <DropdownMenuContent className="mr-5 flex flex-row justify-center bg-white dark:bg-textAlternative md:mr-0 md:block">
                         <DropdownMenuItem>
-                          <Share2Icon />
-                          <span className="hidden md:block">share</span>
+                          <Share2Icon className="mr-2 h-4 w-4" />
+                          <span className="hidden md:block">Share</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleReport(each.id)}
                           disabled={session?.data?.user?.id === each.user.id}
                         >
-                          <BanIcon />
+                          <BanIcon className="mr-2 h-4 w-4" />
                           <span className="hidden md:block">Report</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -567,7 +567,7 @@ const RenderPost = () => {
                       }}
                       className="overflow-hidden border-gray-100 opacity-80 shadow-none transition-all hover:cursor-pointer hover:opacity-100 dark:border-gray-500/5"
                     >
-                      <div className="flex gap-3">
+                      <div className="flex flex-col gap-3 sm:flex-row">
                         <div className="relative h-48 w-full sm:h-auto sm:w-1/3">
                           <Image
                             fill
@@ -664,7 +664,6 @@ const RenderPost = () => {
                         ))}
                       {each.media.length >= 3 && (
                         <div className="grid h-[36vh] w-[82vw] grid-cols-[auto_120px] gap-2 md:w-[36vw]">
-                          {/* First column: Main Image (Takes all available space) */}
                           <div
                             className="relative h-full w-full"
                             onClick={() =>
@@ -682,7 +681,6 @@ const RenderPost = () => {
                             />
                           </div>
 
-                          {/* Second column: Smaller stacked images */}
                           <div className="flex w-full flex-col gap-2">
                             {each.media.slice(1, 4).map((media, mediaIndex) => (
                               <div
@@ -715,14 +713,14 @@ const RenderPost = () => {
                   )}
 
                   <div className="flex-1 break-words">
-                    <h4 className="break-all text-xs md:text-sm">
+                    <h4 className="break-all text-sm md:text-base">
                       {expandedStates[index] || !isLongContent
                         ? each.content
                         : `${truncatedContent}...`}
                     </h4>
                     {isLongContent && (
                       <button
-                        className="mt-2 text-xs underline"
+                        className="mt-2 text-sm text-primary hover:underline"
                         onClick={() => toggleExpand(index)}
                       >
                         {expandedStates[index] ? "See less" : "See more"}
@@ -747,7 +745,7 @@ const RenderPost = () => {
                     {each.likes.some(
                       (like) => like.userId === session.data?.user.id,
                     ) ? (
-                      <GoHeartFill className="size-5" />
+                      <GoHeartFill className="size-5 text-red-500" />
                     ) : (
                       <GoHeart className="size-5" />
                     )}
@@ -775,7 +773,7 @@ const RenderPost = () => {
                     {each.bookmarks.some(
                       (bookmark) => bookmark.userId === session.data?.user.id,
                     ) ? (
-                      <HiBookmark className="size-5" />
+                      <HiBookmark className="size-5 text-primary" />
                     ) : (
                       <HiOutlineBookmark className="size-5" />
                     )}
@@ -830,7 +828,7 @@ const RenderPost = () => {
                       <Button
                         onClick={() => fetchNextCommentPage()}
                         disabled={isFetchingNextCommentPage}
-                        className="mt-4"
+                        className="mt-4 w-full"
                       >
                         {isFetchingNextCommentPage ? "Loading..." : "Load More"}
                       </Button>

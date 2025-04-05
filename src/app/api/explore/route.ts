@@ -1,109 +1,138 @@
 // app/api/explore/route.ts
-import getUserSession from "@/functions/get-user";
-import { prisma } from "@/lib/prisma"; // Update this if your prisma path is different
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import getUserSession from "@/functions/get-user";
+import { Prisma } from "@prisma/client";
+
+const ITEMS_PER_PAGE = 10;
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const q = searchParams.get("q")?.toLowerCase() || "";
-  const type = searchParams.get("type") || "all";
-  const cursor = searchParams.get("cursor") || null; // Ensure cursor is defined
-
   try {
     const session = await getUserSession();
-
     if (!session) {
-      return NextResponse.json(
-        {
-          message: "unauthorized | not logged in",
-        },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const queries: Record<string, Promise<any[]>> = {
-      user: prisma.user.findMany({
+
+    const { searchParams } = new URL(req.url);
+    const query = searchParams.get("q") || "";
+    const type = searchParams.get("type") || "all";
+    const page = parseInt(searchParams.get("page") || "1");
+    const skip = (page - 1) * ITEMS_PER_PAGE;
+
+    const searchConditions = {
+      take: ITEMS_PER_PAGE,
+      skip,
+      orderBy: {
+        createdAt: Prisma.SortOrder.desc,
+      },
+    };
+
+    const results: any = {};
+
+    if (type === "all" || type === "user") {
+      const users = await prisma.user.findMany({
+        ...searchConditions,
         where: {
           OR: [
-            { name: { contains: q, mode: "insensitive" } },
-            { nerdAt: { contains: q, mode: "insensitive" } },
-            { bio: { contains: q, mode: "insensitive" } },
+            { name: { contains: query, mode: "insensitive" } },
+            { nerdAt: { contains: query, mode: "insensitive" } },
+            { bio: { contains: query, mode: "insensitive" } },
           ],
         },
-        select: { id: true, name: true, nerdAt: true, image: true },
-        take: 10,
-      }),
-      post: prisma.post.findMany({
+        select: {
+          id: true,
+          name: true,
+          nerdAt: true,
+          image: true,
+          bio: true,
+        },
+      });
+      results.users = users;
+    }
+
+    if (type === "all" || type === "post") {
+      const posts = await prisma.post.findMany({
+        ...searchConditions,
         where: {
-          content: { contains: q, mode: "insensitive" },
+          content: { contains: query, mode: "insensitive" },
         },
         include: {
           user: {
-            include: {
-              following: {
-                where: { followerId: session.user.id },
-                select: { id: true },
-              },
+            select: {
+              id: true,
+              name: true,
+              nerdAt: true,
+              image: true,
             },
           },
           likes: true,
           bookmarks: true,
           media: true,
-          project: {
-            include: {
-              _count: true,
+        },
+      });
+      results.posts = posts;
+    }
+
+    if (type === "all" || type === "project") {
+      const projects = await prisma.project.findMany({
+        ...searchConditions,
+        where: {
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { description: { contains: query, mode: "insensitive" } },
+            { category: { has: query } },
+          ],
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              nerdAt: true,
+              image: true,
+            },
+          },
+          stars: true,
+          ratings: true,
+        },
+      });
+      results.projects = projects;
+    }
+
+    if (type === "all" || type === "community") {
+      const communities = await prisma.community.findMany({
+        ...searchConditions,
+        where: {
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { description: { contains: query, mode: "insensitive" } },
+          ],
+        },
+        include: {
+          creator: {
+            select: {
+              id: true,
+              name: true,
+              nerdAt: true,
+              image: true,
+            },
+          },
+          members: {
+            select: {
+              id: true,
             },
           },
         },
-        orderBy: { createdAt: "desc" },
-        take: 10,
-        skip: cursor ? 1 : 0,
-        cursor: cursor ? { id: cursor } : undefined,
-      }),
-      project: prisma.project.findMany({
-        where: {
-          OR: [
-            { name: { contains: q, mode: "insensitive" } },
-            { description: { contains: q, mode: "insensitive" } },
-            { category: { has: q } },
-          ],
-        },
-        select: { id: true, name: true, description: true, image: true },
-        take: 10,
-      }),
-      community: prisma.community.findMany({
-        where: {
-          OR: [
-            { name: { contains: q, mode: "insensitive" } },
-            { description: { contains: q, mode: "insensitive" } },
-          ],
-        },
-        select: { id: true, name: true, image: true, description: true },
-        take: 10,
-      }),
-    };
-
-    const results: Record<string, any> = {};
-
-    if (type === "all") {
-      const [users, posts, projects, communities] = await Promise.all([
-        queries.user,
-        queries.post,
-        queries.project,
-        queries.community,
-      ]);
-      results.users = users;
-      results.posts = posts;
-      results.projects = projects;
+      });
       results.communities = communities;
-    } else if (type in queries) {
-      results[type + "s"] = await queries[type];
-    } else {
-      return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
 
     return NextResponse.json(results);
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Server Error" }, { status: 500 });
+  } catch (error) {
+    console.error("Search error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
