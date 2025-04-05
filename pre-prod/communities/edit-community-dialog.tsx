@@ -1,19 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import type { CommunityInterface } from "@/interface/auth/community.interface";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +25,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ImageUpload } from "../ui/image-upload";
+import { ImageUpload } from "../../src/components/ui/image-upload";
 import toast from "react-hot-toast";
 
 const formSchema = z.object({
@@ -38,40 +37,44 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface CreateCommunityDialogProps {
+interface EditCommunityDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  community: CommunityInterface;
 }
 
-export function CreateCommunityDialog({
+export function EditCommunityDialog({
   open,
   onOpenChange,
-}: CreateCommunityDialogProps) {
+  community,
+}: EditCommunityDialogProps) {
   const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      image: "",
-      categoryId: "",
+      name: community.name,
+      description: community.description,
+      image: community.image || "",
+      categoryId: community.categoryId || "",
     },
   });
 
   const mutation = useMutation({
     mutationFn: async (values: FormValues) => {
-      const { data } = await axios.post("/api/communities", values);
+      const { data } = await axios.patch("/api/communities", {
+        id: community.id,
+        ...values,
+      });
       return data;
     },
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Community created successfully",
+        description: "Community updated successfully",
       });
       router.refresh();
       onOpenChange(false);
-      form.reset();
     },
     onError: (error: any) => {
       toast({
@@ -90,10 +93,7 @@ export function CreateCommunityDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Create a new community</DialogTitle>
-          <DialogDescription>
-            Create a community to connect with people who share your interests
-          </DialogDescription>
+          <DialogTitle>Edit community</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -162,7 +162,7 @@ export function CreateCommunityDialog({
                 Cancel
               </Button>
               <Button type="submit" disabled={mutation.isPending}>
-                {mutation.isPending ? "Creating..." : "Create Community"}
+                {mutation.isPending ? "Saving..." : "Save Changes"}
               </Button>
             </DialogFooter>
           </form>

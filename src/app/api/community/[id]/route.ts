@@ -13,7 +13,11 @@ export async function GET(
       include: {
         category: true,
         members: true,
-        posts: true,
+        posts: {
+          include: {
+            user: true, // Include user relation for posts
+          },
+        },
         creator: true,
       },
     });

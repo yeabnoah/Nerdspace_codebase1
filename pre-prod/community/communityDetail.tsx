@@ -1,7 +1,7 @@
 "use client";
 
 import type { CommunityInterface } from "@/interface/auth/community.interface";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -57,11 +57,24 @@ const CommunityDetail = ({ id }: { id: string }) => {
     },
   });
 
+  const createPostMutation = useMutation({
+    mutationFn: async (newPost: { content: string; communityId: string }) => {
+      const response = await axios.post("/api/community", newPost);
+      return response.data;
+    },
+    onSuccess: () => {
+      refetch(); // Refetch community data to update the feed
+      setNewPost(""); // Clear the input field
+      setCurrentView("feed"); // Switch back to the feed view
+    },
+    onError: (error: any) => {
+      console.error("Error creating post:", error);
+    },
+  });
+
   const handleCreatePost = () => {
-    // Handle post creation logic here
-    console.log("Creating post:", newPost);
-    setNewPost("");
-    setCurrentView("feed");
+    if (!newPost.trim()) return;
+    createPostMutation.mutate({ content: newPost, communityId: id });
   };
 
   const handleJoinCommunity = () => {
@@ -149,12 +162,6 @@ const CommunityDetail = ({ id }: { id: string }) => {
                   <MessageCircle className="mr-1.5 h-3.5 w-3.5" />
                   <span>{data.posts.length} posts</span>
                 </div>
-                {/* <div className="flex items-center text-sm text-muted-foreground">
-              <Calendar className="mr-1.5 h-3.5 w-3.5" />
-              <span>
-                Created {new Date(data.createdAt).toLocaleDateString()}
-              </span>
-            </div> */}
               </div>
 
               {data.category && (
@@ -207,7 +214,6 @@ const CommunityDetail = ({ id }: { id: string }) => {
         </DropdownMenu>
       </div>
 
-
       <Separator />
     </div>
   );
@@ -238,10 +244,10 @@ const CommunityDetail = ({ id }: { id: string }) => {
                 <Avatar className="h-9 w-9">
                   <AvatarImage
                     src={`/placeholder.svg?height=36&width=36`}
-                    alt={post.user.visualName as string}
+                    alt={post.user?.visualName || "Unknown User"}
                   />
                   <AvatarFallback>
-                    {post.user.visualName &&
+                    {post.user?.visualName &&
                       post.user.visualName.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -249,7 +255,7 @@ const CommunityDetail = ({ id }: { id: string }) => {
                   <div className="flex items-start justify-between">
                     <div>
                       <p className="text-sm font-medium">
-                        {post.user.visualName}
+                        {post.user?.visualName || "Unknown User"}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {post.createdAt
@@ -549,10 +555,10 @@ const CommunityDetail = ({ id }: { id: string }) => {
                 </Button>
                 <Button
                   onClick={handleCreatePost}
-                  disabled={!newPost.trim()}
+                  disabled={!newPost.trim() || createPostMutation.isLoading}
                   className="px-5"
                 >
-                  Post
+                  {createPostMutation.isLoading ? "Posting..." : "Post"}
                 </Button>
               </div>
             </div>
@@ -565,9 +571,8 @@ const CommunityDetail = ({ id }: { id: string }) => {
   return (
     <div className="container mx-auto max-w-3xl p-6">
       <CommunityHeader />
-      <FeedView />
-
-      {/* {currentView === "create-post" && <CreatePostView />} */}
+      {currentView === "feed" && <FeedView />}
+      {currentView === "create-post" && <CreatePostView />}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import CommunityComponent from "@/components/community/communityComponent";
+import CommunityComponent from "../../community/communityComponent";
 import LeftNavbar from "@/components/navbar/left-navbar";
 import MobileNavBar from "@/components/navbar/mobile-nav-bar";
 

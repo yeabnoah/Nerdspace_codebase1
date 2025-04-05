@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { CommunityDetail } from "@/components/communities/community-detail"
+import { CommunityDetail } from "../../../communities/community-detail"
 import { prisma } from "@/lib/prisma"
 import getUserSession from "@/functions/get-user"
 

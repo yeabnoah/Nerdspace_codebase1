@@ -70,50 +70,35 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    const body = await request.json();
-    const { name, description, categoryId, image } = body;
-
-    if (!name || typeof name !== "string") {
+    const { communityId, content, image } = await request.json();
+    if (!communityId || !content) {
       return NextResponse.json(
-        { message: "Invalid community name" },
+        { message: "Community ID and content are required" },
         { status: 400 },
       );
     }
 
-    if (!description || typeof description !== "string") {
+    const community = await prisma.community.findUnique({
+      where: { id: communityId },
+    });
+    if (!community) {
       return NextResponse.json(
-        { message: "Invalid community description" },
-        { status: 400 },
+        { message: "Community not found" },
+        { status: 404 },
       );
     }
 
-    if (categoryId) {
-      const categoryExists = await prisma.communityCategory.findUnique({
-        where: { id: categoryId },
-      });
-
-      if (!categoryExists) {
-        return NextResponse.json(
-          { message: `Invalid category ID: ${categoryId}` },
-          { status: 400 },
-        );
-      }
-    }
-
-    const newCommunity = await prisma.community.create({
+    const post = await prisma.communityPost.create({
       data: {
-        name,
-        description,
+        content,
         image: image || null,
-        category: categoryId ? { connect: { id: categoryId } } : undefined,
-        creator: {
-          connect: { id: session.user.id },
-        },
+        communityId,
+        userId: session.user.id,
       },
     });
 
     return NextResponse.json(
-      { message: "Community created successfully", data: newCommunity },
+      { message: "Post created successfully", data: post },
       { status: 201 },
     );
   } catch (error: any) {
@@ -133,50 +118,36 @@ export const DELETE = async (request: NextRequest) => {
       );
     }
 
-    const { id } = await request.json();
-    if (!id) {
+    const { postId } = await request.json();
+    if (!postId) {
       return NextResponse.json(
-        {
-          message: "Community ID is required",
-        },
+        { message: "Post ID is required" },
         { status: 400 },
       );
     }
 
-    const community = await prisma.community.findUnique({ where: { id } });
-    if (!community) {
-      return NextResponse.json(
-        {
-          message: "Community not found",
-        },
-        { status: 404 },
-      );
+    const post = await prisma.communityPost.findUnique({
+      where: { id: postId },
+    });
+    if (!post) {
+      return NextResponse.json({ message: "Post not found" }, { status: 404 });
     }
 
-    if (community.creatorId !== session.user.id) {
+    if (post.userId !== session.user.id) {
       return NextResponse.json(
-        {
-          message: "You are not authorized to delete this community",
-        },
+        { message: "You are not authorized to delete this post" },
         { status: 403 },
       );
     }
 
-    await prisma.community.delete({ where: { id } });
+    await prisma.communityPost.delete({ where: { id: postId } });
 
     return NextResponse.json(
-      {
-        message: "Community deleted successfully",
-      },
+      { message: "Post deleted successfully" },
       { status: 200 },
     );
   } catch (error: any) {
-    return NextResponse.json(
-      {
-        message: error.message,
-      },
-      { status: 500 },
-    );
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 };
 
@@ -190,62 +161,122 @@ export const PATCH = async (request: NextRequest) => {
       );
     }
 
-    const { id, name, description, image, categoryId } = await request.json();
-
-    if (!id) {
+    const { postId, content, image } = await request.json();
+    if (!postId || !content) {
       return NextResponse.json(
-        { message: "Community ID is required" },
+        { message: "Post ID and content are required" },
         { status: 400 },
       );
     }
 
-    const community = await prisma.community.findUnique({ where: { id } });
-    if (!community) {
-      return NextResponse.json(
-        { message: "Community not found" },
-        { status: 404 },
-      );
+    const post = await prisma.communityPost.findUnique({
+      where: { id: postId },
+    });
+    if (!post) {
+      return NextResponse.json({ message: "Post not found" }, { status: 404 });
     }
 
-    if (community.creatorId !== session.user.id) {
+    if (post.userId !== session.user.id) {
       return NextResponse.json(
-        { message: "You are not authorized to update this community" },
+        { message: "You are not authorized to edit this post" },
         { status: 403 },
       );
     }
 
-    if (categoryId) {
-      const categoryExists = await prisma.communityCategory.findUnique({
-        where: { id: categoryId },
-      });
-
-      if (!categoryExists) {
-        return NextResponse.json(
-          { message: `Invalid category ID: ${categoryId}` },
-          { status: 400 },
-        );
-      }
-    }
-
-    const updatedCommunity = await prisma.community.update({
-      where: { id },
-      data: {
-        name,
-        description,
-        image,
-        category: categoryId ? { connect: { id: categoryId } } : undefined,
-        updatedAt: new Date(),
-      },
+    const updatedPost = await prisma.communityPost.update({
+      where: { id: postId },
+      data: { content, image: image || null },
     });
 
     return NextResponse.json(
-      {
-        message: "Community updated successfully",
-        community: updatedCommunity,
-      },
+      { message: "Post updated successfully", data: updatedPost },
       { status: 200 },
     );
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 };
+
+// export const POST_LIKE = async (request: NextRequest) => {
+//   try {
+//     const session = await getUserSession();
+//     if (!session) {
+//       return NextResponse.json(
+//         { message: "unauthorized | not logged in" },
+//         { status: 400 },
+//       );
+//     }
+
+//     const { postId } = await request.json();
+//     if (!postId) {
+//       return NextResponse.json(
+//         { message: "Post ID is required" },
+//         { status: 400 },
+//       );
+//     }
+
+//     const post = await prisma.communityPost.findUnique({
+//       where: { id: postId },
+//     });
+//     if (!post) {
+//       return NextResponse.json({ message: "Post not found" }, { status: 404 });
+//     }
+
+//     const like = await prisma.like.create({
+//       data: {
+//         userId: session.user.id,
+//         communityPostId: postId,
+//       },
+//     });
+
+//     return NextResponse.json(
+//       { message: "Post liked successfully", data: like },
+//       { status: 201 },
+//     );
+//   } catch (error: any) {
+//     return NextResponse.json({ message: error.message }, { status: 500 });
+//   }
+// };
+
+// export const POST_COMMENT = async (request: NextRequest) => {
+//   try {
+//     const session = await getUserSession();
+//     if (!session) {
+//       return NextResponse.json(
+//         { message: "unauthorized | not logged in" },
+//         { status: 400 },
+//       );
+//     }
+
+//     const { postId, content, parentId } = await request.json();
+//     if (!postId || !content) {
+//       return NextResponse.json(
+//         { message: "Post ID and content are required" },
+//         { status: 400 },
+//       );
+//     }
+
+//     const post = await prisma.communityPost.findUnique({
+//       where: { id: postId },
+//     });
+//     if (!post) {
+//       return NextResponse.json({ message: "Post not found" }, { status: 404 });
+//     }
+
+//     const comment = await prisma.postComment.create({
+//       data: {
+//         content,
+//         postId,
+//         userId: session.user.id,
+//         parentId: parentId || null,
+//       },
+//     });
+
+//     return NextResponse.json(
+//       { message: "Comment added successfully", data: comment },
+//       { status: 201 },
+//     );
+//   } catch (error: any) {
+//     return NextResponse.json({ message: error.message }, { status: 500 });
+//   }
+// };

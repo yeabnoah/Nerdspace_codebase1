@@ -1,7 +1,7 @@
 import { Suspense } from "react"
-import CommunitiesList from "@/components/communities/communities-list"
-import { CommunitiesHeader } from "@/components/communities/communities-header"
-import { LoadingCommunities } from "@/components/communities/loading-communities"
+import CommunitiesList from "../../communities/communities-list"
+import { CommunitiesHeader } from "../../communities/communities-header"
+import { LoadingCommunities } from "../../communities/loading-communities"
 
 export default function CommunitiesPage() {
   return (
