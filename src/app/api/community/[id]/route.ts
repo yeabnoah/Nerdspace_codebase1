@@ -13,6 +13,8 @@ export async function GET(
       include: {
         category: true,
         members: true,
+        posts: true,
+        creator: true,
       },
     });
 
