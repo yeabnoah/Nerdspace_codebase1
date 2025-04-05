@@ -118,7 +118,6 @@ const CommunityDetail = ({ id }: { id: string }) => {
   const CommunityHeader = () => (
     <div className="mb-8">
       <div className="mb-6 flex items-center justify-between">
-
         <div className="flex flex-1 items-center gap-3">
           <Button
             variant="ghost"
@@ -208,24 +207,6 @@ const CommunityDetail = ({ id }: { id: string }) => {
         </DropdownMenu>
       </div>
 
-      <Tabs
-        defaultValue="feed"
-        value={currentView}
-        onValueChange={(value) => setCurrentView(value as ScreenView)}
-        className="w-full"
-      >
-        <TabsList className="mb-1 grid h-11 w-full grid-cols-3">
-          <TabsTrigger value="feed" className="text-sm">
-            Feed
-          </TabsTrigger>
-          <TabsTrigger value="members" className="text-sm">
-            Members
-          </TabsTrigger>
-          <TabsTrigger value="about" className="text-sm">
-            About
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
 
       <Separator />
     </div>
@@ -584,12 +565,9 @@ const CommunityDetail = ({ id }: { id: string }) => {
   return (
     <div className="container mx-auto max-w-3xl p-6">
       <CommunityHeader />
+      <FeedView />
 
-      {/* Render the appropriate view based on currentView state */}
-      {currentView === "feed" && <FeedView />}
-      {currentView === "members" && <MembersView />}
-      {currentView === "about" && <AboutView />}
-      {currentView === "create-post" && <CreatePostView />}
+      {/* {currentView === "create-post" && <CreatePostView />} */}
     </div>
   );
 };
