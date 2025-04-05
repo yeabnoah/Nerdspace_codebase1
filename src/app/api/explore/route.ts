@@ -7,12 +7,13 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q")?.toLowerCase() || "";
   const type = searchParams.get("type") || "all";
+  const cursor = searchParams.get("cursor") || null; // Ensure cursor is defined
 
   try {
     const session = await getUserSession();
 
     if (!session) {
-      return Response.json(
+      return NextResponse.json(
         {
           message: "unauthorized | not logged in",
         },
@@ -35,8 +36,28 @@ export async function GET(req: NextRequest) {
         where: {
           content: { contains: q, mode: "insensitive" },
         },
-        select: { id: true, content: true, createdAt: true, userId: true },
+        include: {
+          user: {
+            include: {
+              following: {
+                where: { followerId: session.user.id },
+                select: { id: true },
+              },
+            },
+          },
+          likes: true,
+          bookmarks: true,
+          media: true,
+          project: {
+            include: {
+              _count: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
         take: 10,
+        skip: cursor ? 1 : 0,
+        cursor: cursor ? { id: cursor } : undefined,
       }),
       project: prisma.project.findMany({
         where: {
