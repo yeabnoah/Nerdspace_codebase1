@@ -54,6 +54,7 @@ model User {
   Community            Community[]
   CommunityMembership  CommunityMembership[]
   CommunityPost        CommunityPost[]
+  interests            CommunityCategory[]    @relation("UserInterests")
 
   @@unique([email])
   @@map("user")
@@ -370,6 +371,7 @@ model CommunityCategory {
   id          String      @id @default(uuid())
   name        String      @unique
   communities Community[]
+  users       User[]      @relation("UserInterests")
 }
 
 enum CommunityRole {

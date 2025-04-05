@@ -29,13 +29,13 @@ const LeftNavbar = () => {
       </Button>
       <Button
         onClick={() => {
-          router.push("/search");
+          router.push("/explore");
         }}
         variant="outline"
         className="justify-start gap-3 border-gray-100 bg-transparent shadow-none dark:border-gray-500/5"
       >
-        <Search className="hidden md:block" size={20} />
-        <span className="hidden lg:block">search</span>
+        <TrendingUp className="hidden md:block" size={20} />
+        <span className="hidden lg:block">Explore</span>
       </Button>
       <Button
         onClick={() => {
@@ -57,26 +57,7 @@ const LeftNavbar = () => {
         <Users className="hidden md:block" size={20} />
         <span className="hidden lg:block">Communities</span>
       </Button>
-      <Button
-        onClick={() => {
-          router.push("/explore");
-        }}
-        variant="outline"
-        className="justify-start gap-3 border-gray-100 bg-transparent shadow-none dark:border-gray-500/5"
-      >
-        <TrendingUp className="hidden md:block" size={20} />
-        <span className="hidden lg:block">Explore</span>
-      </Button>
-      <Button
-        onClick={() => {
-          router.push("/bookmarks");
-        }}
-        variant="outline"
-        className="justify-start gap-3 border-gray-100 bg-transparent shadow-none dark:border-gray-500/5"
-      >
-        <Bookmark className="hidden md:block" size={20} />
-        <span className="hidden lg:block">Bookmark</span>
-      </Button>
+      
       <Button
         onClick={() => {
           router.push("/events");
