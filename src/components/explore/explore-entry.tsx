@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -8,115 +8,276 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
-import { MessageSquare, Heart, Clock, Star } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Loader2, Search, Filter } from "lucide-react";
+import PostCard from "@/components/post/PostCard";
+import { useInView } from "react-intersection-observer";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+
+const ITEMS_PER_PAGE = 10;
 
 const ExploreEntry = () => {
   const [query, setQuery] = useState("");
   const [type, setType] = useState("all");
-  const [results, setResults] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const debouncedQuery = useDebounce(query, 500);
+  const { ref, inView } = useInView();
 
-  const handleSearch = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const response = await fetch(`/api/explore?q=${query}&type=${type}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch results");
-      }
-      const data = await response.json();
-      setResults(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ["explore", debouncedQuery, type],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await axios.get(
+        `/api/explore?q=${debouncedQuery}&type=${type}&page=${pageParam}`,
+      );
+      return response.data;
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      const totalItems = allPages.length * ITEMS_PER_PAGE;
+      const hasMore =
+        lastPage.users?.length === ITEMS_PER_PAGE ||
+        lastPage.posts?.length === ITEMS_PER_PAGE ||
+        lastPage.projects?.length === ITEMS_PER_PAGE ||
+        lastPage.communities?.length === ITEMS_PER_PAGE;
+      return hasMore ? allPages.length + 1 : undefined;
+    },
+    initialPageParam: 1,
+    enabled: !!debouncedQuery.trim(),
+  });
+
+  React.useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
   };
 
-  return (
-    <div className="p-6">
-      <h1 className="mb-4 font-instrument text-3xl">Explore</h1>
-      <div className="mb-6 flex items-center gap-4">
+  const handleTypeChange = (value: string) => {
+    setType(value);
+  };
+
+  const searchInput = useMemo(
+    () => (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative flex-1"
+      >
+        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground sm:h-5 sm:w-5" />
         <Input
-          placeholder="Search..."
+          placeholder="Search anything..."
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="w-full"
+          onChange={handleQueryChange}
+          className="h-12 w-full rounded-xl border-none bg-card/40 pl-10 pr-4 text-base shadow-sm backdrop-blur-sm transition-all duration-300 focus:bg-card/60 focus:ring-2 focus:ring-primary/20 sm:h-14 sm:pl-12 sm:text-lg"
         />
-        <Select value={type} onValueChange={(value) => setType(value)}>
-          <SelectTrigger className="w-40">
+      </motion.div>
+    ),
+    [query],
+  );
+
+  const typeSelect = useMemo(
+    () => (
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.1 }}
+        className="w-full sm:w-40"
+      >
+        <Select value={type} onValueChange={handleTypeChange}>
+          <SelectTrigger className="h-12 w-full rounded-xl border-none bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 focus:ring-2 focus:ring-primary/20 sm:h-14">
+            <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
             <SelectValue placeholder="Select type" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="rounded-xl border-none bg-card/80 shadow-lg backdrop-blur-sm">
             <SelectItem value="all">All</SelectItem>
             <SelectItem value="user">Users</SelectItem>
             <SelectItem value="post">Posts</SelectItem>
             <SelectItem value="project">Projects</SelectItem>
+            <SelectItem value="community">Communities</SelectItem>
           </SelectContent>
         </Select>
-        <Button onClick={handleSearch} disabled={loading}>
-          {loading ? "Searching..." : "Search"}
-        </Button>
-      </div>
-      {error && <p className="text-red-500">{error}</p>}
-      {results && (
-        <Tabs defaultValue="all" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="posts">Posts</TabsTrigger>
-            <TabsTrigger value="projects">Projects</TabsTrigger>
-          </TabsList>
+      </motion.div>
+    ),
+    [type],
+  );
 
-          <TabsContent value="all">
-            <div className="space-y-6">
-              {results.users && <UsersCard users={results.users} />}
-              {results.posts && <PostsCard posts={results.posts} />}
-              {results.projects && <ProjectsCard projects={results.projects} />}
-            </div>
-          </TabsContent>
+  const allResults = useMemo(() => {
+    if (!data?.pages) return null;
+    return data.pages.reduce((acc, page) => ({
+      users: [...(acc.users || []), ...(page.users || [])],
+      posts: [...(acc.posts || []), ...(page.posts || [])],
+      projects: [...(acc.projects || []), ...(page.projects || [])],
+      communities: [...(acc.communities || []), ...(page.communities || [])],
+    }));
+  }, [data]);
 
-          <TabsContent value="users">
-            {results.users && <UsersCard users={results.users} />}
-          </TabsContent>
-
-          <TabsContent value="posts">
-            {results.posts && <PostsCard posts={results.posts} />}
-          </TabsContent>
-
-          <TabsContent value="projects">
-            {results.projects && <ProjectsCard projects={results.projects} />}
-          </TabsContent>
-        </Tabs>
+  return (
+    <div className="mx-auto max-w-7xl p-4 sm:p-6">
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6 text-center font-instrument text-3xl font-bold text-primary sm:mb-8 sm:text-5xl"
+      >
+        Explore
+      </motion.h1>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-8 flex flex-col gap-4 rounded-xl bg-card/40 p-4 shadow-sm backdrop-blur-sm supports-[backdrop-filter]:bg-card/60 sm:mb-12 sm:flex-row sm:items-center sm:p-6"
+      >
+        {searchInput}
+        {typeSelect}
+      </motion.div>
+      {error && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mb-4 text-center text-destructive"
+        >
+          Error: {error.message}
+        </motion.p>
       )}
+      {isFetching && !allResults && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex items-center justify-center py-8"
+        >
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </motion.div>
+      )}
+      <AnimatePresence>
+        {allResults && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <Tabs defaultValue="all" className="space-y-6 sm:space-y-8">
+              <TabsList className="flex w-full flex-wrap justify-start gap-2 border-b bg-transparent">
+                <TabsTrigger
+                  value="all"
+                  className="rounded-lg px-3 py-1.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary sm:px-4 sm:py-2 sm:text-base"
+                >
+                  All
+                </TabsTrigger>
+                <TabsTrigger
+                  value="users"
+                  className="rounded-lg px-3 py-1.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary sm:px-4 sm:py-2 sm:text-base"
+                >
+                  Users
+                </TabsTrigger>
+                <TabsTrigger
+                  value="posts"
+                  className="rounded-lg px-3 py-1.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary sm:px-4 sm:py-2 sm:text-base"
+                >
+                  Posts
+                </TabsTrigger>
+                <TabsTrigger
+                  value="projects"
+                  className="rounded-lg px-3 py-1.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary sm:px-4 sm:py-2 sm:text-base"
+                >
+                  Projects
+                </TabsTrigger>
+                <TabsTrigger
+                  value="communities"
+                  className="rounded-lg px-3 py-1.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary sm:px-4 sm:py-2 sm:text-base"
+                >
+                  Communities
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="all" className="space-y-6 sm:space-y-8">
+                {allResults.users && <UsersCard users={allResults.users} />}
+                {allResults.posts && <PostsCard posts={allResults.posts} />}
+                {allResults.projects && (
+                  <ProjectsCard projects={allResults.projects} />
+                )}
+                {allResults.communities && (
+                  <CommunitiesCard communities={allResults.communities} />
+                )}
+              </TabsContent>
+
+              <TabsContent value="users">
+                {allResults.users && <UsersCard users={allResults.users} />}
+              </TabsContent>
+
+              <TabsContent value="posts">
+                {allResults.posts && <PostsCard posts={allResults.posts} />}
+              </TabsContent>
+
+              <TabsContent value="projects">
+                {allResults.projects && (
+                  <ProjectsCard projects={allResults.projects} />
+                )}
+              </TabsContent>
+
+              <TabsContent value="communities">
+                {allResults.communities && (
+                  <CommunitiesCard communities={allResults.communities} />
+                )}
+              </TabsContent>
+            </Tabs>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <div ref={ref} className="h-10">
+        {isFetchingNextPage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center justify-center py-4"
+          >
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 };
 
 const UsersCard = ({ users }: { users: any[] }) => (
-  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
     {users.map((user) => (
       <Card
         key={user.id}
-        className="transition-shadow duration-300 hover:shadow-md"
+        className="group border-border/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
       >
-        <CardHeader className="flex flex-row items-center gap-4">
-          {user.image && (
+        <CardHeader className="flex flex-row items-center gap-3 p-4 sm:gap-4 sm:p-6">
+          {user.image ? (
             <img
               src={user.image}
               alt={user.name}
-              className="h-12 w-12 rounded-full object-cover"
+              className="h-12 w-12 rounded-full object-cover ring-2 ring-primary/20 transition-all duration-300 group-hover:ring-primary/40 sm:h-16 sm:w-16"
             />
+          ) : (
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 sm:h-16 sm:w-16">
+              <span className="text-xl font-bold text-primary/60 sm:text-2xl">
+                {user.name[0]}
+              </span>
+            </div>
           )}
           <div>
-            <CardTitle className="text-base">{user.name}</CardTitle>
-            <p className="text-sm text-muted-foreground">@{user.nerdAt}</p>
+            <CardTitle className="text-base font-semibold sm:text-lg">
+              {user.name}
+            </CardTitle>
+            <p className="text-xs text-muted-foreground sm:text-sm">
+              @{user.nerdAt}
+            </p>
           </div>
         </CardHeader>
       </Card>
@@ -125,236 +286,77 @@ const UsersCard = ({ users }: { users: any[] }) => (
 );
 
 const PostsCard = ({ posts }: { posts: any[] }) => {
-  const [expandedPosts, setExpandedPosts] = useState<{
-    [key: string]: boolean;
-  }>({});
-
-  const toggleExpand = (postId: string) => {
-    setExpandedPosts((prev) => ({
-      ...prev,
-      [postId]: !prev[postId],
-    }));
-  };
-
-  const getGridClass = (mediaCount: number) => {
-    switch (mediaCount) {
-      case 1:
-        return "grid-cols-1";
-      case 2:
-        return "grid-cols-2";
-      case 3:
-      case 4:
-        return "grid-cols-2";
-      default:
-        return "";
-    }
-  };
-
   return (
-    <div className="space-y-6">
-      {posts.map((post) => {
-        const isExpanded = expandedPosts[post.id];
-        const contentWords = post.content.split(" ");
-        const trimLimit = 20; // Adjust trim limit as needed
-        const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
-        const isLongContent = contentWords.length > trimLimit;
-
-        return (
-          <Card
-            key={post.id}
-            className="overflow-hidden border border-gray-100 p-4 dark:border-gray-500/5"
-          >
-            <div className="flex items-center gap-3 pb-4">
-              {post.user?.image && (
-                <Image
-                  src={post.user.image}
-                  alt={post.user.name || "User"}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                />
-              )}
-              <div>
-                <p className="text-sm font-medium">{post.user?.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  @{post.user?.nerdAt}
-                </p>
-              </div>
-            </div>
-            <div className="mb-4">
-              <p className="text-sm">
-                {isExpanded || !isLongContent
-                  ? post.content
-                  : `${truncatedContent}...`}
-              </p>
-              {isLongContent && (
-                <button
-                  className="mt-2 text-xs underline"
-                  onClick={() => toggleExpand(post.id)}
-                >
-                  {isExpanded ? "See less" : "See more"}
-                </button>
-              )}
-            </div>
-            {post.shared && (
-              <Card className="overflow-hidden border-gray-100 opacity-80 shadow-none transition-all hover:cursor-pointer hover:opacity-100 dark:border-gray-500/5">
-                <div className="flex gap-3">
-                  <div className="relative h-48 w-full sm:h-auto sm:w-1/3">
-                    <Image
-                      fill
-                      src={post.project?.image || "/placeholder.svg"}
-                      alt={post.project?.name || "Project"}
-                      className="object-cover"
-                      sizes="(max-width: 640px) 100vw, 33vw"
-                    />
-                  </div>
-                  <div className="flex flex-1 flex-col justify-between p-4">
-                    <div className="space-y-2">
-                      <h3 className="font-medium tracking-tight">
-                        {post.project?.name}
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        <Badge
-                          variant="outline"
-                          className="bg-primary/5 text-xs font-normal"
-                        >
-                          {post.project?.status}
-                        </Badge>
-                        {post.project?.category && (
-                          <Badge
-                            variant="outline"
-                            className="bg-primary/5 text-xs font-normal"
-                          >
-                            {post.project?.category}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                    <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3.5 w-3.5" />
-                        <span>{post.project?._count.updates}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="h-3.5 w-3.5" />
-                        <span>{post.project?._count.stars}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MessageSquare className="h-3.5 w-3.5" />
-                        <span>{post.project?._count.reviews}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            )}
-            {post.media?.length > 0 && (
-              <div
-                className={`grid w-[100%] flex-1 gap-2 ${getGridClass(
-                  post.media.length,
-                )}`}
-              >
-                {post.media.length === 1 && (
-                  <div className="relative h-[30vh] md:h-[36vh]">
-                    <Image
-                      fill
-                      src={post.media[0].url}
-                      alt="Post media"
-                      className="w-full rounded-xl object-cover"
-                    />
-                  </div>
-                )}
-                {post.media.length === 2 &&
-                  post.media.map((media, mediaIndex) => (
-                    <div
-                      key={media.id}
-                      className="relative h-[20vh] md:h-[28vh]"
-                    >
-                      <Image
-                        fill
-                        src={media.url}
-                        alt="Post media"
-                        className="h-full w-full rounded-xl object-cover"
-                      />
-                    </div>
-                  ))}
-                {post.media.length >= 3 && (
-                  <div className="grid h-[36vh] w-[82vw] grid-cols-[auto_120px] gap-2 md:w-[36vw]">
-                    <div className="relative h-full w-full">
-                      <Image
-                        fill
-                        src={post.media[0].url}
-                        alt="Post media"
-                        className="h-full w-full rounded-xl object-cover"
-                      />
-                    </div>
-                    <div className="flex w-full flex-col gap-2">
-                      {post.media.slice(1, 4).map((media, mediaIndex) => (
-                        <div key={media.id} className="relative h-full w-full">
-                          <Image
-                            fill
-                            src={media.url}
-                            alt="Post media"
-                            className="h-full w-full rounded-xl object-cover"
-                          />
-                          {mediaIndex === 2 && post.media.length > 4 && (
-                            <div className="absolute bottom-2 right-2 rounded-full bg-black/50 px-2 py-1 text-white">
-                              +{post.media.length - 4}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-            <div className="flex items-center justify-between pt-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex items-center gap-1"
-              >
-                <Heart className="h-4 w-4" />
-                <span className="text-xs">{post.likes?.length || 0}</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex items-center gap-1"
-              >
-                <MessageSquare className="h-4 w-4" />
-              </Button>
-            </div>
-          </Card>
-        );
-      })}
+    <div className="space-y-4 sm:space-y-6">
+      {posts.map((post) => (
+        <PostCard key={post.id} post={post} />
+      ))}
     </div>
   );
 };
 
 const ProjectsCard = ({ projects }: { projects: any[] }) => (
-  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
     {projects.map((project) => (
       <Card
         key={project.id}
-        className="transition-shadow duration-300 hover:shadow-md"
+        className="group border-border/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
       >
-        <CardHeader>
-          <CardTitle>{project.name}</CardTitle>
+        <CardHeader className="space-y-2 p-4 sm:p-6">
+          <CardTitle className="text-lg font-semibold sm:text-xl">
+            {project.name}
+          </CardTitle>
+          <p className="line-clamp-2 text-xs text-muted-foreground sm:text-sm">
+            {project.description}
+          </p>
         </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">{project.description}</p>
+        <CardContent className="p-4 sm:p-6">
           {project.image && (
-            <Image
-              src={project.image}
-              alt={project.name}
-              width={500}
-              height={300}
-              className="mt-4 rounded-md object-cover"
-            />
+            <div className="relative aspect-video overflow-hidden rounded-lg">
+              <Image
+                src={project.image}
+                alt={project.name}
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
           )}
         </CardContent>
+      </Card>
+    ))}
+  </div>
+);
+
+const CommunitiesCard = ({ communities }: { communities: any[] }) => (
+  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+    {communities.map((community) => (
+      <Card
+        key={community.id}
+        className="group border-border/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+      >
+        <CardHeader className="flex flex-row items-center gap-3 p-4 sm:gap-4 sm:p-6">
+          {community.image ? (
+            <img
+              src={community.image}
+              alt={community.name}
+              className="h-12 w-12 rounded-full object-cover ring-2 ring-primary/20 transition-all duration-300 group-hover:ring-primary/40 sm:h-16 sm:w-16"
+            />
+          ) : (
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 sm:h-16 sm:w-16">
+              <span className="text-xl font-bold text-primary/60 sm:text-2xl">
+                {community.name[0]}
+              </span>
+            </div>
+          )}
+          <div>
+            <CardTitle className="text-base font-semibold sm:text-lg">
+              {community.name}
+            </CardTitle>
+            <p className="text-xs text-muted-foreground sm:text-sm">
+              @{community.nerdAt}
+            </p>
+          </div>
+        </CardHeader>
       </Card>
     ))}
   </div>
