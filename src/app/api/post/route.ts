@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const session = await getUserSession();
 
     if (!session) {
-      return Response.json(
+      return NextResponse.json(
         {
           message: "unauthorized | not logged in",
         },
@@ -81,7 +81,7 @@ export const POST = async (req: NextRequest) => {
     const validateContent = postSchema.safeParse({ content });
 
     if (validateContent.error) {
-      return Response.json(
+      return NextResponse.json(
         {
           message: "Please provide the right parameters",
         },
@@ -90,7 +90,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     if (!session) {
-      return Response.json(
+      return NextResponse.json(
         {
           message: "unauthorized | not logged in",
         },
@@ -132,7 +132,7 @@ export const DELETE = async (req: NextRequest) => {
     const session = await getUserSession();
 
     if (!session) {
-      return Response.json(
+      return NextResponse.json(
         {
           message: "unauthorized | not logged in",
         },
@@ -145,7 +145,7 @@ export const DELETE = async (req: NextRequest) => {
     });
 
     if (!post || post.userId !== session.user.id) {
-      return Response.json(
+      return NextResponse.json(
         {
           message: "Post not found or unauthorized",
         },
@@ -154,7 +154,7 @@ export const DELETE = async (req: NextRequest) => {
     }
 
     await prisma.post.delete({
-      where: { id: id, userId: session.user.id },
+      where: { id: id },
     });
 
     return NextResponse.json(
@@ -182,7 +182,7 @@ export const PATCH = async (req: NextRequest) => {
     const validateContent = postSchema.safeParse({ content });
 
     if (validateContent.error) {
-      return Response.json(
+      return NextResponse.json(
         {
           message: "Please provide the right parameters",
         },
@@ -191,7 +191,7 @@ export const PATCH = async (req: NextRequest) => {
     }
 
     if (!session) {
-      return Response.json(
+      return NextResponse.json(
         {
           message: "unauthorized | not logged in",
         },
@@ -204,7 +204,7 @@ export const PATCH = async (req: NextRequest) => {
     });
 
     if (!post || post.userId !== session.user.id) {
-      return Response.json(
+      return NextResponse.json(
         {
           message: "Post not found or unauthorized",
         },
@@ -213,7 +213,7 @@ export const PATCH = async (req: NextRequest) => {
     }
 
     const updatedPost = await prisma.post.update({
-      where: { id: id, userId: session.user.id },
+      where: { id: id },
       data: { content: content },
     });
 
