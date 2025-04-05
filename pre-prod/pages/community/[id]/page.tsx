@@ -3,7 +3,7 @@
 import LeftNavbar from "@/components/navbar/left-navbar";
 import { use } from "react";
 import ProjectDetail from "@/components/project/project-detail";
-import CommunityDetail from "@/components/community/communityDetail";
+import CommunityDetail from "../../../community/communityDetail";
 
 export default function ProjectDetailPage({
   params,

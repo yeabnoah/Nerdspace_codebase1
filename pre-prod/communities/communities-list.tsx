@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useInView } from "react-intersection-observer"
 import { CommunityCard } from "./community-card"
 import type { CommunityInterface } from "@/interface/auth/community.interface"
-import { LoadingSpinner } from "../ui/loading-spinner"
+import { LoadingSpinner } from "../../src/components/ui/loading-spinner"
 
 export default function CommunitiesList() {
   const [communities, setCommunities] = useState<CommunityInterface[]>([])
