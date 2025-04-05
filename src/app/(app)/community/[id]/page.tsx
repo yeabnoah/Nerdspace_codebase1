@@ -3,6 +3,7 @@
 import LeftNavbar from "@/components/navbar/left-navbar";
 import { use } from "react";
 import ProjectDetail from "@/components/project/project-detail";
+import CommunityDetail from "@/components/community/communityDetail";
 
 export default function ProjectDetailPage({
   params,
@@ -15,8 +16,7 @@ export default function ProjectDetailPage({
     <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start">
       <LeftNavbar />
       <div className="my-5 min-h-fit flex-1 md:mx-10">
-        {/* <ProjectDetail projectId={id} /> */}
-        my project detail id {id}
+        <CommunityDetail id={id} />
       </div>
     </div>
   );
