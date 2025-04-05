@@ -1,12 +1,21 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import getUserSession from "@/functions/get-user";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const page = parseInt(searchParams.get("page") || "1", 10);
-  const pageSize = 3;
+  const pageSize = parseInt(searchParams.get("pageSize") || "3", 10);
 
   try {
+    const session = await getUserSession();
+    if (!session) {
+      return NextResponse.json(
+        { message: "unauthorized | not logged in" },
+        { status: 400 },
+      );
+    }
+
     const projects = await prisma.project.findMany({
       skip: (page - 1) * pageSize,
       take: pageSize,
