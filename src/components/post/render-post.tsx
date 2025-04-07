@@ -430,120 +430,134 @@ const RenderPost = () => {
   };
 
   return (
-    <div className=" bg-transparent">
-      {data?.pages
-        .flatMap((page) => page.data)
-        .map((each: postInterface, index) => {
-          const contentWords = each.content.split(" ");
-          const trimLimit = getTrimLimit();
-          const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
-          const isLongContent = contentWords.length > trimLimit;
-          const isShortContent = contentWords.length < trimLimit;
-          const isTooShort = contentWords.length < 10;
+    <div className="relative">
+      {/* Glowing background elements */}
+      <div className="fixed -left-12 -top-12 h-48 w-48 rounded-full bg-blue-300/20 blur-[120px]"></div>
+      <div className="fixed -right-12 top-1/3 h-36 w-36 rounded-full bg-orange-300/20 blur-[100px]"></div>
+      <div className="fixed bottom-1/4 left-1/4 h-32 w-32 rounded-full bg-blue-300/15 blur-[80px]"></div>
+      <div className="fixed bottom-0 right-0 h-40 w-40 rounded-full bg-orange-300/15 blur-[90px]"></div>
 
-          inView && hasNextPage && fetchNextPage();
+      {/* Gradient glow illustrations */}
+      <div className="fixed left-[20%] top-[15%] h-[220px] w-[320px] rotate-[35deg] bg-gradient-to-r from-blue-300/15 via-transparent to-orange-300/15 blur-[130px]"></div>
+      <div className="fixed bottom-[25%] right-[10%] h-[260px] w-[280px] -rotate-[25deg] bg-gradient-to-l from-orange-300/15 via-transparent to-blue-300/15 blur-[110px]"></div>
+      <div className="fixed left-[35%] top-[45%] h-[200px] w-[240px] rotate-[55deg] bg-gradient-to-br from-blue-300/10 via-transparent to-orange-300/10 blur-[100px]"></div>
 
-          return (
-            <PostCard
-              key={index}
-              post={each}
-              index={index}
-              expandedStates={expandedStates}
-              toggleExpand={toggleExpand}
-              commentShown={commentShown}
-              toggleCommentShown={toggleCommentShown}
-              expandedComments={expandedComments}
-              toggleCommentExpand={toggleCommentExpand}
-              replyShown={replyShown}
-              toggleReplyShown={toggleReplyShown}
-              replyContent={replyContent}
-              setReplyContent={setReplyContent}
-              handleReplySubmit={handleReplySubmit}
-              expandedReplies={expandedReplies}
-              toggleReplies={toggleReplies}
-              handleEditComment={handleEditComment}
-              handleDeleteComment={handleDeleteComment}
-              openEditModal={openEditModal}
-              openDeleteModal={openDeleteModal}
-              setSelectedCommentReply={setSelectedCommentReply}
-              modalEditOpened={editModalOpen}
-              modalDeleteOpened={deleteModalOpen}
-              reportModalOpen={reportModalOpen}
-              setReportModalOpen={setReportModalOpen}
-              setCommentId={setCommentId}
-              commentLoading={commentLoading}
-              comments={comments}
-              hasNextCommentPage={hasNextCommentPage}
-              isFetchingNextCommentPage={isFetchingNextCommentPage}
-              fetchNextCommentPage={fetchNextCommentPage}
-              setEditModal={setEditModal}
-              setDeleteModal={setDeleteModal}
-              changePostAccessType={changePostAccessType}
-              handleFollow={handleFollow}
+      {/* Main content */}
+      <div className="relative z-10">
+        {data?.pages
+          .flatMap((page) => page.data)
+          .map((each: postInterface, index) => {
+            const contentWords = each.content.split(" ");
+            const trimLimit = getTrimLimit();
+            const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
+            const isLongContent = contentWords.length > trimLimit;
+            const isShortContent = contentWords.length < trimLimit;
+            const isTooShort = contentWords.length < 10;
+
+            inView && hasNextPage && fetchNextPage();
+
+            return (
+              <PostCard
+                key={index}
+                post={each}
+                index={index}
+                expandedStates={expandedStates}
+                toggleExpand={toggleExpand}
+                commentShown={commentShown}
+                toggleCommentShown={toggleCommentShown}
+                expandedComments={expandedComments}
+                toggleCommentExpand={toggleCommentExpand}
+                replyShown={replyShown}
+                toggleReplyShown={toggleReplyShown}
+                replyContent={replyContent}
+                setReplyContent={setReplyContent}
+                handleReplySubmit={handleReplySubmit}
+                expandedReplies={expandedReplies}
+                toggleReplies={toggleReplies}
+                handleEditComment={handleEditComment}
+                handleDeleteComment={handleDeleteComment}
+                openEditModal={openEditModal}
+                openDeleteModal={openDeleteModal}
+                setSelectedCommentReply={setSelectedCommentReply}
+                modalEditOpened={editModalOpen}
+                modalDeleteOpened={deleteModalOpen}
+                reportModalOpen={reportModalOpen}
+                setReportModalOpen={setReportModalOpen}
+                setCommentId={setCommentId}
+                commentLoading={commentLoading}
+                comments={comments}
+                hasNextCommentPage={hasNextCommentPage}
+                isFetchingNextCommentPage={isFetchingNextCommentPage}
+                fetchNextCommentPage={fetchNextCommentPage}
+                setEditModal={setEditModal}
+                setDeleteModal={setDeleteModal}
+                changePostAccessType={changePostAccessType}
+                handleFollow={handleFollow}
+              />
+            );
+          })}
+        <div ref={ref}>{isFetchingNextPage && <MorePostsFetchSkeleton />}</div>
+
+        <ImagePreviewDialog
+          images={selectedPostImages}
+          initialIndex={selectedMediaIndex || 0}
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+        />
+
+        <EditModal
+          selectedPost={selectedPost}
+          setEditModal={setEditModal}
+          editModal={editModal}
+          content={content}
+          setContent={setContent}
+        />
+
+        <DeleteModal
+          selectedPost={selectedPost}
+          setDeleteModal={setDeleteModal}
+          deleteModal={deleteModal}
+          content={content}
+          setContent={setContent}
+        />
+
+        {selectedComment && (
+          <>
+            <EditCommentModal
+              commentId={selectedComment.id}
+              postId={selectedPost.id}
+              initialContent={selectedComment.content}
+              isOpen={editCommentModalOpen}
+              onClose={() => setEditCommentModalOpen(false)}
             />
-          );
-        })}
-      <div ref={ref}>{isFetchingNextPage && <MorePostsFetchSkeleton />}</div>
-
-      <ImagePreviewDialog
-        images={selectedPostImages}
-        initialIndex={selectedMediaIndex || 0}
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-      />
-
-      <EditModal
-        selectedPost={selectedPost}
-        setEditModal={setEditModal}
-        editModal={editModal}
-        content={content}
-        setContent={setContent}
-      />
-
-      <DeleteModal
-        selectedPost={selectedPost}
-        setDeleteModal={setDeleteModal}
-        deleteModal={deleteModal}
-        content={content}
-        setContent={setContent}
-      />
-
-      {selectedComment && (
-        <>
-          <EditCommentModal
-            commentId={selectedComment.id}
-            postId={selectedPost.id}
-            initialContent={selectedComment.content}
-            isOpen={editCommentModalOpen}
-            onClose={() => setEditCommentModalOpen(false)}
-          />
-          <DeleteCommentModal
-            commentId={selectedComment.id}
-            isOpen={deleteCommentModalOpen}
-            onClose={() => setDeleteCommentModalOpen(false)}
-          />
-        </>
-      )}
-      {selectedCommentReply && (
-        <>
-          <EditCommentModal
-            postId={selectedPost.id}
-            commentId={selectedCommentReply.id}
-            initialContent={selectedCommentReply.content}
-            isOpen={editReplyModalOpen}
-            onClose={() => setEditReplyModalOpen(false)}
-          />
-          <DeleteCommentModal
-            commentId={selectedCommentReply.id}
-            isOpen={deleteReplyModalOpen}
-            onClose={() => setDeleteReplyModalOpen(false)}
-          />
-        </>
-      )}
-      <ReportModal
-        isOpen={reportModalOpen}
-        onClose={() => setReportModalOpen(false)}
-      />
+            <DeleteCommentModal
+              commentId={selectedComment.id}
+              isOpen={deleteCommentModalOpen}
+              onClose={() => setDeleteCommentModalOpen(false)}
+            />
+          </>
+        )}
+        {selectedCommentReply && (
+          <>
+            <EditCommentModal
+              postId={selectedPost.id}
+              commentId={selectedCommentReply.id}
+              initialContent={selectedCommentReply.content}
+              isOpen={editReplyModalOpen}
+              onClose={() => setEditReplyModalOpen(false)}
+            />
+            <DeleteCommentModal
+              commentId={selectedCommentReply.id}
+              isOpen={deleteReplyModalOpen}
+              onClose={() => setDeleteReplyModalOpen(false)}
+            />
+          </>
+        )}
+        <ReportModal
+          isOpen={reportModalOpen}
+          onClose={() => setReportModalOpen(false)}
+        />
+      </div>
     </div>
   );
 };

@@ -234,25 +234,8 @@ const PostCard = ({
   };
 
   return (
-    <div className="relative my-5 w-full flex-1 p-4 px-3 border-b">
-      {/* Scattered glow pattern */}
-      <div className="absolute -left-4 -top-4 h-32 w-32 rounded-full bg-indigo-500/10 blur-2xl"></div>
-      <div className="absolute -right-4 top-1/4 h-24 w-24 rounded-full bg-rose-300/10 blur-2xl"></div>
-      <div className="absolute bottom-1/4 left-1/4 h-16 w-16 rounded-full bg-violet-400/10 blur-xl"></div>
-      <div className="absolute bottom-0 right-0 h-20 w-20 rounded-full bg-cyan-300/10 blur-xl"></div>
-      <div className="absolute left-1/3 top-0 h-28 w-28 rounded-full bg-purple-500/5 blur-2xl"></div>
-      <div className="absolute bottom-1/3 right-1/3 h-12 w-12 rounded-full bg-teal-400/5 blur-xl"></div>
-      <div className="h-18 w-18 absolute left-0 top-1/3 rounded-full bg-fuchsia-400/5 blur-xl"></div>
-
-      {/* Random flowing gradient illustrations */}
-      <div className="absolute left-[15%] top-[10%] h-[180px] w-[280px] rotate-[25deg] bg-gradient-to-r from-indigo-500/5 via-transparent to-cyan-400/5 blur-2xl"></div>
-      <div className="absolute bottom-[20%] right-[5%] h-[220px] w-[240px] -rotate-[15deg] bg-gradient-to-l from-rose-400/5 via-transparent to-violet-500/5 blur-2xl"></div>
-      <div className="absolute left-[30%] top-[40%] h-[160px] w-[200px] rotate-[45deg] bg-gradient-to-br from-cyan-400/5 via-transparent to-indigo-500/5 blur-xl"></div>
-      <div className="absolute bottom-[10%] right-[25%] h-[140px] w-[220px] -rotate-[35deg] bg-gradient-to-tr from-violet-500/5 via-transparent to-rose-400/5 blur-xl"></div>
-      <div className="absolute left-[5%] top-[60%] h-[200px] w-[260px] rotate-[10deg] bg-gradient-to-br from-indigo-500/5 via-transparent to-cyan-400/5 blur-2xl"></div>
-      <div className="absolute right-[15%] top-[30%] h-[150px] w-[180px] -rotate-[25deg] bg-gradient-to-tr from-rose-400/5 via-transparent to-violet-500/5 blur-xl"></div>
-
-      <div className="relative backdrop-blur-sm">
+    <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-4 px-3 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/10 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/30 after:to-transparent [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/30 [&>div]:before:to-transparent">
+      <div className="relative pl-5 backdrop-blur-sm">
         <div className="mr-2 flex w-full items-center justify-between pb-2">
           <div className="flex flex-1 items-center gap-3">
             <Image
