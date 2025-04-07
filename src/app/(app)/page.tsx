@@ -9,7 +9,7 @@ export default function Home() {
     <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start">
       <LeftNavbar />
       <div className="my-5 min-h-fit flex-1 md:mx-10">
-        <PostInput />
+        {/* <PostInput /> */}
         <RenderPOst />
       </div>
       <RightNavbar />

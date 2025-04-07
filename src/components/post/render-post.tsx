@@ -430,7 +430,7 @@ const RenderPost = () => {
   };
 
   return (
-    <div>
+    <div className=" bg-transparent">
       {data?.pages
         .flatMap((page) => page.data)
         .map((each: postInterface, index) => {
