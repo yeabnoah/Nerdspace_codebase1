@@ -131,7 +131,7 @@ const PostCard = ({
   const isLongContent = contentWords.length > trimLimit;
   const isShortContent = contentWords.length < trimLimit;
   const isTooShort = contentWords.length < 10;
-     
+
   const likeMutation = useMutation({
     mutationFn: async (postId: string) => {
       const response = await axios.post("/api/post/like", {
@@ -234,14 +234,13 @@ const PostCard = ({
   };
 
   return (
-    <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-4 px-3 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/50 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/50 after:to-transparent [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/50 [&>div]:before:to-transparent">
+    <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-4 px-3 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/30 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent  after:to-transparent [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent  [&>div]:before:to-transparent">
       {/* Orange diagonal glow from bottom-left to top-right */}
-      
-      
-      {/* Blue diagonal glow from bottom-right to top-left */}
-      <div className="absolute -right-4 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent backdrop-blur-sm border border-blue-300/50 blur-[150px]"></div>
 
-      <div className="absolute left-12 -bottom-5 h-[300px] w-[300px] rotate-45 rounded-full bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent backdrop-blur-sm border border-orange-300/50 blur-[150px]"></div>
+      {/* Blue diagonal glow from bottom-right to top-left */}
+      {/* <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+
+      <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
 
       <div className="relative pl-5 backdrop-blur-sm">
         <div className="mr-2 flex w-full items-center justify-between pb-2">
@@ -249,7 +248,7 @@ const PostCard = ({
             <Image
               src={post.user.image || "/user.jpg"}
               alt="user"
-              className="size-10 cursor-pointer rounded-full shadow-[0_0_5px_rgba(0,122,255,0.5),0_0_8px_rgba(255,165,0,0.5),0_0_10px_rgba(0,122,255,0.4)] transition-all hover:shadow-[0_0_8px_rgba(0,122,255,0.6),0_0_10px_rgba(255,165,0,0.6),0_0_12px_rgba(0,122,255,0.5)]"
+              className="size-10 cursor-pointer rounded-full shadow-[0_0_3px_rgba(0,122,255,0.5),0_0_5px_rgba(255,165,0,0.5),0_0_7px_rgba(0,122,255,0.4)] transition-all"
               height={200}
               width={200}
               onClick={() => handleUserProfileClick(post.user.id)}
@@ -271,7 +270,8 @@ const PostCard = ({
             {session?.data?.user?.id !== post.user.id && (
               <Button
                 variant={"outline"}
-                className={`mx-0 rounded-lg px-3 text-xs shadow-none dark:bg-textAlternative md:text-sm`}
+                size="sm"
+                className={`mx-0 rounded-lg bg-transparent px-2 py-1 text-xs shadow-none hover:bg-transparent md:text-sm`}
                 onClick={() => {
                   handleFollow(post);
                 }}

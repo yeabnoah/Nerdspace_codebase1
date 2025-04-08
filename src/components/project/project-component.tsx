@@ -255,7 +255,7 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="container mx-auto py-2">
+    <div className="container mx-auto py-2 px-8 bg-white  dark:bg-black">
       <Tabs
         defaultValue="projects"
         className="w-fit"
@@ -274,7 +274,7 @@ export default function ProjectsPage() {
         </div>
 
         <TabsContent value="projects">
-          <div className="flex w-full flex-col gap-4 pb-5 sm:flex-row md:w-auto">
+          {/* <div className="flex w-full flex-col gap-4 pb-5 sm:flex-row md:w-auto">
             <div className="relative w-full sm:w-80">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -604,7 +604,7 @@ export default function ProjectsPage() {
                 </div>
               </DialogContent>
             </Dialog>
-          </div>
+          </div> */}
           {/* </div> */}
 
           {isLoading && (
@@ -625,7 +625,7 @@ export default function ProjectsPage() {
               </div>
             </div>
           ) : (
-            <div className="flex w-full flex-wrap items-center gap-2">
+            <div className=" flex flex-row justify-evenly flex-wrap gap-3">
               {filteredProjects?.map((project) => (
                 <ProjectCard key={project.id} {...project} />
               ))}
