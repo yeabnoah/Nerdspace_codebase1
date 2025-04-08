@@ -407,19 +407,11 @@ const UsersCard = ({ users }: { users: any[] }) => (
 const PostsCard = ({ posts }: { posts: any[] }) => {
   const router = useRouter();
   const [expandedStates, setExpandedStates] = useState<boolean[]>([]);
-  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>(
-    {},
-  );
-  const [expandedComments, setExpandedComments] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>({});
+  const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
   const [replyShown, setReplyShown] = useState<{ [key: string]: boolean }>({});
-  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>(
-    {},
-  );
-  const [expandedReplies, setExpandedReplies] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
+  const [expandedReplies, setExpandedReplies] = useState<{ [key: string]: boolean }>({});
   const [modalEditOpened, setModalEditOpened] = useState(false);
   const [modalDeleteOpened, setModalDeleteOpened] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -427,11 +419,12 @@ const PostsCard = ({ posts }: { posts: any[] }) => {
   const [commentLoading, setCommentLoading] = useState(false);
   const [comments, setComments] = useState<any[]>([]);
   const [hasNextCommentPage, setHasNextCommentPage] = useState(false);
-  const [isFetchingNextCommentPage, setIsFetchingNextCommentPage] =
-    useState(false);
+  const [isFetchingNextCommentPage, setIsFetchingNextCommentPage] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
 
-  const handlePostClick = (postId: string) => {
-    router.push(`/post/${postId}`);
+  const handlePostClick = (post: any) => {
+    setSelectedPost(post);
+    router.push(`/post/${post.id}`);
   };
 
   const toggleExpand = (index: number) => {
@@ -512,15 +505,53 @@ const PostsCard = ({ posts }: { posts: any[] }) => {
 
   return (
     <div className="space-y-4 sm:space-y-6">
+      {selectedPost && (
+        <ExplorePostCard
+          post={selectedPost}
+          index={0}
+          expandedStates={expandedStates}
+          toggleExpand={toggleExpand}
+          commentShown={commentShown}
+          toggleCommentShown={toggleCommentShown}
+          expandedComments={expandedComments}
+          toggleCommentExpand={toggleCommentExpand}
+          replyShown={replyShown}
+          toggleReplyShown={toggleReplyShown}
+          replyContent={replyContent}
+          setReplyContent={setReplyContent}
+          handleReplySubmit={handleReplySubmit}
+          expandedReplies={expandedReplies}
+          toggleReplies={toggleReplies}
+          handleEditComment={handleEditComment}
+          handleDeleteComment={handleDeleteComment}
+          openEditModal={openEditModal}
+          openDeleteModal={openDeleteModal}
+          setSelectedCommentReply={setSelectedCommentReply}
+          modalEditOpened={modalEditOpened}
+          modalDeleteOpened={modalDeleteOpened}
+          reportModalOpen={reportModalOpen}
+          setReportModalOpen={setReportModalOpen}
+          setCommentId={setCommentId}
+          commentLoading={commentLoading}
+          comments={comments}
+          hasNextCommentPage={hasNextCommentPage}
+          isFetchingNextCommentPage={isFetchingNextCommentPage}
+          fetchNextCommentPage={() => {}}
+          setEditModal={setEditModal}
+          setDeleteModal={setDeleteModal}
+          changePostAccessType={changePostAccessType}
+          handleFollow={handleFollow}
+        />
+      )}
       {posts.map((post, index) => (
         <div
           key={post.id}
-          onClick={() => handlePostClick(post.id)}
+          onClick={() => handlePostClick(post)}
           className="cursor-pointer"
         >
           <ExplorePostCard
             post={post}
-            index={index}
+            index={index + 1}
             expandedStates={expandedStates}
             toggleExpand={toggleExpand}
             commentShown={commentShown}
