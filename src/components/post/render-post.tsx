@@ -481,6 +481,8 @@ const RenderPost = () => {
                 setDeleteModal={setDeleteModal}
                 changePostAccessType={changePostAccessType}
                 handleFollow={handleFollow}
+                handleLike={handleLike}
+                handleBookmark={handleBookmark}
               />
             );
           })}
