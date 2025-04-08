@@ -406,20 +406,154 @@ const UsersCard = ({ users }: { users: any[] }) => (
 
 const PostsCard = ({ posts }: { posts: any[] }) => {
   const router = useRouter();
-  
+  const [expandedStates, setExpandedStates] = useState<boolean[]>([]);
+  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>(
+    {},
+  );
+  const [expandedComments, setExpandedComments] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [replyShown, setReplyShown] = useState<{ [key: string]: boolean }>({});
+  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>(
+    {},
+  );
+  const [expandedReplies, setExpandedReplies] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [modalEditOpened, setModalEditOpened] = useState(false);
+  const [modalDeleteOpened, setModalDeleteOpened] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [commentId, setCommentId] = useState("");
+  const [commentLoading, setCommentLoading] = useState(false);
+  const [comments, setComments] = useState<any[]>([]);
+  const [hasNextCommentPage, setHasNextCommentPage] = useState(false);
+  const [isFetchingNextCommentPage, setIsFetchingNextCommentPage] =
+    useState(false);
+
   const handlePostClick = (postId: string) => {
     router.push(`/post/${postId}`);
   };
 
+  const toggleExpand = (index: number) => {
+    setExpandedStates((prev) => {
+      const newStates = [...prev];
+      newStates[index] = !newStates[index];
+      return newStates;
+    });
+  };
+
+  const toggleCommentShown = (postId: string) => {
+    setCommentShown((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+  };
+
+  const toggleCommentExpand = (commentId: string) => {
+    setExpandedComments((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const toggleReplyShown = (commentId: string) => {
+    setReplyShown((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const toggleReplies = (commentId: string) => {
+    setExpandedReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const handleReplySubmit = (commentId: string) => {
+    // Implement reply submission logic
+  };
+
+  const handleEditComment = (commentId: string) => {
+    // Implement edit comment logic
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    // Implement delete comment logic
+  };
+
+  const openEditModal = (comment: any) => {
+    // Implement open edit modal logic
+  };
+
+  const openDeleteModal = (comment: any) => {
+    // Implement open delete modal logic
+  };
+
+  const setSelectedCommentReply = (comment: any) => {
+    // Implement set selected comment reply logic
+  };
+
+  const setEditModal = (open: boolean) => {
+    setModalEditOpened(open);
+  };
+
+  const setDeleteModal = (open: boolean) => {
+    setModalDeleteOpened(open);
+  };
+
+  const changePostAccessType = (post: any) => {
+    // Implement change post access type logic
+  };
+
+  const handleFollow = (post: any) => {
+    // Implement handle follow logic
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6">
-      {posts.map((post) => (
-        <div 
-          key={post.id} 
+      {posts.map((post, index) => (
+        <div
+          key={post.id}
           onClick={() => handlePostClick(post.id)}
           className="cursor-pointer"
         >
-          <ExplorePostCard post={post} />
+          <ExplorePostCard
+            post={post}
+            index={index}
+            expandedStates={expandedStates}
+            toggleExpand={toggleExpand}
+            commentShown={commentShown}
+            toggleCommentShown={toggleCommentShown}
+            expandedComments={expandedComments}
+            toggleCommentExpand={toggleCommentExpand}
+            replyShown={replyShown}
+            toggleReplyShown={toggleReplyShown}
+            replyContent={replyContent}
+            setReplyContent={setReplyContent}
+            handleReplySubmit={handleReplySubmit}
+            expandedReplies={expandedReplies}
+            toggleReplies={toggleReplies}
+            handleEditComment={handleEditComment}
+            handleDeleteComment={handleDeleteComment}
+            openEditModal={openEditModal}
+            openDeleteModal={openDeleteModal}
+            setSelectedCommentReply={setSelectedCommentReply}
+            modalEditOpened={modalEditOpened}
+            modalDeleteOpened={modalDeleteOpened}
+            reportModalOpen={reportModalOpen}
+            setReportModalOpen={setReportModalOpen}
+            setCommentId={setCommentId}
+            commentLoading={commentLoading}
+            comments={comments}
+            hasNextCommentPage={hasNextCommentPage}
+            isFetchingNextCommentPage={isFetchingNextCommentPage}
+            fetchNextCommentPage={() => {}}
+            setEditModal={setEditModal}
+            setDeleteModal={setDeleteModal}
+            changePostAccessType={changePostAccessType}
+            handleFollow={handleFollow}
+          />
         </div>
       ))}
     </div>

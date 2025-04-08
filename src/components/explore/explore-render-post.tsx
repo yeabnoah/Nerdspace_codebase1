@@ -55,9 +55,22 @@ import {
 import DeleteCommentModal from "../post/comment/DeleteCommentModal";
 import EditCommentModal from "../post/comment/EditCommentModal";
 import PostCard from "../post/post-card";
+import React from "react";
 
 interface ExploreRenderPostProps {
   selectedPost: postInterface;
+}
+
+interface Like {
+  id: string;
+  postId: string;
+  userId: string;
+}
+
+interface Bookmark {
+  id: string;
+  postId: string;
+  userId: string;
 }
 
 const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
@@ -67,6 +80,14 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
   const { setUserProfile } = useUserProfileStore();
   const { setPostId, setCommentId } = useReportStore();
   const router = useRouter();
+
+  // Ensure post data is properly structured
+  const post = {
+    ...selectedPost,
+    bookmarks: selectedPost.bookmarks || [],
+    likes: selectedPost.likes || [],
+    media: selectedPost.media || [],
+  };
 
   // Get all state and functions from explore store
   const {
@@ -195,12 +216,78 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
       });
       return response.data.data;
     },
-    onSuccess: (_, postId) => {
-      setLikedPosts((prev) => ({ ...prev, [postId]: !prev[postId] }));
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    onMutate: async (postId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["posts"] });
+
+      // Snapshot the previous value
+      const previousPosts = queryClient.getQueryData(["posts"]);
+
+      // Update the selected post optimistically
+      if (post.id === postId) {
+        const isLiked = post.likes.some(
+          (like: Like) => like.userId === session.data?.user.id,
+        );
+        post.likes = isLiked
+          ? post.likes.filter(
+              (like: Like) => like.userId !== session.data?.user.id,
+            )
+          : [
+              ...post.likes,
+              {
+                id: Date.now().toString(),
+                postId,
+                userId: session.data?.user.id!,
+              },
+            ];
+      }
+
+      // Optimistically update the feed posts
+      queryClient.setQueryData(["posts"], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            data: page.data.map((post: any) => {
+              if (post.id === postId) {
+                const isLiked = post.likes.some(
+                  (like: Like) => like.userId === session.data?.user.id,
+                );
+                return {
+                  ...post,
+                  likes: isLiked
+                    ? post.likes.filter(
+                        (like: Like) => like.userId !== session.data?.user.id,
+                      )
+                    : [
+                        ...post.likes,
+                        {
+                          id: Date.now().toString(),
+                          postId,
+                          userId: session.data?.user.id!,
+                        },
+                      ],
+                };
+              }
+              return post;
+            }),
+          })),
+        };
+      });
+
+      return { previousPosts };
     },
-    onError: () => {
+    onError: (err, postId, context) => {
+      // Revert back to the previous value on error
+      if (context?.previousPosts) {
+        queryClient.setQueryData(["posts"], context.previousPosts);
+      }
       toast.error("Error occurred while liking/unliking post");
+    },
+    onSettled: () => {
+      // Refetch to ensure data is in sync
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 
@@ -212,12 +299,80 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
       });
       return response.data.data;
     },
-    onSuccess: (_, postId) => {
-      setBookmarkedPosts((prev) => ({ ...prev, [postId]: !prev[postId] }));
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    onMutate: async (postId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["posts"] });
+
+      // Snapshot the previous value
+      const previousPosts = queryClient.getQueryData(["posts"]);
+
+      // Update the selected post optimistically
+      if (post.id === postId) {
+        const isBookmarked = post.bookmarks.some(
+          (bookmark: Bookmark) => bookmark.userId === session.data?.user.id,
+        );
+        post.bookmarks = isBookmarked
+          ? post.bookmarks.filter(
+              (bookmark: Bookmark) => bookmark.userId !== session.data?.user.id,
+            )
+          : [
+              ...post.bookmarks,
+              {
+                id: Date.now().toString(),
+                postId,
+                userId: session.data?.user.id!,
+              },
+            ];
+      }
+
+      // Optimistically update the feed posts
+      queryClient.setQueryData(["posts"], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            data: page.data.map((post: any) => {
+              if (post.id === postId) {
+                const isBookmarked = post.bookmarks.some(
+                  (bookmark: Bookmark) =>
+                    bookmark.userId === session.data?.user.id,
+                );
+                return {
+                  ...post,
+                  bookmarks: isBookmarked
+                    ? post.bookmarks.filter(
+                        (bookmark: Bookmark) =>
+                          bookmark.userId !== session.data?.user.id,
+                      )
+                    : [
+                        ...post.bookmarks,
+                        {
+                          id: Date.now().toString(),
+                          postId,
+                          userId: session.data?.user.id!,
+                        },
+                      ],
+                };
+              }
+              return post;
+            }),
+          })),
+        };
+      });
+
+      return { previousPosts };
     },
-    onError: () => {
+    onError: (err, postId, context) => {
+      // Revert back to the previous value on error
+      if (context?.previousPosts) {
+        queryClient.setQueryData(["posts"], context.previousPosts);
+      }
       toast.error("Error occurred while bookmarking/unbookmarking post");
+    },
+    onSettled: () => {
+      // Refetch to ensure data is in sync
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 
@@ -264,6 +419,12 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
     });
   };
 
+  React.useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   if (isLoading) {
     return <RenderPostSkeleton />;
   }
@@ -285,7 +446,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
         {/* Render selected post first */}
         <PostCard
           key="selected-post"
-          post={selectedPost}
+          post={post}
           index={0}
           expandedStates={expandedStates}
           toggleExpand={toggleExpand}
@@ -319,6 +480,8 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
           setDeleteModal={setDeleteModalOpen}
           changePostAccessType={changePostAccessType}
           handleFollow={handleFollow}
+          handleLike={handleLike}
+          handleBookmark={handleBookmark}
         />
 
         {/* Render the rest of the feed */}
@@ -359,6 +522,8 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
             setDeleteModal={setDeleteModalOpen}
             changePostAccessType={changePostAccessType}
             handleFollow={handleFollow}
+            handleLike={handleLike}
+            handleBookmark={handleBookmark}
           />
         ))}
 

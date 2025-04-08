@@ -77,6 +77,8 @@ interface PostCardProps {
   setDeleteModal: (open: boolean) => void;
   changePostAccessType: (post: postInterface) => void;
   handleFollow: (post: postInterface) => void;
+  handleLike: (postId: string) => void;
+  handleBookmark: (postId: string) => void;
 }
 
 const PostCard = ({
@@ -114,6 +116,8 @@ const PostCard = ({
   setDeleteModal,
   changePostAccessType,
   handleFollow,
+  handleLike,
+  handleBookmark,
 }: PostCardProps) => {
   const router = useRouter();
   const session = authClient.useSession();
@@ -186,14 +190,6 @@ const PostCard = ({
       toast.error("Error occurred while adding comment");
     },
   });
-
-  const handleLike = (postId: string) => {
-    likeMutation.mutate(postId);
-  };
-
-  const handleBookmark = (postId: string) => {
-    bookmarkMutation.mutate(postId);
-  };
 
   const handleCommentSubmit = () => {
     if (commentContent) {
@@ -414,7 +410,7 @@ const PostCard = ({
                 </div>
               </Card>
             )}
-            {post.media.length > 0 && (
+            {post.media && post.media.length > 0 && (
               <div
                 className={`${!post.shared && "mt-4"} grid w-[100%] flex-1 gap-2 ${getGridClass(
                   post.media.length,
@@ -536,7 +532,7 @@ const PostCard = ({
               } md:mx-auto`}
               onClick={() => handleLike(post.id)}
             >
-              {post.likes.some(
+              {post.likes?.some(
                 (like) => like.userId === session.data?.user.id,
               ) ? (
                 <GoHeartFill className="size-5 text-red-500" />
