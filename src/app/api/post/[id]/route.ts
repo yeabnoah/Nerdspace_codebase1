@@ -1,93 +1,53 @@
-import { NextResponse } from "next/server";
-// import prisma from "@/lib/prisma";
-import { authClient } from "@/lib/auth-client";
 import { prisma } from "@/lib/prisma";
-import getUserSession from "@/functions/get-user";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } },
 ) {
   try {
-    const session = await getUserSession();
-    const postId = params.id;
-
-    if (!session) {
-      return NextResponse.json(
-        {
-          message: "unauthorized | not logged in",
-        },
-        { status: 400 },
-      );
-    }
-
     const post = await prisma.post.findUnique({
-      where: {
-        id: postId,
-      },
+      where: { id: params.id },
       include: {
         user: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-            nerdAt: true,
-          },
-        },
-        media: true,
-        likes: {
-          where: {
-            userId: session?.user?.id,
-          },
-        },
-        bookmarks: {
-          where: {
-            userId: session?.user?.id,
-          },
-        },
-        postcomments: {
           include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-                nerdAt: true,
-              },
-            },
-            replies: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    nerdAt: true,
-                  },
-                },
-              },
-            },
+            following: true,
           },
         },
-        _count: {
-          select: {
-            likes: true,
-            postcomments: true,
-            bookmarks: true,
+        likes: true,
+        bookmarks: true,
+        media: true,
+        project: {
+          include: {
+            _count: true,
           },
         },
       },
     });
 
     if (!post) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      return NextResponse.json({ message: "Post not found" }, { status: 404 });
     }
 
-    return NextResponse.json(post);
+    const modifiedPost = {
+      ...post,
+      user: {
+        ...post.user,
+        isFollowingAuthor: post.user.following.length > 0,
+      },
+    };
+
+    return NextResponse.json(
+      {
+        data: modifiedPost,
+        message: "Post fetched successfully",
+      },
+      { status: 200 },
+    );
   } catch (error) {
     console.error("Error fetching post:", error);
     return NextResponse.json(
-      { error: "Failed to fetch post" },
+      { error: "Internal server error" },
       { status: 500 },
     );
   }

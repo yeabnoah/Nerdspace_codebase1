@@ -43,6 +43,7 @@ import { Label } from "../ui/label";
 import { Slider } from "../ui/slider";
 import ProjectExploreCard from "./project-explore-card";
 import ExplorePostCard from "./explore-post-card";
+import { useRouter } from "next/navigation";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -59,6 +60,7 @@ const ExploreEntry = () => {
   const [showFilters, setShowFilters] = useState(false);
   const debouncedQuery = useDebounce(query, 500);
   const { ref, inView } = useInView();
+  const router = useRouter();
 
   const {
     data,
@@ -403,10 +405,22 @@ const UsersCard = ({ users }: { users: any[] }) => (
 );
 
 const PostsCard = ({ posts }: { posts: any[] }) => {
+  const router = useRouter();
+  
+  const handlePostClick = (postId: string) => {
+    router.push(`/post/${postId}`);
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6">
       {posts.map((post) => (
-        <ExplorePostCard key={post.id} post={post} />
+        <div 
+          key={post.id} 
+          onClick={() => handlePostClick(post.id)}
+          className="cursor-pointer"
+        >
+          <ExplorePostCard post={post} />
+        </div>
       ))}
     </div>
   );
