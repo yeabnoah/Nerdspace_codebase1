@@ -26,12 +26,15 @@ import { Input } from "./ui/input";
 import Link from "next/link";
 import useUserStore from "@/store/user.store";
 import { Skeleton } from "./ui/skeleton";
+import { Command } from "@/components/ui/command";
 
 const Navbar = () => {
   const router = useRouter();
   let loadingToastId: string | undefined;
   const session = authClient.useSession();
   const { user, isloading } = useUserStore();
+  const [open, setOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   const logout = async () => {
     await authClient.signOut({
@@ -52,17 +55,16 @@ const Navbar = () => {
     });
   };
 
-  const onsubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const searchInput = (
-      e.currentTarget.elements.namedItem("search") as HTMLInputElement
-    ).value;
-    console.log("searching ...");
-    router.push(`/search?q=${searchInput}`);
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setOpen(false);
+    }
   };
 
   return (
-    <div className="sticky top-0 z-50 mx-auto dark:bg-black flex max-w-6xl flex-row items-center justify-between bg-white px-2 py-4 dark:bg-transparent md:px-6">
+    <div className="sticky top-0 z-50 mx-auto flex max-w-6xl flex-row items-center justify-between bg-white px-2 py-4 dark:bg-black dark:bg-transparent md:px-6">
       <div
         onClick={() => {
           router.push("/");
@@ -73,19 +75,22 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center justify-center gap-5">
-        <form
-          onSubmit={onsubmit}
-          className="hidden flex-row items-center justify-center rounded-lg border p-2 md:flex"
-        >
-          <input
-            name="search"
-            className="bg-transparent px-2 font-normal outline-none placeholder:text-sm"
-            placeholder="looking for something ?"
-          />
-          <button type="submit" className="bg-transparent">
-            <Search className="" size={20} />
-          </button>
-        </form>
+        <div className="hidden md:flex">
+          <Command className="rounded-lg border shadow-md">
+            <form onSubmit={handleSearch} className="flex items-center">
+              <Search className="mx-3 h-4 w-4 shrink-0 opacity-50" />
+              <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder="Search anything..."
+              />
+              <kbd className="pointer-events-none mr-2 inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                <span className="text-xs">⌘</span>K
+              </kbd>
+            </form>
+          </Command>
+        </div>
         <ModeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

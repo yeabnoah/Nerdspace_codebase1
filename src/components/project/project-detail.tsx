@@ -471,39 +471,42 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const isuserAuthor = session.data?.user.id === project?.userId;
 
   return (
-    <div className="container mx-auto max-w-6xl px-4">
-      <div className="relative mb-8 h-[300px] w-full overflow-hidden rounded-xl md:h-[300px]">
+    <div className="container mx-auto max-w-6xl px-4 relative">
+      {/* Background gradient effects */}
+      <div className="absolute -bottom-20 -left-20 h-[300px] w-[300px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 via-blue-400/10 to-transparent blur-[80px]"></div>
+      <div className="absolute -right-20 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-orange-300/10 to-transparent blur-[80px]"></div>
+
+      <div className="relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl md:h-[400px] group">
         <Image
           src={project?.image || "/placeholder.svg"}
           alt={(project?.name as string) || ""}
           fill
           quality={100}
-          className="object-cover"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
           priority={true}
         />
-        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 to-transparent p-6">
-          {/* Bottom Gradient Shadow */}
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent"></div>
-          <div className="relative z-10 mb-2 flex items-center gap-2">
+        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/50 to-transparent p-8">
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent"></div>
+          <div className="relative z-10 mb-4 flex items-center gap-3">
             <Badge
               variant="outline"
-              className="border-primary/30 bg-primary/10 text-xs text-white"
+              className="border-primary/30 bg-primary/10 text-xs text-white backdrop-blur-sm"
             >
               {project?.status}
             </Badge>
             <Badge
               variant="outline"
-              className="border-secondary/30 bg-secondary/20 text-secondary-foreground"
+              className="border-secondary/30 bg-secondary/20 text-secondary-foreground backdrop-blur-sm"
             >
               {project?.access}
             </Badge>
           </div>
-          <h1 className="relative z-10 mb-2 font-instrument text-3xl text-white md:text-4xl">
+          <h1 className="relative z-10 mb-4 font-instrument text-4xl text-white md:text-5xl">
             {project?.name}
           </h1>
-          <div className="relative z-10 flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <div className="relative h-8 w-8 overflow-hidden rounded-full">
+          <div className="relative z-10 flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-white/20">
                 <Image
                   src={project?.user.image || "/placeholder.svg"}
                   alt={project?.user.visualName as string}
@@ -516,16 +519,16 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               </span>
             </div>
             <div className="flex items-center text-sm text-white/80">
-              <CalendarIcon className="mr-1 h-4 w-4" />
+              <CalendarIcon className="mr-2 h-4 w-4" />
               <span>{timeAgo}</span>
             </div>
           </div>
           {project?.user.id === session.data?.user.id && (
-            <div className="absolute right-4 top-4">
+            <div className="absolute right-6 top-6">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="p-2">
-                    <SettingsIcon />
+                  <Button variant="ghost" className="p-2 text-white hover:bg-white/10">
+                    <SettingsIcon className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
@@ -552,7 +555,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               <Badge
                 key={cat}
                 variant="outline"
-                className="text-sm font-normal"
+                className="text-sm font-normal bg-background/50 backdrop-blur-sm"
               >
                 {cat}
               </Badge>
@@ -560,89 +563,93 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </div>
 
           {/* Description */}
-          <Card className="rounded-lg border-card-foreground/5 shadow-none dark:border-gray-500/5">
-            <CardContent className="p-6">
-              <h2 className="mb-4 font-instrument text-3xl">
+          <Card className="rounded-xl border-card-foreground/5 shadow-none dark:border-gray-500/5 bg-background/50 backdrop-blur-sm">
+            <CardContent className="p-8">
+              <h2 className="mb-6 font-instrument text-3xl">
                 About This Project
               </h2>
-              <p className="text-muted-foreground">{project?.description}</p>
+              <p className="text-muted-foreground leading-relaxed">{project?.description}</p>
             </CardContent>
           </Card>
 
           {/* Stats */}
-          <Card className="rounded-lg border-card-foreground/5 shadow-none dark:border-gray-500/5">
-            <CardContent className="p-6">
-              <h2 className="mb-4 font-instrument text-3xl">Project Stats</h2>
-              <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-5">
+          <Card className="rounded-xl border-card-foreground/5 shadow-none dark:border-gray-500/5 bg-background/50 backdrop-blur-sm">
+            <CardContent className="p-8">
+              <h2 className="mb-6 font-instrument text-3xl">Project Stats</h2>
+              <div className="grid grid-cols-2 gap-6 text-center md:grid-cols-5">
                 <div className="flex flex-col items-center">
-                  <Star className="mb-1 h-5 w-5 text-yellow-500" />
-                  <span className="font-bold">{project?._count.stars}</span>
-                  <span className="text-xs text-muted-foreground">Stars</span>
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <Star className="h-6 w-6 text-yellow-500" />
+                  </div>
+                  <span className="text-2xl font-bold">{project?._count.stars}</span>
+                  <span className="text-sm text-muted-foreground">Stars</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <Heart className="mb-1 h-5 w-5 text-red-500" />
-                  <span className="font-bold">{project?._count.followers}</span>
-                  <span className="text-xs text-muted-foreground">
-                    Followers
-                  </span>
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <Heart className="h-6 w-6 text-red-500" />
+                  </div>
+                  <span className="text-2xl font-bold">{project?._count.followers}</span>
+                  <span className="text-sm text-muted-foreground">Followers</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <MessageSquare className="mb-1 h-5 w-5 text-blue-500" />
-                  <span className="font-bold">{project?._count.reviews}</span>
-                  <span className="text-xs text-muted-foreground">Reviews</span>
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <MessageSquare className="h-6 w-6 text-blue-500" />
+                  </div>
+                  <span className="text-2xl font-bold">{project?._count.reviews}</span>
+                  <span className="text-sm text-muted-foreground">Reviews</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <Flag className="mb-1 h-5 w-5 text-green-500" />
-                  <span className="font-bold">
-                    {project?._count?.updates as number}
-                  </span>
-                  <span className="text-xs text-muted-foreground">Updates</span>
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <Flag className="h-6 w-6 text-green-500" />
+                  </div>
+                  <span className="text-2xl font-bold">{project?._count?.updates as number}</span>
+                  <span className="text-sm text-muted-foreground">Updates</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <Star className="mb-1 h-5 w-5 text-purple-500" />
-                  <span className="font-bold">
-                    {project?._count?.ratings as number}
-                  </span>
-                  <span className="text-xs text-muted-foreground">Ratings</span>
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <Star className="h-6 w-6 text-purple-500" />
+                  </div>
+                  <span className="text-2xl font-bold">{project?._count?.ratings as number}</span>
+                  <span className="text-sm text-muted-foreground">Ratings</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Updates and Reviews Section */}
-          <Card className="rounded-lg border-card-foreground/5 shadow-none dark:border-gray-500/5">
-            <CardContent className="p-6">
-              <h2 className="mb-4 font-instrument text-3xl">Project Updates</h2>
+          <Card className="rounded-xl border-card-foreground/5 shadow-none dark:border-gray-500/5 bg-background/50 backdrop-blur-sm">
+            <CardContent className="p-8">
+              <h2 className="mb-6 font-instrument text-3xl">Project Updates</h2>
 
-              {/* Tabs for toggling between Updates and Reviews */}
               <Tabs
                 value={activeTab}
                 onValueChange={(value) =>
                   setActiveTab(value as "updates" | "reviews")
                 }
               >
-                <TabsList className="mb-4">
+                <TabsList className="mb-6 bg-background/50 backdrop-blur-sm">
                   <TabsTrigger value="updates">Updates</TabsTrigger>
                   <TabsTrigger value="reviews">Reviews</TabsTrigger>
                 </TabsList>
 
-                {/* Updates Tab */}
                 <TabsContent value="updates">
                   {project?.updates && project.updates.length > 0 ? (
-                    project.updates.map((update, index) => (
-                      <UpdateCard
-                        update={update}
-                        key={index}
-                        isOwner={project?.user.id === session.data?.user.id}
-                      />
-                    ))
+                    <div className="space-y-6">
+                      {project.updates.map((update, index) => (
+                        <UpdateCard
+                          update={update}
+                          key={index}
+                          isOwner={project?.user.id === session.data?.user.id}
+                        />
+                      ))}
+                    </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-8 text-center">
-                      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                        <PaintBucket className="h-8 w-8 text-muted-foreground" />
+                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+                        <PaintBucket className="h-10 w-10 text-primary" />
                       </div>
-                      <h3 className="text-lg font-medium">No updates yet</h3>
-                      <p className="mt-2 max-w-md text-muted-foreground">
+                      <h3 className="mb-2 text-xl font-medium">No updates yet</h3>
+                      <p className="max-w-md text-muted-foreground">
                         This project hasn't posted any updates. Check back later
                         for progress on this mission to Mars.
                       </p>
@@ -650,19 +657,18 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                   )}
                 </TabsContent>
 
-                {/* Reviews Tab */}
                 <TabsContent value="reviews">
-                  {/* Input Section for New Review */}
-                  <div className="mb-6">
+                  <div className="mb-8">
                     <Textarea
                       placeholder="Write your review here..."
                       value={reviewContent}
                       onChange={(e) => setReviewContent(e.target.value)}
-                      className="mb-2"
+                      className="mb-4 min-h-[120px] bg-background/50 backdrop-blur-sm"
                     />
                     <Button
                       onClick={handleCreateReview}
                       disabled={createReviewMutation.isPending}
+                      className="w-full"
                     >
                       {createReviewMutation.isPending
                         ? "Submitting..."
@@ -670,16 +676,15 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                     </Button>
                   </div>
 
-                  {/* List of Reviews */}
                   {project?.reviews && project.reviews.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       {project.reviews.map((review, index) => (
                         <div
                           key={index}
-                          className="rounded-md border border-gray-100 px-4 py-2 dark:border-gray-500/5"
+                          className="rounded-xl border border-card-foreground/5 bg-background/50 p-6 backdrop-blur-sm"
                         >
-                          <div className="flex items-center gap-2">
-                            <div className="relative h-8 w-8 overflow-hidden rounded-full">
+                          <div className="flex items-start gap-4">
+                            <div className="relative h-10 w-10 overflow-hidden rounded-full">
                               <Image
                                 src={review.user.image || "/placeholder.svg"}
                                 alt={review.user.visualName as string}
@@ -687,70 +692,48 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                                 className="object-cover"
                               />
                             </div>
-                            <p className="text-sm">{review.content}</p>
-                          </div>
-                          {review.user.id === session.data?.user.id && (
-                            <div className="mt-2 flex gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  handleEditReview(
-                                    review.id as string,
-                                    review.content as string,
-                                  )
-                                }
-                              >
-                                Edit
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() =>
-                                  handleDeleteReview(review.id as string)
-                                }
-                              >
-                                Delete
-                              </Button>
+                            <div className="flex-1">
+                              <p className="text-sm leading-relaxed">{review.content}</p>
+                              {review.user.id === session.data?.user.id && (
+                                <div className="mt-4 flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() =>
+                                      handleEditReview(
+                                        review.id as string,
+                                        review.content as string,
+                                      )
+                                    }
+                                  >
+                                    Edit
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() =>
+                                      handleDeleteReview(review.id as string)
+                                    }
+                                  >
+                                    Delete
+                                  </Button>
+                                </div>
+                              )}
                             </div>
-                          )}
+                          </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground">
-                      No reviews yet. Be the first to leave one!
-                    </p>
-                  )}
-
-                  {/* Edit Review Modal */}
-                  {isEditingReview && (
-                    <Dialog
-                      open={isEditingReview}
-                      onOpenChange={setIsEditingReview}
-                    >
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Edit Review</DialogTitle>
-                        </DialogHeader>
-                        <Textarea
-                          value={editingReviewContent}
-                          onChange={(e) =>
-                            setEditingReviewContent(e.target.value)
-                          }
-                          className="mb-4"
-                        />
-                        <DialogFooter>
-                          <Button
-                            variant="outline"
-                            onClick={() => setIsEditingReview(false)}
-                          >
-                            Cancel
-                          </Button>
-                          <Button onClick={handleSaveEditedReview}>Save</Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
+                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+                        <MessageSquare className="h-10 w-10 text-primary" />
+                      </div>
+                      <h3 className="mb-2 text-xl font-medium">No reviews yet</h3>
+                      <p className="max-w-md text-muted-foreground">
+                        Be the first to share your thoughts about this project!
+                      </p>
+                    </div>
                   )}
                 </TabsContent>
               </Tabs>
@@ -761,11 +744,11 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         {/* Right Column - Sidebar */}
         <div className="space-y-8">
           {/* Action Buttons */}
-          <Card className="rounded-lg border-card-foreground/10 shadow-none dark:border-gray-500/5">
+          <Card className="rounded-xl border-card-foreground/10 shadow-none dark:border-gray-500/5 bg-background/50 backdrop-blur-sm">
             <CardContent className="space-y-4 p-6">
               <Button
                 variant={"outline"}
-                className="w-full gap-2"
+                className="w-full gap-2 bg-background/50 backdrop-blur-sm"
                 onClick={handleStarProject}
               >
                 {project?.stars?.some(
@@ -786,7 +769,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                 <>
                   <Button
                     variant={isFollowing ? "outline" : "default"}
-                    className="w-full gap-2"
+                    className="w-full gap-2 bg-background/50 backdrop-blur-sm"
                     onClick={handleFollowProject}
                   >
                     {isFollowing ? "Unfollow" : "Follow"}
@@ -797,7 +780,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               <Button
                 onClick={() => setIsShareProjectDialogOpen(true)}
                 variant="outline"
-                className="w-full gap-2"
+                className="w-full gap-2 bg-background/50 backdrop-blur-sm"
               >
                 <Share2 className="h-4 w-4" />
                 Share project
@@ -806,7 +789,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               {isuserAuthor && (
                 <Button
                   variant="outline"
-                  className="w-full gap-2"
+                  className="w-full gap-2 bg-background/50 backdrop-blur-sm"
                   onClick={() => setIsShareUpdateDialogOpen(true)}
                 >
                   <PlusIcon className="h-4 w-4" />
@@ -817,13 +800,13 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Creator Profile */}
-          <Card className="rounded-lg border-card-foreground/10 shadow-none dark:border-gray-500/5">
-            <CardContent className="px-6 py-3">
-              <h2 className="mb-2 text-center font-instrument text-xl font-bold">
+          <Card className="rounded-xl border-card-foreground/10 shadow-none dark:border-gray-500/5 bg-background/50 backdrop-blur-sm">
+            <CardContent className="px-6 py-6">
+              <h2 className="mb-4 text-center font-instrument text-xl font-bold">
                 Creator
               </h2>
               <div className="flex flex-col items-center text-center">
-                <div className="relative h-24 w-24 overflow-hidden rounded-full">
+                <div className="relative mb-4 h-24 w-24 overflow-hidden rounded-full ring-2 ring-primary/20">
                   <Image
                     src={project?.user.image || "/placeholder.svg"}
                     alt={(project?.user.visualName as string) || ""}
@@ -837,7 +820,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                 <span className="mb-2 text-sm text-muted-foreground">
                   Nerd at: {project?.user.nerdAt}
                 </span>
-                <p className="text-sm">{project?.user.bio}</p>
+                <p className="mb-4 text-sm text-muted-foreground">{project?.user.bio}</p>
                 <Separator className="my-4" />
                 <Link
                   href={`/user-profile/${project?.userId}`}
@@ -850,29 +833,29 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
             </CardContent>
           </Card>
 
-          {/* Similar Projects Placeholder */}
-          <Card className="rounded-lg border-card-foreground/10 shadow-none dark:border-gray-500/5">
+          {/* Similar Projects */}
+          <Card className="rounded-xl border-card-foreground/10 shadow-none dark:border-gray-500/5 bg-background/50 backdrop-blur-sm">
             <CardContent className="p-6">
-              <h2 className="mb-4 font-instrument text-3xl">
+              <h2 className="mb-6 font-instrument text-3xl">
                 Similar Projects
               </h2>
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-16 rounded-md bg-muted"></div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 rounded-lg border border-card-foreground/5 p-4">
+                  <div className="h-16 w-20 rounded-xl bg-muted"></div>
                   <div>
                     <h3 className="font-medium">Mars Rover</h3>
                     <p className="text-xs text-muted-foreground">By SpaceX</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-16 rounded-md bg-muted"></div>
+                <div className="flex items-center gap-4 rounded-lg border border-card-foreground/5 p-4">
+                  <div className="h-16 w-20 rounded-xl bg-muted"></div>
                   <div>
                     <h3 className="font-medium">Lunar Gateway</h3>
                     <p className="text-xs text-muted-foreground">By NASA</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-16 rounded-md bg-muted"></div>
+                <div className="flex items-center gap-4 rounded-lg border border-card-foreground/5 p-4">
+                  <div className="h-16 w-20 rounded-xl bg-muted"></div>
                   <div>
                     <h3 className="font-medium">Artemis Program</h3>
                     <p className="text-xs text-muted-foreground">By ESA</p>

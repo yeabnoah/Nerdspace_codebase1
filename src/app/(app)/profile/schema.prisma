@@ -1,0 +1,407 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // previewFeatures = ["fullTextSearchPostgres"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model test {
+  id Int @id
+}
+
+model User {
+  id                   String                 @id
+  name                 String
+  email                String
+  emailVerified        Boolean
+  image                String?
+  createdAt            DateTime
+  updatedAt            DateTime
+  sessions             Session[]
+  accounts             Account[]
+  nerdAt               String?
+  posts                Post[]
+  bio                  String?
+  countryId            String?
+  country              Country?
+  link                 String?
+  visualName           String?
+  firstTime            Boolean                @default(true)
+  PostComment          PostComment[]
+  likes                Like[]
+  bookmarks            Bookmark[]
+  reports              Report[]
+  coverImage           String?
+  followers            Follows[]              @relation("UserFollowers")
+  following            Follows[]              @relation("UserFollowing")
+  Project              Project[]
+  ProjectUpdateLike    ProjectUpdateLike[]
+  ProjectUpdateComment ProjectUpdateComment[]
+  ProjectFollow        ProjectFollow[]
+  ProjectStar          ProjectStar[]
+  ProjectRating        ProjectRating[]
+  ProjectReview        ProjectReview[]
+  ProjectUpdate        ProjectUpdate[]
+  Community            Community[]
+  CommunityMembership  CommunityMembership[]
+  CommunityPost        CommunityPost[]
+  interests            CommunityCategory[]    @relation("UserInterests")
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Follows {
+  id          String @id @default(uuid())
+  followerId  String
+  followingId String
+
+  follower  User @relation("UserFollowers", fields: [followerId], references: [id])
+  following User @relation("UserFollowing", fields: [followingId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([followerId, followingId]) // Prevent duplicate follows
+}
+
+model Country {
+  id                  String   @id @default(uuid())
+  alpha2              String
+  alpha3              String
+  countryCallingCodes String[]
+  currencies          String[]
+  emoji               String?
+  ioc                 String
+  languages           String[]
+  name                String
+  status              String
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("country")
+}
+
+model Post {
+  id           String        @id @default(uuid())
+  content      String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now())
+  userId       String
+  access       PostAccess    @default(public)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postcomments PostComment[]
+  likes        Like[]
+  bookmarks    Bookmark[]
+  reports      Report[]
+  media        Media[]
+  shared       Boolean?      @default(false)
+  projectId    String?
+  project      Project?      @relation(fields: [projectId], references: [id])
+
+  @@map("posts")
+}
+
+model PostComment {
+  id              String         @id @default(uuid())
+  userId          String
+  postId          String
+  parentId        String?
+  content         String
+  replies         PostComment[]  @relation("CommentReplies")
+  parent          PostComment?   @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post            Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  reports         Report[]
+  CommunityPost   CommunityPost? @relation(fields: [communityPostId], references: [id])
+  communityPostId String?
+
+  @@map("postcomments")
+}
+
+enum PostAccess {
+  private
+  public
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+model Like {
+  id              String         @id @default(uuid())
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  post            Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId          String
+  CommunityPost   CommunityPost? @relation(fields: [communityPostId], references: [id])
+  communityPostId String?
+
+  @@unique([userId, postId]) // Ensures a user can like a post only once
+}
+
+model Bookmark {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+
+  @@unique([userId, postId]) // Ensures a user can bookmark a post only once
+}
+
+model Report {
+  id         String       @id @default(uuid())
+  reporter   User         @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  reporterId String
+  post       Post?        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId     String?
+  comment    PostComment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId  String?
+  reason     String
+  status     ReportStatus @default(PENDING)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@map("reports")
+}
+
+model Media {
+  id        String    @id @default(cuid())
+  url       String
+  type      MediaType
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  createdAt DateTime  @default(now())
+}
+
+model Project {
+  id          String          @id @default(uuid())
+  name        String
+  description String
+  image       String
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status      projectStatus   @default(ONGOING)
+  category    String[]
+  access      PostAccess      @default(private)
+  updates     ProjectUpdate[]
+  createdAt   DateTime        @default(now())
+  stars       ProjectStar[]
+  ratings     ProjectRating[]
+  reviews     ProjectReview[]
+  followers   ProjectFollow[]
+  Post        Post[]
+}
+
+model ProjectUpdate {
+  id        String                 @id @default(uuid())
+  title     String
+  image     String?
+  content   String
+  projectId String
+  project   Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime               @default(now())
+  likes     ProjectUpdateLike[]
+  comments  ProjectUpdateComment[]
+  User      User?                  @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model ProjectStar {
+  id        String  @id @default(uuid())
+  userId    String
+  projectId String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+model ProjectRating {
+  id        String  @id @default(uuid())
+  userId    String
+  projectId String
+  rating    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+model ProjectReview {
+  id        String   @id @default(uuid())
+  userId    String
+  projectId String
+  content   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProjectUpdateLike {
+  id       String        @id @default(uuid())
+  userId   String
+  updateId String
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  update   ProjectUpdate @relation(fields: [updateId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, updateId])
+}
+
+model ProjectUpdateComment {
+  id        String        @id @default(uuid())
+  userId    String
+  updateId  String
+  content   String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  update    ProjectUpdate @relation(fields: [updateId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model ProjectFollow {
+  id        String  @id @default(uuid())
+  userId    String
+  projectId String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+model Community {
+  id          String                @id @default(uuid())
+  name        String                @unique
+  description String
+  image       String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  creatorId   String
+  creator     User                  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  members     CommunityMembership[]
+  posts       CommunityPost[]
+  categoryId  String?
+  category    CommunityCategory?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@map("communities")
+}
+
+model CommunityMembership {
+  id          String        @id @default(uuid())
+  userId      String
+  communityId String
+  role        CommunityRole @default(MEMBER)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  community   Community     @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  joinedAt    DateTime      @default(now())
+
+  @@unique([userId, communityId]) // Prevents duplicate memberships
+}
+
+model CommunityPost {
+  id          String        @id @default(uuid())
+  image       String?
+  content     String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  userId      String
+  communityId String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  community   Community     @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  likes       Like[]
+  comments    PostComment[] // Ensure this relation exists for fetching comments
+
+  @@map("community_posts")
+}
+
+model CommunityCategory {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  communities Community[]
+  users       User[]      @relation("UserInterests")
+}
+
+enum CommunityRole {
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+enum ProjectAccessStatus {
+  public
+  private
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  REJECTED
+}
+
+// Enum to specify media type
+enum MediaType {
+  IMAGE
+  VIDEO
+  GIF
+}
+
+enum projectStatus {
+  ONGOING
+  COMPLETED
+  CANCELLED
+  PAUSED
+}
