@@ -8,10 +8,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Loader2, Search, Filter } from "lucide-react";
+import { Loader2, Search, Filter, SortAsc, SortDesc } from "lucide-react";
 import PostCard from "@/components/post/PostCard";
 import { useInView } from "react-intersection-observer";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -24,6 +45,14 @@ const ITEMS_PER_PAGE = 10;
 const ExploreEntry = () => {
   const [query, setQuery] = useState("");
   const [type, setType] = useState("all");
+  const [sortBy, setSortBy] = useState("relevance");
+  const [filters, setFilters] = useState({
+    user: [],
+    post: [],
+    project: [],
+    community: []
+  });
+  const [showFilters, setShowFilters] = useState(false);
   const debouncedQuery = useDebounce(query, 500);
   const { ref, inView } = useInView();
 
@@ -36,10 +65,10 @@ const ExploreEntry = () => {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["explore", debouncedQuery, type],
+    queryKey: ["explore", debouncedQuery, type, sortBy, filters],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await axios.get(
-        `/api/explore?q=${debouncedQuery}&type=${type}&page=${pageParam}`,
+        `/api/explore?q=${debouncedQuery}&type=${type}&page=${pageParam}&sort=${sortBy}&filters=${encodeURIComponent(JSON.stringify(filters))}`,
       );
       return response.data;
     },
@@ -68,6 +97,10 @@ const ExploreEntry = () => {
 
   const handleTypeChange = (value: string) => {
     setType(value);
+  };
+
+  const handleSortChange = (value: string) => {
+    setSortBy(value);
   };
 
   const searchInput = useMemo(
@@ -115,6 +148,84 @@ const ExploreEntry = () => {
     [type],
   );
 
+  const sortSelect = useMemo(
+    () => (
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.2 }}
+        className="w-full sm:w-40"
+      >
+        <Select value={sortBy} onValueChange={handleSortChange}>
+          <SelectTrigger className="h-12 w-full rounded-xl border-none bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 focus:ring-2 focus:ring-primary/20 sm:h-14">
+            <SortAsc className="mr-2 h-4 w-4 text-muted-foreground" />
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent className="rounded-xl border-none bg-card/80 shadow-lg backdrop-blur-sm">
+            <SelectItem value="relevance">Relevance</SelectItem>
+            <SelectItem value="newest">Newest</SelectItem>
+            <SelectItem value="popular">Most Popular</SelectItem>
+          </SelectContent>
+        </Select>
+      </motion.div>
+    ),
+    [sortBy],
+  );
+
+  const filterButton = useMemo(
+    () => (
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <Sheet open={showFilters} onOpenChange={setShowFilters}>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              className="h-12 rounded-xl border-none bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 focus:ring-2 focus:ring-primary/20 sm:h-14"
+            >
+              <Filter className="mr-2 h-4 w-4" />
+              Filters
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="w-[400px]">
+            <SheetHeader>
+              <SheetTitle>Search Filters</SheetTitle>
+            </SheetHeader>
+            <div className="mt-4 space-y-4">
+              {/* Add filter options based on type */}
+              {type === "user" && (
+                <div className="space-y-2">
+                  <Label>Followers</Label>
+                  <Slider
+                    defaultValue={[0, 1000]}
+                    max={1000}
+                    step={10}
+                    className="w-full"
+                  />
+                </div>
+              )}
+              {type === "post" && (
+                <div className="space-y-2">
+                  <Label>Likes</Label>
+                  <Slider
+                    defaultValue={[0, 100]}
+                    max={100}
+                    step={1}
+                    className="w-full"
+                  />
+                </div>
+              )}
+              {/* Add more filter options as needed */}
+            </div>
+          </SheetContent>
+        </Sheet>
+      </motion.div>
+    ),
+    [showFilters, type],
+  );
+
   const allResults = useMemo(() => {
     if (!data?.pages) return null;
     return data.pages.reduce((acc, page) => ({
@@ -141,6 +252,8 @@ const ExploreEntry = () => {
       >
         {searchInput}
         {typeSelect}
+        {sortSelect}
+        {filterButton}
       </motion.div>
       {error && (
         <motion.p
