@@ -58,6 +58,8 @@ interface ProjectInterface {
   category: string[];
   access: "public" | "private";
   createdAt: string;
+  members?: UserInterface[];
+  tags?: string[];
   _count: {
     updates: number;
     stars: number;

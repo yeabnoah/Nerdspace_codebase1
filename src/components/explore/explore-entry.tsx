@@ -39,6 +39,10 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import { Label } from "../ui/label";
+import { Slider } from "../ui/slider";
+import ProjectExploreCard from "./project-explore-card";
+import ExplorePostCard from "./explore-post-card";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -50,7 +54,7 @@ const ExploreEntry = () => {
     user: [],
     post: [],
     project: [],
-    community: []
+    community: [],
   });
   const [showFilters, setShowFilters] = useState(false);
   const debouncedQuery = useDebounce(query, 500);
@@ -402,7 +406,7 @@ const PostsCard = ({ posts }: { posts: any[] }) => {
   return (
     <div className="space-y-4 sm:space-y-6">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <ExplorePostCard key={post.id} post={post} />
       ))}
     </div>
   );
@@ -411,31 +415,7 @@ const PostsCard = ({ posts }: { posts: any[] }) => {
 const ProjectsCard = ({ projects }: { projects: any[] }) => (
   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
     {projects.map((project) => (
-      <Card
-        key={project.id}
-        className="group border-border/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
-      >
-        <CardHeader className="space-y-2 p-4 sm:p-6">
-          <CardTitle className="text-lg font-semibold sm:text-xl">
-            {project.name}
-          </CardTitle>
-          <p className="line-clamp-2 text-xs text-muted-foreground sm:text-sm">
-            {project.description}
-          </p>
-        </CardHeader>
-        <CardContent className="p-4 sm:p-6">
-          {project.image && (
-            <div className="relative aspect-video overflow-hidden rounded-lg">
-              <Image
-                src={project.image}
-                alt={project.name}
-                fill
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <ProjectExploreCard key={project.id} {...project} />
     ))}
   </div>
 );
