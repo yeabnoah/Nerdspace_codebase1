@@ -38,7 +38,7 @@ export default function PostPage() {
 
   if (!selectedPost) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-white dark:bg-black">
         <Navbar />
         <div className="relative mx-auto flex max-w-6xl flex-1 flex-row items-start">
           <LeftNavbar />
@@ -78,7 +78,7 @@ export default function PostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white dark:bg-black">
       <Navbar />
       <div className="relative mx-auto flex max-w-6xl flex-1 flex-row items-start">
         <LeftNavbar />

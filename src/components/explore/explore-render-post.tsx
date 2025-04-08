@@ -80,13 +80,19 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
   const { setUserProfile } = useUserProfileStore();
   const { setPostId, setCommentId } = useReportStore();
   const router = useRouter();
+  const [post, setPost] = useState(selectedPost);
+
+  // Update post state when selectedPost changes
+  React.useEffect(() => {
+    setPost(selectedPost);
+  }, [selectedPost]);
 
   // Ensure post data is properly structured
-  const post = {
-    ...selectedPost,
-    bookmarks: selectedPost.bookmarks || [],
-    likes: selectedPost.likes || [],
-    media: selectedPost.media || [],
+  const currentPost = {
+    ...post,
+    bookmarks: post?.bookmarks || [],
+    likes: post?.likes || [],
+    media: post?.media || [],
   };
 
   // Get all state and functions from explore store
@@ -129,9 +135,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
 
   const [commentContent, setCommentContent] = useState<string>("");
   const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
-  const [bookmarkedPosts, setBookmarkedPosts] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<{ [key: string]: boolean }>({});
   const [expandedStates, setExpandedStates] = useState<boolean[]>([]);
 
   const {
@@ -155,16 +159,16 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
     hasNextPage: hasNextCommentPage,
     isFetchingNextPage: isFetchingNextCommentPage,
   } = useInfiniteQuery({
-    queryKey: ["comment", selectedPost?.id],
+    queryKey: ["comment", currentPost?.id],
     queryFn: async ({ pageParam = null }) => {
       const response = await axios.get(
-        `/api/post/comment?postId=${selectedPost?.id}&cursor=${pageParam}`,
+        `/api/post/comment?postId=${currentPost?.id}&cursor=${pageParam}`,
       );
       return response.data;
     },
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     initialPageParam: null,
-    enabled: !!selectedPost?.id,
+    enabled: !!currentPost?.id,
   });
 
   const comments = commentData?.pages.flatMap((page) => page.data) || [];
@@ -173,7 +177,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
     if (replyContent[commentId]) {
       axios
         .post("/api/post/comment", {
-          postId: selectedPost.id,
+          postId: currentPost.id,
           content: replyContent[commentId],
           parentId: commentId,
         })
@@ -224,22 +228,25 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
       const previousPosts = queryClient.getQueryData(["posts"]);
 
       // Update the selected post optimistically
-      if (post.id === postId) {
-        const isLiked = post.likes.some(
+      if (currentPost.id === postId) {
+        const isLiked = currentPost.likes.some(
           (like: Like) => like.userId === session.data?.user.id,
         );
-        post.likes = isLiked
-          ? post.likes.filter(
-              (like: Like) => like.userId !== session.data?.user.id,
-            )
-          : [
-              ...post.likes,
-              {
-                id: Date.now().toString(),
-                postId,
-                userId: session.data?.user.id!,
-              },
-            ];
+        setPost((prev) => ({
+          ...prev!,
+          likes: isLiked
+            ? prev!.likes.filter(
+                (like: Like) => like.userId !== session.data?.user.id,
+              )
+            : [
+                ...prev!.likes,
+                {
+                  id: Date.now().toString(),
+                  postId,
+                  userId: session.data?.user.id!,
+                },
+              ],
+        }));
       }
 
       // Optimistically update the feed posts
@@ -307,22 +314,25 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
       const previousPosts = queryClient.getQueryData(["posts"]);
 
       // Update the selected post optimistically
-      if (post.id === postId) {
-        const isBookmarked = post.bookmarks.some(
+      if (currentPost.id === postId) {
+        const isBookmarked = currentPost.bookmarks.some(
           (bookmark: Bookmark) => bookmark.userId === session.data?.user.id,
         );
-        post.bookmarks = isBookmarked
-          ? post.bookmarks.filter(
-              (bookmark: Bookmark) => bookmark.userId !== session.data?.user.id,
-            )
-          : [
-              ...post.bookmarks,
-              {
-                id: Date.now().toString(),
-                postId,
-                userId: session.data?.user.id!,
-              },
-            ];
+        setPost((prev) => ({
+          ...prev!,
+          bookmarks: isBookmarked
+            ? prev!.bookmarks.filter(
+                (bookmark: Bookmark) => bookmark.userId !== session.data?.user.id,
+              )
+            : [
+                ...prev!.bookmarks,
+                {
+                  id: Date.now().toString(),
+                  postId,
+                  userId: session.data?.user.id!,
+                },
+              ],
+        }));
       }
 
       // Optimistically update the feed posts
@@ -438,7 +448,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
   }
 
   const allPosts = data?.pages.flatMap((page) => page.data) || [];
-  const feedPosts = allPosts.filter((post) => post.id !== selectedPost.id);
+  const feedPosts = allPosts.filter((post) => post.id !== currentPost.id);
 
   return (
     <div className="relative">
@@ -446,7 +456,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
         {/* Render selected post first */}
         <PostCard
           key="selected-post"
-          post={post}
+          post={currentPost}
           index={0}
           expandedStates={expandedStates}
           toggleExpand={toggleExpand}
@@ -537,7 +547,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
         />
 
         <EditModal
-          selectedPost={selectedPost}
+          selectedPost={currentPost}
           setEditModal={setEditModalOpen}
           editModal={editModalOpen}
           content={content}
@@ -545,7 +555,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
         />
 
         <DeleteModal
-          selectedPost={selectedPost}
+          selectedPost={currentPost}
           setDeleteModal={setDeleteModalOpen}
           deleteModal={deleteModalOpen}
           content={content}
@@ -556,7 +566,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
           <>
             <EditCommentModal
               commentId={selectedComment.id}
-              postId={selectedPost.id}
+              postId={currentPost.id}
               initialContent={selectedComment.content}
               isOpen={editCommentModalOpen}
               onClose={() => setEditCommentModalOpen(false)}
@@ -571,7 +581,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
         {selectedCommentReply && (
           <>
             <EditCommentModal
-              postId={selectedPost.id}
+              postId={currentPost.id}
               commentId={selectedCommentReply.id}
               initialContent={selectedCommentReply.content}
               isOpen={editReplyModalOpen}
