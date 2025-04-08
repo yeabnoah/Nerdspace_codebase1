@@ -6,15 +6,25 @@ import Image from "next/image";
 import type ProjectInterface from "@/interface/auth/project.interface";
 import { Share2, Calendar, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 
 export default function ProjectExploreCard(project: ProjectInterface) {
   const router = useRouter();
   const createdDate = new Date(project.createdAt);
   const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
 
+  const handleProjectClick = useCallback(() => {
+    router.push(`/project/${project.id}`);
+  }, [router, project.id]);
+
+  const handleViewProjectClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/project/${project.id}`);
+  }, [router, project.id]);
+
   return (
     <div
-      onClick={() => router.push(`/project/${project.id}`)}
+      onClick={handleProjectClick}
       className="group relative w-full overflow-hidden rounded-2xl bg-gradient-to-b from-gray-800 to-black shadow-lg transition-all duration-300 hover:cursor-pointer hover:shadow-xl"
     >
       {/* Glowing effect container */}
@@ -82,10 +92,7 @@ export default function ProjectExploreCard(project: ProjectInterface) {
 
           <button
             className="w-full rounded-xl bg-white py-2 text-center text-sm font-medium text-black transition-colors hover:bg-gray-100"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Add your action here
-            }}
+            onClick={handleViewProjectClick}
           >
             View Project
           </button>
