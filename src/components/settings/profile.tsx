@@ -40,6 +40,7 @@ export default function ProfilePage() {
 
       setuser(response.data.data);
       setIsLoading(false);
+      //console.log(test)
       return response.data;
     },
   });
