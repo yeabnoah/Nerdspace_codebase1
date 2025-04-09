@@ -5,7 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 export const POST = async (req: NextRequest) => {
   try {
     const session = await getUserSession();
-    const userId = await req.nextUrl.searchParams.get("userId");
+    const userId = req.nextUrl.searchParams.get("userId");
+    const action = req.nextUrl.searchParams.get("action") || "follow";
 
     if (!userId) {
       return NextResponse.json(
@@ -34,19 +35,29 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-    const user = await prisma.follows.findFirst({
+    const existingFollow = await prisma.follows.findFirst({
       where: {
         followerId: session.user.id,
         followingId: userId,
       },
     });
 
-    if (user) {
+    if (action === "unfollow") {
+      if (!existingFollow) {
+        return NextResponse.json(
+          {
+            message: "You are not following this user",
+          },
+          { status: 400 },
+        );
+      }
+
       await prisma.follows.delete({
         where: {
-          id: user.id,
+          id: existingFollow.id,
         },
       });
+
       return NextResponse.json(
         {
           message: "Unfollowed successfully",
@@ -54,12 +65,22 @@ export const POST = async (req: NextRequest) => {
         { status: 200 },
       );
     } else {
+      if (existingFollow) {
+        return NextResponse.json(
+          {
+            message: "You are already following this user",
+          },
+          { status: 400 },
+        );
+      }
+
       const following = await prisma.follows.create({
         data: {
           followerId: session.user.id,
           followingId: userId,
         },
       });
+
       return NextResponse.json(
         {
           data: following,
