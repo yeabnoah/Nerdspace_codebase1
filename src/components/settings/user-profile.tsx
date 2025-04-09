@@ -18,6 +18,7 @@ import ProjectsTab from "./tabs/ProjectsTab";
 import CollectionsTab from "./tabs/CollectionsTab";
 import BookmarksTab from "./tabs/BookmarksTab";
 import PrivateTab from "./tabs/PrivateTab";
+import Link from "next/link";
 
 export default function UserProfile() {
   const [activeTab, setActiveTab] = useState("posts");
@@ -64,6 +65,26 @@ export default function UserProfile() {
           <p className="mb-4 text-sm text-muted-foreground">
             {userProfile?.bio}
           </p>
+          <div className="mb-4 flex gap-4">
+            <Link
+              href={`/app/profile/${userProfile?.nerdAt}/following`}
+              className="text-sm text-muted-foreground hover:text-primary"
+            >
+              <span className="font-medium text-foreground">
+                {userProfile?._count?.followers || 0}
+              </span>{" "}
+              Following
+            </Link>
+            <Link
+              href={`/app/profile/${userProfile?.nerdAt}/followers`}
+              className="text-sm text-muted-foreground hover:text-primary"
+            >
+              <span className="font-medium text-foreground">
+                {userProfile?._count?.following || 0}
+              </span>{" "}
+              Followers
+            </Link>
+          </div>
         </div>
       </div>
 
