@@ -122,7 +122,7 @@ export default function ProfilePage() {
           </p>
           <div className="mb-4 flex gap-4">
             <Link
-              href={`/app/profile/${user.nerdAt}/following`}
+              href={`/profile/${user.id}/following`}
               className="text-sm text-muted-foreground hover:text-primary"
             >
               <span className="font-medium text-foreground">
@@ -131,7 +131,7 @@ export default function ProfilePage() {
               Following
             </Link>
             <Link
-              href={`/app/profile/${user.nerdAt}/followers`}
+              href={`/profile/${user.id}/followers`}
               className="text-sm text-muted-foreground hover:text-primary"
             >
               <span className="font-medium text-foreground">

@@ -19,8 +19,12 @@ import CollectionsTab from "./tabs/CollectionsTab";
 import BookmarksTab from "./tabs/BookmarksTab";
 import PrivateTab from "./tabs/PrivateTab";
 import Link from "next/link";
+<<<<<<< HEAD
 import { usePathname } from "next/navigation";
 import FollowList from "./follow-list";
+=======
+import UserProfileStats from "./user-profile-stats";
+>>>>>>> e3f9868 (working : following and follower working for current user)
 
 export default function UserProfile() {
   const [activeTab, setActiveTab] = useState("posts");
@@ -88,7 +92,11 @@ export default function UserProfile() {
           </p>
           <div className="mb-4 flex gap-4">
             <Link
+<<<<<<< HEAD
               href={`/profile/${userProfile?.nerdAt}/following`}
+=======
+              href={`/app/profile/${userProfile?.nerdAt}/following`}
+>>>>>>> e3f9868 (working : following and follower working for current user)
               className="text-sm text-muted-foreground hover:text-primary"
             >
               <span className="font-medium text-foreground">
@@ -97,7 +105,11 @@ export default function UserProfile() {
               Following
             </Link>
             <Link
+<<<<<<< HEAD
               href={`/profile/${userProfile?.nerdAt}/followers`}
+=======
+              href={`/app/profile/${userProfile?.nerdAt}/followers`}
+>>>>>>> e3f9868 (working : following and follower working for current user)
               className="text-sm text-muted-foreground hover:text-primary"
             >
               <span className="font-medium text-foreground">
@@ -106,6 +118,15 @@ export default function UserProfile() {
               Followers
             </Link>
           </div>
+<<<<<<< HEAD
+=======
+          {userProfile?.nerdAt && userProfile?.id && (
+            <UserProfileStats 
+              nerdAt={userProfile.nerdAt} 
+              userId={userProfile.id} 
+            />
+          )}
+>>>>>>> e3f9868 (working : following and follower working for current user)
         </div>
       </div>
 
