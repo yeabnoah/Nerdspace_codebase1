@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -18,10 +19,13 @@ import ProjectsTab from "./tabs/ProjectsTab";
 import CollectionsTab from "./tabs/CollectionsTab";
 import BookmarksTab from "./tabs/BookmarksTab";
 import PrivateTab from "./tabs/PrivateTab";
+import { useParams } from "next/navigation";
 
 export default function UserProfile() {
   const [activeTab, setActiveTab] = useState("posts");
   const { userProfile } = useUserProfileStore();
+  const params = useParams();
+  const userId = params?.userId as string;
 
   return (
     <div className="mx-auto min-h-screen sm:px-6 md:w-[70%] md:px-4 lg:px-8">
@@ -64,6 +68,28 @@ export default function UserProfile() {
           <p className="mb-4 text-sm text-muted-foreground">
             {userProfile?.bio}
           </p>
+
+          {/* Followers and Following Counts */}
+          <div className="flex gap-4">
+            <Link
+              href={`/user-profile/${userId}/followers`}
+              className="hover:underline"
+            >
+              <span className="font-semibold">
+                {userProfile?._count?.followers || 0}
+              </span>{" "}
+              Followers
+            </Link>
+            <Link
+              href={`/user-profile/${userId}/following`}
+              className="hover:underline"
+            >
+              <span className="font-semibold">
+                {userProfile?._count?.following || 0}
+              </span>{" "}
+              Following
+            </Link>
+          </div>
         </div>
       </div>
 
