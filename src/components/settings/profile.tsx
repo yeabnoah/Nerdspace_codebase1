@@ -165,13 +165,13 @@ export default function ProfilePage() {
               <Hammer className="mr-2 h-4 w-4" />
               <span className="hidden sm:inline">Projects</span>
             </TabsTrigger>
-            <TabsTrigger
+            {/* <TabsTrigger
               value="collections"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <UsersRound className="mr-2 h-4 w-4" />
               <span className="hidden sm:inline">Community</span>
-            </TabsTrigger>
+            </TabsTrigger> */}
             <TabsTrigger
               value="bookmarks"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
