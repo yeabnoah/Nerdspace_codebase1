@@ -13,7 +13,7 @@ import {
   Hammer,
 } from "lucide-react";
 import useUserProfileStore from "@/store/userProfile.store";
-import RenderMyPost from "./myposts";
+import RenderUserPosts from "./user-posts";
 import ProjectsTab from "./tabs/ProjectsTab";
 import CollectionsTab from "./tabs/CollectionsTab";
 import BookmarksTab from "./tabs/BookmarksTab";
@@ -99,7 +99,7 @@ export default function UserProfile() {
           </TabsList>
 
           <TabsContent value="posts" className="mt-0">
-            <RenderMyPost />
+            <RenderUserPosts />
           </TabsContent>
           <TabsContent value="projects" className="mt-0">
             <ProjectsTab />
