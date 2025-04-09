@@ -372,6 +372,7 @@ const RenderPost = () => {
     await setSelectedPost(post);
     await followMutation.mutate();
     queryClient.invalidateQueries({ queryKey: ["posts"] });
+    queryClient.invalidateQueries({ queryKey: ["whoami"] });
   };
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);

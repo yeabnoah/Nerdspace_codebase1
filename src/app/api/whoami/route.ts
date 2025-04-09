@@ -23,6 +23,12 @@ export const GET = async (req: NextRequest) => {
       include: {
         posts: true,
         country: true,
+        _count: {
+          select: {
+            following: true,
+            followers: true,
+          },
+        },
       },
     });
 

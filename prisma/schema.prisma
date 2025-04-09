@@ -62,8 +62,8 @@ model User {
 
 model Follows {
   id          String @id @default(uuid())
-  followerId  String
-  followingId String
+  followerId  String // The user who follows
+  followingId String // The user being followed
 
   follower  User @relation("UserFollowers", fields: [followerId], references: [id])
   following User @relation("UserFollowing", fields: [followingId], references: [id])
