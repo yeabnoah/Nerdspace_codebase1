@@ -90,27 +90,33 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${InstrumentSerif.variable} ${inter.variable} ${itcThin.variable} ${itcBold.variable} ${itcThinItalic.variable} antialiased dark:bg-black`}
       >
-        <TanstackQueryProvider>
-          <WhoAmIProvider>{children}</WhoAmIProvider>
-        </TanstackQueryProvider>
-        <Toaster
-          position="bottom-right"
-          reverseOrder={false}
-          toastOptions={{
-            className: "",
-            style: {
-              border: "1px solid #201e1d",
-              padding: "8px",
-              color: "#ffffff",
-              backgroundColor: "#201e1d",
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              borderBottomLeftRadius: 10,
-              borderBottomRightRadius: 0,
-            },
-          }}
-        />
-        {/* </ThemeProvider> */}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TanstackQueryProvider>
+            <WhoAmIProvider>{children}</WhoAmIProvider>
+          </TanstackQueryProvider>
+          <Toaster
+            position="bottom-right"
+            reverseOrder={false}
+            toastOptions={{
+              className: "",
+              style: {
+                border: "1px solid #201e1d",
+                padding: "8px",
+                color: "#ffffff",
+                backgroundColor: "#201e1d",
+                borderTopLeftRadius: 10,
+                borderTopRightRadius: 10,
+                borderBottomLeftRadius: 10,
+                borderBottomRightRadius: 0,
+              },
+            }}
+          />
+        </ThemeProvider>
       </body>
     </html>
   );

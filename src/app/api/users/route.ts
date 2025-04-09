@@ -1,8 +1,19 @@
+import getUserSession from "@/functions/get-user";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
+    const session = await getUserSession();
+
+    if (!session) {
+      return NextResponse.json(
+        {
+          message: "unauthorized | not logged in",
+        },
+        { status: 400 },
+      );
+    }
     const { searchParams } = new URL(request.url);
     const exclude = searchParams.get("exclude");
     const limit = parseInt(searchParams.get("limit") || "5");
