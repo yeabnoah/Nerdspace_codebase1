@@ -41,10 +41,12 @@ import fetchMyPosts from "@/functions/fetch-my-post";
 import { GoHeart, GoHeartFill } from "react-icons/go";
 import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
 import ImagePreviewDialog from "../image-preview";
+import { useRouter } from "next/navigation";
 
 const RenderMyPost = () => {
   const { ref, inView } = useInView();
   const session = authClient.useSession();
+  const router = useRouter();
   const [editModal, setEditModal] = useState(false);
   const { selectedPost, setSelectedPost, content, setContent } = usePostStore();
   const [editPostInput, setEditPostInput] = useState<String>();
@@ -157,7 +159,11 @@ const RenderMyPost = () => {
           inView && hasNextPage && fetchNextPage();
 
           return (
-            <div className="my-5 rounded-xl border dark:border-gray-500/5 p-4" key={index}>
+            <div
+              className="my-5 cursor-pointer rounded-xl border p-4 dark:border-gray-500/5"
+              key={index}
+              onClick={() => router.push(`/post/${each.id}`)}
+            >
               <div className="mr-2 flex justify-between pb-2">
                 <div className="flex items-center gap-5">
                   <Image
@@ -398,7 +404,7 @@ const RenderMyPost = () => {
       <div ref={ref}>
         {isFetchingNextPage && (
           <div className="">
-            <Card className="my-5 rounded-xl border dark:border-gray-500/5 bg-transparent p-4 shadow-none">
+            <Card className="my-5 rounded-xl border bg-transparent p-4 shadow-none dark:border-gray-500/5">
               <div className="flex items-center gap-5">
                 <Skeleton className="size-10 rounded-full" />
                 <div>
