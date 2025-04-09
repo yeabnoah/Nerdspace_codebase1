@@ -89,13 +89,6 @@ export default function UserProfile() {
               <Hammer className="mr-2 h-4 w-4" />
               Projects
             </TabsTrigger>
-            <TabsTrigger
-              value="collections"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              <UsersRound className="mr-2 h-4 w-4" />
-              Community
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="posts" className="mt-0">
@@ -104,9 +97,9 @@ export default function UserProfile() {
           <TabsContent value="projects" className="mt-0">
             <ProjectsTab />
           </TabsContent>
-          <TabsContent value="collections" className="mt-0">
+          {/* <TabsContent value="collections" className="mt-0">
             <CollectionsTab />
-          </TabsContent>
+          </TabsContent> */}
           <TabsContent value="bookmarks" className="mt-0">
             <BookmarksTab />
           </TabsContent>
