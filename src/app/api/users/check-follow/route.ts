@@ -10,25 +10,36 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("userId");
+    const userIds = searchParams.get("userIds")?.split(",");
 
-    if (!userId) {
+    if (!userIds || userIds.length === 0) {
       return NextResponse.json(
-        { error: "User ID is required" },
+        { error: "User IDs are required" },
         { status: 400 },
       );
     }
 
-    const follow = await prisma.follows.findUnique({
+    const follows = await prisma.follows.findMany({
       where: {
-        followerId_followingId: {
-          followerId: session.user.id,
-          followingId: userId,
+        followerId: session.user.id,
+        followingId: {
+          in: userIds,
         },
+      },
+      select: {
+        followingId: true,
       },
     });
 
-    return NextResponse.json({ isFollowing: !!follow });
+    const followStatus = userIds.reduce(
+      (acc, userId) => {
+        acc[userId] = follows.some((follow) => follow.followingId === userId);
+        return acc;
+      },
+      {} as Record<string, boolean>,
+    );
+
+    return NextResponse.json(followStatus);
   } catch (error) {
     console.error("Error checking follow status:", error);
     return NextResponse.json(

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { getTrimLimit } from "@/functions/render-helper";
 import postInterface from "@/interface/auth/post.interface";
