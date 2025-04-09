@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import { Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
+import useUserProfileStore from "@/store/userProfile.store";
 
 interface Project {
   id: string;
@@ -96,36 +97,21 @@ function ProjectCard({ project }: { project: Project }) {
 }
 
 export default function ProjectsTab() {
-  const [activeTab, setActiveTab] = useState("followed");
+  const { userProfile } = useUserProfileStore();
+  const [activeTab, setActiveTab] = useState("owned");
 
-  const { data: followedProjects, isLoading: isLoadingFollowed } = useQuery({
-    queryKey: ["followed-projects"],
+  const { data: projects, isLoading } = useQuery({
+    queryKey: ["user-projects", userProfile?.id],
     queryFn: async () => {
-      const response = await axios.get("/api/users/projects");
-      return response.data.data;
+      if (!userProfile?.id) return { data: [] };
+      const response = await axios.get(`/api/users/${userProfile.id}/projects`);
+      return response.data;
     },
+    enabled: !!userProfile?.id,
   });
-
-  const { data: ownedProjects, isLoading: isLoadingOwned } = useQuery({
-    queryKey: ["owned-projects"],
-    queryFn: async () => {
-      const response = await axios.get("/api/users/projects/owned");
-      return response.data.data;
-    },
-  });
-
-  const isLoading = activeTab === "followed" ? isLoadingFollowed : isLoadingOwned;
-  const projects = activeTab === "followed" ? followedProjects : ownedProjects;
 
   return (
     <div className="space-y-6">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="followed">Followed Projects</TabsTrigger>
-          <TabsTrigger value="owned">My Projects</TabsTrigger>
-        </TabsList>
-      </Tabs>
-
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
@@ -137,7 +123,7 @@ export default function ProjectsTab() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {projects?.map((project: Project) => (
+          {projects?.data?.map((project: Project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>
