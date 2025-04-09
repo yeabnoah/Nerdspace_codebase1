@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,11 +19,50 @@ import CollectionsTab from "./tabs/CollectionsTab";
 import BookmarksTab from "./tabs/BookmarksTab";
 import PrivateTab from "./tabs/PrivateTab";
 import Link from "next/link";
-import UserProfileStats from "./user-profile-stats";
+// import UserProfileStats from "./user-profile-stats";
+
+interface FollowCounts {
+  followers: number;
+  following: number;
+}
 
 export default function UserProfile() {
   const [activeTab, setActiveTab] = useState("posts");
   const { userProfile } = useUserProfileStore();
+  const [followCounts, setFollowCounts] = useState<FollowCounts>({
+    followers: 0,
+    following: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFollowCounts = async () => {
+      if (!userProfile?.id) return;
+      
+      try {
+        const [followersRes, followingRes] = await Promise.all([
+          fetch(`/api/users/${userProfile.id}/followers?limit=1`),
+          fetch(`/api/users/${userProfile.id}/following?limit=1`),
+        ]);
+
+        const [followersData, followingData] = await Promise.all([
+          followersRes.json(),
+          followingRes.json(),
+        ]);
+
+        setFollowCounts({
+          followers: followersData.pagination.total,
+          following: followingData.pagination.total,
+        });
+      } catch (error) {
+        console.error("Error fetching follow counts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFollowCounts();
+  }, [userProfile?.id]);
 
   return (
     <div className="mx-auto min-h-screen sm:px-6 md:w-[70%] md:px-4 lg:px-8">
@@ -68,30 +107,24 @@ export default function UserProfile() {
           </p>
           <div className="mb-4 flex gap-4">
             <Link
-              href={`/app/profile/${userProfile?.nerdAt}/following`}
+              href={`/profile/user/${userProfile?.id}/following`}
               className="text-sm text-muted-foreground hover:text-primary"
             >
               <span className="font-medium text-foreground">
-                {userProfile?._count?.following || 0}
+                {loading ? "..." : followCounts.following}
               </span>{" "}
               Following
             </Link>
             <Link
-              href={`/app/profile/${userProfile?.nerdAt}/followers`}
+              href={`/profile/user/${userProfile?.id}/followers`}
               className="text-sm text-muted-foreground hover:text-primary"
             >
               <span className="font-medium text-foreground">
-                {userProfile?._count?.followers || 0}
+                {loading ? "..." : followCounts.followers}
               </span>{" "}
               Followers
             </Link>
           </div>
-          {userProfile?.nerdAt && userProfile?.id && (
-            <UserProfileStats 
-              nerdAt={userProfile.nerdAt} 
-              userId={userProfile.id} 
-            />
-          )}
         </div>
       </div>
 

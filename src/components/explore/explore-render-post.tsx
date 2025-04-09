@@ -436,7 +436,16 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (isLoading) {
-    return <RenderPostSkeleton />;
+    return (
+      <div className="space-y-4">
+        <RenderPostSkeleton />
+        <div className="space-y-4">
+          <RenderPostSkeleton />
+          <RenderPostSkeleton />
+          <RenderPostSkeleton />
+        </div>
+      </div>
+    );
   }
 
   if (isError) {
@@ -495,47 +504,51 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
         />
 
         {/* Render the rest of the feed */}
-        {feedPosts.map((post, index) => (
-          <PostCard
-            key={post.id}
-            post={post}
-            index={index + 1}
-            expandedStates={expandedStates}
-            toggleExpand={toggleExpand}
-            commentShown={commentShown}
-            toggleCommentShown={toggleCommentShown}
-            expandedComments={expandedComments}
-            toggleCommentExpand={toggleCommentExpand}
-            replyShown={replyShown}
-            toggleReplyShown={toggleReplyShown}
-            replyContent={replyContent}
-            setReplyContent={setReplyContent}
-            handleReplySubmit={handleReplySubmit}
-            expandedReplies={expandedReplies}
-            toggleReplies={toggleReplies}
-            handleEditComment={handleEditComment}
-            handleDeleteComment={handleDeleteComment}
-            openEditModal={() => setEditModalOpen(true)}
-            openDeleteModal={() => setDeleteModalOpen(true)}
-            setSelectedCommentReply={setSelectedCommentReply}
-            modalEditOpened={editModalOpen}
-            modalDeleteOpened={deleteModalOpen}
-            reportModalOpen={reportModalOpen}
-            setReportModalOpen={setReportModalOpen}
-            setCommentId={setCommentId}
-            commentLoading={commentLoading}
-            comments={comments}
-            hasNextCommentPage={hasNextCommentPage}
-            isFetchingNextCommentPage={isFetchingNextCommentPage}
-            fetchNextCommentPage={fetchNextCommentPage}
-            setEditModal={setEditModalOpen}
-            setDeleteModal={setDeleteModalOpen}
-            changePostAccessType={changePostAccessType}
-            handleFollow={handleFollow}
-            handleLike={handleLike}
-            handleBookmark={handleBookmark}
-          />
-        ))}
+        {feedPosts.length > 0 && (
+          <div className="mt-8 space-y-4">
+            {feedPosts.map((post, index) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                index={index + 1}
+                expandedStates={expandedStates}
+                toggleExpand={toggleExpand}
+                commentShown={commentShown}
+                toggleCommentShown={toggleCommentShown}
+                expandedComments={expandedComments}
+                toggleCommentExpand={toggleCommentExpand}
+                replyShown={replyShown}
+                toggleReplyShown={toggleReplyShown}
+                replyContent={replyContent}
+                setReplyContent={setReplyContent}
+                handleReplySubmit={handleReplySubmit}
+                expandedReplies={expandedReplies}
+                toggleReplies={toggleReplies}
+                handleEditComment={handleEditComment}
+                handleDeleteComment={handleDeleteComment}
+                openEditModal={() => setEditModalOpen(true)}
+                openDeleteModal={() => setDeleteModalOpen(true)}
+                setSelectedCommentReply={setSelectedCommentReply}
+                modalEditOpened={editModalOpen}
+                modalDeleteOpened={deleteModalOpen}
+                reportModalOpen={reportModalOpen}
+                setReportModalOpen={setReportModalOpen}
+                setCommentId={setCommentId}
+                commentLoading={commentLoading}
+                comments={comments}
+                hasNextCommentPage={hasNextCommentPage}
+                isFetchingNextCommentPage={isFetchingNextCommentPage}
+                fetchNextCommentPage={fetchNextCommentPage}
+                setEditModal={setEditModalOpen}
+                setDeleteModal={setDeleteModalOpen}
+                changePostAccessType={changePostAccessType}
+                handleFollow={handleFollow}
+                handleLike={handleLike}
+                handleBookmark={handleBookmark}
+              />
+            ))}
+          </div>
+        )}
 
         <div ref={ref}>{isFetchingNextPage && <MorePostsFetchSkeleton />}</div>
 
