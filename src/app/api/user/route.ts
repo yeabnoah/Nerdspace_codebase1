@@ -5,12 +5,13 @@ import { NextRequest, NextResponse } from "next/server";
 export const GET = async (req: NextRequest) => {
   try {
     const session = await getUserSession();
-    const userId = await req.nextUrl.searchParams.get("userId");
+    const userId = req.nextUrl.searchParams.get("userId");
+    const nerdAt = req.nextUrl.searchParams.get("nerdAt");
 
-    if (!userId) {
+    if (!userId && !nerdAt) {
       return NextResponse.json(
         {
-          message: "userId is required",
+          message: "userId or nerdAt is required",
         },
         { status: 400 },
       );
@@ -26,20 +27,17 @@ export const GET = async (req: NextRequest) => {
     }
 
     const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      include: {
-        posts: true,
+      where: userId ? { id: userId } : { nerdAt: nerdAt! },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        bio: true,
+        nerdAt: true,
+        coverImage: true,
+        visualName: true,
         country: true,
-        followers: true,
-        following: true,
-        _count: {
-          select: {
-            followers: true,
-            following: true,
-          },
-        },
       },
     });
 
@@ -52,11 +50,27 @@ export const GET = async (req: NextRequest) => {
       );
     }
 
+    // Get the actual counts
+    const [followersCount, followingCount] = await Promise.all([
+      prisma.follows.count({
+        where: { followingId: user.id },
+      }),
+      prisma.follows.count({
+        where: { followerId: user.id },
+      }),
+    ]);
+
     return NextResponse.json({
-      data: user,
+      data: {
+        ...user,
+        _count: {
+          followers: followersCount,
+          following: followingCount,
+        },
+      },
     });
   } catch (error) {
-    console.error("Error fetching posts:", error);
+    console.error("Error fetching user:", error);
     return NextResponse.json({ error: "error" }, { status: 500 });
   }
 };

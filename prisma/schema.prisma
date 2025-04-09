@@ -28,7 +28,7 @@ model User {
   updatedAt            DateTime
   sessions             Session[]
   accounts             Account[]
-  nerdAt               String?
+  nerdAt               String?                @unique
   posts                Post[]
   bio                  String?
   countryId            String?

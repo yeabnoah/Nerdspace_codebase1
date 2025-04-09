@@ -3,17 +3,27 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } },
+  { params }: { params: { nerdAt: string } },
 ) {
   try {
-    const { userId } = params;
+    const { nerdAt } = params;
     const cursor = request.nextUrl.searchParams.get("cursor");
     const limit = parseInt(request.nextUrl.searchParams.get("limit") || "10");
+
+    // First get the user by nerdAt
+    const user = await prisma.user.findUnique({
+      where: { nerdAt },
+      select: { id: true },
+    });
+
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
 
     const [followers, total] = await Promise.all([
       prisma.follows.findMany({
         where: {
-          followingId: userId,
+          followingId: user.id,
           ...(cursor && {
             createdAt: {
               lt: new Date(cursor),
@@ -30,6 +40,7 @@ export async function GET(
               bio: true,
               nerdAt: true,
               coverImage: true,
+              visualName: true,
             },
           },
         },
@@ -40,7 +51,7 @@ export async function GET(
       }),
       prisma.follows.count({
         where: {
-          followingId: userId,
+          followingId: user.id,
         },
       }),
     ]);

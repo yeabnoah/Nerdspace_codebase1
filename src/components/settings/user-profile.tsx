@@ -19,10 +19,31 @@ import CollectionsTab from "./tabs/CollectionsTab";
 import BookmarksTab from "./tabs/BookmarksTab";
 import PrivateTab from "./tabs/PrivateTab";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import FollowList from "./follow-list";
 
 export default function UserProfile() {
   const [activeTab, setActiveTab] = useState("posts");
   const { userProfile } = useUserProfileStore();
+  const pathname = usePathname();
+  const isFollowingPage = pathname?.includes("/following") || false;
+  const isFollowersPage = pathname?.includes("/followers") || false;
+
+  if (isFollowingPage || isFollowersPage) {
+    return (
+      <div className="mx-auto min-h-screen sm:px-6 md:w-[70%] md:px-4 lg:px-8">
+        <div className="px-6 py-4">
+          <h1 className="text-2xl font-bold">
+            {isFollowingPage ? "Following" : "Followers"}
+          </h1>
+          <FollowList
+            type={isFollowingPage ? "following" : "followers"}
+            nerdAt={userProfile?.nerdAt || ""}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto min-h-screen sm:px-6 md:w-[70%] md:px-4 lg:px-8">
@@ -67,20 +88,20 @@ export default function UserProfile() {
           </p>
           <div className="mb-4 flex gap-4">
             <Link
-              href={`/app/profile/${userProfile?.nerdAt}/following`}
-              className="text-sm text-muted-foreground hover:text-primary"
-            >
-              <span className="font-medium text-foreground">
-                {userProfile?._count?.followers || 0}
-              </span>{" "}
-              Following
-            </Link>
-            <Link
-              href={`/app/profile/${userProfile?.nerdAt}/followers`}
+              href={`/profile/${userProfile?.nerdAt}/following`}
               className="text-sm text-muted-foreground hover:text-primary"
             >
               <span className="font-medium text-foreground">
                 {userProfile?._count?.following || 0}
+              </span>{" "}
+              Following
+            </Link>
+            <Link
+              href={`/profile/${userProfile?.nerdAt}/followers`}
+              className="text-sm text-muted-foreground hover:text-primary"
+            >
+              <span className="font-medium text-foreground">
+                {userProfile?._count?.followers || 0}
               </span>{" "}
               Followers
             </Link>
