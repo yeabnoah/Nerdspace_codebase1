@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from "@/lib/utils";
 import axios from "axios";
 import { useState } from "react";

@@ -5,9 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   try {
     const session = await getUserSession();
-    const page = parseInt(request.nextUrl.searchParams.get("page") || "1");
-    const limit = 10;
-    const skip = (page - 1) * limit;
+    const cursor = request.nextUrl.searchParams.get("cursor");
+    const limit = parseInt(request.nextUrl.searchParams.get("limit") || "10");
 
     if (!session) {
       return NextResponse.json(
@@ -22,6 +21,11 @@ export async function GET(request: NextRequest) {
       prisma.follows.findMany({
         where: {
           followerId: session.user.id,
+          ...(cursor && {
+            createdAt: {
+              lt: new Date(cursor),
+            },
+          }),
         },
         include: {
           following: {
@@ -39,8 +43,7 @@ export async function GET(request: NextRequest) {
         orderBy: {
           createdAt: "desc",
         },
-        skip,
-        take: limit,
+        take: limit + 1,
       }),
       prisma.follows.count({
         where: {
@@ -49,13 +52,18 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
+    const hasNextPage = following.length > limit;
+    const items = hasNextPage ? following.slice(0, -1) : following;
+    const nextCursor = hasNextPage
+      ? items[items.length - 1].createdAt.toISOString()
+      : null;
+
     return NextResponse.json({
-      data: following.map((follow) => follow.following),
+      data: items.map((follow) => follow.following),
       pagination: {
+        nextCursor,
+        hasNextPage,
         total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
       },
     });
   } catch (error) {
