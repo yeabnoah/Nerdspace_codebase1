@@ -20,13 +20,31 @@ import BookmarksTab from "./tabs/BookmarksTab";
 import PrivateTab from "./tabs/PrivateTab";
 import { Skeleton } from "../ui/skeleton";
 import { useRouter } from "next/navigation";
+import useUserProfileStore from "@/store/userProfile.store";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("posts");
-  const { user, isloading } = useUserStore();
+  const { user, isloading, setuser, setIsLoading } = useUserStore();
+  const { userProfile } = useUserProfileStore();
   const router = useRouter();
 
-  if (isloading) {
+  const { isFetching, isPending } = useQuery({
+    queryKey: ["fetch_who_am_i"],
+    queryFn: async () => {
+      const response = await axios.get("/api/whoami", {
+        withCredentials: true,
+      });
+
+      setuser(response.data.data);
+      setIsLoading(false);
+      return response.data;
+    },
+  });
+
+  if (isloading || isFetching || isPending) {
     return (
       <div className="mx-auto flex max-w-7xl flex-1 flex-row items-start justify-center">
         {/* <LeftNavbar /> */}
@@ -58,7 +76,7 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto min-h-screen w-full px-4 md:w-[70%] md:px-8">
-      <div className="relative h-40 overflow-hidden rounded-xl border dark:border-gray-500/5 bg-transparent">
+      <div className="relative h-40 overflow-hidden rounded-xl border bg-transparent dark:border-gray-500/5">
         <Image
           src={user.coverImage || "/obsession.jpg"}
           className="w-full bg-cover bg-center"
@@ -99,9 +117,29 @@ export default function ProfilePage() {
           <p className="text-center text-sm text-muted-foreground md:text-left">
             Nerd@{user.nerdAt}
           </p>
-          <p className="mb-4 text-center text-sm text-muted-foreground md:text-left">
+          <p className="mb-2 text-center text-sm text-muted-foreground md:text-left">
             {user.bio}
           </p>
+          <div className="mb-4 flex gap-4">
+            <Link
+              href={`/app/profile/${user.nerdAt}/following`}
+              className="text-sm text-muted-foreground hover:text-primary"
+            >
+              <span className="font-medium text-foreground">
+                {user?._count.followers || 0}
+              </span>{" "}
+              Following
+            </Link>
+            <Link
+              href={`/app/profile/${user.nerdAt}/followers`}
+              className="text-sm text-muted-foreground hover:text-primary"
+            >
+              <span className="font-medium text-foreground">
+                {user._count.following || 0}
+              </span>{" "}
+              Followers
+            </Link>
+          </div>
         </div>
       </div>
 

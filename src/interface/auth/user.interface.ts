@@ -17,8 +17,12 @@ interface UserInterface {
   country: Country;
   posts: postInterface[];
   username: string;
-  coverImage?: string;
+  coverImage?: string | null;
   isFollowingAuthor?: boolean;
+  _count: {
+    followers: number;
+    following: number;
+  };
 }
 
 export default UserInterface;
