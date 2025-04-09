@@ -29,12 +29,17 @@ export const GET = async (req: NextRequest) => {
       where: {
         id: userId,
       },
-
       include: {
         posts: true,
         country: true,
         followers: true,
         following: true,
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+          },
+        },
       },
     });
 
