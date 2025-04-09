@@ -1,3 +1,5 @@
+"use client"
+
 import ReportModal from "@/components/modal/report.modal";
 import { Button } from "@/components/ui/button";
 import {

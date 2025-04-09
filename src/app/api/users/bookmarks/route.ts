@@ -5,9 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   try {
     const session = await getUserSession();
-    const page = parseInt(request.nextUrl.searchParams.get("page") || "1");
-    const limit = 10;
-    const skip = (page - 1) * limit;
+    const cursor = request.nextUrl.searchParams.get("cursor");
+    const limit = parseInt(request.nextUrl.searchParams.get("limit") || "10");
 
     if (!session) {
       return NextResponse.json(
@@ -22,6 +21,13 @@ export async function GET(request: NextRequest) {
       prisma.bookmark.findMany({
         where: {
           userId: session.user.id,
+          ...(cursor && {
+            post: {
+              createdAt: {
+                lt: new Date(cursor),
+              },
+            },
+          }),
         },
         include: {
           post: {
@@ -55,10 +61,11 @@ export async function GET(request: NextRequest) {
           },
         },
         orderBy: {
-          createdAt: "desc",
+          post: {
+            createdAt: "desc",
+          },
         },
-        skip,
-        take: limit,
+        take: limit + 1,
       }),
       prisma.bookmark.count({
         where: {
@@ -67,13 +74,18 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
+    const hasNextPage = bookmarks.length > limit;
+    const items = hasNextPage ? bookmarks.slice(0, -1) : bookmarks;
+    const nextCursor = hasNextPage
+      ? items[items.length - 1].post.createdAt.toISOString()
+      : null;
+
     return NextResponse.json({
-      data: bookmarks.map((bookmark) => bookmark.post),
+      data: items.map((bookmark) => bookmark.post),
       pagination: {
+        nextCursor,
+        hasNextPage,
         total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
       },
     });
   } catch (error) {
