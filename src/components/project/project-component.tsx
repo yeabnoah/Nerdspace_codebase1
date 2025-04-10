@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Search, Upload, Check, X, Globe, Lock, Tag } from "lucide-react";
+import { Plus, Search, Upload, Check, X, Globe, Lock, Tag, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -257,46 +257,52 @@ export default function ProjectsPage() {
   return (
     <div className="container mx-auto w-full px-8 py-2 dark:bg-black">
       <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-        <h1 className="font-instrument text-4xl">Projects</h1>
+        <h1 className="font-geist font-medium text-3xl">Projects</h1>
 
         <div className="flex w-full flex-col gap-4 sm:flex-row md:w-auto">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-40">
+            <SelectTrigger className="w-full h-11 rounded-xl sm:w-40 border-gray-100 dark:border-gray-500/10">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="ongoing">Ongoing</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="paused">Paused</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
+            <SelectContent className="border-gray-100 dark:border-gray-500/10 dark:bg-black rounded-xl">
+              <SelectItem value="all" className="font-geist">All Status</SelectItem>
+              <SelectItem value="ongoing" className="font-geist">Ongoing</SelectItem>
+              <SelectItem value="completed" className="font-geist">Completed</SelectItem>
+              <SelectItem value="paused" className="font-geist">Paused</SelectItem>
+              <SelectItem value="cancelled" className="font-geist">Cancelled</SelectItem>
             </SelectContent>
           </Select>
 
           <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
             <DialogTrigger asChild>
-              <Button className="w-full sm:w-auto">
-                <Plus className="mr-2 h-4 w-4" />
+              <Button className="w-full h-11 rounded-xl sm:w-auto cursor-pointer" onClick={() => setIsCreateModalOpen(true)}>
+                <Plus className=" h-4" />
                 Create Project
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="max-w-4xl overflow-hidden rounded-xl border-none p-0 shadow-xl"
+              className="max-w-4xl overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm"
               aria-describedby="create-project-description"
             >
-              <p id="create-project-description" className="sr-only">
+              <p id="create-project-description" className="font-geist sr-only">
                 Fill in the details to create a new project.
               </p>
-              <div className="flex h-[85vh] max-h-[85vh] flex-col md:flex-row">
+              <div className="relative flex h-[85vh] max-h-[85vh] flex-col md:flex-row">
+                {/* Glow effects */}
+                <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+                <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+
                 <DialogTitle></DialogTitle>
-                <div className="flex w-full flex-col bg-gradient-to-b from-primary/10 to-primary/5 p-6 md:w-1/3">
-                  <div className="mb-2 font-instrument text-3xl">New Project</div>
-                  <p className="mb-6 text-muted-foreground">
-                    Fill in the details to create a new project.
+                <div className="flex w-full flex-col rounded-l-xl border-b border-l border-r border-t p-6 dark:border-gray-600/10 dark:bg-black md:w-1/3">
+                  <div className="font-geist mb-2 text-3xl font-medium">
+                    New Project
+                  </div>
+                  <p className="font-geist mb-6 text-muted-foreground">
+                    Fill in the details to create a new project
                   </p>
 
                   <div className="mt-4 flex flex-1 flex-col items-center justify-center">
-                    <div className="relative mb-4 aspect-square w-full max-w-[220px] overflow-hidden rounded-xl border-2 border-dashed border-primary/20 bg-background/50">
+                    <div className="relative mb-4 aspect-square w-full max-w-[220px] overflow-hidden rounded-xl border-2 border-dashed border-primary/20 dark:bg-black">
                       {selectedImage ? (
                         <img
                           src={URL.createObjectURL(selectedImage)}
@@ -304,7 +310,7 @@ export default function ProjectsPage() {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                        <div className="font-geist flex h-full w-full items-center justify-center text-muted-foreground">
                           No image
                         </div>
                       )}
@@ -312,8 +318,7 @@ export default function ProjectsPage() {
 
                     <div className="relative w-full max-w-[220px]">
                       <Button
-                        variant="outline"
-                        className="w-full"
+                        className="font-geist h-11 w-full rounded-full"
                         type="button"
                       >
                         <Upload className="mr-2 h-4 w-4" />
@@ -328,18 +333,11 @@ export default function ProjectsPage() {
                     </div>
 
                     {selectedImage && (
-                      <div className="mt-2 w-full">
-                        <Button
-                          variant="outline"
-                          className="ml-4 w-[87%]"
-                          onClick={handleImageCancel}
-                        >
+                      <div className="font-geist mt-2">
+                        <p>Selected Image: {selectedImage.name}</p>
+                        <Button variant="outline" onClick={handleImageCancel}>
                           Remove Image
                         </Button>
-
-                        <p className="my-2 text-wrap text-xs">
-                          {selectedImage.name}
-                        </p>
                       </div>
                     )}
                   </div>
@@ -347,17 +345,32 @@ export default function ProjectsPage() {
 
                 <div className="flex-1 overflow-y-auto p-6">
                   <Tabs defaultValue="details" className="w-full">
-                    <TabsList className="mb-6 grid w-full grid-cols-2">
-                      <TabsTrigger value="details">Project Details</TabsTrigger>
-                      <TabsTrigger value="settings">Settings & Categories</TabsTrigger>
+                    <TabsList className="mb-6 grid h-12 w-full dark:bg-black border border-gray-100 dark:border-gray-500/10 grid-cols-2 rounded-full">
+                      <TabsTrigger
+                        value="details"
+                        className="font-geist h-10 rounded-full"
+                      >
+                        Project Details
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="settings"
+                        className="font-geist h-10 rounded-full"
+                      >
+                        Settings & Categories
+                      </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="details" className="space-y-6">
-                      <div className="rounded-lg border bg-card p-4 shadow-sm">
-                        <h3 className="mb-4 text-lg font-medium">Basic Information</h3>
+                      <div className="rounded-xl border border-gray-100 bg-card p-4 shadow-none dark:border-gray-500/5">
+                        <h3 className="font-geist mb-4 text-lg font-medium">
+                          Basic Information
+                        </h3>
                         <div className="space-y-4">
                           <div className="space-y-2">
-                            <Label htmlFor="name" className="text-sm font-medium">
+                            <Label
+                              htmlFor="name"
+                              className="font-geist text-sm font-medium"
+                            >
                               Project Name
                             </Label>
                             <Input
@@ -370,12 +383,15 @@ export default function ProjectsPage() {
                                 })
                               }
                               placeholder="Enter project name"
-                              className="border-input/50 focus-visible:ring-primary/50"
+                              className="font-geist h-11 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
                             />
                           </div>
 
                           <div className="space-y-2">
-                            <Label htmlFor="description" className="text-sm font-medium">
+                            <Label
+                              htmlFor="description"
+                              className="font-geist text-sm font-medium"
+                            >
                               Description
                             </Label>
                             <Textarea
@@ -389,7 +405,7 @@ export default function ProjectsPage() {
                               }
                               placeholder="Describe your project"
                               rows={6}
-                              className="resize-none border-input/50 focus-visible:ring-primary/50"
+                              className="font-geist h-24 resize-none rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
                             />
                           </div>
                         </div>
@@ -397,11 +413,16 @@ export default function ProjectsPage() {
                     </TabsContent>
 
                     <TabsContent value="settings" className="space-y-6">
-                      <div className="rounded-lg border bg-card p-4 shadow-sm">
-                        <h3 className="mb-4 text-lg font-medium">Project Settings</h3>
+                      <div className="rounded-xl border border-gray-100 bg-card p-4 dark:border-gray-500/5">
+                        <h3 className="font-geist mb-4 text-lg font-medium">
+                          Project Status
+                        </h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="status" className="text-sm font-medium">
+                            <Label
+                              htmlFor="status"
+                              className="font-geist text-sm font-medium"
+                            >
                               Status
                             </Label>
                             <Select
@@ -417,10 +438,13 @@ export default function ProjectsPage() {
                                 })
                               }
                             >
-                              <SelectTrigger id="status" className="w-full">
+                              <SelectTrigger
+                                id="status"
+                                className="font-geist h-11 w-full rounded-xl border shadow-none dark:border-gray-500/5"
+                              >
                                 <SelectValue placeholder="Select status" />
                               </SelectTrigger>
-                              <SelectContent>
+                              <SelectContent className="font-geist rounded-xl border shadow-none dark:border-gray-500/5">
                                 <SelectItem value="ONGOING">
                                   <div className="flex items-center">
                                     <div className="mr-2 h-2 w-2 rounded-full bg-blue-500"></div>
@@ -450,7 +474,10 @@ export default function ProjectsPage() {
                           </div>
 
                           <div className="space-y-2">
-                            <Label htmlFor="access" className="text-sm font-medium">
+                            <Label
+                              htmlFor="access"
+                              className="font-geist text-sm font-medium"
+                            >
                               Access
                             </Label>
                             <Select
@@ -462,10 +489,13 @@ export default function ProjectsPage() {
                                 })
                               }
                             >
-                              <SelectTrigger id="access" className="w-full">
+                              <SelectTrigger
+                                id="access"
+                                className="font-geist h-11 w-full rounded-xl border shadow-none dark:border-gray-500/5"
+                              >
                                 <SelectValue placeholder="Select access" />
                               </SelectTrigger>
-                              <SelectContent>
+                              <SelectContent className="font-geist rounded-xl border shadow-none dark:border-gray-500/5">
                                 <SelectItem value="public">
                                   <div className="flex items-center">
                                     <Globe className="mr-2 h-4 w-4 text-blue-500" />
@@ -484,8 +514,10 @@ export default function ProjectsPage() {
                         </div>
                       </div>
 
-                      <div className="rounded-lg border bg-card p-4 shadow-sm">
-                        <h3 className="mb-4 text-lg font-medium">Categories</h3>
+                      <div className="rounded-xl border border-gray-100 bg-card p-4 dark:border-gray-500/5">
+                        <h3 className="font-geist mb-4 text-lg font-medium">
+                          Categories
+                        </h3>
                         <div className="space-y-4">
                           <div className="relative">
                             <Tag className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
@@ -493,18 +525,18 @@ export default function ProjectsPage() {
                               id="category"
                               placeholder="Type a category and press space"
                               onKeyDown={handleCategoryInput}
-                              className="pl-10"
+                              className="font-geist h-11 rounded-xl border pl-10 shadow-none dark:border-gray-500/5"
                             />
                           </div>
 
-                          <div className="min-h-[100px] rounded-md border bg-background/50 p-3">
+                          <div className="min-h-[100px] rounded-xl border bg-background/50 p-3 dark:border-gray-500/5">
                             {selectedCategories.length > 0 ? (
                               <div className="flex flex-wrap gap-2">
                                 {selectedCategories.map((category) => (
                                   <Badge
                                     key={category}
                                     variant="secondary"
-                                    className="group flex items-center gap-1 px-2 py-1"
+                                    className="font-geist group flex h-8 items-center gap-2 rounded-xl px-2 py-1"
                                   >
                                     {category}
                                     <button
@@ -522,7 +554,8 @@ export default function ProjectsPage() {
                                 ))}
                               </div>
                             ) : (
-                              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                              <div className="font-geist flex h-full items-center justify-center text-sm text-muted-foreground">
+                                <AlertCircle className="mr-2 h-4 w-4" />
                                 No categories added yet
                               </div>
                             )}
@@ -532,9 +565,10 @@ export default function ProjectsPage() {
                     </TabsContent>
                   </Tabs>
 
-                  <div className="mt-8 flex justify-end gap-3 border-t pt-4">
+                  <div className="font-geist mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5">
                     <Button
                       variant="outline"
+                      className="h-11 w-24 rounded-2xl"
                       onClick={() => setIsCreateModalOpen(false)}
                     >
                       Cancel
@@ -542,7 +576,7 @@ export default function ProjectsPage() {
                     <Button
                       onClick={handleCreateProject}
                       disabled={!newProject.name || !newProject.description}
-                      className="gap-2"
+                      className="h-11 w-fit gap-2 rounded-2xl"
                     >
                       <Check className="h-4 w-4" />
                       Create Project
@@ -565,9 +599,9 @@ export default function ProjectsPage() {
           <div className="absolute -bottom-20 -left-20 h-[200px] w-[200px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 via-blue-400/10 to-transparent blur-[80px]"></div>
           <div className="absolute -right-20 -top-20 h-[200px] w-[200px] -rotate-45 rounded-full bg-gradient-to-br from-orange-300/10 to-transparent blur-[80px]"></div>
 
-          <TabsList className="relative z-10 flex justify-center">
-            <TabsTrigger value="projects">Project Board</TabsTrigger>
-            <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
+          <TabsList className="relative z-10 flex h-12 rounded-full dark:bg-black border border-gray-100 dark:border-gray-500/10 justify-center">
+            <TabsTrigger value="projects" className="font-geist h-10 px-5 rounded-full">Project Board</TabsTrigger>
+            <TabsTrigger value="leaderboard" className="font-geist h-10 px-5 rounded-full">Leaderboard</TabsTrigger>
           </TabsList>
         </div>
 
