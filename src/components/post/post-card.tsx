@@ -3,12 +3,12 @@
 import { getTrimLimit } from "@/functions/render-helper";
 import postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
-import { queryClient } from "@/providers/tanstack-query-provider";
 import usePostStore from "@/store/post.store";
 import { PostAccess } from "@prisma/client";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { motion } from "framer-motion";
 import {
   BanIcon,
   Clock,
@@ -41,7 +41,6 @@ import {
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { renderComments } from "./comment/render-comments";
-import { motion } from "framer-motion";
 
 interface PostCardProps {
   post: postInterface;
@@ -118,12 +117,12 @@ const PostCard = ({
   setEditModal,
   setDeleteModal,
   changePostAccessType,
-  handleFollow,
   handleLike,
   handleBookmark,
 }: PostCardProps) => {
   const router = useRouter();
   const session = authClient.useSession();
+  const queryClient = useQueryClient();
   const { setSelectedPost, setContent } = usePostStore();
   const [commentContent, setCommentContent] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -300,6 +299,37 @@ const PostCard = ({
     bookmarked: { scale: [1, 1.2, 1], color: "var(--primary)" },
   };
 
+  const followMutation = useMutation({
+    mutationFn: async ({ userId, action }: { userId: string; action: "follow" | "unfollow" }) => {
+      const response = await axios.post(`/api/user/follow?userId=${userId}&action=${action}`);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["follow-status"] });
+      toast.success(data.message);
+    },
+    onError: () => {
+      toast.error("Error occurred while following/unfollowing user");
+    },
+  });
+
+  const handleFollow = (post: postInterface) => {
+    if (!session.data?.user?.id) {
+      toast.error("Please sign in to follow users");
+      return;
+    }
+    if (session.data.user.id === post.user.id) {
+      toast.error("You cannot follow yourself");
+      return;
+    }
+    const isFollowing = post.user.isFollowingAuthor;
+    followMutation.mutate({
+      userId: post.user.id,
+      action: isFollowing ? "unfollow" : "follow",
+    });
+  };
+
   return (
     <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-4 px-3 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/50 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/50 after:to-transparent [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/50 [&>div]:before:to-transparent">
       {/* Orange diagonal glow from bottom-left to top-right */}
@@ -338,13 +368,15 @@ const PostCard = ({
               <Button
                 variant={"outline"}
                 size="sm"
-                className={`mx-0 rounded-lg bg-transparent px-2 py-1 text-xs shadow-none hover:bg-transparent md:text-sm`}
+                className={`mx-0  h-11 rounded-xl bg-transparent px-2 text-xs shadow-none hover:bg-transparent md:text-sm`}
                 onClick={() => {
                   handleFollow(post);
                 }}
               >
-                {!post.user?.isFollowingAuthor && <Plus size={15} />}
-                {post.user?.isFollowingAuthor ? "Following" : "Follow"}
+                <span className="flex items-center gap-1 px-2 ">
+                  {!post.user?.isFollowingAuthor && <Plus size={15} />}
+                  {post.user?.isFollowingAuthor ? "Following" : "Follow"}
+                </span>
               </Button>
             )}
             <DropdownMenu>
