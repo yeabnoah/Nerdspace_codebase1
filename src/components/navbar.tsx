@@ -26,15 +26,36 @@ import { Input } from "./ui/input";
 import Link from "next/link";
 import useUserStore from "@/store/user.store";
 import { Skeleton } from "./ui/skeleton";
-import { Command } from "@/components/ui/command";
+import {
+  Command,
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "@/components/ui/command";
+import { DialogTitle } from "@/components/ui/dialog";
+import useSearchStore from "@/store/search.store";
 
 const Navbar = () => {
   const router = useRouter();
   let loadingToastId: string | undefined;
   const session = authClient.useSession();
   const { user, isloading } = useUserStore();
-  const [open, setOpen] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const { query, setQuery, isSearchOpen, setIsSearchOpen } = useSearchStore();
+
+  React.useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, [setIsSearchOpen]);
 
   const logout = async () => {
     await authClient.signOut({
@@ -55,14 +76,6 @@ const Navbar = () => {
     });
   };
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
-      setOpen(false);
-    }
-  };
-
   return (
     <div className="sticky top-0 z-50 mx-auto flex max-w-6xl flex-row items-center justify-between bg-white px-2 py-4 dark:bg-black md:px-6">
       <div
@@ -76,20 +89,44 @@ const Navbar = () => {
 
       <div className="flex items-center justify-center gap-5">
         <div className="hidden md:flex">
-          <Command className="rounded-lg border shadow-md">
-            <form onSubmit={handleSearch} className="flex items-center">
-              <Search className="mx-3 h-4 w-4 shrink-0 opacity-50" />
-              <input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                placeholder="Search anything..."
-              />
-              <kbd className="pointer-events-none mr-2 inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-                <span className="text-xs">⌘</span>K
-              </kbd>
-            </form>
-          </Command>
+          <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+            <DialogTitle className="sr-only">Search</DialogTitle>
+            <CommandInput
+              value={query}
+              onValueChange={setQuery}
+              placeholder="Search anything..."
+              className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            />
+            <CommandList>
+              {query.trim() && (
+                <CommandGroup>
+                  <CommandItem
+                    onSelect={() => {
+                      if (query.trim()) {
+                        router.push(
+                          `/explore?q=${encodeURIComponent(query)}`,
+                        );
+                        setIsSearchOpen(false);
+                        setQuery("");
+                      }
+                    }}
+                  >
+                    <span>Search "{query}"</span>
+                  </CommandItem>
+                </CommandGroup>
+              )}
+            </CommandList>
+          </CommandDialog>
+          <Button
+            variant="outline"
+            className="relative h-11 w-64 justify-start text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64"
+            onClick={() => setIsSearchOpen(true)}
+          >
+            <span className="inline-flex">Search...</span>
+            <kbd className="pointer-events-none absolute right-1.5 top-1.5 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+              <span className="text-xs">⌘</span>K
+            </kbd>
+          </Button>
         </div>
         <ModeToggle />
         <DropdownMenu>
