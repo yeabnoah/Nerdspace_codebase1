@@ -28,9 +28,11 @@ const RightNavbar = () => {
   }, []);
 
   return (
-    <div className="sticky left-0 top-20 md:pr-5 lg:pr-0">
+    <div className="sticky left-0 top-20 mt-5 md:pr-5 lg:pr-0">
       <FollowList />
-      <RecomendedProjects />
+      <div className="mt-5">
+        <RecomendedProjects />
+      </div>
     </div>
   );
 };
