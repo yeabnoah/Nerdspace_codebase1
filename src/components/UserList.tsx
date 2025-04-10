@@ -16,6 +16,7 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
   const [cursor, setCursor] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const session = authClient.useSession();
+  const [followLoading, setFollowLoading] = useState<Record<string, boolean>>({});
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["users", cursor],
@@ -30,13 +31,25 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
   const followMutation = useMutation({
     mutationKey: ["follow-user"],
     mutationFn: async (userId: string) => {
+      setFollowLoading((prev) => ({ ...prev, [userId]: true }));
       const response = await axios.post(`/api/user/follow?userId=${userId}`);
       return response.data.message;
     },
     onSuccess: (message) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["who-to-follow"] });
+      queryClient.invalidateQueries({ queryKey: ["follow-status"] });
+      queryClient.invalidateQueries({ queryKey: ["user-followers"] });
+      queryClient.invalidateQueries({ queryKey: ["user-following"] });
+      queryClient.invalidateQueries({ queryKey: ["explore"] });
       toast.success(message);
+    },
+    onError: () => {
+      toast.error("Error occurred while following/unfollowing user");
+    },
+    onSettled: (_, __, variables) => {
+      setFollowLoading((prev) => ({ ...prev, [variables]: false }));
     },
   });
 
@@ -86,8 +99,9 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
                   variant={"outline"}
                   className="mt-2 border bg-transparent shadow-none sm:mt-0"
                   onClick={() => handleFollowClick(u.id)}
+                  disabled={followLoading[u.id]}
                 >
-                  Follow
+                  {followLoading[u.id] ? "Loading..." : u.isFollowingAuthor ? "Following" : "Follow"}
                 </Button>
               </div>
             ))
