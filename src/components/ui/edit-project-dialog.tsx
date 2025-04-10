@@ -153,22 +153,26 @@ export function EditProjectDialog({
         <Button className="hidden">Open Dialog</Button>
       </DialogTrigger>
       <DialogContent
-        className="max-w-4xl overflow-hidden rounded-xl border-none p-0"
+        className="max-w-4xl overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm"
         aria-describedby="edit-project-description"
       >
-        <p id="edit-project-description" className="sr-only">
+        <p id="edit-project-description font-geist" className="sr-only">
           Update your project details and settings.
         </p>
-        <div className="flex h-[85vh] max-h-[85vh] flex-col md:flex-row">
+        <div className="relative flex h-[85vh] max-h-[85vh] flex-col md:flex-row">
+          {/* Glow effects */}
+          <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+          <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+
           <DialogTitle></DialogTitle>
-          <div className="flex w-full flex-col bg-gradient-to-b from-primary/10 to-primary/5 p-6 md:w-1/3">
-            <div className="mb-2 font-instrument text-3xl">Edit Project</div>
-            <p className="mb-6 text-muted-foreground">
+          <div className="flex w-full dark:bg-black flex-col border-r dark:border-gray-600/10 border-l border-t border-b rounded-l-xl p-6 md:w-1/3">
+            <div className="mb-2 text-3xl font-geist font-medium">Edit Project</div>
+            <p className="mb-6 text-muted-foreground font-geist">
               Update your project details and settings
             </p>
 
             <div className="mt-4 flex flex-1 flex-col items-center justify-center">
-              <div className="relative mb-4 aspect-square w-full max-w-[220px] overflow-hidden rounded-xl border-2 border-dashed border-primary/20 bg-background/50">
+              <div className="relative mb-4 aspect-square w-full max-w-[220px] overflow-hidden rounded-xl border-2 border-dashed border-primary/20 bg-black ">
                 {selectedImage ? (
                   <img
                     src={
@@ -184,14 +188,14 @@ export function EditProjectDialog({
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                  <div className="flex h-full w-full items-center justify-center text-muted-foreground font-geist">
                     No image
                   </div>
                 )}
               </div>
 
               <div className="relative w-full max-w-[220px]">
-                <Button variant="outline" className="w-full" type="button">
+                <Button className="w-full h-11 rounded-full b font-geist" type="button">
                   <Upload className="mr-2 h-4 w-4" />
                   {project.image || selectedImage
                     ? "Change Image"
@@ -206,7 +210,7 @@ export function EditProjectDialog({
               </div>
 
               {selectedImage && (
-                <div className="mt-2">
+                <div className="mt-2 font-geist">
                   <p>Selected Image: {selectedImage.name}</p>
                   <Button variant="outline" onClick={handleImageCancel}>
                     Remove Image
@@ -216,17 +220,15 @@ export function EditProjectDialog({
             </div>
 
             <div className="mt-auto pt-6">
-              <div className="mb-2 text-sm text-muted-foreground">
-                Current Status
-              </div>
+              <div className="mb-2 text-sm text-muted-foreground font-geist">Current Status</div>
               <div className="flex items-center">
                 <div
                   className={cn(
                     "mr-2 size-2 rounded-full",
-                    getStatusColor(editedProject?.status || project.status),
+                    getStatusColor(editedProject?.status || project.status)
                   )}
                 ></div>
-                <span className="text-xs font-medium">
+                <span className="text-xs font-medium font-geist">
                   {editedProject?.status || project.status}
                 </span>
               </div>
@@ -240,22 +242,24 @@ export function EditProjectDialog({
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="mb-6 grid w-full grid-cols-2">
-                <TabsTrigger value="details">Project Details</TabsTrigger>
-                <TabsTrigger value="settings">
+              <TabsList className="mb-6 grid  h-12 rounded-full w-full grid-cols-2">
+                <TabsTrigger value="details" className="font-geist h-10  rounded-full">
+                  Project Details
+                </TabsTrigger>
+                <TabsTrigger value="settings" className="font-geist h-10  rounded-full">
                   Settings & Categories
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="details" className="space-y-6">
-                <div className="rounded-lg border border-gray-100 bg-card p-4 shadow-none dark:border-gray-500/5">
-                  <h3 className="mb-4 text-lg font-medium">
+                <div className=" border rounded-xl border-gray-100 bg-card p-4 shadow-none dark:border-gray-500/5">
+                  <h3 className="mb-4 text-lg font-medium font-geist">
                     Basic Information
                   </h3>
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-sm font-medium">
+                      <Label htmlFor="name" className="text-sm font-medium font-geist">
                         Project Name
                       </Label>
                       <Input
@@ -272,14 +276,14 @@ export function EditProjectDialog({
                           }))
                         }
                         placeholder="Enter project name"
-                        className="border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                        className="border-input/50 shadow-none h-11 rounded-xl focus-visible:ring-primary/50 dark:border-gray-500/5 font-geist"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label
                         htmlFor="description"
-                        className="text-sm font-medium"
+                        className="text-sm font-medium font-geist"
                       >
                         Description
                       </Label>
@@ -298,7 +302,7 @@ export function EditProjectDialog({
                         }
                         placeholder="Describe your project"
                         rows={6}
-                        className="resize-none border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                        className="resize-none border-input/50 h-24 rounded-xl shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5 font-geist"
                       />
                     </div>
                   </div>
@@ -306,12 +310,12 @@ export function EditProjectDialog({
               </TabsContent>
 
               <TabsContent value="settings" className="space-y-6">
-                <div className="rounded-lg border border-gray-100 bg-card p-4 dark:border-gray-500/5">
-                  <h3 className="mb-4 text-lg font-medium">Project Status</h3>
+                <div className=" border rounded-xl border-gray-100 bg-card p-4 dark:border-gray-500/5">
+                  <h3 className="mb-4 text-lg font-medium font-geist">Project Status</h3>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="status" className="text-sm font-medium">
+                      <Label htmlFor="status" className="text-sm font-medium font-geist">
                         Status
                       </Label>
                       <Select
@@ -329,11 +333,13 @@ export function EditProjectDialog({
                       >
                         <SelectTrigger
                           id="status"
-                          className="w-full border shadow-none dark:border-gray-500/5"
+                          className="w-full border h-11 rounded-xl shadow-none dark:border-gray-500/5 font-geist"
                         >
                           <SelectValue placeholder="Select status" />
                         </SelectTrigger>
-                        <SelectContent className="border shadow-none dark:border-gray-500/5">
+                        <SelectContent
+                          className={`border shadow-none rounded-xl dark:border-gray-500/5 font-geist`}
+                        >
                           <SelectItem
                             value="ONGOING"
                             className="flex items-center"
@@ -366,7 +372,7 @@ export function EditProjectDialog({
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="access" className="text-sm font-medium">
+                      <Label htmlFor="access" className="text-sm font-medium font-geist">
                         Access
                       </Label>
                       <Select
@@ -380,11 +386,13 @@ export function EditProjectDialog({
                       >
                         <SelectTrigger
                           id="access"
-                          className="w-full border shadow-none dark:border-gray-500/5"
+                          className="w-full border h-11 rounded-xl shadow-none dark:border-gray-500/5 font-geist"
                         >
                           <SelectValue placeholder="Select access" />
                         </SelectTrigger>
-                        <SelectContent className="border shadow-none dark:border-gray-500/5">
+                        <SelectContent
+                          className={`border shadow-none rounded-xl dark:border-gray-500/5 font-geist`}
+                        >
                           <SelectItem value="public">
                             <div className="flex items-center">
                               <Globe className="mr-2 h-4 w-4 text-blue-500" />
@@ -403,8 +411,8 @@ export function EditProjectDialog({
                   </div>
                 </div>
 
-                <div className="rounded-lg border border-gray-100 bg-card p-4 dark:border-gray-500/5">
-                  <h3 className="mb-4 text-lg font-medium">Categories</h3>
+                <div className=" border rounded-xl border-gray-100 bg-card p-4 dark:border-gray-500/5">
+                  <h3 className="mb-4 text-lg font-medium font-geist">Categories</h3>
 
                   <div className="space-y-4">
                     <div className="relative">
@@ -413,18 +421,18 @@ export function EditProjectDialog({
                         id="category"
                         placeholder="Type a category and press Enter or Space"
                         onKeyDown={handleCategoryInput}
-                        className="border pl-10 shadow-none dark:border-gray-500/5"
-                      />
+                          className="border pl-10 shadow-none h-11 rounded-xl dark:border-gray-500/5 font-geist"
+                        />
                     </div>
 
-                    <div className="min-h-[100px] rounded-md border bg-background/50 p-3 dark:border-gray-500/5">
+                    <div className="min-h-[100px rounded-xl border bg-background/50 p-3 dark:border-gray-500/5">
                       {selectedCategories.length > 0 ? (
                         <div className="flex flex-wrap gap-2">
                           {selectedCategories.map((category) => (
                             <Badge
                               key={category}
                               variant="secondary"
-                              className="group flex items-center gap-1 px-2 py-1"
+                              className="group flex h-8 rounded-xl gap-2 items-center px-2 py-1 font-geist"
                             >
                               {category}
                               <button
@@ -438,7 +446,9 @@ export function EditProjectDialog({
                           ))}
                         </div>
                       ) : (
-                        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                        <div
+                          className={`flex h-full items-center justify-center text-sm text-muted-foreground font-geist`}
+                        >
                           <AlertCircle className="mr-2 h-4 w-4" />
                           No categories added yet
                         </div>
@@ -449,11 +459,13 @@ export function EditProjectDialog({
               </TabsContent>
             </Tabs>
 
-            <div className="mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <div
+              className={`mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5 font-geist`}
+            >
+              <Button variant="outline" className="h-11 w-24 rounded-2xl" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleEditProject} className="gap-2">
+              <Button onClick={handleEditProject} className="gap-2 h-11 w-fit rounded-2xl">
                 <Check className="h-4 w-4" />
                 Save Changes
               </Button>
