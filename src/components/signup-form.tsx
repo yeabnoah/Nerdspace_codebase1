@@ -12,6 +12,7 @@ import { SignupFormData, signupSchema } from "@/validation/signup.validation";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export function SignUpForm({
   className,
@@ -29,6 +30,7 @@ export function SignUpForm({
   const [loading, setLoading] = useState(false);
 
   let loadingToastId: string | undefined;
+  const router = useRouter();
 
   const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
     console.log("worked signin", data);
@@ -49,11 +51,14 @@ export function SignUpForm({
           toast.success("Successfully created your account");
 
           await authClient.sendVerificationEmail({
-            email: data.email, // Use the email from the form data
+            email: data.email,
             callbackURL: "/",
           });
 
           toast("Please check your email to verify it", { icon: "‼️" });
+          
+          // Redirect to onboarding for new users
+          router.push("/onboarding");
         },
         onError: (ctx) => {
           toast.dismiss(loadingToastId);

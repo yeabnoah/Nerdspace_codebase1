@@ -10,7 +10,7 @@ export const Progress: React.FC<ProgressProps> = ({ value, className, label }) =
   return (
     <div className={`relative w-full h-2 bg-gray-200 rounded ${className}`}>
       <div
-        className="absolute top-0 left-0 h-2 bg-blue-500 rounded"
+        className="absolute top-0 left-0 h-2 bg-primary rounded"
         style={{ width: `${value}%` }}
       ></div>
       {label && (

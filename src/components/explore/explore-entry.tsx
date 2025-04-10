@@ -171,7 +171,7 @@ const ExploreEntry = () => {
           <SelectContent className="rounded-xl border-none bg-card/80 shadow-lg backdrop-blur-sm">
             <SelectItem value="relevance">Relevance</SelectItem>
             <SelectItem value="newest">Newest</SelectItem>
-            <SelectItem value="popular">Most Popular</SelectItem>
+            {/* <SelectItem value="popular">Most Popular</SelectItem> */}
           </SelectContent>
         </Select>
       </motion.div>
@@ -198,10 +198,11 @@ const ExploreEntry = () => {
           </SheetTrigger>
           <SheetContent className="w-[400px]">
             <SheetHeader>
-              <SheetTitle>Search Filters</SheetTitle>
+              <SheetTitle className="font-instrument">
+                Search Filters
+              </SheetTitle>
             </SheetHeader>
             <div className="mt-4 space-y-4">
-              {/* Add filter options based on type */}
               {type === "user" && (
                 <div className="space-y-2">
                   <Label>Followers</Label>
@@ -225,6 +226,9 @@ const ExploreEntry = () => {
                 </div>
               )}
               {/* Add more filter options as needed */}
+            </div>
+            <div className="flex h-full w-full items-center justify-center font-instrument text-xl">
+              Will add filtering features soon ..
             </div>
           </SheetContent>
         </Sheet>
@@ -288,7 +292,7 @@ const ExploreEntry = () => {
             exit={{ opacity: 0 }}
           >
             <Tabs defaultValue="all" className="space-y-6 sm:space-y-8">
-              <TabsList className="flex w-full flex-wrap justify-start gap-2 border-b bg-transparent">
+              <TabsList className="flex w-full flex-wrap justify-start gap-2 bg-transparent">
                 <TabsTrigger
                   value="all"
                   className="rounded-lg px-3 py-1.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary sm:px-4 sm:py-2 sm:text-base"
@@ -313,12 +317,12 @@ const ExploreEntry = () => {
                 >
                   Projects
                 </TabsTrigger>
-                <TabsTrigger
+                {/* <TabsTrigger
                   value="communities"
                   className="rounded-lg px-3 py-1.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary sm:px-4 sm:py-2 sm:text-base"
                 >
                   Communities
-                </TabsTrigger>
+                </TabsTrigger> */}
               </TabsList>
 
               <TabsContent value="all" className="space-y-6 sm:space-y-8">
@@ -408,11 +412,19 @@ const UsersCard = ({ users }: { users: any[] }) => (
 const PostsCard = ({ posts }: { posts: any[] }) => {
   const router = useRouter();
   const [expandedStates, setExpandedStates] = useState<boolean[]>([]);
-  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>({});
-  const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
+  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>(
+    {},
+  );
+  const [expandedComments, setExpandedComments] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [replyShown, setReplyShown] = useState<{ [key: string]: boolean }>({});
-  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
-  const [expandedReplies, setExpandedReplies] = useState<{ [key: string]: boolean }>({});
+  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>(
+    {},
+  );
+  const [expandedReplies, setExpandedReplies] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [modalEditOpened, setModalEditOpened] = useState(false);
   const [modalDeleteOpened, setModalDeleteOpened] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -420,7 +432,8 @@ const PostsCard = ({ posts }: { posts: any[] }) => {
   const [commentLoading, setCommentLoading] = useState(false);
   const [comments, setComments] = useState<any[]>([]);
   const [hasNextCommentPage, setHasNextCommentPage] = useState(false);
-  const [isFetchingNextCommentPage, setIsFetchingNextCommentPage] = useState(false);
+  const [isFetchingNextCommentPage, setIsFetchingNextCommentPage] =
+    useState(false);
   const [selectedPost, setSelectedPost] = useState<any>(null);
 
   const handlePostClick = (post: any) => {

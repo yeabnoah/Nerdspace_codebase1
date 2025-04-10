@@ -294,13 +294,16 @@ const ProfileSettings = () => {
               }
 
               await mutation.mutate({
-                country: user?.country ? undefined : selectedCountry,
-                image: uploadedImageUrl || user.image || "",
-                coverImage: uploadedCoverImageUrl || user.coverImage || "",
-                nerdAt,
-                bio,
-                displayName,
-                link,
+                country: user?.country
+                  ? undefined
+                  : selectedCountry || undefined,
+                image: uploadedImageUrl || user.image || undefined,
+                coverImage:
+                  uploadedCoverImageUrl || user.coverImage || undefined,
+                nerdAt: nerdAt || undefined,
+                bio: bio || undefined,
+                displayName: displayName || undefined,
+                link: link || undefined,
                 firstTime: false,
               });
             }}

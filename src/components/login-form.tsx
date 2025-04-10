@@ -11,6 +11,8 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { FaGithub } from "react-icons/fa";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
@@ -29,6 +31,8 @@ export function LoginForm({
 
   let loadingToastId: string | undefined;
 
+  const router = useRouter();
+
   const onSubmit: SubmitHandler<loginType> = async (data) => {
     await authClient.signIn.email(
       {
@@ -43,9 +47,24 @@ export function LoginForm({
             "Loading ... checking your credentials",
           );
         },
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.dismiss(loadingToastId);
           toast.success("You're successfully signed in");
+          
+          // Check if this is the user's first login
+          try {
+            const response = await axios.get("/api/onboarding/status", {
+              withCredentials: true,
+            });
+            if (response.data.isFirstTime) {
+              router.push("/onboarding");
+            } else {
+              router.push("/");
+            }
+          } catch (error) {
+            console.error("Error checking onboarding status:", error);
+            router.push("/");
+          }
         },
         onError: (ctx) => {
           toast.dismiss(loadingToastId);

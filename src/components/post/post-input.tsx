@@ -84,7 +84,7 @@ const PostInput = () => {
   }
 
   return (
-    <div className="mb-6 w-full rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700/10 dark:bg-black">
+    <div className="mb-6 w-full rounded-2xl border border-gray-100 bg-white shadow-sm transition-all dark:border-gray-700/10 dark:bg-black">
       <div className="flex items-center gap-4 border-b border-gray-100 p-4 dark:border-gray-800/30">
         <div className="relative">
           <Image
