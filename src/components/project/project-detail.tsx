@@ -686,7 +686,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </div>
 
           {/* Description */}
-          <Card className="overflow-hidden rounded-xl border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:border-border/5">
+          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-gray-900">
             <CardContent className="p-8">
               <h2 className="font-geist mb-6 text-4xl font-medium text-foreground">
                 About this project
@@ -698,14 +698,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Stats */}
-          <Card className="overflow-hidden rounded-xl border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:border-border/5">
+          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-gray-900">
             <CardContent className="p-8">
               <h2 className="font-geist mb-6 text-3xl font-normal text-foreground">
                 Project Stats
               </h2>
               <div className="grid grid-cols-2 gap-6 text-center md:grid-cols-5">
                 <div className="flex flex-col items-center">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-border/40 bg-background/50 backdrop-blur-sm">
+                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-gray-900">
                     <Star className="h-4 w-4 text-foreground" />
                   </div>
                   <span className="font-geist text-lg font-normal">
@@ -716,7 +716,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-border/40 bg-background/50 backdrop-blur-sm">
+                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-gray-900">
                     <Heart className="h-4 w-4 text-foreground" />
                   </div>
                   <span className="font-geist text-lg font-normal">
@@ -727,7 +727,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-border/40 bg-background/50 backdrop-blur-sm">
+                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-gray-900">
                     <MessageSquare className="h-4 w-4 text-foreground" />
                   </div>
                   <span className="font-geist text-lg font-normal">
@@ -738,7 +738,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-border/40 bg-background/50 backdrop-blur-sm">
+                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-gray-900">
                     <Flag className="h-4 w-4 text-foreground" />
                   </div>
                   <span className="font-geist text-lg font-normal">
@@ -749,7 +749,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-border/40 bg-background/50 backdrop-blur-sm">
+                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-gray-900">
                     <Star className="h-4 w-4 text-foreground" />
                   </div>
                   <span className="font-geist text-lg font-normal">
@@ -764,7 +764,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Updates and Reviews Section */}
-          <Card className="overflow-hidden rounded-xl border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:border-border/5">
+          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-gray-900">
             <CardContent className="p-8">
               <h2 className="font-geist mb-6 text-3xl font-normal text-foreground">
                 Project Activity
@@ -772,13 +772,13 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
               <div className="w-full">
                 {/* Custom Tab Headers */}
-                <div className="mb-8 flex w-full overflow-hidden rounded-full border border-zinc-200/30 bg-white/5 p-1 backdrop-blur-md dark:border-zinc-800/30 dark:bg-black/5">
+                <div className="mb-8 flex w-full overflow-hidden rounded-full border border-gray-100 bg-white p-1 dark:border-gray-500/5 dark:bg-gray-900">
                   <button
                     onClick={() => setActiveTab("updates")}
                     className={`relative flex-1 rounded-full py-2.5 text-sm font-medium transition-all duration-300 ${
                       activeTab === "updates"
                         ? "text-white"
-                        : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300"
+                        : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     }`}
                   >
                     {activeTab === "updates" && (
@@ -794,7 +794,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                     className={`relative flex-1 rounded-full py-2.5 text-sm font-medium transition-all duration-300 ${
                       activeTab === "reviews"
                         ? "text-white"
-                        : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300"
+                        : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     }`}
                   >
                     {activeTab === "reviews" && (
@@ -828,14 +828,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                         ))}
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 py-12 text-center dark:bg-black/5">
+                      <div className="flex flex-col items-center justify-center rounded-xl bg-white py-12 text-center dark:bg-gray-900">
                         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/10 to-indigo-500/10">
                           <PaintBucket className="h-10 w-10 text-indigo-500" />
                         </div>
                         <h3 className="mb-2 text-xl font-normal">
                           No updates yet
                         </h3>
-                        <p className="max-w-md text-zinc-500 dark:text-zinc-400">
+                        <p className="max-w-md text-gray-500 dark:text-gray-400">
                           This project hasn't posted any updates. Check back
                           later for progress on this mission to Mars.
                         </p>
@@ -856,7 +856,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                         placeholder="Write your review here..."
                         value={reviewContent}
                         onChange={(e) => setReviewContent(e.target.value)}
-                        className="min-h-[120px] w-full rounded-xl border border-zinc-200/20 bg-white/5 p-4 text-sm backdrop-blur-sm transition-colors placeholder:text-zinc-500 focus:border-zinc-300/20 dark:border-zinc-800/20 dark:bg-black/5 dark:text-zinc-300 dark:placeholder:text-zinc-600 dark:focus:border-zinc-700/20"
+                        className="min-h-[120px] w-full rounded-xl border border-gray-100 bg-white p-4 text-sm dark:border-gray-500/5 dark:bg-gray-900"
                       />
                       <Button
                         onClick={handleCreateReview}
@@ -876,7 +876,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                         {project.reviews.map((review, index) => (
                           <div
                             key={index}
-                            className="group relative overflow-hidden rounded-xl border border-zinc-200/20 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:bg-white/10 dark:border-zinc-800/20 dark:bg-black/5 dark:hover:bg-black/10"
+                            className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white p-6 dark:border-gray-500/5 dark:bg-gray-900"
                           >
                             <div className="flex items-start gap-4">
                               <div className="relative h-10 w-10 overflow-hidden rounded-full ring-1 ring-white/10">
@@ -889,10 +889,10 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                               </div>
                               <div className="flex-1">
                                 <div className="mb-2 flex items-center justify-between">
-                                  <h4 className="font-medium text-zinc-900 dark:text-zinc-100">
+                                  <h4 className="font-medium text-gray-900 dark:text-gray-100">
                                     {review.user.visualName}
                                   </h4>
-                                  <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
                                     {formatDistanceToNow(
                                       new Date(review.createdAt as string),
                                       {
@@ -901,7 +901,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                                     )}
                                   </span>
                                 </div>
-                                <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+                                <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
                                   {review.content}
                                 </p>
                                 {review.user.id === session.data?.user.id && (
@@ -922,14 +922,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                         ))}
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 py-12 text-center dark:bg-black/5">
+                      <div className="flex flex-col items-center justify-center rounded-xl bg-white py-12 text-center dark:bg-gray-900">
                         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/10 to-indigo-500/10">
                           <MessageSquare className="h-10 w-10 text-indigo-500" />
                         </div>
-                        <h3 className="mb-2 text-xl font-normal text-zinc-900 dark:text-zinc-100">
+                        <h3 className="mb-2 text-xl font-normal text-gray-900 dark:text-gray-100">
                           No reviews yet
                         </h3>
-                        <p className="max-w-md text-zinc-500 dark:text-zinc-400">
+                        <p className="max-w-md text-gray-500 dark:text-gray-400">
                           Be the first to share your thoughts about this
                           project!
                         </p>
@@ -944,11 +944,11 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
         {/* Right Column - Sidebar */}
         <div className="space-y-8">
-          <Card className="overflow-hidden rounded-xl border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:border-border/5">
+          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-gray-900">
             <CardContent className="space-y-3 p-4">
               <Button
                 variant="outline"
-                className="h-11 w-full gap-2 rounded-full border-zinc-200/20 bg-white/5 text-sm font-medium text-zinc-900 backdrop-blur-sm transition-colors hover:bg-white/10 dark:border-zinc-800/20 dark:bg-black/5 dark:text-zinc-100 dark:hover:bg-black/10"
+                className="h-11 w-full gap-2 rounded-full border-gray-100 bg-white text-sm font-medium text-gray-900 dark:border-gray-500/5 dark:bg-gray-900 dark:text-gray-100"
                 onClick={handleStarProject}
               >
                 {project?.stars?.some(
@@ -970,7 +970,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                   variant={isFollowing ? "outline" : "default"}
                   className={`h-9 w-full gap-2 rounded-md text-sm font-medium ${
                     isFollowing
-                      ? "h-12 border-zinc-200/20 bg-white/5 text-zinc-900 backdrop-blur-sm transition-colors hover:bg-white/10 dark:border-zinc-800/20 dark:bg-black/5 dark:text-zinc-100 dark:hover:bg-black/10"
+                      ? "h-12 border-gray-100 bg-white text-gray-900 dark:border-gray-500/5 dark:bg-gray-900 dark:text-gray-100"
                       : "bg-gradient-to-r from-violet-500 to-indigo-500 text-white hover:from-violet-600 hover:to-indigo-600"
                   }`}
                   onClick={handleFollowProject}
@@ -984,7 +984,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               <Button
                 onClick={() => setIsShareProjectDialogOpen(true)}
                 variant="outline"
-                className="h-11 w-full gap-2 rounded-full border-zinc-200/20 bg-white/5 text-sm font-medium text-zinc-900 backdrop-blur-sm transition-colors hover:bg-white/10 dark:border-zinc-800/20 dark:bg-black/5 dark:text-zinc-100 dark:hover:bg-black/10"
+                className="h-11 w-full gap-2 rounded-full border-gray-100 bg-white text-sm font-medium text-gray-900 dark:border-gray-500/5 dark:bg-gray-900 dark:text-gray-100"
               >
                 <Share2 className="h-4 w-4" />
                 Share project
@@ -993,7 +993,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               {isUserAuthor && (
                 <Button
                   variant="outline"
-                  className="h-11 w-full gap-2 rounded-full border-zinc-200/20 bg-white/5 text-sm font-medium text-zinc-900 backdrop-blur-sm transition-colors hover:bg-white/10 dark:border-zinc-800/20 dark:bg-black/5 dark:text-zinc-100 dark:hover:bg-black/10"
+                  className="h-11 w-full gap-2 rounded-full border-gray-100 bg-white text-sm font-medium text-gray-900 dark:border-gray-500/5 dark:bg-gray-900 dark:text-gray-100"
                   onClick={() => setIsShareUpdateDialogOpen(true)}
                 >
                   <PlusIcon className="h-4 w-4" />
@@ -1004,7 +1004,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Creator Profile */}
-          <Card className="overflow-hidden rounded-xl border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:border-border/5">
+          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-gray-900">
             <CardContent className="px-6 py-6">
               <h2 className="font-geist mb-4 text-center text-xl font-normal">
                 Creator
@@ -1041,13 +1041,13 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Similar Projects */}
-          <Card className="overflow-hidden rounded-xl border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:border-border/5">
+          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-gray-900">
             <CardContent className="px-3 py-6">
               <h2 className="font-geist mb-3 text-xl font-normal">
                 Similar Projects
               </h2>
               <div className="flex flex-col space-y-2">
-                <div className="group relative overflow-hidden rounded-xl border border-border/10 bg-card/30 transition-all duration-300 hover:bg-card/50 hover:shadow-lg">
+                <div className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white transition-all duration-300 hover:shadow-lg dark:border-gray-500/5 dark:bg-gray-900">
                   <div className="my-2 flex gap-2 px-1">
                     <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-full">
                       <Image
@@ -1067,7 +1067,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                   </div>
                 </div>
 
-                <div className="group relative overflow-hidden rounded-xl border border-border/10 bg-card/30 transition-all duration-300 hover:bg-card/50 hover:shadow-lg">
+                <div className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white transition-all duration-300 hover:shadow-lg dark:border-gray-500/5 dark:bg-gray-900">
                   <div className="my-2 flex gap-2 px-1">
                     <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-full">
                       <Image
@@ -1087,7 +1087,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                   </div>
                 </div>
 
-                <div className="group relative overflow-hidden rounded-xl border border-border/10 bg-card/30 transition-all duration-300 hover:bg-card/50 hover:shadow-lg">
+                <div className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white transition-all duration-300 hover:shadow-lg dark:border-gray-500/5 dark:bg-gray-900">
                   <div className="my-2 flex gap-2 px-1">
                     <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-full">
                       <Image

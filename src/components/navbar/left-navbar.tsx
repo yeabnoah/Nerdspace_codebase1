@@ -13,13 +13,14 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Progress } from "../ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
 
 const LeftNavbar = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -52,73 +53,77 @@ const LeftNavbar = () => {
     { name: "Personal Link", threshold: 100 },
   ];
 
+  const navItems = [
+    { name: "home", icon: HomeIcon, path: "/" },
+    { name: "explore", icon: TrendingUp, path: "/explore" },
+    { name: "project", icon: FolderKanbanIcon, path: "/project" },
+    { name: "community", icon: Users, path: "/community" },
+    { name: "events", icon: Clock, path: "/events" },
+    { name: "nerd-ai", icon: Computer, path: "/nerd-ai" },
+  ];
+
+  const getActiveItem = () => {
+    const currentPath = pathname || "/";
+    const activeItem = navItems.find(
+      (item) =>
+        currentPath === item.path ||
+        (item.path !== "/" && currentPath.startsWith(item.path)),
+    );
+    return activeItem?.name || "home";
+  };
+
   return (
-    <div className="sticky left-0 top-20 hidden gap-2 px-5 py-5 md:flex md:w-fit md:flex-col lg:w-[17vw]">
-      <Button
-        onClick={() => {
-          router.push("/");
-        }}
-        variant="outline"
-        className="justify-start gap-3 border-gray-100 bg-transparent shadow-none dark:border-gray-500/5"
-      >
-        <HomeIcon className="hidden md:block" size={20} />
-        <span className="hidden lg:block">Home</span>
-      </Button>
-      <Button
-        onClick={() => {
-          router.push("/explore");
-        }}
-        variant="outline"
-        className="justify-start gap-3 border-gray-100 bg-transparent shadow-none dark:border-gray-500/5"
-      >
-        <TrendingUp className="hidden md:block" size={20} />
-        <span className="hidden lg:block">Explore</span>
-      </Button>
-      <Button
-        onClick={() => {
-          router.push("/project");
-        }}
-        variant="outline"
-        className="justify-start gap-3 border-gray-100 bg-transparent shadow-none dark:border-gray-500/5"
-      >
-        <FolderKanbanIcon className="hidden md:block" size={20} />
-        <span className="hidden lg:block">Project</span>
-      </Button>
-      <Button
-        onClick={() => {
-          router.push("/community");
-        }}
-        variant="outline"
-        className="justify-start gap-3 border-gray-100 bg-transparent shadow-none dark:border-gray-500/5"
-      >
-        <Users className="hidden md:block" size={20} />
-        <span className="hidden lg:block">Communities</span>
-      </Button>
+    <div className="sticky left-0 top-20 hidden w-full gap-2 px-5 py-5 md:flex md:flex-col lg:w-[17vw]">
+      {/* Navigation Items */}
+      {navItems.map((item) => (
+        <motion.div
+          key={item.name}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full"
+        >
+          <Button
+            onClick={() => {
+              router.push(item.path);
+            }}
+            variant="outline"
+            className={`group relative w-full justify-start gap-3 border-gray-100 bg-transparent shadow-none transition-all duration-300 hover:bg-primary/5 dark:border-gray-500/5 ${
+              getActiveItem() === item.name
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground"
+            }`}
+          >
+            <item.icon
+              className={`hidden transition-transform duration-300 group-hover:scale-110 md:block ${
+                getActiveItem() === item.name ? "text-primary" : ""
+              }`}
+              size={20}
+            />
+            <span className="hidden lg:block">
+              {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+            </span>
+            {getActiveItem() === item.name && (
+              <motion.div
+                layoutId="activeIndicator"
+                className="absolute left-0 h-full w-1 rounded-full bg-primary"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              />
+            )}
+          </Button>
+        </motion.div>
+      ))}
 
-      <Button
-        onClick={() => {
-          router.push("/events");
-        }}
-        variant="outline"
-        className="justify-start gap-3 border-gray-100 bg-transparent shadow-none dark:border-gray-500/5"
-      >
-        <Clock className="hidden md:block" size={20} />
-        <span className="hidden lg:block">Events</span>
-      </Button>
-      <Button
-        variant="outline"
-        className="justify-start gap-3 border-gray-100 bg-transparent shadow-none dark:border-gray-500/5"
-      >
-        <Computer className="hidden md:block" size={20} />
-        <span className="hidden lg:block">Nerd AI</span>
-      </Button>
-
-      <div
-        className="relative mt-4 cursor-pointer overflow-hidden rounded-lg border border-transparent bg-transparent p-4 backdrop-blur-sm"
+      {/* Profile Setup Card */}
+      <motion.div
+        className="relative mt-4 w-full cursor-pointer overflow-hidden rounded-lg border border-transparent bg-card/50 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md"
         onClick={() => setIsExpanded(!isExpanded)}
+        whileHover={{ scale: 1.01 }}
       >
-        <div className="absolute -right-4 top-0 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/10 via-blue-400/30 to-transparent blur-[100px] backdrop-blur-sm"></div>
-        {/* <div className="absolute -bottom-5 left-0 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[100px] backdrop-blur-sm"></div> */}
+        {/* Glow effects */}
+        <div className="absolute -right-4 top-0 size-32 -rotate-45 border border-blue-300/10 bg-gradient-to-br  blur-[100px] backdrop-blur-sm"></div>
+        <div className="absolute -bottom-5 left-0 size-32 rotate-45 border border-orange-300/10 bg-gradient-to-tl blur-[100px] backdrop-blur-sm"></div>
 
         <div className="relative z-10">
           <div className="flex items-center justify-between">
@@ -141,11 +146,11 @@ const LeftNavbar = () => {
             </span>
           </div>
 
-          {/* "Complete Profile" Button - Always Visible */}
-          <Button 
+          {/* "Complete Profile" Button */}
+          <Button
             variant="link"
             size="sm"
-            className="w-full justify-center py-0 text-xs text-primary"
+            className="mt-2 w-full justify-center py-0 text-xs text-primary transition-colors hover:text-primary/80"
             onClick={(e) => {
               e.stopPropagation();
               router.push("/settings");
@@ -164,30 +169,41 @@ const LeftNavbar = () => {
                 className="overflow-hidden"
               >
                 <div className="mb-1 border-t border-gray-500/10 dark:border-white/10"></div>
-                <span className="text-sm font-medium text-muted-foreground">Complete your profile</span>
+                <span className="text-sm font-medium text-muted-foreground">
+                  Complete your profile
+                </span>
                 <div className="mt-2 space-y-1">
                   {profileItems.map((item) => (
-                    <div
+                    <motion.div
                       key={item.name}
                       className="flex items-center gap-2 text-xs"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        delay: 0.1 + profileItems.indexOf(item) * 0.05,
+                      }}
                     >
                       <motion.div
-                        className={`size-3 rounded-full border ${completionPercentage >= item.threshold && "border-purple-400 bg-purple-500"}`}
+                        className={`size-3 rounded-full border transition-colors duration-300 ${
+                          completionPercentage >= item.threshold
+                            ? "border-purple-400 bg-purple-500"
+                            : "border-gray-300 dark:border-gray-600"
+                        }`}
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{
                           delay: 0.1 + profileItems.indexOf(item) * 0.05,
                         }}
                       />
-                      <span>{item.name}</span>
-                    </div>
+                      <span className="text-muted-foreground">{item.name}</span>
+                    </motion.div>
                   ))}
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

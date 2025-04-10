@@ -10,6 +10,8 @@ import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import FollowListSkeleton from "./FollowListSkeleton";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const FollowList = () => {
   const [cursor, setCursor] = useState<string | null>(null);
@@ -55,35 +57,45 @@ const FollowList = () => {
   const nextCursor: string | null = data?.nextCursor || null;
 
   return (
-    <div className="my-5 hidden gap-2 rounded-xl border border-gray-100 px-4 py-5 shadow-none dark:border-gray-500/5 md:flex md:flex-col lg:w-[19vw]">
-      <div>
-        <h1
-          className="font-instrument text-2xl italic hover:cursor-pointer hover:underline"
+    <Card className="hidden min-h-32 rounded-2xl border border-gray-100 bg-transparent pt-4 shadow-none dark:border-gray-500/5 md:block">
+      <div className="relative">
+        {/* Subtle gradient background effects */}
+        <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/10 bg-gradient-to-br from-primary/5 to-transparent blur-[150px] backdrop-blur-sm"></div>
+
+        <h2
           onClick={() => {
             router.push("/whotofollow");
           }}
+          className="mb-3 px-6 font-instrument text-2xl italic text-card-foreground hover:cursor-pointer hover:underline dark:text-white"
         >
           Who to Follow
-        </h1>
-        <div className="space-y-3">
+        </h2>
+        <CardContent className="flex flex-col space-y-3 px-2">
           {users.length > 0 ? (
             users.map((u) => (
               <div
                 key={u.id}
-                className="my-5 flex items-center justify-between"
+                className="group relative flex flex-row items-center gap-3 rounded-xl border border-gray-100/50 bg-gray-500/5 p-2 transition-all duration-300 dark:border-gray-500/5"
               >
-                <div className="flex items-center gap-2">
+                <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-white/10">
                   <Image
                     src={u.image || "/user.jpg"}
                     alt="user"
-                    className="size-10 rounded-full"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     height={200}
                     width={200}
                   />
-                  <div className="flex flex-col items-start">
-                    <span className="text-sm">{u.visualName}</span>
-                    <span className="text-[12px]">Nerd@{u.nerdAt}</span>
+                </div>
+                <div className="flex flex-1 flex-col">
+                  <div className="flex items-center justify-between">
+                    <p
+                      className="text-sm font-medium hover:underline"
+                      title={u.visualName ?? ""}
+                    >
+                      {u.visualName ?? ""}
+                    </p>
                   </div>
+                  <div className="flex items-center text-sm gap-2">Nerd@{u.nerdAt}</div>
                 </div>
                 <Button
                   size="sm"
@@ -97,14 +109,19 @@ const FollowList = () => {
           ) : (
             <p className="text-sm text-gray-500">No suggestions available</p>
           )}
-        </div>
+        </CardContent>
         {nextCursor && (
-          <Button onClick={() => setCursor(nextCursor)} className="mt-4">
-            Load More
-          </Button>
+          <div className="px-6 pb-4">
+            <Button
+              onClick={() => setCursor(nextCursor)}
+              className="w-full border bg-transparent text-card-foreground shadow-none hover:bg-transparent dark:text-white"
+            >
+              Load More
+            </Button>
+          </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 };
 
