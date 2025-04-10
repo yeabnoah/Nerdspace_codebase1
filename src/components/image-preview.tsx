@@ -35,14 +35,6 @@ export default function ImagePreviewDialog({
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
 
-  useEffect(() => {
-    if (isOpen) {
-      setCurrentIndex(initialIndex);
-      setZoom(1);
-      setRotation(0);
-    }
-  }, [initialIndex, isOpen]);
-
   const goToNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
@@ -52,6 +44,35 @@ export default function ImagePreviewDialog({
       (prevIndex) => (prevIndex - 1 + images.length) % images.length,
     );
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentIndex(initialIndex);
+      setZoom(1);
+      setRotation(0);
+    }
+  }, [initialIndex, isOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+
+      switch (e.key) {
+        case "ArrowLeft":
+          goToPrevious();
+          break;
+        case "ArrowRight":
+          goToNext();
+          break;
+        case "Escape":
+          onClose();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, goToPrevious, goToNext, onClose]);
 
   const handleZoomIn = () => {
     setZoom((prevZoom) => Math.min(prevZoom + 0.2, 3));
@@ -94,15 +115,15 @@ export default function ImagePreviewDialog({
       await new Promise((resolve) => {
         img.onload = resolve;
       });
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = img.width;
       canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       ctx?.drawImage(img, 0, 0);
       const pngBlob = await new Promise<Blob>((resolve) => {
-        canvas.toBlob((blob) => resolve(blob!), 'image/png');
+        canvas.toBlob((blob) => resolve(blob!), "image/png");
       });
-      const item = new ClipboardItem({ 'image/png': pngBlob });
+      const item = new ClipboardItem({ "image/png": pngBlob });
       await navigator.clipboard.write([item]);
       toast.success("Image copied to clipboard");
     } catch (error) {
@@ -114,7 +135,7 @@ export default function ImagePreviewDialog({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogTitle className="sr-only">Image Preview</DialogTitle>
-      <DialogContent 
+      <DialogContent
         className="flex h-screen max-w-[100vw] items-center justify-center border-none bg-black/30 p-0 dark:bg-black/10"
         aria-describedby="image-preview-description"
       >
@@ -128,7 +149,7 @@ export default function ImagePreviewDialog({
             size="icon"
             className="absolute right-4 top-4 z-50 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40"
             onClick={onClose}
-            style={{ color: 'white' }}
+            style={{ color: "white" }}
           >
             <X className="h-6 w-6" />
           </Button>
@@ -136,17 +157,21 @@ export default function ImagePreviewDialog({
           {/* Image container */}
           <div className="relative flex h-full w-full items-center justify-center overflow-auto">
             <div
-              className="relative"
+              className="relative flex items-center justify-center"
               style={{ transform: `scale(${zoom}) rotate(${rotation}deg)` }}
             >
               <Image
-                src={images[currentIndex] || "/placeholder.svg?height=600&width=600"}
+                src={
+                  images[currentIndex] ||
+                  "/placeholder.svg?height=600&width=600"
+                }
                 alt={`Image ${currentIndex + 1}`}
-                width={1000}
-                height={1000}
-                className="h-fit w-fit rounded-xl object-contain"
+                width={4000}
+                height={4000}
+                className="h-screen max-w-[90vw] rounded-xl object-contain"
                 priority
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                quality={100}
+                sizes="90vw"
               />
             </div>
 
@@ -156,7 +181,7 @@ export default function ImagePreviewDialog({
               size="icon"
               className="absolute left-2 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:left-4 md:h-10 md:w-10"
               onClick={goToPrevious}
-              style={{ color: 'white' }}
+              style={{ color: "white" }}
             >
               <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
             </Button>
@@ -166,7 +191,7 @@ export default function ImagePreviewDialog({
               size="icon"
               className="absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:right-4 md:h-10 md:w-10"
               onClick={goToNext}
-              style={{ color: 'white' }}
+              style={{ color: "white" }}
             >
               <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
             </Button>
@@ -178,7 +203,7 @@ export default function ImagePreviewDialog({
                 size="icon"
                 className="h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:h-10 md:w-10"
                 onClick={handleZoomIn}
-                style={{ color: 'white' }}
+                style={{ color: "white" }}
               >
                 <ZoomIn className="h-5 w-5 md:h-6 md:w-6" />
               </Button>
@@ -188,7 +213,7 @@ export default function ImagePreviewDialog({
                 size="icon"
                 className="h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:h-10 md:w-10"
                 onClick={handleZoomOut}
-                style={{ color: 'white' }}
+                style={{ color: "white" }}
               >
                 <ZoomOut className="h-5 w-5 md:h-6 md:w-6" />
               </Button>
@@ -198,7 +223,7 @@ export default function ImagePreviewDialog({
                 size="icon"
                 className="h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:h-10 md:w-10"
                 onClick={handleRotate}
-                style={{ color: 'white' }}
+                style={{ color: "white" }}
               >
                 <RotateCw className="h-5 w-5 md:h-6 md:w-6" />
               </Button>
@@ -208,7 +233,7 @@ export default function ImagePreviewDialog({
                 size="icon"
                 className="h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:h-10 md:w-10"
                 onClick={handleDownload}
-                style={{ color: 'white' }}
+                style={{ color: "white" }}
               >
                 <Download className="h-5 w-5 md:h-6 md:w-6" />
               </Button>
@@ -218,7 +243,7 @@ export default function ImagePreviewDialog({
                 size="icon"
                 className="h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70 dark:bg-white/20 dark:text-black dark:hover:bg-white/40 md:h-10 md:w-10"
                 onClick={handleCopy}
-                style={{ color: 'white' }}
+                style={{ color: "white" }}
               >
                 <Copy className="h-5 w-5 md:h-6 md:w-6" />
               </Button>

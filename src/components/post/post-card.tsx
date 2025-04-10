@@ -352,7 +352,7 @@ const PostCard = ({
                 <MoreHorizontal />
               </DropdownMenuTrigger>
               {session?.data?.user?.id === post.user.id ? (
-                <DropdownMenuContent className="mr-5 flex flex-row bg-white dark:bg-textAlternative md:mr-0 md:block">
+                <DropdownMenuContent className="mr-5 flex flex-row bg-white dark:bg-black/95 border-none md:mr-0 md:block">
                   <DropdownMenuItem
                     onClick={() => {
                       setSelectedPost(post);
