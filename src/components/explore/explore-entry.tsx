@@ -32,7 +32,17 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Loader2, Search, Filter, SortAsc, SortDesc } from "lucide-react";
+import {
+  Loader2,
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
+  Calendar,
+  ArrowRight,
+  Users,
+  MessageSquare,
+} from "lucide-react";
 import PostCard from "@/components/post/PostCard";
 import { useInView } from "react-intersection-observer";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -45,6 +55,8 @@ import ProjectExploreCard from "./project-explore-card";
 import ExplorePostCard from "./explore-post-card";
 import { useRouter } from "next/navigation";
 import useSearchStore from "@/store/search.store";
+import { formatDistanceToNow } from "date-fns";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -52,6 +64,7 @@ const ExploreEntry = () => {
   const { query, setQuery } = useSearchStore();
   const [type, setType] = useState("all");
   const [sortBy, setSortBy] = useState("relevance");
+  const [activeTab, setActiveTab] = useState("users");
   const [filters, setFilters] = useState({
     user: [],
     post: [],
@@ -102,7 +115,8 @@ const ExploreEntry = () => {
     setQuery(e.target.value);
   };
 
-  const handleTypeChange = (value: string) => {
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
     setType(value);
   };
 
@@ -129,31 +143,30 @@ const ExploreEntry = () => {
     [query],
   );
 
-  const typeSelect = useMemo(
-    () => (
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.1 }}
-        className="w-full sm:w-40"
-      >
-        <Select value={type} onValueChange={handleTypeChange}>
-          <SelectTrigger className="h-12 w-full rounded-xl border-none bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 focus:ring-2 focus:ring-primary/20 sm:h-14">
-            <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
-            <SelectValue placeholder="Select type" />
-          </SelectTrigger>
-          <SelectContent className="rounded-xl border-none bg-card/80 shadow-lg backdrop-blur-sm">
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="user">Users</SelectItem>
-            <SelectItem value="post">Posts</SelectItem>
-            <SelectItem value="project">Projects</SelectItem>
-            <SelectItem value="community">Communities</SelectItem>
-          </SelectContent>
-        </Select>
-      </motion.div>
-    ),
-    [type],
-  );
+  const handleTypeChange = (value: string) => {
+    setType(value);
+  };
+
+  const filteredResults = useMemo(() => {
+    if (!data?.pages) return null;
+    const allResults = data.pages.reduce((acc, page) => ({
+      users: [...(acc.users || []), ...(page.users || [])],
+      posts: [...(acc.posts || []), ...(page.posts || [])],
+      projects: [...(acc.projects || []), ...(page.projects || [])],
+      communities: [...(acc.communities || []), ...(page.communities || [])],
+    }));
+
+    if (type === "all") {
+      return allResults;
+    }
+
+    return {
+      users: type === "user" ? allResults.users : [],
+      posts: type === "post" ? allResults.posts : [],
+      projects: type === "project" ? allResults.projects : [],
+      communities: type === "community" ? allResults.communities : [],
+    };
+  }, [data, type]);
 
   const sortSelect = useMemo(
     () => (
@@ -237,22 +250,16 @@ const ExploreEntry = () => {
     [showFilters, type],
   );
 
-  const allResults = useMemo(() => {
-    if (!data?.pages) return null;
-    return data.pages.reduce((acc, page) => ({
-      users: [...(acc.users || []), ...(page.users || [])],
-      posts: [...(acc.posts || []), ...(page.posts || [])],
-      projects: [...(acc.projects || []), ...(page.projects || [])],
-      communities: [...(acc.communities || []), ...(page.communities || [])],
-    }));
-  }, [data]);
-
   return (
-    <div className="mx-auto max-w-7xl p-4 sm:p-6">
+    <div className="relative mx-auto max-w-7xl p-4 sm:p-6">
+      {/* Glow effects */}
+      <div className="absolute -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
+      <div className="absolute -bottom-20 -left-10 h-[300px] w-[300px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 to-transparent blur-[80px] dark:from-indigo-300/10"></div>
+
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-6 text-center font-instrument text-3xl font-bold text-primary sm:mb-8 sm:text-5xl"
+        className="font-geist mb-3 text-start text-3xl font-medium text-primary  "
       >
         Explore
       </motion.h1>
@@ -261,10 +268,24 @@ const ExploreEntry = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8 flex flex-col gap-4 rounded-xl bg-card/40 p-4 shadow-sm backdrop-blur-sm supports-[backdrop-filter]:bg-card/60 sm:mb-12 sm:flex-row sm:items-center sm:p-6"
       >
-        {searchInput}
-        {typeSelect}
-        {sortSelect}
-        {filterButton}
+        <div className="flex-1">{searchInput}</div>
+        <div className="flex gap-2">
+          <Select value={type} onValueChange={handleTypeChange}>
+            <SelectTrigger className="h-12 w-40 rounded-xl border-none bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 focus:ring-2 focus:ring-primary/20 sm:h-14">
+              <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
+              <SelectValue placeholder="Filter" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl border-none bg-card/80 shadow-lg backdrop-blur-sm">
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="user">Users</SelectItem>
+              <SelectItem value="post">Posts</SelectItem>
+              <SelectItem value="project">Projects</SelectItem>
+              <SelectItem value="community">Communities</SelectItem>
+            </SelectContent>
+          </Select>
+          {sortSelect}
+          {filterButton}
+        </div>
       </motion.div>
       {error && (
         <motion.p
@@ -275,7 +296,7 @@ const ExploreEntry = () => {
           Error: {error.message}
         </motion.p>
       )}
-      {isFetching && !allResults && (
+      {isFetching && !filteredResults && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -284,81 +305,70 @@ const ExploreEntry = () => {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </motion.div>
       )}
-      <AnimatePresence>
-        {allResults && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <Tabs defaultValue="all" className="space-y-6 sm:space-y-8">
-              <TabsList className="flex w-full flex-wrap justify-start gap-2 bg-transparent">
-                <TabsTrigger
-                  value="all"
-                  className="rounded-lg px-3 py-1.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary sm:px-4 sm:py-2 sm:text-base"
-                >
-                  All
-                </TabsTrigger>
-                <TabsTrigger
-                  value="users"
-                  className="rounded-lg px-3 py-1.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary sm:px-4 sm:py-2 sm:text-base"
-                >
-                  Users
-                </TabsTrigger>
-                <TabsTrigger
-                  value="posts"
-                  className="rounded-lg px-3 py-1.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary sm:px-4 sm:py-2 sm:text-base"
-                >
-                  Posts
-                </TabsTrigger>
-                <TabsTrigger
-                  value="projects"
-                  className="rounded-lg px-3 py-1.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary sm:px-4 sm:py-2 sm:text-base"
-                >
-                  Projects
-                </TabsTrigger>
-                {/* <TabsTrigger
-                  value="communities"
-                  className="rounded-lg px-3 py-1.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary sm:px-4 sm:py-2 sm:text-base"
-                >
-                  Communities
-                </TabsTrigger> */}
-              </TabsList>
 
-              <TabsContent value="all" className="space-y-6 sm:space-y-8">
-                {allResults.users && <UsersCard users={allResults.users} />}
-                {allResults.posts && <PostsCard posts={allResults.posts} />}
-                {allResults.projects && (
-                  <ProjectsCard projects={allResults.projects} />
+      {filteredResults && (
+        <div className="space-y-8">
+          {type === "all" && (
+            <>
+              {/* Users Section */}
+              {filteredResults.users?.length > 0 && (
+                <div>
+                  <h2 className="mb-4 text-xl font-semibold">Users</h2>
+                  <UsersCard users={filteredResults.users} />
+                </div>
+              )}
+
+              {/* Posts Section */}
+              {filteredResults.posts?.length > 0 && (
+                <div>
+                  <h2 className="mb-4 text-xl font-semibold">Posts</h2>
+                  <PostsCard posts={filteredResults.posts} />
+                </div>
+              )}
+
+              {/* Projects Section */}
+              {filteredResults.projects?.length > 0 && (
+                <div>
+                  <h2 className="mb-4 text-xl font-semibold">Projects</h2>
+                  <ProjectsCard projects={filteredResults.projects} />
+                </div>
+              )}
+
+              {/* Communities Section */}
+              {filteredResults.communities?.length > 0 && (
+                <div>
+                  <h2 className="mb-4 text-xl font-semibold">Communities</h2>
+                  <CommunitiesCard communities={filteredResults.communities} />
+                </div>
+              )}
+            </>
+          )}
+
+          {type !== "all" && (
+            <div>
+              {type === "user" && filteredResults.users?.length > 0 && (
+                <UsersCard users={filteredResults.users} />
+              )}
+              {type === "post" && filteredResults.posts?.length > 0 && (
+                <PostsCard posts={filteredResults.posts} />
+              )}
+              {type === "project" && filteredResults.projects?.length > 0 && (
+                <ProjectsCard projects={filteredResults.projects} />
+              )}
+              {type === "community" &&
+                filteredResults.communities?.length > 0 && (
+                  <CommunitiesCard communities={filteredResults.communities} />
                 )}
-                {allResults.communities && (
-                  <CommunitiesCard communities={allResults.communities} />
-                )}
-              </TabsContent>
+              {!filteredResults[`${type}s`]?.length && (
+                <p className="text-center text-muted-foreground">
+                  No {type}s found
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
-              <TabsContent value="users">
-                {allResults.users && <UsersCard users={allResults.users} />}
-              </TabsContent>
-
-              <TabsContent value="posts">
-                {allResults.posts && <PostsCard posts={allResults.posts} />}
-              </TabsContent>
-
-              <TabsContent value="projects">
-                {allResults.projects && (
-                  <ProjectsCard projects={allResults.projects} />
-                )}
-              </TabsContent>
-
-              <TabsContent value="communities">
-                {allResults.communities && (
-                  <CommunitiesCard communities={allResults.communities} />
-                )}
-              </TabsContent>
-            </Tabs>
-          </motion.div>
-        )}
-      </AnimatePresence>
       <div ref={ref} className="h-10">
         {isFetchingNextPage && (
           <motion.div
@@ -374,40 +384,77 @@ const ExploreEntry = () => {
   );
 };
 
-const UsersCard = ({ users }: { users: any[] }) => (
-  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-    {users.map((user) => (
-      <Card
-        key={user.id}
-        className="group border-border/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
-      >
-        <CardHeader className="flex flex-row items-center gap-3 p-4 sm:gap-4 sm:p-6">
-          {user.image ? (
-            <img
-              src={user.image}
-              alt={user.name}
-              className="h-12 w-12 rounded-full object-cover ring-2 ring-primary/20 transition-all duration-300 group-hover:ring-primary/40 sm:h-16 sm:w-16"
-            />
-          ) : (
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 sm:h-16 sm:w-16">
-              <span className="text-xl font-bold text-primary/60 sm:text-2xl">
-                {user.name[0]}
-              </span>
+const UsersCard = ({ users }: { users: any[] }) => {
+  const router = useRouter();
+
+  return (
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {users.map((user) => (
+        <div
+          key={user.id}
+          className="group relative overflow-hidden rounded-2xl border-none bg-gradient-to-br from-zinc-100 via-white to-zinc-50 shadow-md transition-all duration-300 hover:scale-[1.02] dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black"
+        >
+          {/* Content container */}
+          <div className="relative z-10 flex flex-col p-6">
+            {/* Avatar and basic info */}
+            <div className="flex items-center gap-4">
+              <Avatar className="h-16 w-16 ring-2 ring-white dark:ring-zinc-800">
+                <AvatarImage src={user.image || "/user.jpg"} alt={user.name} />
+                <AvatarFallback>
+                  {user.name.substring(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h3 className="font-heading text-lg font-semibold text-zinc-900 dark:text-white">
+                  {user.name}
+                </h3>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  @{user.nerdAt}
+                </p>
+              </div>
             </div>
-          )}
-          <div>
-            <CardTitle className="text-base font-semibold sm:text-lg">
-              {user.name}
-            </CardTitle>
-            <p className="text-xs text-muted-foreground sm:text-sm">
-              @{user.nerdAt}
-            </p>
+
+            {/* Bio section */}
+            {user.bio && (
+              <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-zinc-600 dark:text-white/80">
+                {user.bio}
+              </p>
+            )}
+
+            {/* Stats section */}
+            <div className="mt-6 grid grid-cols-2 gap-4 rounded-xl bg-zinc-100/50 p-4 dark:bg-zinc-800/20">
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-lg font-semibold text-zinc-900 dark:text-white">
+                  {user._count?.followers || 0}
+                </span>
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                  Followers
+                </span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-lg font-semibold text-zinc-900 dark:text-white">
+                  {user._count?.posts || 0}
+                </span>
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                  Posts
+                </span>
+              </div>
+            </div>
+
+            {/* Action button */}
+            <Button
+              className="mt-6 w-full gap-2 bg-transparent text-black shadow-none transition-all hover:bg-transparent dark:text-white"
+              onClick={() => router.push(`/user-profile/${user.id}`)}
+            >
+              View Profile
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </div>
-        </CardHeader>
-      </Card>
-    ))}
-  </div>
-);
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const PostsCard = ({ posts }: { posts: any[] }) => {
   const router = useRouter();
@@ -605,13 +652,95 @@ const PostsCard = ({ posts }: { posts: any[] }) => {
   );
 };
 
-const ProjectsCard = ({ projects }: { projects: any[] }) => (
-  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-    {projects.map((project) => (
-      <ProjectExploreCard key={project.id} {...project} />
-    ))}
-  </div>
-);
+const ProjectsCard = ({ projects }: { projects: any[] }) => {
+  const router = useRouter();
+
+  return (
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map((project) => (
+        <div
+          key={project.id}
+          onClick={() => router.push(`/project/${project.id}`)}
+          className="group relative h-[380px] w-full max-w-sm cursor-pointer overflow-hidden rounded-2xl border-none bg-gradient-to-br from-zinc-100 via-white to-zinc-50 shadow-md transition-all duration-300 hover:scale-[1.02] dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black"
+        >
+          {/* Subtle animated glow effect */}
+          <div className="absolute inset-0 z-0 bg-gradient-to-br from-violet-500/5 via-transparent to-emerald-500/5 opacity-0 blur-xl transition-opacity duration-700 group-hover:opacity-100 dark:from-violet-500/10 dark:to-emerald-500/10"></div>
+
+          {/* Background image with improved overlay */}
+          <div className="absolute inset-0 z-0">
+            <Image
+              src={project.image || "/placeholder.svg?height=400&width=600"}
+              alt={project.name}
+              fill
+              className="object-cover opacity-40 transition-all duration-700 group-hover:scale-105 group-hover:opacity-50 dark:opacity-40 dark:group-hover:opacity-50"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-white/40 dark:from-black dark:via-black/80 dark:to-transparent"></div>
+          </div>
+
+          {/* Content container with better spacing */}
+          <div className="relative z-10 flex h-full flex-col p-6">
+            {/* Top section with date badge */}
+            <div className="mb-auto flex w-full items-start justify-between">
+              {/* Modern date badge */}
+              <div className="overflow-hidden rounded-xl bg-zinc-800/10 backdrop-blur-md dark:bg-white/10">
+                <div className="bg-zinc-800 px-3 py-1 text-center text-[10px] font-semibold text-white dark:bg-black/60">
+                  {new Date(project.createdAt)
+                    .toLocaleString("default", { month: "short" })
+                    .toUpperCase()}
+                </div>
+                <div className="px-3 py-1.5 text-center">
+                  <div className="text-lg font-bold text-zinc-800 dark:text-white">
+                    {new Date(project.createdAt).getDate()}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Project details with improved typography */}
+            <div className="mt-auto space-y-4">
+              {/* Status badge */}
+              <Badge
+                variant="outline"
+                className="border-emerald-500/50 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+              >
+                Active
+              </Badge>
+
+              {/* Title with better typography */}
+              <h2 className="font-heading font-instrument text-2xl font-bold leading-tight text-zinc-900 dark:text-white">
+                {project.name}
+              </h2>
+
+              {/* Timestamp with icon */}
+              <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-white/60">
+                <Calendar className="h-3 w-3" />
+                <span>
+                  {formatDistanceToNow(new Date(project.createdAt), {
+                    addSuffix: true,
+                  })}
+                </span>
+              </div>
+
+              {/* Description with better readability */}
+              <p className="line-clamp-2 text-xs leading-relaxed text-zinc-600 dark:text-white/80">
+                {project.description}
+              </p>
+
+              {/* Action button with hover effect */}
+              <Button className="mt-4 w-full gap-2 bg-transparent text-black shadow-none transition-all hover:bg-transparent dark:text-white">
+                View Project
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Subtle border glow on hover */}
+          <div className="absolute inset-0 rounded-2xl border border-zinc-200 transition-all duration-300 group-hover:border-zinc-300 dark:border-white/5 dark:group-hover:border-white/10"></div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const CommunitiesCard = ({ communities }: { communities: any[] }) => (
   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
