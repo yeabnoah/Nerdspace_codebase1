@@ -357,7 +357,7 @@ export default function UpdateCard({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem
-                        onClick={() => setIsDeleteCardDialogOpen(true)} // Open delete card dialog
+                        onClick={() => setIsDeleteCardDialogOpen(true)}
                         className="text-red-500"
                       >
                         <TrashIcon />
@@ -367,9 +367,7 @@ export default function UpdateCard({
                         onClick={() => {
                           setProjectUpdate(update);
                           setIsShareDialogOpen(true);
-
-                          console.log();
-                        }} // Open share dialog
+                        }}
                       >
                         <ShareIcon />
                         Share

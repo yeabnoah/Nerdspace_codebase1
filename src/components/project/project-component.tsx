@@ -255,15 +255,11 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="container mx-auto py-2 px-8 bg-white dark:bg-black">
-      
-      
+    <div className="container mx-auto w-full px-8 py-2 dark:bg-black">
       <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <h1 className="font-instrument text-4xl">Projects</h1>
 
         <div className="flex w-full flex-col gap-4 sm:flex-row md:w-auto">
-        
-
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full sm:w-40">
               <SelectValue placeholder="Status" />
@@ -294,9 +290,7 @@ export default function ProjectsPage() {
               <div className="flex h-[85vh] max-h-[85vh] flex-col md:flex-row">
                 <DialogTitle></DialogTitle>
                 <div className="flex w-full flex-col bg-gradient-to-b from-primary/10 to-primary/5 p-6 md:w-1/3">
-                  <div className="mb-2 font-instrument text-3xl">
-                    New Project
-                  </div>
+                  <div className="mb-2 font-instrument text-3xl">New Project</div>
                   <p className="mb-6 text-muted-foreground">
                     Fill in the details to create a new project.
                   </p>
@@ -337,13 +331,13 @@ export default function ProjectsPage() {
                       <div className="mt-2 w-full">
                         <Button
                           variant="outline"
-                          className=" w-[87%] ml-4"
+                          className="ml-4 w-[87%]"
                           onClick={handleImageCancel}
                         >
                           Remove Image
                         </Button>
 
-                        <p className="text-wrap my-2 text-xs">
+                        <p className="my-2 text-wrap text-xs">
                           {selectedImage.name}
                         </p>
                       </div>
@@ -355,22 +349,15 @@ export default function ProjectsPage() {
                   <Tabs defaultValue="details" className="w-full">
                     <TabsList className="mb-6 grid w-full grid-cols-2">
                       <TabsTrigger value="details">Project Details</TabsTrigger>
-                      <TabsTrigger value="settings">
-                        Settings & Categories
-                      </TabsTrigger>
+                      <TabsTrigger value="settings">Settings & Categories</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="details" className="space-y-6">
                       <div className="rounded-lg border bg-card p-4 shadow-sm">
-                        <h3 className="mb-4 text-lg font-medium">
-                          Basic Information
-                        </h3>
+                        <h3 className="mb-4 text-lg font-medium">Basic Information</h3>
                         <div className="space-y-4">
                           <div className="space-y-2">
-                            <Label
-                              htmlFor="name"
-                              className="text-sm font-medium"
-                            >
+                            <Label htmlFor="name" className="text-sm font-medium">
                               Project Name
                             </Label>
                             <Input
@@ -388,10 +375,7 @@ export default function ProjectsPage() {
                           </div>
 
                           <div className="space-y-2">
-                            <Label
-                              htmlFor="description"
-                              className="text-sm font-medium"
-                            >
+                            <Label htmlFor="description" className="text-sm font-medium">
                               Description
                             </Label>
                             <Textarea
@@ -414,15 +398,10 @@ export default function ProjectsPage() {
 
                     <TabsContent value="settings" className="space-y-6">
                       <div className="rounded-lg border bg-card p-4 shadow-sm">
-                        <h3 className="mb-4 text-lg font-medium">
-                          Project Settings
-                        </h3>
+                        <h3 className="mb-4 text-lg font-medium">Project Settings</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label
-                              htmlFor="status"
-                              className="text-sm font-medium"
-                            >
+                            <Label htmlFor="status" className="text-sm font-medium">
                               Status
                             </Label>
                             <Select
@@ -471,10 +450,7 @@ export default function ProjectsPage() {
                           </div>
 
                           <div className="space-y-2">
-                            <Label
-                              htmlFor="access"
-                              className="text-sm font-medium"
-                            >
+                            <Label htmlFor="access" className="text-sm font-medium">
                               Access
                             </Label>
                             <Select
@@ -581,42 +557,39 @@ export default function ProjectsPage() {
 
       <Tabs
         defaultValue="projects"
-        className="w-fit"
+        className="w-full"
         onValueChange={(value) => setActiveTab(value)}
       >
-        <div className="mb-6 w-full flex-1 max-w-6xl flex items-center justify-between relative">
+        <div className="relative mb-6 flex w-full max-w-6xl flex-1 items-center justify-between">
           {/* Add gradient background effects */}
           <div className="absolute -bottom-20 -left-20 h-[200px] w-[200px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 via-blue-400/10 to-transparent blur-[80px]"></div>
           <div className="absolute -right-20 -top-20 h-[200px] w-[200px] -rotate-45 rounded-full bg-gradient-to-br from-orange-300/10 to-transparent blur-[80px]"></div>
-          
-          <TabsList className="flex max-w-6xl w-full justify-center relative z-10">
+
+          <TabsList className="relative z-10 flex justify-center">
             <TabsTrigger value="projects">Project Board</TabsTrigger>
             <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
           </TabsList>
-
-          <div className="font-instrument text-2xl relative z-10">
-            {activeTab === "projects" ? "Project Board" : "Leaderboard"}
-          </div>
         </div>
 
         <TabsContent value="projects">
           {isLoading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 relative">
-              {/* Add subtle gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 blur-3xl"></div>
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <ProjectCardSkeleton key={i} />
-              ))}
+            <div className="min-w-6xl relative mx-auto h-52">
+              <div className="absolute inset-0 flex flex-row items-center justify-center bg-gradient-to-br from-primary/5 via-transparent to-primary/5 blur-3xl"></div>
+              <div className="grid grid-cols-3 gap-5">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <ProjectCardSkeleton key={i} />
+                ))}
+              </div>
             </div>
           )}
 
           {!isLoading && filteredProjects?.length === 0 ? (
-            <div className="flex w-full flex-col items-center justify-center py-12 relative">
+            <div className="relative flex w-full flex-col items-center justify-center py-12">
               {/* Add gradient background effects */}
               <div className="absolute -bottom-20 -left-20 h-[200px] w-[200px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 via-blue-400/10 to-transparent blur-[80px]"></div>
               <div className="absolute -right-20 -top-20 h-[200px] w-[200px] -rotate-45 rounded-full bg-gradient-to-br from-orange-300/10 to-transparent blur-[80px]"></div>
-              
-              <div className="text-center relative z-10">
+
+              <div className="relative z-10 text-center">
                 <h3 className="text-lg font-medium">No projects found</h3>
                 <p className="mt-1 text-muted-foreground">
                   Try adjusting your search or filter criteria
@@ -624,7 +597,7 @@ export default function ProjectsPage() {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 relative">
+            <div className="relative grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
               {/* Add subtle gradient background */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 blur-3xl"></div>
               {filteredProjects?.map((project) => (

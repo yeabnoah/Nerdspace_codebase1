@@ -93,10 +93,19 @@ const RenderPost = () => {
   };
 
   const toggleCommentShown = (postId: string) => {
-    setCommentShown((prev) => ({
-      ...prev,
-      [postId]: !prev[postId],
-    }));
+    setCommentShown((prev) => {
+      const newCommentShown = Object.keys(prev).reduce(
+        (acc, key) => {
+          acc[key] = false;
+          return acc;
+        },
+        {} as { [key: string]: boolean },
+      );
+
+      newCommentShown[postId] = !prev[postId];
+
+      return newCommentShown;
+    });
   };
 
   const [expandedReplies, setExpandedReplies] = useState<{
