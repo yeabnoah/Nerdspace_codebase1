@@ -44,11 +44,12 @@ import { Slider } from "../ui/slider";
 import ProjectExploreCard from "./project-explore-card";
 import ExplorePostCard from "./explore-post-card";
 import { useRouter } from "next/navigation";
+import useSearchStore from "@/store/search.store";
 
 const ITEMS_PER_PAGE = 10;
 
 const ExploreEntry = () => {
-  const [query, setQuery] = useState("");
+  const { query, setQuery } = useSearchStore();
   const [type, setType] = useState("all");
   const [sortBy, setSortBy] = useState("relevance");
   const [filters, setFilters] = useState({
