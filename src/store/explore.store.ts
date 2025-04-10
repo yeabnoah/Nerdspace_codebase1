@@ -76,12 +76,30 @@ const useExploreStore = create<ExploreStoreInterface>((set) => ({
 
   // Toggle functions
   toggleCommentShown: (postId: string) =>
-    set((state) => ({
-      commentShown: {
-        ...state.commentShown,
-        [postId]: !state.commentShown[postId],
-      },
-    })),
+    set((state) => {
+      // Create a new commentShown object with all values set to false
+      const newCommentShown = Object.keys(state.commentShown).reduce(
+        (acc, key) => {
+          acc[key] = false;
+          return acc;
+        },
+        {} as { [key: string]: boolean },
+      );
+
+      // Toggle the clicked post's comment state
+      newCommentShown[postId] = !state.commentShown[postId];
+
+      // Reset all comment-related states when switching posts
+      return {
+        commentShown: newCommentShown,
+        expandedComments: {},
+        replyShown: {},
+        replyContent: {},
+        expandedReplies: {},
+        selectedComment: null,
+        selectedCommentReply: null,
+      };
+    }),
 
   toggleCommentExpand: (commentId: string) =>
     set((state) => ({
