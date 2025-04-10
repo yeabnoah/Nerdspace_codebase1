@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { Button } from "../ui/button";
-import { Textarea } from "../ui/textarea";
 import { AutosizeTextarea } from "../ui/resizeble-text-area";
 import { PostFileUploader } from "../media/post-file-uploader";
 import axios from "axios";
@@ -18,10 +17,9 @@ import {
   DialogTrigger,
   DialogContent,
   DialogTitle,
-  DialogDescription,
-  DialogClose,
 } from "../ui/dialog";
-import { X } from "lucide-react";
+import { FolderIcon, MessagesSquareIcon, X } from "lucide-react";
+import { HiPhoto } from "react-icons/hi2";
 
 const cloudinaryUploadUrl = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!;
 const cloudinaryUploadPreset =
@@ -33,6 +31,7 @@ const PostInput = () => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const session = authClient.useSession();
   const router = useRouter();
+  const [isUploading, setIsUploading] = useState(false);
 
   const { mutate, isPending, isError } = useMutation({
     mutationKey: ["create-post"],
@@ -56,6 +55,7 @@ const PostInput = () => {
       return;
     }
 
+    setIsUploading(true);
     try {
       const fileUrls = await Promise.all(
         dialogFiles.map(async (file) => {
@@ -64,7 +64,6 @@ const PostInput = () => {
           formData.append("upload_preset", cloudinaryUploadPreset);
 
           const response = await axios.post(cloudinaryUploadUrl, formData);
-
           return response.data.secure_url;
         }),
       );
@@ -75,6 +74,8 @@ const PostInput = () => {
       setIsDialogOpen(false);
     } catch (error) {
       toast.error("An error occurred while uploading files");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -83,170 +84,161 @@ const PostInput = () => {
   }
 
   return (
-    <div className="mb-6 w-full rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-gray-500/5 dark:bg-textAlternative">
-      <div className="flex items-start gap-3">
+    <div className="mb-6 w-full rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700/10 dark:bg-black">
+      <div className="flex items-center gap-4 border-b border-gray-100 p-4 dark:border-gray-800/30">
         <div className="relative">
           <Image
             src={session?.data?.user?.image || "/user.jpg"}
             alt="user"
-            className="size-10 rounded-full border-2 border-primary/20"
+            className="size-10 rounded-full border-2 border-gray-50 shadow-sm dark:border-gray-800"
             height={200}
             width={200}
           />
-          <div className="absolute -bottom-1 -right-1 size-3 rounded-full border-2 border-white bg-green-500 dark:border-textAlternative" />
+          <div className="absolute -bottom-1 -right-1 size-3 rounded-full border-2 border-white bg-green-500 dark:border-gray-900" />
+        </div>
+        <h3 className="font-medium text-gray-800 dark:text-gray-200">
+          {session?.data?.user?.name || "User"}
+        </h3>
+      </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger asChild>
+          <div className="p-4">
+            <div className="flex w-full cursor-pointer items-start rounded-xl border border-gray-200 bg-gray-50/80 px-4 py-3 transition-all hover:border-gray-300 dark:border-gray-800/30 dark:bg-gray-800/20">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                What's on your mind?
+              </span>
+            </div>
+          </div>
+        </DialogTrigger>
+
+        <div className="flex items-center justify-between px-4 pb-4">
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
+            >
+              <HiPhoto />
+              Photo
+            </Button>
+            <Button
+              disabled
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
+            >
+              <FolderIcon />
+              Document
+            </Button>
+            <Button
+              disabled
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
+            >
+              <MessagesSquareIcon />
+              Poll
+            </Button>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="rounded-lg bg-gray-100 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+          >
+            Post
+          </Button>
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <div className="flex flex-1 cursor-pointer flex-col gap-3">
-              <div className="flex w-full items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-2.5 transition-all hover:border-primary/50 dark:border-gray-500/5 dark:bg-gray-500/5">
-                <span className="text-sm text-gray-500 dark:text-gray-400">
-                  What's on your mind?
-                </span>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="size-8 rounded-full hover:bg-primary/10"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-primary"
-                    >
-                      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-                      <line x1="4" y1="22" x2="4" y2="15" />
-                    </svg>
-                  </Button>
-                </div>
-              </div>
-              <div className="flex items-center justify-between border-t border-gray-100 pt-3 dark:border-gray-500/5">
-                <div className="flex items-center gap-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-2 text-sm text-gray-500 hover:bg-primary/10 hover:text-primary dark:text-gray-400"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                    </svg>
-                    Comment
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-2 text-sm text-gray-500 hover:bg-primary/10 hover:text-primary dark:text-gray-400"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                      <polyline points="7 10 12 15 17 10" />
-                      <line x1="12" y1="15" x2="12" y2="3" />
-                    </svg>
-                    Share
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl dark:bg-textAlternative">
-            <DialogTitle className="font-instrument text-3xl font-thin">
-              Create a new post
+        <DialogContent className="max-w-2xl overflow-hidden rounded-2xl border-gray-200 p-0 dark:border-gray-800 dark:bg-gray-900">
+          <div className="border-b border-gray-200 p-4 dark:border-gray-800">
+            <DialogTitle className="text-xl font-semibold tracking-tight">
+              Create post
             </DialogTitle>
-            <DialogDescription>
-              Share your thoughts or upload an image.
-            </DialogDescription>
-            <div className="mt-4 flex items-start gap-3">
+          </div>
+
+          <div className="p-4">
+            <div className="mb-4 flex items-center gap-3">
               <Image
                 src={session?.data?.user?.image || "/user.jpg"}
                 alt="user"
-                className="size-10 rounded-full border-2 border-primary/20"
+                className="size-10 rounded-full border-2 border-gray-50"
                 height={200}
                 width={200}
               />
-              <AutosizeTextarea
-                maxHeight={300}
-                placeholder="What's on your mind?"
-                className="h-14 w-full border-gray-100 bg-transparent font-inter text-sm placeholder:text-sm dark:border-gray-500/5 md:text-base"
-                value={dialogPost}
-                onChange={(e) => setDialogPost(e.target.value)}
-              />
+              <div>
+                <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                  {session?.data?.user?.name || "User"}
+                </h4>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  Public post
+                </span>
+              </div>
             </div>
-            <PostFileUploader onFilesSelected={setDialogFiles} />
+
+            <AutosizeTextarea
+              maxHeight={300}
+              placeholder="What's on your mind?"
+              className="h-32 w-full border-0 bg-transparent text-base placeholder:text-gray-400 focus:ring-0 dark:placeholder:text-gray-500"
+              value={dialogPost}
+              onChange={(e) => setDialogPost(e.target.value)}
+            />
+          </div>
+
+          <div className="border-t border-gray-200 p-4 dark:border-gray-800">
+            <div className="mb-4 flex items-center justify-between">
+              <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                Add to your post
+              </h4>
+              <PostFileUploader onFilesSelected={setDialogFiles} />
+            </div>
+
             {dialogFiles.length > 0 && (
-              <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 {dialogFiles.map((file) => (
                   <div
                     key={file.name}
-                    className="group relative h-40 overflow-hidden rounded-lg border dark:border-gray-500/5"
+                    className="group relative aspect-square overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800"
                   >
-                    <div className="relative h-full w-full bg-gray-100 dark:bg-gray-500/5">
+                    <div className="relative h-full w-full bg-gray-50 dark:bg-gray-800/30">
                       <img
-                        src={URL.createObjectURL(file)}
+                        src={URL.createObjectURL(file) || "/placeholder.svg"}
                         alt={file.name}
                         className="h-full w-full object-cover"
                       />
-                      <div className="absolute right-2 top-2 flex gap-1">
-                        <Button
-                          variant="secondary"
-                          size="icon"
-                          className="h-7 w-7 bg-white/80 backdrop-blur-sm hover:bg-white"
-                          onClick={() => handleRemoveFile(file.name)}
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        className="absolute right-1 top-1 h-6 w-6 rounded-full bg-black/60 hover:bg-black/80 dark:bg-black/80"
+                        onClick={() => handleRemoveFile(file.name)}
+                      >
+                        <X className="h-3 w-3 text-white" />
+                      </Button>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-            <div className="mt-6 flex justify-end gap-3">
-              <DialogClose asChild>
-                <Button
-                  variant="outline"
-                  className="text-sm dark:bg-textAlternative"
-                >
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button
-                onClick={handleSubmit}
-                className="text-sm"
-                disabled={isPending || dialogPost.trim() === ""}
-              >
-                {isPending ? "Posting..." : "Post"}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
+          </div>
+
+          <div className="border-t border-gray-200 p-4 dark:border-gray-800">
+            <Button
+              onClick={handleSubmit}
+              className="w-full rounded-lg py-2.5 text-sm font-medium"
+              disabled={isPending || isUploading || dialogPost.trim() === ""}
+            >
+              {isPending || isUploading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  {isUploading ? "Uploading..." : "Posting..."}
+                </div>
+              ) : (
+                "Post"
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
