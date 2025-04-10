@@ -57,7 +57,7 @@ export default function ProjectCard(project: ProjectInterface) {
 
   return (
     <div
-      className="group relative h-[380px] w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-100 via-white to-zinc-50 shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl dark:from-zinc-900 dark:via-zinc-800 dark:to-black"
+      className="group relative h-[380px] w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-100 via-white to-zinc-50 shadow-md transition-all duration-300 hover:scale-[1.02] dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black border-none"
       onClick={() => router.push(`/project/${project.id}`)}
     >
       {/* Subtle animated glow effect */}
