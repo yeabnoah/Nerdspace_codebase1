@@ -5,6 +5,7 @@ import { X, ImageIcon, Film, File } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFileStore } from "@/store/fileStore";
 import axios from "axios";
+import { HiPhoto } from "react-icons/hi2";
 
 interface PostFileUploaderProps {
   maxFiles?: number;
@@ -88,7 +89,7 @@ export function PostFileUploader({
       <div className="flex gap-2">
         <Button
           variant="outline"
-          className="m-0 border-none bg-transparent p-0 shadow-none"
+          className="m-0 mx-5  rounded-lg dark:border-gray-500/5 bg-transparent p-0 shadow-none hover:bg-transparent"
           onClick={() => {
             fileInputRef.current?.setAttribute(
               "accept",
@@ -97,7 +98,10 @@ export function PostFileUploader({
             fileInputRef.current?.click();
           }}
         >
-          <ImageIcon className="mx-2 h-5 w-5" />
+          <div className="flex items-center gap-2 px-5">
+            <HiPhoto className="ml-2 h-5 w-5" />
+            Photo
+          </div>
         </Button>
       </div>
 
