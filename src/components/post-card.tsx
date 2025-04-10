@@ -3,7 +3,7 @@
 import type React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,15 +23,36 @@ import { MessageSquare, MoreHorizontal, Bookmark, Heart } from "lucide-react";
 import { useState } from "react";
 // import { useCommunity } from "@/components/community-provider";
 import type { CommunityPost } from "@/lib/types";
+import { FollowButton } from "@/components/follow-button";
+import { Input } from "@/components/ui/input";
+
+interface PostComment {
+  id: string;
+  content: string;
+  user: {
+    id: string;
+    name: string;
+    image: string;
+  };
+}
 
 interface PostCardProps {
   post: CommunityPost;
+  currentUser: {
+    id: string;
+    name: string;
+    image: string;
+  };
 }
 
-export function PostCard({ post }: PostCardProps) {
-  // const { communities, currentUser, likePost, addComment } = useCommunity();
+export function PostCard({ post, currentUser }: PostCardProps) {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState(
+    Array.isArray(post.likes) ? post.likes.length : 0,
+  );
+  const [comments, setComments] = useState<PostComment[]>([]);
   const [showComments, setShowComments] = useState(false);
-  const [commentText, setCommentText] = useState("");
+  const [newComment, setNewComment] = useState("");
 
   // Find the user who created the post
   // const community = communities.find((c: any) => c.id === post.communityId);
@@ -47,17 +68,47 @@ export function PostCard({ post }: PostCardProps) {
     addSuffix: true,
   });
 
-  // Handle like
-  const handleLike = () => {
-    // likePost(post.id);
+  const handleLike = async () => {
+    try {
+      const response = await fetch(`/api/posts/${post.id}/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: currentUser.id }),
+      });
+
+      if (response.ok) {
+        setIsLiked(!isLiked);
+        setLikes((prev) => (isLiked ? prev - 1 : prev + 1));
+      }
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
   };
 
-  // Handle comment submission
-  const handleCommentSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (commentText.trim()) {
-      // addComment(post.id, commentText);
-      setCommentText("");
+  const handleComment = async () => {
+    if (!newComment.trim()) return;
+
+    try {
+      const response = await fetch(`/api/posts/${post.id}/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: newComment,
+          userId: currentUser.id,
+        }),
+      });
+
+      if (response.ok) {
+        const comment = await response.json();
+        setComments((prev) => [...prev, comment]);
+        setNewComment("");
+      }
+    } catch (error) {
+      console.error("Error adding comment:", error);
     }
   };
 
@@ -69,36 +120,38 @@ export function PostCard({ post }: PostCardProps) {
       whileHover={{ scale: 1.01 }}
       className="overflow-hidden"
     >
-      <Card>
-        <CardHeader className="flex flex-row items-start gap-3 space-y-0 pb-2">
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-            <Avatar className="h-8 w-8">
-              {/* <AvatarImage src={user?.image || undefined} /> */}
-              <AvatarFallback>
-                {/* {user?.name.substring(0, 2).toUpperCase()} */}
-              </AvatarFallback>
-            </Avatar>
-          </motion.div>
+      <Card className="mx-auto mb-4 w-full max-w-2xl">
+        <CardHeader className="flex flex-row items-center gap-4">
+          <Avatar>
+            <AvatarImage src={post.user.image} alt={post.user.name} />
+            <AvatarFallback>{post.user.name[0]}</AvatarFallback>
+          </Avatar>
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <div>
-                {/* <p className="text-sm font-medium">{user?.name}</p> */}
-                <p className="text-xs text-muted-foreground">{formattedDate}</p>
+                <p className="font-medium">{post.user.name}</p>
+                <p className="text-sm text-gray-500">@{post.user.username}</p>
               </div>
+              {currentUser && currentUser.id !== post.user.id && (
+                <FollowButton
+                  userId={currentUser.id}
+                  isFollowing={post.user.isFollowing || false}
+                />
+              )}
               <div className="flex items-center gap-2">
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   whileTap={{ scale: 0.9 }}
                   className="cursor-pointer"
                 >
-                  <Heart className="h-4 w-4 text-muted-foreground hover:text-red-500 transition-colors" />
+                  <Heart className="h-4 w-4 text-muted-foreground transition-colors hover:text-red-500" />
                 </motion.div>
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: -5 }}
                   whileTap={{ scale: 0.9 }}
                   className="cursor-pointer"
                 >
-                  <Bookmark className="h-4 w-4 text-muted-foreground hover:text-yellow-500 transition-colors" />
+                  <Bookmark className="h-4 w-4 text-muted-foreground transition-colors hover:text-yellow-500" />
                 </motion.div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -126,7 +179,7 @@ export function PostCard({ post }: PostCardProps) {
         </CardHeader>
 
         <CardContent className="pb-2 pt-1">
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -135,7 +188,7 @@ export function PostCard({ post }: PostCardProps) {
             {post.content}
           </motion.p>
           {post.image && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
@@ -150,86 +203,60 @@ export function PostCard({ post }: PostCardProps) {
           )}
         </CardContent>
 
-        <CardFooter className="flex flex-col items-start border-t pt-2">
-          <div className="flex w-full items-center gap-4">
-            {/* <Button
+        <CardFooter className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <Button
               variant="ghost"
               size="sm"
-              className={`flex h-7 items-center gap-1 px-2 ${hasLiked ? "text-primary" : ""}`}
               onClick={handleLike}
+              className="flex items-center gap-2"
             >
               <Heart
-                className={`h-3.5 w-3.5 ${hasLiked ? "fill-current" : ""}`}
+                className={`h-4 w-4 ${
+                  isLiked ? "fill-red-500 text-red-500" : ""
+                }`}
               />
-              <span className="text-xs">{post.likes.length}</span>
-            </Button> */}
-            <motion.div 
-              whileHover={{ scale: 1.05 }} 
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center"
+              <span>{likes}</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowComments(!showComments)}
+              className="flex items-center gap-2"
             >
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex h-7 items-center gap-1 px-2"
-                onClick={() => setShowComments(!showComments)}
-              >
-                <motion.div
-                  animate={{ 
-                    scale: showComments ? [1, 1.2, 1] : 1,
-                    rotate: showComments ? [0, 10, -10, 0] : 0
-                  }}
-                  transition={{ 
-                    duration: 0.5,
-                    times: [0, 0.3, 0.6, 1]
-                  }}
-                >
-                  <MessageSquare className="h-3.5 w-3.5" />
-                </motion.div>
-                <motion.span
-                  animate={{ 
-                    scale: showComments ? [1, 1.1, 1] : 1
-                  }}
-                  transition={{ duration: 0.3 }}
-                  className="text-xs"
-                >
-                  {post.comments.length}
-                </motion.span>
-              </Button>
-            </motion.div>
+              <MessageSquare className="h-4 w-4" />
+              <span>{comments.length}</span>
+            </Button>
           </div>
-
-          <AnimatePresence>
-            {showComments && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.2 }}
-                className="mt-3 w-full space-y-3"
-              >
-                <form
-                  onSubmit={handleCommentSubmit}
-                  className="flex flex-col gap-2"
-                >
-                  <Textarea
-                    placeholder="Write a comment..."
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    className="min-h-[60px] text-sm"
-                  />
-                  <motion.div 
-                    whileHover={{ scale: 1.02 }} 
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Button type="submit" size="sm" className="self-end">
-                      Post
-                    </Button>
-                  </motion.div>
-                </form>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {showComments && (
+            <div className="w-full space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Add a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                />
+                <Button onClick={handleComment}>Comment</Button>
+              </div>
+              <div className="space-y-2">
+                {comments.map((comment) => (
+                  <div key={comment.id} className="flex items-start gap-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage
+                        src={comment.user.image}
+                        alt={comment.user.name}
+                      />
+                      <AvatarFallback>{comment.user.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm font-medium">{comment.user.name}</p>
+                      <p className="text-sm text-gray-600">{comment.content}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </CardFooter>
       </Card>
     </motion.div>

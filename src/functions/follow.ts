@@ -102,4 +102,24 @@ export const followService = {
       throw new FollowError(`Failed to ${action} user`);
     }
   },
+
+  followUser: async (
+    userId: string,
+    action: "follow" | "unfollow" = "follow",
+  ) => {
+    try {
+      const response = await axios.post(`/api/user/follow`, null, {
+        params: { userId, action },
+      });
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        throw new FollowError(
+          error.response?.data?.message || `Failed to ${action} user`,
+          error.response?.status,
+        );
+      }
+      throw new FollowError(`Failed to ${action} user`);
+    }
+  },
 };
