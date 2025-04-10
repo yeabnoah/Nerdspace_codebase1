@@ -1,5 +1,9 @@
-import { Badge } from "@/components/ui/badge";
+"use client";
 
+import React from "react";
+
+import { formatDistanceToNow } from "date-fns";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -9,24 +13,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"; // Import Tabs component
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { formatDistanceToNow } from "date-fns";
 import {
   CalendarIcon,
   Flag,
@@ -37,12 +32,18 @@ import {
   SettingsIcon,
   Share2,
   Star,
+  ExternalLink,
+  Trash2Icon,
+  PencilIcon,
   Upload,
+  Check,
+  EditIcon,
+  Trash2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react"; // Add useEffect for fetching follow status
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import ProjectDetailSkeleton from "../skeleton/project-detail.skeleton";
 import {
@@ -53,8 +54,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Separator } from "../ui/separator";
 import { EditProjectDialog } from "@/components/ui/edit-project-dialog";
-import ProjectInterface from "@/interface/auth/project.interface";
-import { UpdateInterface } from "@/interface/auth/project.interface";
+import type ProjectInterface from "@/interface/auth/project.interface";
 import UpdateCard from "./project-update-card";
 import { GoStar, GoStarFill } from "react-icons/go";
 
@@ -74,11 +74,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isShareProjectDialogOpen, setIsShareProjectDialogOpen] =
     useState(false);
-  const [activeTab, setActiveTab] = useState<"updates" | "reviews">("updates"); // State for toggling between updates and reviews
-  const [reviewContent, setReviewContent] = useState(""); // State for new review content
-  const [isEditingReview, setIsEditingReview] = useState(false); // State for editing review
-  const [editingReviewContent, setEditingReviewContent] = useState(""); // State for edited review content
-  const [editingReviewId, setEditingReviewId] = useState<string | null>(null); // State for review being edited
+  const [activeTab, setActiveTab] = useState<"updates" | "reviews">("updates");
+  const [reviewContent, setReviewContent] = useState("");
+  const [isEditingReview, setIsEditingReview] = useState(false);
+  const [editingReviewContent, setEditingReviewContent] = useState("");
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [isEditReviewModalOpen, setIsEditReviewModalOpen] = useState(false);
+  const [isDeleteReviewModalOpen, setIsDeleteReviewModalOpen] = useState(false);
+  const [reviewToDelete, setReviewToDelete] = useState<string | null>(null);
   const session = authClient.useSession();
 
   useEffect(() => {
@@ -87,7 +90,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         const response = await axios.get(
           `/api/project/follow?projectId=${projectId}`,
         );
-        setIsFollowing(response.data.isFollowing); // Update follow state
+        setIsFollowing(response.data.isFollowing);
       } catch (error) {
         console.error("Error fetching follow status:", error);
       }
@@ -123,7 +126,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   const handleLikeProject = () => {
     likeMutation.mutate();
-    setIsLiked((prev) => !prev); // Toggle like state
+    setIsLiked((prev) => !prev);
   };
 
   const starMutation = useMutation({
@@ -141,7 +144,6 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   const handleStarProject = () => {
     starMutation.mutate();
-    // setIsStarred((prev) => !prev); // Toggle star state
   };
 
   const followMutation = useMutation({
@@ -159,7 +161,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   const handleFollowProject = () => {
     followMutation.mutate();
-    setIsFollowing((prev) => !prev); // Toggle follow state
+    setIsFollowing((prev) => !prev);
   };
 
   const postAsPostMutation = useMutation({
@@ -170,7 +172,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         {
           content:
             project?.userId === session.data?.user.id
-              ? "This is my project and I'd  like to share it with you"
+              ? "This is my project and I'd like to share it with you"
               : "I saw this project and wanted to share it :)",
           fileUrls: [],
           projectId: projectId,
@@ -218,7 +220,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     },
     onSuccess: () => {
       toast.success("Project successfully deleted");
-      router.push("/projects"); // Redirect to projects list after deletion
+      router.push("/projects");
     },
     onError: (error: any) => {
       const errorMessage =
@@ -235,7 +237,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      console.log("Image selected:", file); // Debugging log
+      console.log("Image selected:", file);
       setSelectedImage(file);
     }
   };
@@ -357,7 +359,6 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       toast.success("Update shared successfully!");
       setIsShareUpdateDialogOpen(false);
 
-      // Reset the state for creating an update
       setUpdateTitle("");
       setUpdateContent("");
       setUpdateImage(null);
@@ -386,7 +387,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     onSuccess: () => {
       toast.success("Review added successfully!");
       queryClient.invalidateQueries({ queryKey: ["project", projectId] });
-      setReviewContent(""); // Reset input field
+      setReviewContent("");
     },
     onError: () => {
       toast.error("Failed to add review. Please try again.");
@@ -439,9 +440,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   };
 
   const handleEditReview = (reviewId: string, content: string) => {
-    setIsEditingReview(true);
     setEditingReviewId(reviewId);
     setEditingReviewContent(content);
+    setIsEditReviewModalOpen(true);
   };
 
   const handleSaveEditedReview = () => {
@@ -456,7 +457,119 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   };
 
   const handleDeleteReview = (reviewId: string) => {
-    deleteReviewMutation.mutate(reviewId);
+    setReviewToDelete(reviewId);
+    setIsDeleteReviewModalOpen(true);
+  };
+
+  const ReviewEditModal = React.memo(() => {
+    const [localContent, setLocalContent] = useState(editingReviewContent);
+
+    useEffect(() => {
+      setLocalContent(editingReviewContent);
+    }, [editingReviewContent]);
+
+    const handleSave = () => {
+      setEditingReviewContent(localContent);
+      handleSaveEditedReview();
+      setIsEditReviewModalOpen(false);
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setLocalContent(e.target.value);
+      setEditingReviewContent(e.target.value);
+    };
+
+    return (
+      <Dialog open={isEditReviewModalOpen} onOpenChange={setIsEditReviewModalOpen}>
+        <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+          <DialogTitle></DialogTitle>
+          <div className="relative flex flex-col">
+            {/* Glow effects */}
+            <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/50 bg-gradient-to-br from-primary/40 via-primary/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+
+            <div className="flex w-full flex-col px-6 pb-3">
+              <div className="font-geist mb-2 text-3xl font-medium">
+                Edit Review
+              </div>
+              <Textarea
+                value={localContent}
+                onChange={handleChange}
+                className="min-h-[120px] rounded-xl border-none bg-background/50 shadow-sm backdrop-blur-sm focus-visible:ring-1 focus-visible:ring-ring"
+                placeholder="Edit your review..."
+              />
+
+              <div className="font-geist mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5">
+                <Button
+                  variant="outline"
+                  className="h-11 w-24 rounded-2xl"
+                  onClick={() => setIsEditReviewModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="h-11 w-24 rounded-2xl"
+                  onClick={handleSave}
+                  disabled={editReviewMutation.isPending}
+                >
+                  {editReviewMutation.isPending ? "Saving..." : "Save"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  });
+
+  ReviewEditModal.displayName = 'ReviewEditModal';
+
+  const DeleteReviewModal = () => {
+    return (
+      <Dialog open={isDeleteReviewModalOpen} onOpenChange={setIsDeleteReviewModalOpen}>
+        <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+          <DialogTitle></DialogTitle>
+          <div className="relative flex flex-col">
+            {/* Glow effects */}
+            <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-red-300/50 bg-gradient-to-br from-red-300/40 via-red-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+
+            <div className="flex w-full flex-col px-6 pb-3">
+              <div className="font-geist mb-2 text-3xl font-medium">
+                Delete Review
+              </div>
+              <p className="font-geist mb-6 text-muted-foreground">
+                Are you sure you want to delete this review? This action cannot be undone.
+              </p>
+
+              <div className="font-geist mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5">
+                <Button
+                  variant="outline"
+                  className="h-11 w-24 rounded-2xl"
+                  onClick={() => setIsDeleteReviewModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="h-11 w-24 rounded-2xl"
+                  onClick={() => {
+                    if (reviewToDelete) {
+                      deleteReviewMutation.mutate(reviewToDelete);
+                      setIsDeleteReviewModalOpen(false);
+                      setReviewToDelete(null);
+                    }
+                  }}
+                  disabled={deleteReviewMutation.isPending}
+                >
+                  {deleteReviewMutation.isPending ? "Deleting..." : "Delete"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
   };
 
   if (isLoading) {
@@ -468,15 +581,13 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const createdDate = new Date(project?.createdAt || Date.now());
   const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
 
-  const isuserAuthor = session.data?.user.id === project?.userId;
+  const isUserAuthor = session.data?.user.id === project?.userId;
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 relative">
-      {/* Background gradient effects */}
-      <div className="absolute -bottom-20 -left-20 h-[300px] w-[300px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 via-blue-400/10 to-transparent blur-[80px]"></div>
-      <div className="absolute -right-20 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-orange-300/10 to-transparent blur-[80px]"></div>
+    <div className="container relative mx-auto pb-8">
+      <div className="absolute -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
 
-      <div className="relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl md:h-[400px] group">
+      <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl shadow-lg md:h-[300px]">
         <Image
           src={project?.image || "/placeholder.svg"}
           alt={(project?.name as string) || ""}
@@ -485,23 +596,23 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           priority={true}
         />
-        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/50 to-transparent p-8">
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent"></div>
+        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 via-zinc-900/60 to-transparent p-8 dark:from-black/80 dark:via-black/50">
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
           <div className="relative z-10 mb-4 flex items-center gap-3">
             <Badge
               variant="outline"
-              className="border-primary/30 bg-primary/10 text-xs text-white backdrop-blur-sm"
+              className="font-geist border-primary/30 bg-primary/10 text-xs font-normal text-white backdrop-blur-sm"
             >
               {project?.status}
             </Badge>
             <Badge
               variant="outline"
-              className="border-secondary/30 bg-secondary/20 text-secondary-foreground backdrop-blur-sm"
+              className="font-geist border-secondary/30 bg-secondary/20 font-normal text-secondary-foreground backdrop-blur-sm"
             >
               {project?.access}
             </Badge>
           </div>
-          <h1 className="relative z-10 mb-4 font-instrument text-4xl text-white md:text-5xl">
+          <h1 className="font-geist relative z-10 mb-4 text-4xl font-semibold text-white md:text-5xl">
             {project?.name}
           </h1>
           <div className="relative z-10 flex items-center gap-4">
@@ -514,11 +625,11 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                   className="object-cover"
                 />
               </div>
-              <span className="font-medium text-white">
+              <span className="font-geist font-medium text-white">
                 {project?.user.visualName}
               </span>
             </div>
-            <div className="flex items-center text-sm text-white/80">
+            <div className="font-geist flex items-center text-sm font-normal text-white/80">
               <CalendarIcon className="mr-2 h-4 w-4" />
               <span>{timeAgo}</span>
             </div>
@@ -527,19 +638,31 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
             <div className="absolute right-6 top-6">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="p-2 text-white hover:bg-white/10">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20"
+                  >
                     <SettingsIcon className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => setIsEditModalOpen(true)}>
-                    Edit
+                <DropdownMenuContent
+                  align="end"
+                  className="w-44 rounded-xl border shadow-none dark:border-gray-500/5"
+                >
+                  <DropdownMenuItem
+                    className="font-geist flex h-11 items-center gap-2 rounded-xl"
+                    onClick={() => setIsEditModalOpen(true)}
+                  >
+                    <PencilIcon className="h-4 w-4" />
+                    Edit Project
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => setIsDeleteModalOpen(true)}
-                    className="text-red-500"
+                    className="font-geist flex h-11 items-center gap-2 rounded-xl text-red-600 focus:text-red-600"
                   >
-                    Delete
+                    <Trash2Icon className="h-4 w-4" />
+                    Delete Project
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -555,7 +678,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               <Badge
                 key={cat}
                 variant="outline"
-                className="text-sm font-normal bg-background/50 backdrop-blur-sm"
+                className="font-geist border-border/40 bg-background/50 text-sm font-normal backdrop-blur-sm"
               >
                 {cat}
               </Badge>
@@ -563,192 +686,269 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </div>
 
           {/* Description */}
-          <Card className="rounded-xl border-card-foreground/5 shadow-none dark:border-gray-500/5 bg-background/50 backdrop-blur-sm">
+          <Card className="overflow-hidden rounded-xl border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:border-border/5">
             <CardContent className="p-8">
-              <h2 className="mb-6 font-instrument text-3xl">
-                About This Project
+              <h2 className="font-geist mb-6 text-4xl font-medium text-foreground">
+                About this project
               </h2>
-              <p className="text-muted-foreground leading-relaxed">{project?.description}</p>
+              <p className="font-geist text-sm font-normal leading-relaxed text-muted-foreground">
+                {project?.description}
+              </p>
             </CardContent>
           </Card>
 
           {/* Stats */}
-          <Card className="rounded-xl border-card-foreground/5 shadow-none dark:border-gray-500/5 bg-background/50 backdrop-blur-sm">
+          <Card className="overflow-hidden rounded-xl border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:border-border/5">
             <CardContent className="p-8">
-              <h2 className="mb-6 font-instrument text-3xl">Project Stats</h2>
+              <h2 className="font-geist mb-6 text-3xl font-normal text-foreground">
+                Project Stats
+              </h2>
               <div className="grid grid-cols-2 gap-6 text-center md:grid-cols-5">
                 <div className="flex flex-col items-center">
-                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <Star className="h-6 w-6 text-yellow-500" />
+                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-border/40 bg-background/50 backdrop-blur-sm">
+                    <Star className="h-4 w-4 text-foreground" />
                   </div>
-                  <span className="text-2xl font-bold">{project?._count.stars}</span>
-                  <span className="text-sm text-muted-foreground">Stars</span>
+                  <span className="font-geist text-lg font-normal">
+                    {project?._count.stars}
+                  </span>
+                  <span className="font-geist text-xs font-normal text-muted-foreground">
+                    Stars
+                  </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <Heart className="h-6 w-6 text-red-500" />
+                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-border/40 bg-background/50 backdrop-blur-sm">
+                    <Heart className="h-4 w-4 text-foreground" />
                   </div>
-                  <span className="text-2xl font-bold">{project?._count.followers}</span>
-                  <span className="text-sm text-muted-foreground">Followers</span>
+                  <span className="font-geist text-lg font-normal">
+                    {project?._count.followers}
+                  </span>
+                  <span className="font-geist text-xs font-normal text-muted-foreground">
+                    Followers
+                  </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <MessageSquare className="h-6 w-6 text-blue-500" />
+                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-border/40 bg-background/50 backdrop-blur-sm">
+                    <MessageSquare className="h-4 w-4 text-foreground" />
                   </div>
-                  <span className="text-2xl font-bold">{project?._count.reviews}</span>
-                  <span className="text-sm text-muted-foreground">Reviews</span>
+                  <span className="font-geist text-lg font-normal">
+                    {project?._count.reviews}
+                  </span>
+                  <span className="font-geist text-xs font-normal text-muted-foreground">
+                    Reviews
+                  </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <Flag className="h-6 w-6 text-green-500" />
+                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-border/40 bg-background/50 backdrop-blur-sm">
+                    <Flag className="h-4 w-4 text-foreground" />
                   </div>
-                  <span className="text-2xl font-bold">{project?._count?.updates as number}</span>
-                  <span className="text-sm text-muted-foreground">Updates</span>
+                  <span className="font-geist text-lg font-normal">
+                    {project?._count?.updates as number}
+                  </span>
+                  <span className="font-geist text-xs font-normal text-muted-foreground">
+                    Updates
+                  </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <Star className="h-6 w-6 text-purple-500" />
+                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-border/40 bg-background/50 backdrop-blur-sm">
+                    <Star className="h-4 w-4 text-foreground" />
                   </div>
-                  <span className="text-2xl font-bold">{project?._count?.ratings as number}</span>
-                  <span className="text-sm text-muted-foreground">Ratings</span>
+                  <span className="font-geist text-lg font-normal">
+                    {project?._count?.ratings as number}
+                  </span>
+                  <span className="font-geist text-xs font-normal text-muted-foreground">
+                    Ratings
+                  </span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Updates and Reviews Section */}
-          <Card className="rounded-xl border-card-foreground/5 shadow-none dark:border-gray-500/5 bg-background/50 backdrop-blur-sm">
+          <Card className="overflow-hidden rounded-xl border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:border-border/5">
             <CardContent className="p-8">
-              <h2 className="mb-6 font-instrument text-3xl">Project Updates</h2>
+              <h2 className="font-geist mb-6 text-3xl font-normal text-foreground">
+                Project Activity
+              </h2>
 
-              <Tabs
-                value={activeTab}
-                onValueChange={(value) =>
-                  setActiveTab(value as "updates" | "reviews")
-                }
-              >
-                <TabsList className="mb-6 bg-background/50 backdrop-blur-sm">
-                  <TabsTrigger value="updates">Updates</TabsTrigger>
-                  <TabsTrigger value="reviews">Reviews</TabsTrigger>
-                </TabsList>
+              <div className="w-full">
+                {/* Custom Tab Headers */}
+                <div className="mb-8 flex w-full overflow-hidden rounded-full border border-zinc-200/30 bg-white/5 p-1 backdrop-blur-md dark:border-zinc-800/30 dark:bg-black/5">
+                  <button
+                    onClick={() => setActiveTab("updates")}
+                    className={`relative flex-1 rounded-full py-2.5 text-sm font-medium transition-all duration-300 ${
+                      activeTab === "updates"
+                        ? "text-white"
+                        : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300"
+                    }`}
+                  >
+                    {activeTab === "updates" && (
+                      <span className="absolute inset-0 rounded-full bg-primary shadow-lg transition-all duration-300 dark:bg-secondary"></span>
+                    )}
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      <Flag className="h-4 w-4" />
+                      Updates
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("reviews")}
+                    className={`relative flex-1 rounded-full py-2.5 text-sm font-medium transition-all duration-300 ${
+                      activeTab === "reviews"
+                        ? "text-white"
+                        : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300"
+                    }`}
+                  >
+                    {activeTab === "reviews" && (
+                      <span className="absolute inset-0 rounded-full bg-primary shadow-lg transition-all duration-300 dark:bg-secondary"></span>
+                    )}
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      <MessageSquare className="h-4 w-4" />
+                      Reviews
+                    </span>
+                  </button>
+                </div>
 
-                <TabsContent value="updates">
-                  {project?.updates && project.updates.length > 0 ? (
-                    <div className="space-y-6">
-                      {project.updates.map((update, index) => (
-                        <UpdateCard
-                          update={update}
-                          key={index}
-                          isOwner={project?.user.id === session.data?.user.id}
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-                        <PaintBucket className="h-10 w-10 text-primary" />
+                {/* Tab Content */}
+                <div className="relative">
+                  {/* Updates Tab Content */}
+                  <div
+                    className={`transition-all duration-300 ${
+                      activeTab === "updates"
+                        ? "opacity-100"
+                        : "pointer-events-none absolute inset-0 opacity-0"
+                    }`}
+                  >
+                    {project?.updates && project.updates.length > 0 ? (
+                      <div className="space-y-6">
+                        {project.updates.map((update, index) => (
+                          <UpdateCard
+                            update={update}
+                            key={index}
+                            isOwner={project?.user.id === session.data?.user.id}
+                          />
+                        ))}
                       </div>
-                      <h3 className="mb-2 text-xl font-medium">No updates yet</h3>
-                      <p className="max-w-md text-muted-foreground">
-                        This project hasn't posted any updates. Check back later
-                        for progress on this mission to Mars.
-                      </p>
-                    </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="reviews">
-                  <div className="mb-8">
-                    <Textarea
-                      placeholder="Write your review here..."
-                      value={reviewContent}
-                      onChange={(e) => setReviewContent(e.target.value)}
-                      className="mb-4 min-h-[120px] bg-background/50 backdrop-blur-sm"
-                    />
-                    <Button
-                      onClick={handleCreateReview}
-                      disabled={createReviewMutation.isPending}
-                      className="w-full"
-                    >
-                      {createReviewMutation.isPending
-                        ? "Submitting..."
-                        : "Submit Review"}
-                    </Button>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 py-12 text-center dark:bg-black/5">
+                        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/10 to-indigo-500/10">
+                          <PaintBucket className="h-10 w-10 text-indigo-500" />
+                        </div>
+                        <h3 className="mb-2 text-xl font-normal">
+                          No updates yet
+                        </h3>
+                        <p className="max-w-md text-zinc-500 dark:text-zinc-400">
+                          This project hasn't posted any updates. Check back
+                          later for progress on this mission to Mars.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
-                  {project?.reviews && project.reviews.length > 0 ? (
-                    <div className="space-y-6">
-                      {project.reviews.map((review, index) => (
-                        <div
-                          key={index}
-                          className="rounded-xl border border-card-foreground/5 bg-background/50 p-6 backdrop-blur-sm"
-                        >
-                          <div className="flex items-start gap-4">
-                            <div className="relative h-10 w-10 overflow-hidden rounded-full">
-                              <Image
-                                src={review.user.image || "/placeholder.svg"}
-                                alt={review.user.visualName as string}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-sm leading-relaxed">{review.content}</p>
-                              {review.user.id === session.data?.user.id && (
-                                <div className="mt-4 flex gap-2">
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() =>
-                                      handleEditReview(
-                                        review.id as string,
-                                        review.content as string,
-                                      )
-                                    }
-                                  >
-                                    Edit
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="destructive"
-                                    onClick={() =>
-                                      handleDeleteReview(review.id as string)
-                                    }
-                                  >
-                                    Delete
-                                  </Button>
+                  {/* Reviews Tab Content */}
+                  <div
+                    className={`transition-all duration-300 ${
+                      activeTab === "reviews"
+                        ? "opacity-100"
+                        : "pointer-events-none absolute inset-0 opacity-0"
+                    }`}
+                  >
+                    <div className="mx-auto mb-8 flex-col items-center space-y-4">
+                      <Textarea
+                        placeholder="Write your review here..."
+                        value={reviewContent}
+                        onChange={(e) => setReviewContent(e.target.value)}
+                        className="min-h-[120px] w-full rounded-xl border border-zinc-200/20 bg-white/5 p-4 text-sm backdrop-blur-sm transition-colors placeholder:text-zinc-500 focus:border-zinc-300/20 dark:border-zinc-800/20 dark:bg-black/5 dark:text-zinc-300 dark:placeholder:text-zinc-600 dark:focus:border-zinc-700/20"
+                      />
+                      <Button
+                        onClick={handleCreateReview}
+                        disabled={createReviewMutation.isPending}
+                        className="right-0 mx-auto h-12 w-fit justify-end rounded-full border bg-primary font-medium text-white shadow-none transition-opacity hover:opacity-90 disabled:opacity-50 dark:border-gray-700/10 dark:bg-transparent"
+                      >
+                        <span className="py-1 text-white">
+                          {createReviewMutation.isPending
+                            ? "Submitting..."
+                            : "Submit Review"}
+                        </span>
+                      </Button>
+                    </div>
+
+                    {project?.reviews && project.reviews.length > 0 ? (
+                      <div className="space-y-6">
+                        {project.reviews.map((review, index) => (
+                          <div
+                            key={index}
+                            className="group relative overflow-hidden rounded-xl border border-zinc-200/20 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:bg-white/10 dark:border-zinc-800/20 dark:bg-black/5 dark:hover:bg-black/10"
+                          >
+                            <div className="flex items-start gap-4">
+                              <div className="relative h-10 w-10 overflow-hidden rounded-full ring-1 ring-white/10">
+                                <Image
+                                  src={review.user.image || "/placeholder.svg"}
+                                  alt={review.user.visualName as string}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <div className="mb-2 flex items-center justify-between">
+                                  <h4 className="font-medium text-zinc-900 dark:text-zinc-100">
+                                    {review.user.visualName}
+                                  </h4>
+                                  <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                                    {formatDistanceToNow(
+                                      new Date(review.createdAt as string),
+                                      {
+                                        addSuffix: true,
+                                      },
+                                    )}
+                                  </span>
                                 </div>
-                              )}
+                                <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+                                  {review.content}
+                                </p>
+                                {review.user.id === session.data?.user.id && (
+                                  <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                                    <Button
+                                      onClick={() => handleDeleteReview(review.id as string)}
+                                      variant="ghost" 
+                                      size="icon"
+                                      className="h-8 w-8 rounded-full text-destructive hover:text-destructive"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-                        <MessageSquare className="h-10 w-10 text-primary" />
+                        ))}
                       </div>
-                      <h3 className="mb-2 text-xl font-medium">No reviews yet</h3>
-                      <p className="max-w-md text-muted-foreground">
-                        Be the first to share your thoughts about this project!
-                      </p>
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 py-12 text-center dark:bg-black/5">
+                        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/10 to-indigo-500/10">
+                          <MessageSquare className="h-10 w-10 text-indigo-500" />
+                        </div>
+                        <h3 className="mb-2 text-xl font-normal text-zinc-900 dark:text-zinc-100">
+                          No reviews yet
+                        </h3>
+                        <p className="max-w-md text-zinc-500 dark:text-zinc-400">
+                          Be the first to share your thoughts about this
+                          project!
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Right Column - Sidebar */}
         <div className="space-y-8">
-          {/* Action Buttons */}
-          <Card className="rounded-xl border-card-foreground/10 shadow-none dark:border-gray-500/5 bg-background/50 backdrop-blur-sm">
-            <CardContent className="space-y-4 p-6">
+          <Card className="overflow-hidden rounded-xl border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:border-border/5">
+            <CardContent className="space-y-3 p-4">
               <Button
-                variant={"outline"}
-                className="w-full gap-2 bg-background/50 backdrop-blur-sm"
+                variant="outline"
+                className="h-11 w-full gap-2 rounded-full border-zinc-200/20 bg-white/5 text-sm font-medium text-zinc-900 backdrop-blur-sm transition-colors hover:bg-white/10 dark:border-zinc-800/20 dark:bg-black/5 dark:text-zinc-100 dark:hover:bg-black/10"
                 onClick={handleStarProject}
               >
                 {project?.stars?.some(
@@ -765,31 +965,35 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                   : "Star Project"}
               </Button>
 
-              {!isuserAuthor && (
-                <>
-                  <Button
-                    variant={isFollowing ? "outline" : "default"}
-                    className="w-full gap-2 bg-background/50 backdrop-blur-sm"
-                    onClick={handleFollowProject}
-                  >
+              {!isUserAuthor && (
+                <Button
+                  variant={isFollowing ? "outline" : "default"}
+                  className={`h-9 w-full gap-2 rounded-md text-sm font-medium ${
+                    isFollowing
+                      ? "h-12 border-zinc-200/20 bg-white/5 text-zinc-900 backdrop-blur-sm transition-colors hover:bg-white/10 dark:border-zinc-800/20 dark:bg-black/5 dark:text-zinc-100 dark:hover:bg-black/10"
+                      : "bg-gradient-to-r from-violet-500 to-indigo-500 text-white hover:from-violet-600 hover:to-indigo-600"
+                  }`}
+                  onClick={handleFollowProject}
+                >
+                  <span className="py-1 text-white">
                     {isFollowing ? "Unfollow" : "Follow"}
-                  </Button>
-                </>
+                  </span>
+                </Button>
               )}
 
               <Button
                 onClick={() => setIsShareProjectDialogOpen(true)}
                 variant="outline"
-                className="w-full gap-2 bg-background/50 backdrop-blur-sm"
+                className="h-11 w-full gap-2 rounded-full border-zinc-200/20 bg-white/5 text-sm font-medium text-zinc-900 backdrop-blur-sm transition-colors hover:bg-white/10 dark:border-zinc-800/20 dark:bg-black/5 dark:text-zinc-100 dark:hover:bg-black/10"
               >
                 <Share2 className="h-4 w-4" />
                 Share project
               </Button>
 
-              {isuserAuthor && (
+              {isUserAuthor && (
                 <Button
                   variant="outline"
-                  className="w-full gap-2 bg-background/50 backdrop-blur-sm"
+                  className="h-11 w-full gap-2 rounded-full border-zinc-200/20 bg-white/5 text-sm font-medium text-zinc-900 backdrop-blur-sm transition-colors hover:bg-white/10 dark:border-zinc-800/20 dark:bg-black/5 dark:text-zinc-100 dark:hover:bg-black/10"
                   onClick={() => setIsShareUpdateDialogOpen(true)}
                 >
                   <PlusIcon className="h-4 w-4" />
@@ -800,9 +1004,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Creator Profile */}
-          <Card className="rounded-xl border-card-foreground/10 shadow-none dark:border-gray-500/5 bg-background/50 backdrop-blur-sm">
+          <Card className="overflow-hidden rounded-xl border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:border-border/5">
             <CardContent className="px-6 py-6">
-              <h2 className="mb-4 text-center font-instrument text-xl font-bold">
+              <h2 className="font-geist mb-4 text-center text-xl font-normal">
                 Creator
               </h2>
               <div className="flex flex-col items-center text-center">
@@ -814,19 +1018,22 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                     className="object-cover"
                   />
                 </div>
-                <h3 className="text-lg font-bold">
+                <h3 className="font-geist text-lg font-normal">
                   {project?.user.visualName}
                 </h3>
-                <span className="mb-2 text-sm text-muted-foreground">
+                <span className="font-geist mb-2 text-sm font-normal text-muted-foreground">
                   Nerd at: {project?.user.nerdAt}
                 </span>
-                <p className="mb-4 text-sm text-muted-foreground">{project?.user.bio}</p>
-                <Separator className="my-4" />
+                <p className="font-geist mb-2 text-sm font-normal text-muted-foreground">
+                  {project?.user.bio}
+                </p>
+                <Separator className="mb-2" />
                 <Link
                   href={`/user-profile/${project?.userId}`}
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-primary hover:underline"
                 >
+                  <ExternalLink className="h-4 w-4" />
                   Connect with {project?.user.visualName}
                 </Link>
               </div>
@@ -834,31 +1041,69 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Similar Projects */}
-          <Card className="rounded-xl border-card-foreground/10 shadow-none dark:border-gray-500/5 bg-background/50 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <h2 className="mb-6 font-instrument text-3xl">
+          <Card className="overflow-hidden rounded-xl border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:border-border/5">
+            <CardContent className="px-3 py-6">
+              <h2 className="font-geist mb-3 text-xl font-normal">
                 Similar Projects
               </h2>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4 rounded-lg border border-card-foreground/5 p-4">
-                  <div className="h-16 w-20 rounded-xl bg-muted"></div>
-                  <div>
-                    <h3 className="font-medium">Mars Rover</h3>
-                    <p className="text-xs text-muted-foreground">By SpaceX</p>
+              <div className="flex flex-col space-y-2">
+                <div className="group relative overflow-hidden rounded-xl border border-border/10 bg-card/30 transition-all duration-300 hover:bg-card/50 hover:shadow-lg">
+                  <div className="my-2 flex gap-2 px-1">
+                    <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-full">
+                      <Image
+                        src="/user.jpg?height=128&width=128"
+                        alt="Mars Rover"
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-black/60 to-transparent" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-geist font-normal">Lunar Gateway</h3>
+                      <p className="font-geist text-start text-xs font-normal text-muted-foreground">
+                        By NASA
+                      </p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 rounded-lg border border-card-foreground/5 p-4">
-                  <div className="h-16 w-20 rounded-xl bg-muted"></div>
-                  <div>
-                    <h3 className="font-medium">Lunar Gateway</h3>
-                    <p className="text-xs text-muted-foreground">By NASA</p>
+
+                <div className="group relative overflow-hidden rounded-xl border border-border/10 bg-card/30 transition-all duration-300 hover:bg-card/50 hover:shadow-lg">
+                  <div className="my-2 flex gap-2 px-1">
+                    <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-full">
+                      <Image
+                        src="/user.jpg?height=128&width=128"
+                        alt="Mars Rover"
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-black/60 to-transparent" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-geist font-normal">Lunar Gateway</h3>
+                      <p className="font-geist text-start text-xs font-normal text-muted-foreground">
+                        By NASA
+                      </p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 rounded-lg border border-card-foreground/5 p-4">
-                  <div className="h-16 w-20 rounded-xl bg-muted"></div>
-                  <div>
-                    <h3 className="font-medium">Artemis Program</h3>
-                    <p className="text-xs text-muted-foreground">By ESA</p>
+
+                <div className="group relative overflow-hidden rounded-xl border border-border/10 bg-card/30 transition-all duration-300 hover:bg-card/50 hover:shadow-lg">
+                  <div className="my-2 flex gap-2 px-1">
+                    <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-full">
+                      <Image
+                        src="/user.jpg?height=128&width=128"
+                        alt="Mars Rover"
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-black/60 to-transparent" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-geist font-normal">Lunar Gateway</h3>
+                      <p className="font-geist text-start text-xs font-normal text-muted-foreground">
+                        By NASA
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -877,28 +1122,39 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       />
 
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-        <DialogTrigger asChild>
-          <Button className="hidden">Open Dialog</Button>
-        </DialogTrigger>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[550px]">
-          <DialogHeader>
-            <DialogTitle>Delete Project</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this project? This action cannot``{" "}
-              be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleDeleteProject}>
-              Delete
-            </Button>
-          </DialogFooter>
+        <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+          <DialogTitle></DialogTitle>
+          <div className="relative flex flex-col">
+            {/* Glow effects */}
+            <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-red-300/50 bg-gradient-to-br from-red-300/40 via-red-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+
+            <div className="flex w-full flex-col px-6 pb-3">
+              <div className="font-geist mb-2 text-3xl font-medium">
+                Delete Project
+              </div>
+              <p className="font-geist mb-6 text-muted-foreground">
+                Are you sure you want to delete this project? This action cannot
+                be undone.
+              </p>
+
+              <div className="font-geist mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5">
+                <Button
+                  variant="outline"
+                  className="h-11 w-24 rounded-2xl"
+                  onClick={() => setIsDeleteModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleDeleteProject}
+                  className="h-11 w-24 rounded-2xl bg-red-600 text-white hover:bg-red-600"
+                >
+                  Delete
+                </Button>
+              </div>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -907,46 +1163,121 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         open={isShareUpdateDialogOpen}
         onOpenChange={setIsShareUpdateDialogOpen}
       >
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Share a New Update</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <Input
-              placeholder="Update Title"
-              value={updateTitle}
-              onChange={(e) => setUpdateTitle(e.target.value)}
-            />
-            <Textarea
-              placeholder="Update Content"
-              value={updateContent}
-              onChange={(e) => setUpdateContent(e.target.value)}
-            />
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={handleUpdateImageChange}
-            />
-            {updateImage && (
-              <div className="relative h-40 w-full overflow-hidden rounded-md">
-                <Image
-                  src={URL.createObjectURL(updateImage)}
-                  alt="Preview"
-                  fill
-                  className="object-cover"
-                />
+        <DialogTitle></DialogTitle>
+        <DialogContent className="max-w-4xl overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+          <div className="relative flex h-[85vh] max-h-[85vh] flex-col md:flex-row">
+            {/* Glow effects */}
+            <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+
+            {/* Left Column */}
+            <div className="flex w-full flex-col rounded-l-xl border-b border-l border-r border-t p-6 dark:border-gray-600/10 dark:bg-black md:w-1/3">
+              <div className="font-geist mb-2 text-3xl font-medium">
+                Share Update
               </div>
-            )}
+              <p className="font-geist mb-6 text-muted-foreground">
+                Share a new update about your project's progress
+              </p>
+
+              <div className="mt-4 flex flex-1 flex-col items-center justify-center">
+                <div className="relative mb-4 aspect-square w-full max-w-[220px] overflow-hidden rounded-xl border-2 border-dashed border-primary/20 bg-black">
+                  {updateImage ? (
+                    <Image
+                      src={
+                        URL.createObjectURL(updateImage) || "/placeholder.svg"
+                      }
+                      alt="Preview"
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="font-geist flex h-full w-full items-center justify-center text-muted-foreground">
+                      No image
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative w-full max-w-[220px]">
+                  <Button
+                    className="b font-geist h-11 w-full rounded-full"
+                    type="button"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    {updateImage ? "Change Image" : "Upload Image"}
+                  </Button>
+                  <Input
+                    type="file"
+                    className="absolute inset-0 cursor-pointer opacity-0"
+                    accept="image/*"
+                    onChange={handleUpdateImageChange}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="space-y-6">
+                <div className="rounded-xl border border-gray-100 bg-card p-4 shadow-none dark:border-gray-500/5">
+                  <h3 className="font-geist mb-4 text-lg font-medium">
+                    Update Details
+                  </h3>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="title"
+                        className="font-geist text-sm font-medium"
+                      >
+                        Title
+                      </Label>
+                      <Input
+                        id="title"
+                        value={updateTitle}
+                        onChange={(e) => setUpdateTitle(e.target.value)}
+                        placeholder="Enter update title"
+                        className="font-geist h-11 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="content"
+                        className="font-geist text-sm font-medium"
+                      >
+                        Content
+                      </Label>
+                      <Textarea
+                        id="content"
+                        value={updateContent}
+                        onChange={(e) => setUpdateContent(e.target.value)}
+                        placeholder="Share your progress..."
+                        rows={6}
+                        className="font-geist resize-none rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="font-geist mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5">
+                <Button
+                  variant="outline"
+                  className="h-11 w-24 rounded-2xl"
+                  onClick={() => setIsShareUpdateDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleShareUpdate}
+                  className="h-11 w-fit gap-2 rounded-2xl"
+                >
+                  <Check className="h-4 w-4" />
+                  Share Update
+                </Button>
+              </div>
+            </div>
           </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsShareUpdateDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleShareUpdate}>Share</Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -981,6 +1312,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ReviewEditModal />
+      <DeleteReviewModal />
     </div>
   );
 };

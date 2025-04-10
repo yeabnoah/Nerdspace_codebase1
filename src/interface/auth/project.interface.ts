@@ -24,6 +24,7 @@ export type reviewProject = {
   projectId: String;
   content: String;
   user: UserInterface;
+  createdAt: String;
 };
 
 export type commentType = {

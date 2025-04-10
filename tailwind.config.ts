@@ -17,6 +17,8 @@ export default {
         itcThinItalic: ["var(--font-itcThinItalic)"],
         instrument: ["var(--font-instrument-serif)", "serif"],
         inter: ["var(--font-inter)"],
+        geist: ["var(--font-geist-sans)", "sans-serif"],
+        geistMono: ["var(--font-geist-mono)", "sans-serif"],
       },
       colors: {
         textAlternative: "#000000",
