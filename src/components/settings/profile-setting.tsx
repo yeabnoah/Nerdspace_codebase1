@@ -137,193 +137,177 @@ const ProfileSettings = () => {
         <CardDescription>Please provide accurate information</CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="projects">Projects</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
-          </TabsList>
-          <TabsContent value="profile">
-            <div className="md:px-4">
-              <div className="relative mb-4">
-                <Image
-                  src={coverPreviewUrl || user.coverImage || "/obsession.jpg"}
-                  alt="Cover Preview"
-                  width={800}
-                  height={200}
-                  className="mt-2 h-36 w-full rounded-xl object-cover"
-                />
+        <div className="md:px-4">
+          <div className="relative mb-4">
+            <Image
+              src={coverPreviewUrl || user.coverImage || "/obsession.jpg"}
+              alt="Cover Preview"
+              width={800}
+              height={200}
+              className="mt-2 h-36 w-full rounded-xl object-cover"
+            />
 
-                <Input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  id="cover-image-upload"
-                  onChange={handleCoverFileChange}
-                />
-                <label
-                  htmlFor="cover-image-upload"
-                  className="absolute -bottom-5 right-[5%] cursor-pointer rounded-full bg-white p-1 p-3 text-white"
-                >
-                  <Edit size={24} color="black" className="" />
-                </label>
-              </div>
+            <Input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              id="cover-image-upload"
+              onChange={handleCoverFileChange}
+            />
+            <label
+              htmlFor="cover-image-upload"
+              className="absolute -bottom-5 right-[5%] cursor-pointer rounded-full bg-white p-1 p-3 text-white"
+            >
+              <Edit size={24} color="black" className="" />
+            </label>
+          </div>
 
-              <div className="flex w-full flex-col md:flex-row md:items-center md:gap-10">
-                <div className="relative mb-4">
-                  <Image
-                    src={
-                      previewUrl ||
-                      user.image ||
-                      session?.data?.user?.image ||
-                      "/user_placeholder.jpg"
-                    }
-                    alt="Profile Preview"
-                    width={200}
-                    height={200}
-                    className="mt-2 size-16 rounded-full object-cover"
-                  />
+          <div className="flex w-full flex-col md:flex-row md:items-center md:gap-10">
+            <div className="relative mb-4">
+              <Image
+                src={
+                  previewUrl ||
+                  user.image ||
+                  session?.data?.user?.image ||
+                  "/user_placeholder.jpg"
+                }
+                alt="Profile Preview"
+                width={200}
+                height={200}
+                className="mt-2 size-16 rounded-full object-cover"
+              />
 
-                  {/* <div></div> */}
+              {/* <div></div> */}
 
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    id="image-upload"
-                    onChange={handleFileChange}
-                  />
-                  <label
-                    htmlFor="image-upload"
-                    className="absolute bottom-0 left-[15%] cursor-pointer rounded-full bg-white p-1 text-white md:left-[70%]"
-                  >
-                    <Edit size={13} color="black" />
-                  </label>
-                </div>
-
-                <div className="mb-4">
-                  <Label className="mb-2">Display name</Label>
-                  <Input
-                    placeholder="John Doe"
-                    className="mt-1 bg-transparent py-2 text-sm shadow-none placeholder:text-sm"
-                    value={displayName || ""}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <Label className="mb-2">Personal Link</Label>
-                  <Input
-                    placeholder="https://johndoe.blog"
-                    className="mt-1 bg-transparent py-2 text-sm shadow-none placeholder:text-sm"
-                    value={link || ""}
-                    onChange={(e) => setLink(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-3 px-4">
-              <div className="mb-4 flex-1">
-                <Label>Your Country</Label>
-                {user?.country ? (
-                  <p>{user?.country?.name}</p>
-                ) : (
-                  <CountryDropdown
-                    className="mt-2 shadow-none"
-                    placeholder="Select country"
-                    defaultValue={selectedCountry?.alpha3}
-                    onChange={(country) => setSelectedCountry(country)}
-                  />
-                )}
-              </div>
-              <div className="mb-4">
-                <Label className="mb-2">What are you nerd at</Label>
-                <Input
-                  placeholder="Music"
-                  className="mt-1 bg-transparent py-2 text-sm shadow-none placeholder:text-sm"
-                  value={nerdAt || ""}
-                  onChange={(e) => setNerdAt(e.target.value)}
-                />
-              </div>
-
-              <div className="mb-4">
-                <Label className="mb-2">Bio</Label>
-                <AutosizeTextarea
-                  placeholder="Please provide your bio here"
-                  className="mt-1 bg-transparent py-2 shadow-none"
-                  value={bio || ""}
-                  onChange={(e) => setBio(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end">
-              <Button
-                onClick={async () => {
-                  let uploadedImageUrl = selectedImage;
-                  let uploadedCoverImageUrl = selectedCoverImage;
-
-                  if (selectedImage instanceof File) {
-                    const formData = new FormData();
-                    formData.append("file", selectedImage);
-                    formData.append("upload_preset", cloudinaryUploadPreset);
-
-                    try {
-                      const response = await axios.post(
-                        cloudinaryUploadUrl,
-                        formData,
-                      );
-                      uploadedImageUrl = response.data.secure_url;
-                    } catch (error) {
-                      console.error("Image upload failed:", error);
-                      toast.error("Image upload failed");
-                      return;
-                    }
-                  }
-
-                  if (selectedCoverImage instanceof File) {
-                    const formData = new FormData();
-                    formData.append("file", selectedCoverImage);
-                    formData.append("upload_preset", cloudinaryUploadPreset);
-
-                    try {
-                      const response = await axios.post(
-                        cloudinaryUploadUrl,
-                        formData,
-                      );
-                      uploadedCoverImageUrl = response.data.secure_url;
-                    } catch (error) {
-                      console.error("Cover image upload failed:", error);
-                      toast.error("Cover image upload failed");
-                      return;
-                    }
-                  }
-
-                  await mutation.mutate({
-                    country: user?.country ? undefined : selectedCountry,
-                    image: uploadedImageUrl || user.image || "",
-                    coverImage: uploadedCoverImageUrl || user.coverImage || "",
-                    nerdAt,
-                    bio,
-                    displayName,
-                    link,
-                    firstTime: false,
-                  });
-                }}
+              <Input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                id="image-upload"
+                onChange={handleFileChange}
+              />
+              <label
+                htmlFor="image-upload"
+                className="absolute bottom-0 left-[15%] cursor-pointer rounded-full bg-white p-1 text-white md:left-[70%]"
               >
-                Update my info
-              </Button>
+                <Edit size={13} color="black" />
+              </label>
             </div>
-          </TabsContent>
-          <TabsContent value="projects">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Followed Projects</h3>
-              <FollowedProjects />
+
+            <div className="mb-4">
+              <Label className="mb-2">Display name</Label>
+              <Input
+                placeholder="John Doe"
+                className="mt-1 bg-transparent py-2 text-sm shadow-none placeholder:text-sm"
+                value={displayName || ""}
+                onChange={(e) => setDisplayName(e.target.value)}
+              />
             </div>
-          </TabsContent>
-          <TabsContent value="settings">{/* Settings content */}</TabsContent>
-        </Tabs>
+
+            <div className="mb-4">
+              <Label className="mb-2">Personal Link</Label>
+              <Input
+                placeholder="https://johndoe.blog"
+                className="mt-1 bg-transparent py-2 text-sm shadow-none placeholder:text-sm"
+                value={link || ""}
+                onChange={(e) => setLink(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3 px-4">
+          <div className="mb-4 flex-1">
+            <Label>Your Country</Label>
+            {user?.country ? (
+              <p>{user?.country?.name}</p>
+            ) : (
+              <CountryDropdown
+                className="mt-2 shadow-none"
+                placeholder="Select country"
+                defaultValue={selectedCountry?.alpha3}
+                onChange={(country) => setSelectedCountry(country)}
+              />
+            )}
+          </div>
+          <div className="mb-4">
+            <Label className="mb-2">What are you nerd at</Label>
+            <Input
+              placeholder="Music"
+              className="mt-1 bg-transparent py-2 text-sm shadow-none placeholder:text-sm"
+              value={nerdAt || ""}
+              onChange={(e) => setNerdAt(e.target.value)}
+            />
+          </div>
+
+          <div className="mb-4">
+            <Label className="mb-2">Bio</Label>
+            <AutosizeTextarea
+              placeholder="Please provide your bio here"
+              className="mt-1 bg-transparent py-2 shadow-none"
+              value={bio || ""}
+              onChange={(e) => setBio(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button
+            onClick={async () => {
+              let uploadedImageUrl = selectedImage;
+              let uploadedCoverImageUrl = selectedCoverImage;
+
+              if (selectedImage instanceof File) {
+                const formData = new FormData();
+                formData.append("file", selectedImage);
+                formData.append("upload_preset", cloudinaryUploadPreset);
+
+                try {
+                  const response = await axios.post(
+                    cloudinaryUploadUrl,
+                    formData,
+                  );
+                  uploadedImageUrl = response.data.secure_url;
+                } catch (error) {
+                  console.error("Image upload failed:", error);
+                  toast.error("Image upload failed");
+                  return;
+                }
+              }
+
+              if (selectedCoverImage instanceof File) {
+                const formData = new FormData();
+                formData.append("file", selectedCoverImage);
+                formData.append("upload_preset", cloudinaryUploadPreset);
+
+                try {
+                  const response = await axios.post(
+                    cloudinaryUploadUrl,
+                    formData,
+                  );
+                  uploadedCoverImageUrl = response.data.secure_url;
+                } catch (error) {
+                  console.error("Cover image upload failed:", error);
+                  toast.error("Cover image upload failed");
+                  return;
+                }
+              }
+
+              await mutation.mutate({
+                country: user?.country ? undefined : selectedCountry,
+                image: uploadedImageUrl || user.image || "",
+                coverImage: uploadedCoverImageUrl || user.coverImage || "",
+                nerdAt,
+                bio,
+                displayName,
+                link,
+                firstTime: false,
+              });
+            }}
+          >
+            Update my info
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

@@ -262,15 +262,7 @@ export default function ProjectsPage() {
         <h1 className="font-instrument text-4xl">Projects</h1>
 
         <div className="flex w-full flex-col gap-4 sm:flex-row md:w-auto">
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search projects..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+        
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full sm:w-40">
@@ -592,12 +584,12 @@ export default function ProjectsPage() {
         className="w-fit"
         onValueChange={(value) => setActiveTab(value)}
       >
-        <div className="mb-6 flex items-center justify-between relative">
+        <div className="mb-6 w-full flex-1 max-w-6xl flex items-center justify-between relative">
           {/* Add gradient background effects */}
           <div className="absolute -bottom-20 -left-20 h-[200px] w-[200px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 via-blue-400/10 to-transparent blur-[80px]"></div>
           <div className="absolute -right-20 -top-20 h-[200px] w-[200px] -rotate-45 rounded-full bg-gradient-to-br from-orange-300/10 to-transparent blur-[80px]"></div>
           
-          <TabsList className="flex w-fit justify-center relative z-10">
+          <TabsList className="flex max-w-6xl w-full justify-center relative z-10">
             <TabsTrigger value="projects">Project Board</TabsTrigger>
             <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
           </TabsList>
