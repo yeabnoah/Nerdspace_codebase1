@@ -153,13 +153,10 @@ const PostCard = ({
       return response.data.data;
     },
     onMutate: async (postId) => {
-      // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: ["posts"] });
 
-      // Snapshot the previous value
       const previousPosts = queryClient.getQueryData(["posts"]);
 
-      // Optimistically update the UI
       setOptimisticLikes((prev) => ({
         ...prev,
         [postId]: !post.likes?.some(
@@ -345,7 +342,7 @@ const PostCard = ({
   };
 
   return (
-    <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-4 px-3 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/50 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/50 after:to-transparent [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/50 [&>div]:before:to-transparent">
+    <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-4 px-3 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/10 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/20 after:to-transparent [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/20 [&>div]:before:to-transparent">
       {/* Orange diagonal glow from bottom-left to top-right */}
 
       {/* Blue diagonal glow from bottom-right to top-left */}
