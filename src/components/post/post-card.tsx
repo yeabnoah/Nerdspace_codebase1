@@ -41,6 +41,7 @@ import {
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { renderComments } from "./comment/render-comments";
+import { motion } from "framer-motion";
 
 interface PostCardProps {
   post: postInterface;
@@ -130,6 +131,12 @@ const PostCard = ({
     null,
   );
   const [selectedPostImages, setSelectedPostImages] = useState<string[]>([]);
+  const [optimisticLikes, setOptimisticLikes] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [optimisticBookmarks, setOptimisticBookmarks] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const contentWords = post.content.split(" ");
   const trimLimit = getTrimLimit();
@@ -146,11 +153,34 @@ const PostCard = ({
       });
       return response.data.data;
     },
+    onMutate: async (postId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["posts"] });
+
+      // Snapshot the previous value
+      const previousPosts = queryClient.getQueryData(["posts"]);
+
+      // Optimistically update the UI
+      setOptimisticLikes((prev) => ({
+        ...prev,
+        [postId]: !post.likes?.some(
+          (like) => like.userId === session.data?.user.id,
+        ),
+      }));
+
+      return { previousPosts };
+    },
+    onError: (err, postId, context) => {
+      // Revert the optimistic update on error
+      setOptimisticLikes((prev) => ({
+        ...prev,
+        [postId]: !optimisticLikes[postId],
+      }));
+      queryClient.setQueryData(["posts"], context?.previousPosts);
+      toast.error("Error occurred while liking/unliking post");
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
-    },
-    onError: () => {
-      toast.error("Error occurred while liking/unliking post");
     },
   });
 
@@ -162,11 +192,34 @@ const PostCard = ({
       });
       return response.data.data;
     },
+    onMutate: async (postId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["posts"] });
+
+      // Snapshot the previous value
+      const previousPosts = queryClient.getQueryData(["posts"]);
+
+      // Optimistically update the UI
+      setOptimisticBookmarks((prev) => ({
+        ...prev,
+        [postId]: !post.bookmarks.some(
+          (bookmark) => bookmark.userId === session.data?.user.id,
+        ),
+      }));
+
+      return { previousPosts };
+    },
+    onError: (err, postId, context) => {
+      // Revert the optimistic update on error
+      setOptimisticBookmarks((prev) => ({
+        ...prev,
+        [postId]: !optimisticBookmarks[postId],
+      }));
+      queryClient.setQueryData(["posts"], context?.previousPosts);
+      toast.error("Error occurred while bookmarking/unbookmarking post");
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
-    },
-    onError: () => {
-      toast.error("Error occurred while bookmarking/unbookmarking post");
     },
   });
 
@@ -229,6 +282,22 @@ const PostCard = ({
   const handleReport = (postId: string) => {
     setCommentId(postId);
     setReportModalOpen(true);
+  };
+
+  const iconVariants = {
+    initial: { scale: 1 },
+    hover: { scale: 1.2 },
+    tap: { scale: 0.9 },
+  };
+
+  const likeVariants = {
+    initial: { scale: 1, color: "currentColor" },
+    liked: { scale: [1, 1.2, 1], color: "#ef4444" },
+  };
+
+  const bookmarkVariants = {
+    initial: { scale: 1, color: "currentColor" },
+    bookmarked: { scale: [1, 1.2, 1], color: "var(--primary)" },
   };
 
   return (
@@ -528,21 +597,44 @@ const PostCard = ({
               isShortContent && isTooShort ? "mt-5 flex-row" : "mt-5 flex-col"
             } gap-5 md:w-16`}
           >
-            <div
+            <motion.div
               className={`rounded-full ${
                 isShortContent && isTooShort ? "pr-2" : "px-2"
-              } md:mx-auto`}
-              onClick={() => handleLike(post.id)}
+              } cursor-pointer md:mx-auto`}
+              onClick={() => likeMutation.mutate(post.id)}
+              variants={likeVariants}
+              initial="initial"
+              animate={
+                optimisticLikes[post.id] !== undefined
+                  ? optimisticLikes[post.id]
+                    ? "liked"
+                    : "initial"
+                  : post.likes?.some(
+                        (like) => like.userId === session.data?.user.id,
+                      )
+                    ? "liked"
+                    : "initial"
+              }
+              whileHover="hover"
+              whileTap="tap"
+              transition={{ duration: 0.2 }}
             >
-              {post.likes?.some(
-                (like) => like.userId === session.data?.user.id,
-              ) ? (
+              {optimisticLikes[post.id] !== undefined ? (
+                optimisticLikes[post.id] ? (
+                  <GoHeartFill className="size-5 text-red-500" />
+                ) : (
+                  <GoHeart className="size-5" />
+                )
+              ) : post.likes?.some(
+                  (like) => like.userId === session.data?.user.id,
+                ) ? (
                 <GoHeartFill className="size-5 text-red-500" />
               ) : (
                 <GoHeart className="size-5" />
               )}
-            </div>
-            <div
+            </motion.div>
+
+            <motion.div
               onClick={async () => {
                 await setSelectedPost(post);
                 toggleCommentShown(post.id);
@@ -553,23 +645,50 @@ const PostCard = ({
               className={`mx-auto cursor-pointer rounded-full ${
                 isShortContent && isTooShort ? "pr-2" : "px-2"
               }`}
+              variants={iconVariants}
+              whileHover="hover"
+              whileTap="tap"
+              transition={{ duration: 0.2 }}
             >
               <MessageCircle className="size-5" />
-            </div>
-            <div
+            </motion.div>
+
+            <motion.div
               className={`mx-auto rounded-full ${
                 isShortContent && isTooShort ? "pr-2" : "px-2"
-              }`}
-              onClick={() => handleBookmark(post.id)}
+              } cursor-pointer`}
+              onClick={() => bookmarkMutation.mutate(post.id)}
+              variants={bookmarkVariants}
+              initial="initial"
+              animate={
+                optimisticBookmarks[post.id] !== undefined
+                  ? optimisticBookmarks[post.id]
+                    ? "bookmarked"
+                    : "initial"
+                  : post.bookmarks.some(
+                        (bookmark) => bookmark.userId === session.data?.user.id,
+                      )
+                    ? "bookmarked"
+                    : "initial"
+              }
+              whileHover="hover"
+              whileTap="tap"
+              transition={{ duration: 0.2 }}
             >
-              {post.bookmarks.some(
-                (bookmark) => bookmark.userId === session.data?.user.id,
-              ) ? (
+              {optimisticBookmarks[post.id] !== undefined ? (
+                optimisticBookmarks[post.id] ? (
+                  <HiBookmark className="size-5 text-primary" />
+                ) : (
+                  <HiOutlineBookmark className="size-5" />
+                )
+              ) : post.bookmarks.some(
+                  (bookmark) => bookmark.userId === session.data?.user.id,
+                ) ? (
                 <HiBookmark className="size-5 text-primary" />
               ) : (
                 <HiOutlineBookmark className="size-5" />
               )}
-            </div>
+            </motion.div>
           </div>
         </div>
 
