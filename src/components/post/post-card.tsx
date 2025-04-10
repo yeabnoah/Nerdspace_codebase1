@@ -300,13 +300,27 @@ const PostCard = ({
   };
 
   const followMutation = useMutation({
-    mutationFn: async ({ userId, action }: { userId: string; action: "follow" | "unfollow" }) => {
-      const response = await axios.post(`/api/user/follow?userId=${userId}&action=${action}`);
+    mutationFn: async ({
+      userId,
+      action,
+    }: {
+      userId: string;
+      action: "follow" | "unfollow";
+    }) => {
+      const response = await axios.post(
+        `/api/user/follow?userId=${userId}&action=${action}`,
+      );
       return response.data;
     },
     onSuccess: (data) => {
+      // Invalidate all relevant queries
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["who-to-follow"] });
       queryClient.invalidateQueries({ queryKey: ["follow-status"] });
+      queryClient.invalidateQueries({ queryKey: ["user-followers"] });
+      queryClient.invalidateQueries({ queryKey: ["user-following"] });
+      queryClient.invalidateQueries({ queryKey: ["explore"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success(data.message);
     },
     onError: () => {
@@ -368,12 +382,12 @@ const PostCard = ({
               <Button
                 variant={"outline"}
                 size="sm"
-                className={`mx-0  h-11 rounded-xl bg-transparent px-2 text-xs shadow-none hover:bg-transparent md:text-sm`}
+                className={`mx-0 h-11 rounded-xl bg-transparent px-2 text-xs shadow-none hover:bg-transparent md:text-sm`}
                 onClick={() => {
                   handleFollow(post);
                 }}
               >
-                <span className="flex items-center gap-1 px-2 ">
+                <span className="flex items-center gap-1 px-2">
                   {!post.user?.isFollowingAuthor && <Plus size={15} />}
                   {post.user?.isFollowingAuthor ? "Following" : "Follow"}
                 </span>
