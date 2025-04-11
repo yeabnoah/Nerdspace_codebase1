@@ -54,7 +54,7 @@ export default function ProfilePage() {
 
   if (isloading || isFetching || isPending) {
     return (
-      <div className="font-geist container relative mx-10 pb-8">
+      <div className="container relative mx-10 pb-8 font-geist">
         <div className="absolute -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
 
         <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl shadow-lg md:h-[200px]">
@@ -94,7 +94,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="font-geist container relative mx-10 pb-8">
+    <div className="container relative mx-10 pb-8 font-geist">
       <div className="absolute -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
 
       <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl shadow-lg md:h-[200px]">
@@ -110,8 +110,11 @@ export default function ProfilePage() {
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
         </div>
 
-        <Link href="/settings" className="absolute right-4 top-4 p-2 rounded-full bg-black">
-          <SettingsIcon className=" size-4 cursor-pointer rounded-full  text-white" />
+        <Link
+          href="/settings"
+          className="absolute right-4 top-4 rounded-full bg-black p-2"
+        >
+          <SettingsIcon className="size-4 cursor-pointer rounded-full text-white" />
         </Link>
       </div>
 
@@ -124,7 +127,7 @@ export default function ProfilePage() {
             className="object-cover"
           />
         </div>
-        <h1 className="font-geist mt-2 flex flex-row items-center text-2xl font-medium text-white">
+        <h1 className="mt-2 flex flex-row items-center font-geist text-2xl font-medium text-white">
           <span className="font-geist text-sm font-medium text-white">
             {user.visualName || user.name}
           </span>
@@ -138,12 +141,18 @@ export default function ProfilePage() {
           {user.bio || "No bio"}
         </h1>
         <div className="flex gap-4">
-          <span className="font-geist text-sm font-normal text-white">
-            {user._count?.followers || 0} Followers
-          </span>
-          <span className="font-geist text-sm font-normal text-white">
-            {user._count?.following || 0} Following
-          </span>
+          <Link
+            href={`/profile/${user.id}/followers`}
+            className="font-geist text-sm font-normal text-white hover:text-primary"
+          >
+            {user._count?.following || 0} Followers
+          </Link>
+          <Link
+            href={`/profile/${user.id}/following`}
+            className="font-geist text-sm font-normal text-white hover:text-primary"
+          >
+            {user._count?.followers || 0} Following
+          </Link>
         </div>
       </div>
       <div className="">
