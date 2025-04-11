@@ -95,7 +95,7 @@ const Navbar = () => {
         <div className="hidden md:flex">
           <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
             <DialogTitle></DialogTitle>
-            <DialogContent className="max-w-xl overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+            <DialogContent className="max-w-xl overflow-hidden rounded-xl border-none bg-white/80 p-0 backdrop-blur-sm dark:bg-black/80">
               <DialogHeader className="px-6 pt-4">
                 <DialogTitle className="font-geist text-3xl font-medium">
                   Search

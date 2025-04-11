@@ -398,32 +398,35 @@ const PostCard = ({
               </Button>
             )}
             <DropdownMenu>
-              <DropdownMenuTrigger className="mx-auto w-9 py-0 outline-none">
-                <MoreHorizontal />
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
               </DropdownMenuTrigger>
               {session?.data?.user?.id === post.user.id ? (
-                <DropdownMenuContent className="mr-5 flex flex-row border-none bg-white dark:bg-black/95 md:mr-0 md:block">
+                <DropdownMenuContent
+                  align="end"
+                  className="w-48 rounded-2xl border-none bg-white/80 shadow-lg backdrop-blur-sm dark:bg-black/80"
+                >
                   <DropdownMenuItem
                     onClick={() => {
                       setSelectedPost(post);
                       setEditModal(true);
-                      console.log("edit modal");
-                      console.log(post);
-                      console.log(post.id);
-                      // console.log();
                     }}
+                    className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
                   >
                     <Edit className="mr-2 h-4 w-4" />
-                    <span className="hidden md:block">Edit</span>
+                    <span>Edit</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
                       setSelectedPost(post);
                       setDeleteModal(true);
                     }}
+                    className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
                   >
                     <TrashIcon className="mr-2 h-4 w-4" />
-                    <span className="hidden md:block">Delete</span>
+                    <span>Delete</span>
                   </DropdownMenuItem>
                   {(post?.access as unknown as string) ===
                   (PostAccess.public as unknown as string) ? (
@@ -431,37 +434,35 @@ const PostCard = ({
                       onClick={() => {
                         handleAccessChange(post);
                       }}
+                      className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
                     >
                       <LockIcon className="mr-2 h-4 w-4" />
-                      <span className="hidden md:block">Go Private</span>
+                      <span>Go Private</span>
                     </DropdownMenuItem>
                   ) : (
                     <DropdownMenuItem
                       onClick={() => {
                         handleAccessChange(post);
                       }}
+                      className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
                     >
                       <LockOpen className="mr-2 h-4 w-4" />
-                      <span className="hidden md:block">Go Public</span>
+                      <span>Go Public</span>
                     </DropdownMenuItem>
                   )}
-                  {/* <DropdownMenuItem>
-                    <Share2Icon className="mr-2 h-4 w-4" />
-                    <span className="hidden md:block">Share</span>
-                  </DropdownMenuItem> */}
                 </DropdownMenuContent>
               ) : (
-                <DropdownMenuContent className="mr-5 flex flex-row justify-center bg-white dark:bg-textAlternative md:mr-0 md:block">
-                  {/* <DropdownMenuItem>
-                    <Share2Icon className="mr-2 h-4 w-4" />
-                    <span className="hidden md:block">Share</span>
-                  </DropdownMenuItem> */}
+                <DropdownMenuContent
+                  align="end"
+                  className="w-48 rounded-2xl border-none bg-white/80 shadow-lg backdrop-blur-sm dark:bg-black/80"
+                >
                   <DropdownMenuItem
                     onClick={() => handleReport(post.id)}
                     disabled={session?.data?.user?.id === post.user.id}
+                    className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
                   >
                     <BanIcon className="mr-2 h-4 w-4" />
-                    <span className="hidden md:block">Report</span>
+                    <span>Report</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               )}

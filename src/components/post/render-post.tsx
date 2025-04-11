@@ -458,14 +458,16 @@ const RenderPost = () => {
                 setEditModal={setEditModalOpen}
                 setDeleteModal={setDeleteModalOpen}
                 changePostAccessType={changePostAccessType}
-                // handleFollow={handleFollow}
                 handleLike={handleLike}
                 handleBookmark={handleBookmark}
               />
             );
           })}
         <div ref={ref}>{isFetchingNextPage && <MorePostsFetchSkeleton />}</div>
+      </div>
 
+      {/* Modals */}
+      <div className="fixed inset-0 z-50">
         <ImagePreviewDialog
           images={selectedPostImages}
           initialIndex={selectedMediaIndex || 0}

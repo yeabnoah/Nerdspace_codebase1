@@ -57,7 +57,7 @@ const FollowList = () => {
   const nextCursor: string | null = data?.nextCursor || null;
 
   return (
-    <Card className="hidden min-h-32  w-64 rounded-2xl border border-gray-100 bg-transparent pt-4 shadow-none dark:border-gray-500/5 md:block">
+    <Card className="hidden min-h-32 w-64 rounded-2xl border border-gray-100 bg-transparent pt-4 shadow-none dark:border-gray-500/5 md:block">
       <div className="relative">
         <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/10 bg-gradient-to-br from-primary/5 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
@@ -91,10 +91,21 @@ const FollowList = () => {
                       className="text-xs font-medium hover:underline"
                       title={u.visualName ?? ""}
                     >
-                      {u.visualName || u.name || ""}
+                      {(u.visualName && u.visualName.length > 6
+                        ? u.visualName.slice(0, 6) + "..."
+                        : u.visualName) ||
+                        (u.name && u.name.length > 6
+                          ? u.name.slice(0, 6) + "..."
+                          : u.name) ||
+                        ""}
                     </p>
                   </div>
-                  <div className="flex items-center text-xs gap-2">Nerd@{u.nerdAt}</div>
+                  <div className="flex items-center gap-2 text-xs">
+                    Nerd@
+                    {u.nerdAt && u.nerdAt.length > 6
+                      ? u.nerdAt.slice(0, 4) + "..."
+                      : u.nerdAt}
+                  </div>
                 </div>
                 <Button
                   size="sm"
