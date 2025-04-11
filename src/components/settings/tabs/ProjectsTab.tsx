@@ -1,28 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { Skeleton } from "@/components/ui/skeleton";
-import { formatDistanceToNow } from "date-fns";
-import Image from "next/image";
-import { Calendar } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { ProjectCardSkeleton } from "@/components/skeleton/project-card";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import {
-  Star,
-  Heart,
-  MessageSquare,
-  Flag,
-  ArrowRight,
-  Share2,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { formatDistanceToNow } from "date-fns";
+import { ArrowRight, Calendar, Heart, Share2, Star } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface Project {
@@ -184,15 +175,15 @@ function ProjectCard({ project }: { project: Project }) {
             <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
             <div className="flex w-full flex-col px-6 pb-3">
-              <div className="font-geist mb-2 text-3xl font-medium">
+              <div className="mb-2 font-geist text-3xl font-medium">
                 Share Project
               </div>
-              <p className="font-geist mb-6 text-muted-foreground">
+              <p className="mb-6 font-geist text-muted-foreground">
                 Are you sure you want to share this project? This will make it
                 visible to others.
               </p>
 
-              <div className="font-geist mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5">
+              <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
                 <Button
                   variant="outline"
                   className="h-11 w-24 rounded-2xl"
@@ -242,8 +233,12 @@ export default function ProjectsTab() {
 
   return (
     <div className="space-y-6">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-fit mt-5">
-        <TabsList className="grid h-12 dark:bg-transparent border dark:border-gray-500/10 rounded-full w-full grid-cols-2">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="mt-5 w-fit"
+      >
+        <TabsList className="grid h-12 w-full grid-cols-2 rounded-full border dark:border-gray-500/10 dark:bg-transparent">
           <TabsTrigger
             value="followed"
             className="relative flex h-10 items-center gap-2 rounded-full"
@@ -264,13 +259,23 @@ export default function ProjectsTab() {
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
-            <Card
-              key={i}
-              className="h-[400px] animate-pulse rounded-3xl border-none bg-gray-800/50"
-            >
-              <div className="absolute inset-0 z-0 animate-pulse bg-gradient-to-br from-blue-500/50 to-purple-500/50 shadow-lg blur-[3px]"></div>
-            </Card>
+            <ProjectCardSkeleton key={i} />
           ))}
+        </div>
+      ) : projects?.length === 0 ? (
+        <div className="flex h-[200px] w-full items-center justify-center rounded-lg border border-dashed border-zinc-200 bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900/50">
+          <div className="text-center">
+            <p className="text-lg font-medium text-zinc-600 dark:text-zinc-400">
+              {activeTab === "followed"
+                ? "No followed projects yet"
+                : "No created projects yet"}
+            </p>
+            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-500">
+              {activeTab === "followed"
+                ? "Start following projects to see them here"
+                : "Create your first project to get started"}
+            </p>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

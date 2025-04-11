@@ -50,21 +50,7 @@ export function LoginForm({
         onSuccess: async () => {
           toast.dismiss(loadingToastId);
           toast.success("You're successfully signed in");
-          
-          // Check if this is the user's first login
-          try {
-            const response = await axios.get("/api/onboarding/status", {
-              withCredentials: true,
-            });
-            if (response.data.isFirstTime) {
-              router.push("/onboarding");
-            } else {
-              router.push("/");
-            }
-          } catch (error) {
-            console.error("Error checking onboarding status:", error);
-            router.push("/");
-          }
+          router.push("/");
         },
         onError: (ctx) => {
           toast.dismiss(loadingToastId);
@@ -92,7 +78,7 @@ export function LoginForm({
         onSuccess: () => {
           toast.dismiss(loadingToastId);
           toast.success("You're successfully signed in");
-          setLoading(false); 
+          setLoading(false);
         },
         onError: (ctx) => {
           toast.dismiss(loadingToastId);
@@ -117,7 +103,7 @@ export function LoginForm({
       {...props}
     >
       <div className="mb-3 flex flex-col items-center gap-2 text-center">
-        <h1 className="font-playfair text-3xl text-card-foreground ">
+        <h1 className="font-playfair text-3xl text-card-foreground">
           <span className="mx-1 font-itcThinItalic text-4xl">Welcome</span> Back
         </h1>
       </div>
@@ -125,29 +111,31 @@ export function LoginForm({
       <Button
         onClick={loginWithGithub}
         variant="outline"
-        className="w-full rounded-lg bg-inputBg  py-5"
-        type="button" 
-        disabled={loading} 
+        className="w-full rounded-lg bg-inputBg py-5"
+        type="button"
+        disabled={loading}
       >
         {loading ? (
           "Loading..."
         ) : (
           <>
             <FaGithub size={30} />
-            <h1 className="text-base font-medium ">Login with GitHub</h1>
+            <h1 className="text-base font-medium">Login with GitHub</h1>
           </>
         )}
       </Button>
 
       <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-        <span className="relative z-10 bg-background  py-1 rounded-lg px-2 text-muted-foreground">
+        <span className="relative z-10 rounded-lg bg-background px-2 py-1 text-muted-foreground">
           OR
         </span>
       </div>
 
       <div className="grid gap-6">
         <div className="grid gap-2">
-          <Label className="" htmlFor="email">Email</Label>
+          <Label className="" htmlFor="email">
+            Email
+          </Label>
           <Input
             id="email"
             type="email"
@@ -161,20 +149,22 @@ export function LoginForm({
         </div>
         <div className="grid gap-2">
           <div className="flex items-center">
-            <Label className=" " htmlFor="password">Password</Label>
+            <Label className=" " htmlFor="password">
+              Password
+            </Label>
             <a
               href="/forget-password"
-              className="ml-auto text-sm  text-muted-foreground underline-offset-4 hover:underline"
+              className="ml-auto text-sm text-muted-foreground underline-offset-4 hover:underline"
             >
               Forgot your password?
             </a>
           </div>
-            <div className="relative">
+          <div className="relative">
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="**********"
-              className="rounded-lg pr-10 text-sm border border-gray-300"
+              className="rounded-lg border border-gray-300 pr-10 text-sm"
               {...register("password")}
             />
             <button
@@ -184,7 +174,7 @@ export function LoginForm({
             >
               {showPassword ? "Hide" : "Show"}
             </button>
-            </div>
+          </div>
           <p className="text-xs text-red-400">
             {errors.password && <span>{errors.password.message}</span>}
           </p>

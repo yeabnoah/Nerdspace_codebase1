@@ -138,23 +138,23 @@ const ProfileSettings = () => {
 
       <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-black">
         <CardHeader className="px-6">
-          <CardTitle className="font-geist text-3xl font-medium">
+          <CardTitle className="font-geist text-2xl font-medium">
             Profile Settings
           </CardTitle>
-          <CardDescription className="font-geist text-muted-foreground">
+          <CardDescription className="font-geist text-sm text-muted-foreground">
             Customize your profile to make it uniquely yours
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8 px-6">
           {/* Cover Image Section */}
-          <div className="group relative h-[200px] w-full overflow-hidden rounded-2xl shadow-lg">
+          <div className="group relative h-[150px] w-full overflow-hidden rounded-2xl shadow-lg">
             <Image
               src={coverPreviewUrl || user.coverImage || "/obsession.jpg"}
               alt="Cover Preview"
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 via-zinc-900/60 to-transparent p-8 dark:from-black/80 dark:via-black/50">
+            <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 via-zinc-900/60 to-transparent px-8 dark:from-black/80 dark:via-black/50">
               <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
               <div className="relative z-10 flex justify-end">
                 <Input
@@ -178,7 +178,7 @@ const ProfileSettings = () => {
           {/* Profile Image and Basic Info Section */}
           <div className="flex flex-col gap-6 md:flex-row md:items-start">
             <div className="relative flex-shrink-0">
-              <div className="relative h-24 w-24 overflow-hidden rounded-full ring-2 ring-primary/20">
+              <div className="relative h-20 w-20 overflow-hidden rounded-full ring-2 ring-primary/20">
                 <Image
                   src={
                     previewUrl ||
@@ -207,26 +207,26 @@ const ProfileSettings = () => {
               </label>
             </div>
 
-            <div className="flex w-full flex-col gap-4">
+            <div className="flex w-full flex-col gap-2">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label className="font-geist text-sm font-medium">
+                  <Label className="font-geist text-xs font-medium">
                     Display name
                   </Label>
                   <Input
                     placeholder="John Doe"
-                    className="h-11 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                    className="h-10 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/20"
                     value={displayName || ""}
                     onChange={(e) => setDisplayName(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="font-geist text-sm font-medium">
+                  <Label className="font-geist text-xs font-medium">
                     Personal Link
                   </Label>
                   <Input
                     placeholder="https://johndoe.blog"
-                    className="h-11 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                    className="h-10 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/20"
                     value={link || ""}
                     onChange={(e) => setLink(e.target.value)}
                   />
@@ -236,9 +236,9 @@ const ProfileSettings = () => {
           </div>
 
           {/* Additional Info Section */}
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid  md:grid-cols-2">
             <div className="space-y-2">
-              <Label className="font-geist text-sm font-medium">
+              <Label className="font-geist text-xs font-medium">
                 Your Country
               </Label>
               {user?.country ? (
@@ -247,7 +247,7 @@ const ProfileSettings = () => {
                 </p>
               ) : (
                 <CountryDropdown
-                  className="h-11 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                  className="h-10 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
                   placeholder="Select country"
                   defaultValue={selectedCountry?.alpha3}
                   onChange={(country) => setSelectedCountry(country)}
@@ -256,23 +256,22 @@ const ProfileSettings = () => {
             </div>
 
             <div className="space-y-2">
-              <Label className="font-geist text-sm font-medium">
+              <Label className="font-geist text-xs font-medium">
                 What are you nerd at
               </Label>
               <Input
                 placeholder="Music"
-                className="h-11 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                className="h-10 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/20"
                 value={nerdAt || ""}
                 onChange={(e) => setNerdAt(e.target.value)}
               />
             </div>
           </div>
-
           <div className="space-y-2">
-            <Label className="font-geist text-sm font-medium">Bio</Label>
+            <Label className="font-geist text-xs font-medium">Bio</Label>
             <AutosizeTextarea
               placeholder="Tell us about yourself..."
-              className="min-h-[120px] w-full rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                className="min-h-[120px] w-full rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/20"
               value={bio || ""}
               onChange={(e) => setBio(e.target.value)}
             />
@@ -334,7 +333,7 @@ const ProfileSettings = () => {
                   firstTime: false,
                 });
               }}
-              className="h-11 w-fit gap-2 rounded-2xl border border-gray-500/10 bg-gradient-to-r text-black dark:text-white dark:hover:border-black"
+              className="h-10 w-fit gap-2 rounded-2xl border border-gray-500/10 bg-gradient-to-r text-black dark:text-white dark:hover:border-black"
             >
               <Check className="h-4 w-4" />
               Save Changes

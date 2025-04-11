@@ -103,9 +103,7 @@ const Navbar = () => {
                   <CommandItem
                     onSelect={() => {
                       if (query.trim()) {
-                        router.push(
-                          `/explore?q=${encodeURIComponent(query)}`,
-                        );
+                        router.push(`/explore?q=${encodeURIComponent(query)}`);
                         setIsSearchOpen(false);
                         setQuery("");
                       }
@@ -152,7 +150,7 @@ const Navbar = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-48 dark:bg-textAlternative"
+            className="w-48 rounded-2xl border-none bg-white/80 shadow-lg backdrop-blur-sm dark:bg-black/80"
           >
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
@@ -170,7 +168,7 @@ const Navbar = () => {
               onClick={() => {
                 router.push("/profile");
               }}
-              className="cursor-pointer"
+              className="cursor-pointer h-10 rounded-xl hover:bg-primary/10"
             >
               <UserIcon className="mr-2 h-4 w-4" />
               <span>Profile</span>
@@ -180,12 +178,15 @@ const Navbar = () => {
               onClick={() => {
                 router.push("/settings");
               }}
-              className="cursor-pointer"
+              className="cursor-pointer h-10 rounded-xl hover:bg-primary/10"
             >
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer" onClick={logout}>
+            <DropdownMenuItem
+              className="cursor-pointer h-10 rounded-xl hover:bg-primary/10"
+              onClick={logout}
+            >
               <LogOut className="mr-2 h-4 w-4" />
               <span>Logout</span>
             </DropdownMenuItem>
