@@ -106,41 +106,48 @@ const FollowersPage = ({ params }: { params: { id: string } }) => {
             {followers.map((user) => (
               <div
                 key={user.id}
-                className="flex items-center justify-between gap-4 rounded-lg p-4 transition-colors"
+                className="group relative overflow-hidden rounded-2xl border-none bg-gradient-to-br from-zinc-100 via-white to-zinc-50 shadow-md transition-all duration-300 dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black"
               >
-                <Link
-                  href={`/profile/${user.id}`}
-                  className="flex flex-1 items-center gap-4"
-                >
-                  <div className="relative h-12 w-12 overflow-hidden rounded-full">
-                    <Image
-                      src={user.image || "/default-avatar.png"}
-                      alt={user.name || "User"}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">{user.name}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {user.bio || "No bio yet"}
-                    </p>
-                  </div>
-                </Link>
-                {session.data?.user.id !== user.id && (
-                  <Button
-                    variant={followStatus?.[user.id] ? "outline" : "default"}
-                    size="sm"
-                    onClick={() => handleFollow(user.id)}
-                    disabled={loadingStates[user.id]}
+                <div className="relative z-10 flex items-center justify-between gap-4 p-3">
+                  <Link
+                    href={`/profile/${user.id}`}
+                    className="flex flex-1 items-center gap-4"
                   >
-                    {loadingStates[user.id]
-                      ? "Loading..."
-                      : followStatus?.[user.id]
-                        ? "Following"
-                        : "Follow"}
-                  </Button>
-                )}
+                    <div className="relative h-12 w-12 overflow-hidden rounded-full ring-2 ring-white dark:ring-zinc-800">
+                      <Image
+                        src={user.image || "/default-avatar.png"}
+                        alt={user.name || "User"}
+                        fill
+                        className="object-cover transition-all duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="font-heading text-sm font-geist font-semibold text-zinc-900 dark:text-white">
+                        {user.name}
+                      </h3>
+                      <p className="text-sm text-zinc-500 font-geist dark:text-zinc-400">
+                        {user.bio || "No bio yet"}
+                      </p>
+                    </div>
+                  </Link>
+                  {session.data?.user.id !== user.id && (
+                    <Button
+                      variant={followStatus?.[user.id] ? "outline" : "default"}
+                      size="sm"
+                      onClick={() => handleFollow(user.id)}
+                      disabled={loadingStates[user.id]}
+                      className="h-10 rounded-full px-4 transition-all duration-300 hover:scale-105"
+                    >
+                      <span className="font-geist text-sm font-normal px-2">
+                        {loadingStates[user.id]
+                          ? "Loading..."
+                          : followStatus?.[user.id]
+                            ? "Following"
+                            : "Follow"}
+                      </span>
+                    </Button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
