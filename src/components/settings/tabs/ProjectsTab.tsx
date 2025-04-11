@@ -242,8 +242,8 @@ export default function ProjectsTab() {
 
   return (
     <div className="space-y-6">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-5">
-        <TabsList className="grid h-12 dark:bg-transparent border-none dark:border dark:border-gray-500/10 rounded-full w-full grid-cols-2">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-fit mt-5">
+        <TabsList className="grid h-12 dark:bg-transparent border dark:border-gray-500/10 rounded-full w-full grid-cols-2">
           <TabsTrigger
             value="followed"
             className="relative flex h-10 items-center gap-2 rounded-full"

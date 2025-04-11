@@ -14,6 +14,7 @@ import {
   ExternalLink,
   CalendarIcon,
   Dot,
+  SettingsIcon,
 } from "lucide-react";
 import useUserStore from "@/store/user.store";
 import RenderMyPost from "./myposts";
@@ -108,9 +109,13 @@ export default function ProfilePage() {
         <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 via-zinc-900/60 to-transparent p-8 dark:from-black/80 dark:via-black/50">
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
         </div>
+
+        <Link href="/settings" className="absolute right-4 top-4 p-2 rounded-full bg-black">
+          <SettingsIcon className=" size-4 cursor-pointer rounded-full  text-white" />
+        </Link>
       </div>
 
-      <div className="relative z-10 mx-2 my-5 -mt-16 flex flex-col items-start gap-1">
+      <div className="relative z-10 mx-2 my-5 -mt-10 flex flex-col items-start gap-1">
         <div className="relative mx-5 -mt-16 h-28 w-28 overflow-hidden rounded-full ring-2 ring-white/20">
           <Image
             src={user.image || "/user.jpg?height=128&width=128"}
