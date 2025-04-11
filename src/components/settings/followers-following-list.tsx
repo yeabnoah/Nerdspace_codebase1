@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -150,48 +150,56 @@ export default function FollowersFollowingList({
 
   return (
     <div className="space-y-4">
-      {/* <div className="grid gap-4 sm:grid-cols-2"> */}
-      {users.map((user) => (
-        <div
-          key={user.id}
-          className="flex items-center justify-between rounded-lg border p-4"
-        >
-          <Link
-            href={`/app/profile/${user.id}`}
-            className="flex flex-1 items-center gap-4"
+      <div className="grid gap-4">
+        {users.map((user) => (
+          <div
+            key={user.id}
+            className="group relative overflow-hidden rounded-2xl border-none bg-gradient-to-br from-zinc-100 via-white to-zinc-50  transition-all duration-300 hover:scale-[1.02] dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black"
           >
-            <div className="relative h-12 w-12 overflow-hidden rounded-full">
-              <Image
-                src={user.image || "/user.jpg"}
-                alt={user.name}
-                fill
-                className="object-cover"
-              />
+            {/* Content container */}
+            <div className="relative z-10 flex items-center justify-between gap-4 p-3">
+              <Link
+                href={`/profile/${user.id}`}
+                className="flex flex-1 items-center gap-4"
+              >
+                <div className="relative h-12 w-12 overflow-hidden rounded-full ring-2 ring-white dark:ring-zinc-800">
+                  <Image
+                    src={user.image || "/user.jpg"}
+                    alt={user.name}
+                    fill
+                    className="object-cover transition-all duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <div>
+                  <h3 className="font-heading text-sm font-geist font-semibold text-zinc-900 dark:text-white">
+                    {user.name}
+                  </h3>
+                  <p className="text-sm text-zinc-500 font-geist dark:text-zinc-400">
+                    {user.bio || "No bio yet"}
+                  </p>
+                </div>
+              </Link>
+              {session.data?.user.id !== user.id && (
+                <Button
+                  variant={followStatus?.[user.id] ? "outline" : "default"}
+                  size="sm"
+                  onClick={() => handleFollow(user.id)}
+                  disabled={loadingStates[user.id]}
+                  className="h-10 rounded-full px-4 transition-all duration-300 hover:scale-105"
+                >
+                  <span className="font-geist text-sm font-normal px-2">
+                    {loadingStates[user.id]
+                      ? "Loading..."
+                      : followStatus?.[user.id]
+                        ? "Following"
+                        : "Follow"}
+                  </span>
+                </Button>
+              )}
             </div>
-            <div>
-              <h3 className="font-medium">{user.name}</h3>
-              <p className="text-sm text-muted-foreground">
-                Nerd@{user.nerdAt}
-              </p>
-            </div>
-          </Link>
-          {session.data?.user.id !== user.id && (
-            <Button
-              variant={followStatus?.[user.id] ? "outline" : "default"}
-              size="sm"
-              onClick={() => handleFollow(user.id)}
-              disabled={loadingStates[user.id]}
-            >
-              {loadingStates[user.id]
-                ? "Loading..."
-                : followStatus?.[user.id]
-                  ? "Following"
-                  : "Follow"}
-            </Button>
-          )}
-        </div>
-      ))}
-      {/* </div> */}
+          </div>
+        ))}
+      </div>
 
       {pagination.hasNextPage && (
         <div className="flex justify-center">

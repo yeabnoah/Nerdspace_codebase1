@@ -72,7 +72,7 @@ export default function UserProfile() {
       <div className="container relative mx-10 pb-8 font-geist">
         <div className="absolute -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
 
-        <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl shadow-lg md:h-[200px]">
+        <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl md:h-[200px]">
           <Skeleton className="h-full w-full" />
         </div>
 
@@ -92,7 +92,7 @@ export default function UserProfile() {
 
         <div className="mt-8">
           <div className="space-y-8 lg:col-span-2">
-            <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-black">
+            <div className="overflow-hidden rounded-xl border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-black">
               <div className="p-8">
                 <div className="mb-4">
                   <Skeleton className="h-10 w-full" />
@@ -112,7 +112,7 @@ export default function UserProfile() {
     <div className="container relative mx-10 pb-8 font-geist">
       <div className="absolute -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
 
-      <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl shadow-lg md:h-[200px]">
+      <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl md:h-[200px]">
         <Image
           src={userProfile?.coverImage || "/obsession.jpg"}
           alt="Cover Image"
@@ -135,38 +135,38 @@ export default function UserProfile() {
             className="object-cover"
           />
         </div>
-        <h1 className="mt-2 flex flex-row items-center font-geist text-2xl font-medium text-white">
-          <span className="font-geist text-sm font-medium text-white">
+        <h1 className="mt-2 flex flex-row items-center font-geist text-2xl font-medium text-foreground">
+          <span className="font-geist text-sm font-medium text-foreground">
             {userProfile?.visualName || userProfile?.name}
           </span>
           <Dot className="mx-1 h-2 w-2" />
-          <span className="font-geist text-sm font-medium text-white">
+          <span className="font-geist text-sm font-medium text-foreground">
             Nerd@{userProfile?.nerdAt}
           </span>
         </h1>
 
-        <h1 className="font-geist text-sm font-normal text-white">
+        <h1 className="font-geist text-sm font-normal text-foreground">
           {userProfile?.bio || "No bio"}
         </h1>
         <div className="flex gap-4">
           <Link
             href={`/profile/user/${userProfile?.id}/followers`}
-            className="font-geist text-sm font-normal text-white hover:text-primary"
+            className="font-geist text-sm font-normal text-foreground hover:text-primary"
           >
-            {userProfile?._count?.following || 0} Followers
+            {followCounts.followers} Followers
           </Link>
           <Link
             href={`/profile/user/${userProfile?.id}/following`}
-            className="font-geist text-sm font-normal text-white hover:text-primary"
+            className="font-geist text-sm font-normal text-foreground hover:text-primary"
           >
-            {userProfile?._count?.followers || 0} Following
+            {followCounts.following} Following
           </Link>
         </div>
       </div>
 
       <div className="mt-8">
         <div className="space-y-8 lg:col-span-2">
-          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-black">
+          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-black">
             <CardContent className="p-8">
               <Tabs
                 defaultValue="posts"

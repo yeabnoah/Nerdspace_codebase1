@@ -127,29 +127,29 @@ export default function ProfilePage() {
             className="object-cover"
           />
         </div>
-        <h1 className="mt-2 flex flex-row items-center font-geist text-2xl font-medium text-white">
-          <span className="font-geist text-sm font-medium text-white">
+        <h1 className="mt-2 flex flex-row items-center font-geist text-2xl font-medium text-foreground">
+          <span className="font-geist text-sm font-medium text-foreground">
             {user.visualName || user.name}
           </span>
           <Dot className="mx-1 h-2 w-2" />
-          <span className="font-geist text-sm font-medium text-white">
+          <span className="font-geist text-sm font-medium text-foreground">
             Nerd@{user.nerdAt}
           </span>
         </h1>
 
-        <h1 className="font-geist text-sm font-normal text-white">
+        <h1 className="font-geist text-sm font-normal text-foreground">
           {user.bio || "No bio"}
         </h1>
         <div className="flex gap-4">
           <Link
             href={`/profile/${user.id}/followers`}
-            className="font-geist text-sm font-normal text-white hover:text-primary"
+            className="font-geist text-sm font-normal text-foreground hover:text-primary"
           >
             {user._count?.following || 0} Followers
           </Link>
           <Link
             href={`/profile/${user.id}/following`}
-            className="font-geist text-sm font-normal text-white hover:text-primary"
+            className="font-geist text-sm font-normal text-foreground hover:text-primary"
           >
             {user._count?.followers || 0} Following
           </Link>
