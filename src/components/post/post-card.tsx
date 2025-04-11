@@ -4,6 +4,7 @@ import { getTrimLimit } from "@/functions/render-helper";
 import postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
 import usePostStore from "@/store/post.store";
+import useReportStore from "@/store/report.strore";
 import { PostAccess } from "@prisma/client";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -20,7 +21,6 @@ import {
   MoreHorizontal,
   Plus,
   SendIcon,
-  Share2Icon,
   Star,
   TrashIcon,
 } from "lucide-react";
@@ -31,17 +31,19 @@ import toast from "react-hot-toast";
 import { GoHeart, GoHeartFill } from "react-icons/go";
 import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
 import ImagePreviewDialog from "../image-preview";
+import DeleteModal from "../modal/delete.modal";
+import EditModal from "../modal/edit.modal";
 import CommentSkeleton from "../skeleton/comment.skelton";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { renderComments } from "./comment/render-comments";
-import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 
 interface PostCardProps {
   post: postInterface;
@@ -70,7 +72,6 @@ interface PostCardProps {
   modalDeleteOpened: boolean;
   reportModalOpen: boolean;
   setReportModalOpen: (open: boolean) => void;
-  setCommentId: (id: string) => void;
   commentLoading: boolean;
   comments: any[];
   hasNextCommentPage: boolean;
@@ -79,9 +80,9 @@ interface PostCardProps {
   setEditModal: (open: boolean) => void;
   setDeleteModal: (open: boolean) => void;
   changePostAccessType: (post: postInterface) => void;
-  handleFollow: (post: postInterface) => void;
   handleLike: (postId: string) => void;
   handleBookmark: (postId: string) => void;
+  setCommentId: (id: string) => void;
 }
 
 const PostCard = ({
@@ -109,7 +110,6 @@ const PostCard = ({
   modalDeleteOpened,
   reportModalOpen,
   setReportModalOpen,
-  setCommentId,
   commentLoading,
   comments,
   hasNextCommentPage,
@@ -120,11 +120,13 @@ const PostCard = ({
   changePostAccessType,
   handleLike,
   handleBookmark,
+  setCommentId,
 }: PostCardProps) => {
   const router = useRouter();
   const session = authClient.useSession();
   const queryClient = useQueryClient();
   const { setSelectedPost, setContent } = usePostStore();
+  const { setPostId } = useReportStore();
   const [commentContent, setCommentContent] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(
@@ -278,7 +280,7 @@ const PostCard = ({
   };
 
   const handleReport = (postId: string) => {
-    setCommentId(postId);
+    setPostId(postId);
     setReportModalOpen(true);
   };
 
@@ -404,8 +406,11 @@ const PostCard = ({
                   <DropdownMenuItem
                     onClick={() => {
                       setSelectedPost(post);
-                      setContent(post.content);
                       setEditModal(true);
+                      console.log("edit modal");
+                      console.log(post);
+                      console.log(post.id);
+                      // console.log();
                     }}
                   >
                     <Edit className="mr-2 h-4 w-4" />
@@ -414,7 +419,6 @@ const PostCard = ({
                   <DropdownMenuItem
                     onClick={() => {
                       setSelectedPost(post);
-                      setContent(post.content);
                       setDeleteModal(true);
                     }}
                   >
@@ -441,17 +445,17 @@ const PostCard = ({
                       <span className="hidden md:block">Go Public</span>
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem>
+                  {/* <DropdownMenuItem>
                     <Share2Icon className="mr-2 h-4 w-4" />
                     <span className="hidden md:block">Share</span>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                 </DropdownMenuContent>
               ) : (
                 <DropdownMenuContent className="mr-5 flex flex-row justify-center bg-white dark:bg-textAlternative md:mr-0 md:block">
-                  <DropdownMenuItem>
+                  {/* <DropdownMenuItem>
                     <Share2Icon className="mr-2 h-4 w-4" />
                     <span className="hidden md:block">Share</span>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   <DropdownMenuItem
                     onClick={() => handleReport(post.id)}
                     disabled={session?.data?.user?.id === post.user.id}
@@ -781,7 +785,7 @@ const PostCard = ({
                 modalDeleteOpened: modalDeleteOpened,
                 reportModalOpen,
                 setReportModalOpen,
-                setCommentId,
+                setCommentId: (id: string) => setCommentId(id),
               })}
               {hasNextCommentPage && (
                 <Button
@@ -848,6 +852,21 @@ const PostCard = ({
           </DialogContent>
         </Dialog>
       </div>
+
+      <EditModal
+        incasePost={post}
+        setEditModal={setEditModal}
+        editModal={modalEditOpened}
+        incaseContent={post.content}
+      />
+
+      <DeleteModal
+        selectedPost={post}
+        setDeleteModal={setDeleteModal}
+        deleteModal={modalDeleteOpened}
+        content={post.content}
+        setContent={setContent}
+      />
     </div>
   );
 };

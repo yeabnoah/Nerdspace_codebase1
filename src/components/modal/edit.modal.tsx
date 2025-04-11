@@ -15,23 +15,28 @@ import editPostFunction from "@/functions/edit-post";
 import toast from "react-hot-toast";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import { Loader } from "lucide-react";
+import usePostStore from "@/store/post.store";
 
 const EditModal = ({
-  selectedPost,
+  incasePost,
   setEditModal,
   editModal,
-  content,
-  setContent,
+  incaseContent,
 }: {
-  selectedPost: postInterface;
+  incasePost: postInterface;
   setEditModal: (open: boolean) => void;
   editModal: boolean;
-  content: string;
-  setContent: (content: string) => void;
+  incaseContent: string;
 }) => {
+  const { content, setContent, selectedPost } = usePostStore();
+
   const mutation = useMutation({
     mutationKey: ["edit-post"],
-    mutationFn: editPostFunction,
+    mutationFn: () =>
+      editPostFunction({
+        id: selectedPost?.id || incasePost.id,
+        content: content || incaseContent,
+      }),
     onSuccess: async () => {
       toast.success("Post edited successfully");
       setEditModal(false);
@@ -46,12 +51,16 @@ const EditModal = ({
   });
 
   const handleEdit = async () => {
+    console.log(selectedPost);
     await mutation.mutate();
   };
 
   return (
     <Dialog open={editModal} onOpenChange={setEditModal}>
-      <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+      <DialogContent
+        className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm"
+        aria-describedby="edit-post-description"
+      >
         <DialogTitle></DialogTitle>
         <div className="relative flex flex-col">
           {/* Glow effects */}
@@ -59,10 +68,13 @@ const EditModal = ({
           <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
           <div className="flex w-full flex-col px-6 pb-3">
-            <div className="mb-2 font-geist text-3xl font-medium">
+            <div className="post mb-2 font-geist text-3xl font-medium">
               Edit Post
             </div>
-            <p className="mb-6 font-geist text-muted-foreground">
+            <p
+              id="edit-post-description"
+              className="mb-6 font-geist text-muted-foreground"
+            >
               Make changes to your post content
             </p>
 
@@ -99,3 +111,10 @@ const EditModal = ({
 };
 
 export default EditModal;
+
+// {
+//   postUserId: '1ITCapyEoTbXOzqlCOf5wMEblfkw0sDM',
+//   sessionUserId: 'lndn47ueVWe8pvYj9eVx1M2RbQ5d87CR',
+//   postId: 'a9da856e-51b8-4fd3-a9ce-85c4fd36d22c',
+//   sessionId: 'lndn47ueVWe8pvYj9eVx1M2RbQ5d87CR'
+// }

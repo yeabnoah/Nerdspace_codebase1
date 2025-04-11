@@ -563,16 +563,12 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
           selectedPost={currentPost}
           setEditModal={setEditModalOpen}
           editModal={editModalOpen}
-          content={content}
-          setContent={setContent}
         />
 
         <DeleteModal
           selectedPost={currentPost}
           setDeleteModal={setDeleteModalOpen}
           deleteModal={deleteModalOpen}
-          content={content}
-          setContent={setContent}
         />
 
         {selectedComment && (
