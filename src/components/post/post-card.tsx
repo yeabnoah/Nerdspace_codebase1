@@ -41,6 +41,7 @@ import {
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { renderComments } from "./comment/render-comments";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 
 interface PostCardProps {
   post: postInterface;
@@ -136,6 +137,7 @@ const PostCard = ({
   const [optimisticBookmarks, setOptimisticBookmarks] = useState<{
     [key: string]: boolean;
   }>({});
+  const [isAccessDialogOpen, setIsAccessDialogOpen] = useState(false);
 
   const contentWords = post.content.split(" ");
   const trimLimit = getTrimLimit();
@@ -340,6 +342,9 @@ const PostCard = ({
       action: isFollowing ? "unfollow" : "follow",
     });
   };
+  const handleAccessChange = async (post: postInterface) => {
+    setIsAccessDialogOpen(true);
+  };
 
   return (
     <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-4 px-3 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/10 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/20 after:to-transparent [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/20 [&>div]:before:to-transparent">
@@ -420,7 +425,7 @@ const PostCard = ({
                   (PostAccess.public as unknown as string) ? (
                     <DropdownMenuItem
                       onClick={() => {
-                        changePostAccessType(post);
+                        handleAccessChange(post);
                       }}
                     >
                       <LockIcon className="mr-2 h-4 w-4" />
@@ -429,7 +434,7 @@ const PostCard = ({
                   ) : (
                     <DropdownMenuItem
                       onClick={() => {
-                        changePostAccessType(post);
+                        handleAccessChange(post);
                       }}
                     >
                       <LockOpen className="mr-2 h-4 w-4" />
@@ -797,6 +802,51 @@ const PostCard = ({
           isOpen={isDialogOpen}
           onClose={() => setIsDialogOpen(false)}
         />
+
+        <Dialog open={isAccessDialogOpen} onOpenChange={setIsAccessDialogOpen}>
+          <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+            <DialogTitle></DialogTitle>
+            <div className="relative flex flex-col">
+              {/* Glow effects */}
+              <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-red-300/50 bg-gradient-to-br from-red-300/40 via-red-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+              <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+
+              <div className="flex w-full flex-col px-6 pb-3">
+                <div className="mb-2 font-geist text-3xl font-medium">
+                  {(post.access as unknown as string) ===
+                  (PostAccess.public as unknown as string)
+                    ? "Make Post Private"
+                    : "Make Post Public"}
+                </div>
+                <p className="mb-6 font-geist text-muted-foreground">
+                  {(post.access as unknown as string) ===
+                  (PostAccess.public as unknown as string)
+                    ? "Are you sure you want to make this post private? This will hide it from other users."
+                    : "Are you sure you want to make this post public? This will make it visible to other users."}
+                </p>
+
+                <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
+                  <Button
+                    variant="outline"
+                    className="h-11 w-24 rounded-2xl"
+                    onClick={() => setIsAccessDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={async () => {
+                      await changePostAccessType(post);
+                      setIsAccessDialogOpen(false);
+                    }}
+                    className="h-11 w-24 rounded-2xl"
+                  >
+                    Confirm
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
