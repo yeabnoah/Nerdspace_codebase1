@@ -72,7 +72,7 @@ export default function RecommendedProjects() {
               </div>
               <Button
                 size="sm"
-                className="border bg-transparent text-card-foreground shadow-none hover:bg-transparent dark:text-white"
+                className="rounded-full border bg-transparent text-card-foreground shadow-none hover:bg-transparent dark:text-white"
               >
                 Follow
               </Button>
