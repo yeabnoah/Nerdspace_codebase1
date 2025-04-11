@@ -106,7 +106,7 @@ const FollowingPage = ({ params }: { params: { id: string } }) => {
             {following.map((user) => (
               <div
                 key={user.id}
-                className="group relative overflow-hidden rounded-2xl border-none bg-gradient-to-br from-zinc-100 via-white to-zinc-50 shadow-md transition-all duration-300 dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black"
+                className="group relative overflow-hidden rounded-2xl border-none bg-gradient-to-br from-zinc-100 via-white to-zinc-50  transition-all duration-300 dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black"
               >
                
                 <div className="relative z-10 flex items-center justify-between gap-4 p-3">
