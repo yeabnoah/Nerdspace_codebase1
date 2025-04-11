@@ -60,6 +60,16 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const ITEMS_PER_PAGE = 10;
 
+const NoResultsFound = ({ type }: { type: string }) => (
+  <div className="flex flex-col items-center justify-center py-12 text-center">
+    <Search className="h-12 w-12 text-muted-foreground" />
+    <h3 className="mt-4 text-lg font-semibold">No {type} found</h3>
+    <p className="mt-2 text-sm text-muted-foreground">
+      Try adjusting your search or filters to find what you're looking for
+    </p>
+  </div>
+);
+
 const ExploreEntry = () => {
   const { query, setQuery } = useSearchStore();
   const [type, setType] = useState("all");
@@ -97,8 +107,7 @@ const ExploreEntry = () => {
       const hasMore =
         lastPage.users?.length === ITEMS_PER_PAGE ||
         lastPage.posts?.length === ITEMS_PER_PAGE ||
-        lastPage.projects?.length === ITEMS_PER_PAGE ||
-        lastPage.communities?.length === ITEMS_PER_PAGE;
+        lastPage.projects?.length === ITEMS_PER_PAGE;
       return hasMore ? allPages.length + 1 : undefined;
     },
     initialPageParam: 1,
@@ -153,7 +162,6 @@ const ExploreEntry = () => {
       users: [...(acc.users || []), ...(page.users || [])],
       posts: [...(acc.posts || []), ...(page.posts || [])],
       projects: [...(acc.projects || []), ...(page.projects || [])],
-      communities: [...(acc.communities || []), ...(page.communities || [])],
     }));
 
     if (type === "all") {
@@ -164,7 +172,6 @@ const ExploreEntry = () => {
       users: type === "user" ? allResults.users : [],
       posts: type === "post" ? allResults.posts : [],
       projects: type === "project" ? allResults.projects : [],
-      communities: type === "community" ? allResults.communities : [],
     };
   }, [data, type]);
 
@@ -259,7 +266,7 @@ const ExploreEntry = () => {
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="font-geist mb-3 text-start text-3xl font-medium text-primary  "
+        className="mb-3 text-start font-geist text-3xl font-medium text-primary"
       >
         Explore
       </motion.h1>
@@ -280,7 +287,6 @@ const ExploreEntry = () => {
               <SelectItem value="user">Users</SelectItem>
               <SelectItem value="post">Posts</SelectItem>
               <SelectItem value="project">Projects</SelectItem>
-              <SelectItem value="community">Communities</SelectItem>
             </SelectContent>
           </Select>
           {sortSelect}
@@ -311,58 +317,62 @@ const ExploreEntry = () => {
           {type === "all" && (
             <>
               {/* Users Section */}
-              {filteredResults.users?.length > 0 && (
-                <div>
-                  <h2 className="mb-4 text-xl font-semibold">Users</h2>
-                  <UsersCard users={filteredResults.users} />
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-2xl font-semibold">Users</h2>
+                  <div className="dark:bg-border-gray-500/50 h-px flex-1 bg-border" />
                 </div>
-              )}
+                {filteredResults.users?.length > 0 ? (
+                  <UsersCard users={filteredResults.users} />
+                ) : (
+                  <NoResultsFound type="users" />
+                )}
+              </div>
 
               {/* Posts Section */}
-              {filteredResults.posts?.length > 0 && (
-                <div>
-                  <h2 className="mb-4 text-xl font-semibold">Posts</h2>
-                  <PostsCard posts={filteredResults.posts} />
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-2xl font-semibold">Posts</h2>
+                  <div className="dark:bg-border-gray-500/50 h-px flex-1 bg-border" />
                 </div>
-              )}
+                {filteredResults.posts?.length > 0 ? (
+                  <PostsCard posts={filteredResults.posts} />
+                ) : (
+                  <NoResultsFound type="posts" />
+                )}
+              </div>
 
               {/* Projects Section */}
-              {filteredResults.projects?.length > 0 && (
-                <div>
-                  <h2 className="mb-4 text-xl font-semibold">Projects</h2>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-2xl font-semibold">Projects</h2>
+                  <div className="dark:bg-border-gray-500/50 h-px flex-1 bg-border" />
+                </div>
+                {filteredResults.projects?.length > 0 ? (
                   <ProjectsCard projects={filteredResults.projects} />
-                </div>
-              )}
-
-              {/* Communities Section */}
-              {filteredResults.communities?.length > 0 && (
-                <div>
-                  <h2 className="mb-4 text-xl font-semibold">Communities</h2>
-                  <CommunitiesCard communities={filteredResults.communities} />
-                </div>
-              )}
+                ) : (
+                  <NoResultsFound type="projects" />
+                )}
+              </div>
             </>
           )}
 
           {type !== "all" && (
             <div>
-              {type === "user" && filteredResults.users?.length > 0 && (
+              {type === "user" && filteredResults.users?.length > 0 ? (
                 <UsersCard users={filteredResults.users} />
+              ) : (
+                type === "user" && <NoResultsFound type="users" />
               )}
-              {type === "post" && filteredResults.posts?.length > 0 && (
+              {type === "post" && filteredResults.posts?.length > 0 ? (
                 <PostsCard posts={filteredResults.posts} />
+              ) : (
+                type === "post" && <NoResultsFound type="posts" />
               )}
-              {type === "project" && filteredResults.projects?.length > 0 && (
+              {type === "project" && filteredResults.projects?.length > 0 ? (
                 <ProjectsCard projects={filteredResults.projects} />
-              )}
-              {type === "community" &&
-                filteredResults.communities?.length > 0 && (
-                  <CommunitiesCard communities={filteredResults.communities} />
-                )}
-              {!filteredResults[`${type}s`]?.length && (
-                <p className="text-center text-muted-foreground">
-                  No {type}s found
-                </p>
+              ) : (
+                type === "project" && <NoResultsFound type="projects" />
               )}
             </div>
           )}
@@ -742,39 +752,39 @@ const ProjectsCard = ({ projects }: { projects: any[] }) => {
   );
 };
 
-const CommunitiesCard = ({ communities }: { communities: any[] }) => (
-  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-    {communities.map((community) => (
-      <Card
-        key={community.id}
-        className="group border-border/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
-      >
-        <CardHeader className="flex flex-row items-center gap-3 p-4 sm:gap-4 sm:p-6">
-          {community.image ? (
-            <img
-              src={community.image}
-              alt={community.name}
-              className="h-12 w-12 rounded-full object-cover ring-2 ring-primary/20 transition-all duration-300 group-hover:ring-primary/40 sm:h-16 sm:w-16"
-            />
-          ) : (
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 sm:h-16 sm:w-16">
-              <span className="text-xl font-bold text-primary/60 sm:text-2xl">
-                {community.name[0]}
-              </span>
-            </div>
-          )}
-          <div>
-            <CardTitle className="text-base font-semibold sm:text-lg">
-              {community.name}
-            </CardTitle>
-            <p className="text-xs text-muted-foreground sm:text-sm">
-              @{community.nerdAt}
-            </p>
-          </div>
-        </CardHeader>
-      </Card>
-    ))}
-  </div>
-);
+// const CommunitiesCard = ({ communities }: { communities: any[] }) => (
+//   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+//     {communities.map((community) => (
+//       <Card
+//         key={community.id}
+//         className="group border-border/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+//       >
+//         <CardHeader className="flex flex-row items-center gap-3 p-4 sm:gap-4 sm:p-6">
+//           {community.image ? (
+//             <img
+//               src={community.image}
+//               alt={community.name}
+//               className="h-12 w-12 rounded-full object-cover ring-2 ring-primary/20 transition-all duration-300 group-hover:ring-primary/40 sm:h-16 sm:w-16"
+//             />
+//           ) : (
+//             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 sm:h-16 sm:w-16">
+//               <span className="text-xl font-bold text-primary/60 sm:text-2xl">
+//                 {community.name[0]}
+//               </span>
+//             </div>
+//           )}
+//           <div>
+//             <CardTitle className="text-base font-semibold sm:text-lg">
+//               {community.name}
+//             </CardTitle>
+//             <p className="text-xs text-muted-foreground sm:text-sm">
+//               @{community.nerdAt}
+//             </p>
+//           </div>
+//         </CardHeader>
+//       </Card>
+//     ))}
+//   </div>
+// );
 
 export default ExploreEntry;

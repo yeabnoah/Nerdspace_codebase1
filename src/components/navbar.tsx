@@ -35,7 +35,11 @@ import {
   CommandGroup,
   CommandItem,
 } from "@/components/ui/command";
-import { DialogTitle } from "@/components/ui/dialog";
+import {
+  DialogTitle,
+  DialogContent,
+  DialogHeader,
+} from "@/components/ui/dialog";
 import useSearchStore from "@/store/search.store";
 
 const Navbar = () => {
@@ -90,38 +94,60 @@ const Navbar = () => {
       <div className="flex items-center justify-center gap-5">
         <div className="hidden md:flex">
           <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
-            <DialogTitle className="sr-only">Search</DialogTitle>
-            <CommandInput
-              value={query}
-              onValueChange={setQuery}
-              placeholder="Search anything..."
-              className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
-            />
-            <CommandList>
-              {query.trim() && (
-                <CommandGroup>
-                  <CommandItem
-                    onSelect={() => {
-                      if (query.trim()) {
-                        router.push(`/explore?q=${encodeURIComponent(query)}`);
-                        setIsSearchOpen(false);
-                        setQuery("");
-                      }
-                    }}
-                  >
-                    <span>Search "{query}"</span>
-                  </CommandItem>
-                </CommandGroup>
-              )}
-            </CommandList>
+            <DialogTitle></DialogTitle>
+            <DialogContent className="max-w-xl overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+              <DialogHeader className="px-6 pt-4">
+                <DialogTitle className="font-geist text-3xl font-medium">
+                  Search
+                </DialogTitle>
+                <p className="font-geist text-muted-foreground">
+                  Search for projects, users and more...
+                </p>
+              </DialogHeader>
+
+              <div className="relative flex flex-col px-6 pb-4">
+                {/* Glow effects */}
+                <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+                <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+
+                <CommandInput
+                  value={query}
+                  onValueChange={setQuery}
+                  placeholder="Type to search..."
+                  className="h-11 rounded-xl border-input/50 bg-transparent font-geist shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                />
+
+                <CommandList className="mt-4">
+                  {query.trim() && (
+                    <CommandGroup>
+                      <CommandItem
+                        onSelect={() => {
+                          if (query.trim()) {
+                            router.push(
+                              `/explore?q=${encodeURIComponent(query)}`,
+                            );
+                            setIsSearchOpen(false);
+                            setQuery("");
+                          }
+                        }}
+                        className="flex h-11 items-center gap-2 rounded-xl font-geist"
+                      >
+                        <Search className="h-4 w-4" />
+                        <span>Search "{query}"</span>
+                      </CommandItem>
+                    </CommandGroup>
+                  )}
+                </CommandList>
+              </div>
+            </DialogContent>
           </CommandDialog>
           <Button
             variant="outline"
-            className="relative h-11 w-64 justify-start text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64"
+            className="relative h-11 w-64 justify-start rounded-xl text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64"
             onClick={() => setIsSearchOpen(true)}
           >
             <span className="inline-flex">Search...</span>
-            <kbd className="pointer-events-none absolute right-1.5 top-1.5 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+            <kbd className="pointer-events-none absolute right-[12px] top-1/2 hidden h-5 -translate-y-1/2 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
               <span className="text-xs">⌘</span>K
             </kbd>
           </Button>
@@ -168,7 +194,7 @@ const Navbar = () => {
               onClick={() => {
                 router.push("/profile");
               }}
-              className="cursor-pointer h-10 rounded-xl hover:bg-primary/10"
+              className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
             >
               <UserIcon className="mr-2 h-4 w-4" />
               <span>Profile</span>
@@ -178,13 +204,13 @@ const Navbar = () => {
               onClick={() => {
                 router.push("/settings");
               }}
-              className="cursor-pointer h-10 rounded-xl hover:bg-primary/10"
+              className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
             >
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="cursor-pointer h-10 rounded-xl hover:bg-primary/10"
+              className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
               onClick={logout}
             >
               <LogOut className="mr-2 h-4 w-4" />
