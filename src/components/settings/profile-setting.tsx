@@ -49,6 +49,7 @@ const ProfileSettings = () => {
     process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const session = authClient.useSession();
   const { user, isloading } = useUserStore();
 
@@ -280,6 +281,7 @@ const ProfileSettings = () => {
           <div className="flex justify-end">
             <Button
               onClick={async () => {
+                setIsSaving(true);
                 let uploadedImageUrl = selectedImage;
                 let uploadedCoverImageUrl = selectedCoverImage;
 
@@ -297,6 +299,7 @@ const ProfileSettings = () => {
                   } catch (error) {
                     console.error("Image upload failed:", error);
                     toast.error("Image upload failed");
+                    setIsSaving(false);
                     return;
                   }
                 }
@@ -315,6 +318,7 @@ const ProfileSettings = () => {
                   } catch (error) {
                     console.error("Cover image upload failed:", error);
                     toast.error("Cover image upload failed");
+                    setIsSaving(false);
                     return;
                   }
                 }
@@ -332,11 +336,22 @@ const ProfileSettings = () => {
                   link: link || undefined,
                   firstTime: false,
                 });
+                setIsSaving(false);
               }}
-              className="h-10 w-fit gap-2 rounded-2xl border border-gray-500/10 bg-gradient-to-r text-black dark:text-white dark:hover:border-black"
+              disabled={isSaving}
+              className="h-10 w-fit gap-2 hover:bg-white dark:hover:bg-black shadow-none rounded-2xl border border-gray-500/10 bg-gradient-to-r text-black dark:text-white dark:hover:border-black"
             >
-              <Check className="h-4 w-4" />
-              Save Changes
+              {isSaving ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  <span>Saving...</span>
+                </div>
+              ) : (
+                <>
+                  <Check className="h-4 w-4" />
+                  Save Changes
+                </>
+              )}
             </Button>
           </div>
         </CardContent>
