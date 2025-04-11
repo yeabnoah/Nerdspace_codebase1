@@ -213,7 +213,6 @@ const RenderMyPrivatePost = () => {
                         <DropdownMenuItem
                           onClick={() => {
                             setSelectedPost(each);
-                            setContent(each.content);
                             setEditModal(true);
                           }}
                         >
@@ -223,7 +222,6 @@ const RenderMyPrivatePost = () => {
                         <DropdownMenuItem
                           onClick={() => {
                             setSelectedPost(each);
-                            setContent(each.content);
                             setDeleteModal(true);
                           }}
                         >
@@ -491,8 +489,6 @@ const RenderMyPrivatePost = () => {
         selectedPost={selectedPost}
         setEditModal={setEditModal}
         editModal={editModal}
-        content={content}
-        setContent={setContent}
       />
 
       <DeleteModal

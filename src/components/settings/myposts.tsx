@@ -477,8 +477,6 @@ const RenderMyPost = () => {
         selectedPost={selectedPost}
         setEditModal={setEditModal}
         editModal={editModal}
-        content={content}
-        setContent={setContent}
       />
 
       <DeleteModal

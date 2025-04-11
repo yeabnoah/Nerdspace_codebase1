@@ -56,9 +56,6 @@ export function SignUpForm({
           });
 
           toast("Please check your email to verify it", { icon: "‼️" });
-          
-          // Redirect to onboarding for new users
-          router.push("/onboarding");
         },
         onError: (ctx) => {
           toast.dismiss(loadingToastId);

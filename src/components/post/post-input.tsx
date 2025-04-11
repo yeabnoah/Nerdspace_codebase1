@@ -6,7 +6,7 @@ import { queryClient } from "@/providers/tanstack-query-provider";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { Button } from "../ui/button";
 import { AutosizeTextarea } from "../ui/resizeble-text-area";
@@ -32,6 +32,11 @@ const PostInput = () => {
   const session = authClient.useSession();
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { mutate, isPending, isError } = useMutation({
     mutationKey: ["create-post"],
@@ -87,17 +92,22 @@ const PostInput = () => {
     <div className="mb-6 w-full rounded-2xl border border-gray-100 bg-white shadow-sm transition-all dark:border-gray-700/10 dark:bg-black">
       <div className="flex items-center gap-4 border-b border-gray-100 p-4 dark:border-gray-800/30">
         <div className="relative">
-          <Image
-            src={session?.data?.user?.image || "/user.jpg"}
-            alt="user"
-            className="size-10 rounded-full border-2 border-gray-50 shadow-sm dark:border-gray-800"
-            height={200}
-            width={200}
-          />
-          <div className="absolute -bottom-1 -right-1 size-3 rounded-full border-2 border-white bg-green-500 dark:border-gray-900" />
+          {mounted && (
+            <Image
+              src={session?.data?.user?.image || "/user.jpg"}
+              alt="user"
+              className="size-10 rounded-full border-2 border-gray-50 shadow-sm dark:border-gray-800"
+              height={40}
+              width={40}
+              priority
+            />
+          )}
+          {mounted && (
+            <div className="absolute -bottom-1 -right-1 size-3 rounded-full border-2 border-white bg-green-500 dark:border-gray-900" />
+          )}
         </div>
         <h3 className="font-medium text-gray-800 dark:text-gray-200">
-          {session?.data?.user?.name || "User"}
+          {mounted ? session?.data?.user?.name || "User" : "User"}
         </h3>
       </div>
 
@@ -165,16 +175,19 @@ const PostInput = () => {
 
             <div className="p-6">
               <div className="mb-6 flex items-center gap-4">
-                <Image
-                  src={session?.data?.user?.image || "/user.jpg"}
-                  alt="user"
-                  className="size-12 rounded-full border-2 border-gray-50 shadow-sm dark:border-gray-800"
-                  height={200}
-                  width={200}
-                />
+                {mounted && (
+                  <Image
+                    src={session?.data?.user?.image || "/user.jpg"}
+                    alt="user"
+                    className="size-12 rounded-full border-2 border-gray-50 shadow-sm dark:border-gray-800"
+                    height={48}
+                    width={48}
+                    priority
+                  />
+                )}
                 <div>
                   <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                    {session?.data?.user?.name || "User"}
+                    {mounted ? session?.data?.user?.name || "User" : "User"}
                   </h4>
                   <span className="text-sm text-gray-500 dark:text-gray-400">
                     Public post
@@ -220,11 +233,11 @@ const PostInput = () => {
               </div>
 
               {dialogFiles.length > 0 && (
-                <div className=" flex flex-wrap gap-4 items-center">
+                <div className="flex flex-wrap items-center gap-4">
                   {dialogFiles.map((file) => (
                     <div
                       key={file.name}
-                      className="group relative size-40 aspect-square overflow-hidden rounded-xl border border-gray-200 shadow-sm transition-all hover:shadow-md dark:border-gray-800"
+                      className="group relative aspect-square size-40 overflow-hidden rounded-xl border border-gray-200 shadow-sm transition-all hover:shadow-md dark:border-gray-800"
                     >
                       <div className="relative h-full w-full bg-gray-50 dark:bg-gray-800/30">
                         <img
@@ -235,10 +248,10 @@ const PostInput = () => {
                         <Button
                           variant="secondary"
                           size="icon"
-                          className="absolute right-2 px-2 top-2 h-8 w-fit rounded-full bg-black/60 hover:bg-black/80 dark:bg-black/80"
+                          className="absolute right-2 top-2 h-8 w-fit rounded-full bg-black/60 px-2 hover:bg-black/80 dark:bg-black/80"
                           onClick={() => handleRemoveFile(file.name)}
                         >
-                          <X className=" size-8 text-white" />
+                          <X className="size-8 text-white" />
                         </Button>
                       </div>
                     </div>

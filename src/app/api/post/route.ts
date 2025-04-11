@@ -200,13 +200,29 @@ export const PATCH = async (req: NextRequest) => {
     }
 
     const post = await prisma.post.findUnique({
-      where: { id: id },
+      where: { id: id, userId: session.user.id },
     });
 
-    if (!post || post.userId !== session.user.id) {
+    if (!post) {
       return NextResponse.json(
         {
-          message: "Post not found or unauthorized",
+          message: "Post not found",
+        },
+        { status: 404 },
+      );
+    }
+
+    console.log({
+      postUserId: post?.userId,
+      sessionUserId: session.user.id,
+      postId: post?.id,
+      sessionId: session.user.id,
+    });
+
+    if (post.userId !== session.user.id) {
+      return NextResponse.json(
+        {
+          message: "unauthorized | not the author of the post",
         },
         { status: 404 },
       );

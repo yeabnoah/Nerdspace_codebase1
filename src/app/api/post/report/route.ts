@@ -14,11 +14,28 @@ export const POST = async (req: NextRequest) => {
     }
 
     const body: reportType = await req.json();
+
+    // Clean up empty strings
+    if (body.postId === "") {
+      body.postId = undefined;
+    }
+    if (body.commentId === "") {
+      body.commentId = undefined;
+    }
+
     const checkValidation = reportSchema.safeParse(body);
 
     if (!checkValidation.success) {
       return NextResponse.json(
         { error: checkValidation.error.message },
+        { status: 400 },
+      );
+    }
+
+    // Check if either postId or commentId is provided
+    if (!body.postId && !body.commentId) {
+      return NextResponse.json(
+        { message: "Either postId or commentId must be provided" },
         { status: 400 },
       );
     }
@@ -67,6 +84,7 @@ export const POST = async (req: NextRequest) => {
       postId: body.postId || null,
       commentId: body.commentId || null,
       reason: body.reason,
+      additionalContext: body.additionalContext || null,
     };
 
     const newReport = await prisma.report.create({

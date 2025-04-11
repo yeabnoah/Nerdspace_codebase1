@@ -10,56 +10,24 @@ import { queryClient } from "@/providers/tanstack-query-provider";
 import usePostStore from "@/store/post.store";
 import useReportStore from "@/store/report.strore";
 import useUserProfileStore from "@/store/userProfile.store";
-import { PostAccess } from "@prisma/client";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import {
-  BanIcon,
-  Clock,
-  Edit,
-  LockIcon,
-  LockOpen,
-  MessageCircle,
-  MessageSquare,
-  MoreHorizontal,
-  Plus,
-  SendIcon,
-  Share2Icon,
-  Star,
-  TrashIcon,
-} from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { GoHeart, GoHeartFill } from "react-icons/go";
-import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
 import { useInView } from "react-intersection-observer";
 import ImagePreviewDialog from "../image-preview";
-import DeleteModal from "../modal/delete.modal";
-import EditModal from "../modal/edit.modal";
 import ReportModal from "../modal/report.modal";
-import CommentSkeleton from "../skeleton/comment.skelton";
 import MorePostsFetchSkeleton from "../skeleton/morepostFetch.skeleton";
 import RenderPostSkeleton from "../skeleton/render-post.skeleton";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Card } from "../ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../ui/dropdown-menu";
 import DeleteCommentModal from "./comment/DeleteCommentModal";
 import EditCommentModal from "./comment/EditCommentModal";
-import { renderComments } from "./comment/render-comments";
 import PostCard from "./post-card";
 
 const RenderPost = () => {
   const { ref, inView } = useInView();
   const session = authClient.useSession();
-  const [editModal, setEditModal] = useState(false);
+  // const [editModal, setEditModal] = useState(false);
   const { selectedPost, setSelectedPost, content, setContent } = usePostStore();
   const [editPostInput, setEditPostInput] = useState<String>();
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
@@ -194,7 +162,7 @@ const RenderPost = () => {
       content: string;
     }) => {
       const response = await axios.post("/api/post/comment", {
-        postId: selectedPost.id,
+        postId: selectedPost?.id as string,
         content,
         parentId: commentId,
       });
@@ -242,7 +210,7 @@ const RenderPost = () => {
   const handleCommentSubmit = () => {
     if (commentContent) {
       commentMutation.mutate({
-        postId: selectedPost.id,
+        postId: selectedPost?.id as string,
         content: commentContent,
       });
     }
@@ -474,23 +442,23 @@ const RenderPost = () => {
                 toggleReplies={toggleReplies}
                 handleEditComment={handleEditComment}
                 handleDeleteComment={handleDeleteComment}
-                openEditModal={openEditModal}
-                openDeleteModal={openDeleteModal}
+                setCommentId={setCommentId}
+                openEditModal={() => setEditModalOpen(true)}
+                openDeleteModal={() => setDeleteModalOpen(true)}
                 setSelectedCommentReply={setSelectedCommentReply}
                 modalEditOpened={editModalOpen}
                 modalDeleteOpened={deleteModalOpen}
                 reportModalOpen={reportModalOpen}
                 setReportModalOpen={setReportModalOpen}
-                setCommentId={setCommentId}
                 commentLoading={commentLoading}
                 comments={comments}
                 hasNextCommentPage={hasNextCommentPage}
                 isFetchingNextCommentPage={isFetchingNextCommentPage}
                 fetchNextCommentPage={fetchNextCommentPage}
-                setEditModal={setEditModal}
-                setDeleteModal={setDeleteModal}
+                setEditModal={setEditModalOpen}
+                setDeleteModal={setDeleteModalOpen}
                 changePostAccessType={changePostAccessType}
-                handleFollow={handleFollow}
+                // handleFollow={handleFollow}
                 handleLike={handleLike}
                 handleBookmark={handleBookmark}
               />
@@ -505,27 +473,11 @@ const RenderPost = () => {
           onClose={() => setIsDialogOpen(false)}
         />
 
-        <EditModal
-          selectedPost={selectedPost}
-          setEditModal={setEditModal}
-          editModal={editModal}
-          content={content}
-          setContent={setContent}
-        />
-
-        <DeleteModal
-          selectedPost={selectedPost}
-          setDeleteModal={setDeleteModal}
-          deleteModal={deleteModal}
-          content={content}
-          setContent={setContent}
-        />
-
         {selectedComment && (
           <>
             <EditCommentModal
               commentId={selectedComment.id}
-              postId={selectedPost.id}
+              postId={selectedPost?.id as string}
               initialContent={selectedComment.content}
               isOpen={editCommentModalOpen}
               onClose={() => setEditCommentModalOpen(false)}
@@ -540,7 +492,7 @@ const RenderPost = () => {
         {selectedCommentReply && (
           <>
             <EditCommentModal
-              postId={selectedPost.id}
+              postId={selectedPost?.id as string}
               commentId={selectedCommentReply.id}
               initialContent={selectedCommentReply.content}
               isOpen={editReplyModalOpen}
