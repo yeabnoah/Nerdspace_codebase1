@@ -73,7 +73,7 @@ const LeftNavbar = () => {
   };
 
   return (
-    <div className="sticky left-0 top-20 hidden w-full gap-2 px-5 py-5 md:flex md:flex-col lg:w-[17vw]">
+    <div className="sticky left-0 top-20  hidden w-full gap-1 px-5 py-5 md:flex md:flex-col lg:w-[17vw]">
       {/* Navigation Items */}
       {navItems.map((item) => (
         <motion.div
@@ -87,7 +87,7 @@ const LeftNavbar = () => {
               router.push(item.path);
             }}
             variant="outline"
-            className={`group relative w-full justify-start gap-3 border-gray-100 bg-transparent shadow-none transition-all duration-300 hover:bg-primary/5 dark:border-gray-500/5 ${
+            className={`group relative w-full justify-start gap-2 rounded-xl border-none bg-transparent px-3 py-4 shadow-none transition-all duration-300 hover:bg-primary/5 dark:border-gray-500/5 ${
               getActiveItem() === item.name
                 ? "bg-primary/10 text-primary"
                 : "text-muted-foreground"
@@ -99,13 +99,13 @@ const LeftNavbar = () => {
               }`}
               size={20}
             />
-            <span className="hidden lg:block">
+            <span className="hidden font-geist lg:block">
               {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
             </span>
             {getActiveItem() === item.name && (
               <motion.div
                 layoutId="activeIndicator"
-                className="absolute left-0 h-full w-1 rounded-full bg-primary"
+                className="absolute left-0 h-full w-1 rounded-full bg-gradient-to-b from-primary to-primary/50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.2 }}
@@ -117,13 +117,13 @@ const LeftNavbar = () => {
 
       {/* Profile Setup Card */}
       <motion.div
-        className="relative mt-4 w-full cursor-pointer overflow-hidden rounded-lg border border-transparent bg-card/50 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md"
+        className="relative mt-14 w-full cursor-pointer overflow-hidden rounded-xl border border-transparent bg-card/50 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md"
         onClick={() => setIsExpanded(!isExpanded)}
         whileHover={{ scale: 1.01 }}
       >
         {/* Glow effects */}
-        <div className="absolute -right-4 top-0 size-32 -rotate-45 border border-blue-300/10 bg-gradient-to-br  blur-[100px] backdrop-blur-sm"></div>
-        <div className="absolute -bottom-5 left-0 size-32 rotate-45 border border-orange-300/10 bg-gradient-to-tl blur-[100px] backdrop-blur-sm"></div>
+        <div className="absolute -right-4 top-0 size-32 -rotate-45 rounded-full border border-blue-300/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+        <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
         <div className="relative z-10">
           <div className="flex items-center justify-between">
