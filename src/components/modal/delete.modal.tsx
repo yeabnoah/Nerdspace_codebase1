@@ -1,18 +1,14 @@
 import deletePostFunction from "@/functions/delete-post";
 import postInterface from "@/interface/auth/post.interface";
-import { DialogDescription } from "@radix-ui/react-dialog";
+import { queryClient } from "@/providers/tanstack-query-provider";
 import { useMutation } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
 import toast from "react-hot-toast";
 import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from "../ui/dialog";
-import { queryClient } from "@/providers/tanstack-query-provider";
 
 const DeleteModal = ({
   selectedPost,

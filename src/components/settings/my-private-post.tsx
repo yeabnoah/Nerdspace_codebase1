@@ -486,13 +486,14 @@ const RenderMyPrivatePost = () => {
       />
 
       <EditModal
-        selectedPost={selectedPost}
+        incasePost={selectedPost as postInterface}
         setEditModal={setEditModal}
         editModal={editModal}
+        incaseContent={content}
       />
 
       <DeleteModal
-        selectedPost={selectedPost}
+        selectedPost={selectedPost as postInterface}
         setDeleteModal={setDeleteModal}
         deleteModal={deleteModal}
         content={content}

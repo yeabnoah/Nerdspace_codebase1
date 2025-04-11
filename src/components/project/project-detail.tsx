@@ -57,6 +57,7 @@ import { EditProjectDialog } from "@/components/ui/edit-project-dialog";
 import type ProjectInterface from "@/interface/auth/project.interface";
 import UpdateCard from "./project-update-card";
 import { GoStar, GoStarFill } from "react-icons/go";
+import RecommendedProjects from "../user/recommend-project";
 
 const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
@@ -70,6 +71,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const [updateTitle, setUpdateTitle] = useState("");
   const [updateContent, setUpdateContent] = useState("");
   const [updateImage, setUpdateImage] = useState<File | null>(null);
+  const [isSubmittingUpdate, setIsSubmittingUpdate] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isShareProjectDialogOpen, setIsShareProjectDialogOpen] =
@@ -116,28 +118,103 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     mutationFn: async () => {
       await axios.post(`/api/project/update/like?projectId=${projectId}`);
     },
+    onMutate: () => {
+      // Optimistically update the UI
+      setIsLiked((prev) => !prev);
+      if (project) {
+        const optimisticProject = {
+          ...project,
+          _count: {
+            ...project._count,
+            ratings: project._count.ratings + (isLiked ? -1 : 1),
+          },
+        };
+        queryClient.setQueryData(["project", projectId], optimisticProject);
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["project", projectId] });
     },
     onError: () => {
+      // Revert optimistic update on error
+      setIsLiked((prev) => !prev);
+      if (project) {
+        const revertedProject = {
+          ...project,
+          _count: {
+            ...project._count,
+            ratings: project._count.ratings + (isLiked ? 1 : -1),
+          },
+        };
+        queryClient.setQueryData(["project", projectId], revertedProject);
+      }
       toast.error("Failed to update like. Please try again.");
     },
   });
 
   const handleLikeProject = () => {
     likeMutation.mutate();
-    setIsLiked((prev) => !prev);
   };
 
   const starMutation = useMutation({
     mutationFn: async () => {
       await axios.post(`/api/project/star?projectId=${projectId}`);
     },
+    onMutate: () => {
+      // Optimistically update the UI
+      if (project) {
+        const optimisticProject = {
+          ...project,
+          _count: {
+            ...project._count,
+            stars:
+              project._count.stars +
+              (project.stars?.some(
+                (star) => star.userId === session.data?.user.id,
+              )
+                ? -1
+                : 1),
+          },
+          stars: project.stars?.some(
+            (star) => star.userId === session.data?.user.id,
+          )
+            ? project.stars.filter(
+                (star) => star.userId !== session.data?.user.id,
+              )
+            : [...(project.stars || []), { userId: session.data?.user.id }],
+        };
+        queryClient.setQueryData(["project", projectId], optimisticProject);
+      }
+    },
     onSuccess: () => {
       toast.success("Star status updated!");
       queryClient.invalidateQueries({ queryKey: ["project", projectId] });
     },
     onError: () => {
+      // Revert optimistic update on error
+      if (project) {
+        const revertedProject = {
+          ...project,
+          _count: {
+            ...project._count,
+            stars:
+              project._count.stars +
+              (project.stars?.some(
+                (star) => star.userId === session.data?.user.id,
+              )
+                ? 1
+                : -1),
+          },
+          stars: project.stars?.some(
+            (star) => star.userId === session.data?.user.id,
+          )
+            ? [...(project.stars || []), { userId: session.data?.user.id }]
+            : project.stars.filter(
+                (star) => star.userId !== session.data?.user.id,
+              ),
+        };
+        queryClient.setQueryData(["project", projectId], revertedProject);
+      }
       toast.error("Failed to update star status. Please try again.");
     },
   });
@@ -150,18 +227,43 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     mutationFn: async () => {
       await axios.post(`/api/project/follow?projectId=${projectId}`);
     },
+    onMutate: () => {
+      // Optimistically update the UI
+      setIsFollowing((prev) => !prev);
+      if (project) {
+        const optimisticProject = {
+          ...project,
+          _count: {
+            ...project._count,
+            followers: project._count.followers + (isFollowing ? -1 : 1),
+          },
+        };
+        queryClient.setQueryData(["project", projectId], optimisticProject);
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["project", projectId] });
       toast.success("Follow status updated!");
     },
     onError: () => {
+      // Revert optimistic update on error
+      setIsFollowing((prev) => !prev);
+      if (project) {
+        const revertedProject = {
+          ...project,
+          _count: {
+            ...project._count,
+            followers: project._count.followers + (isFollowing ? 1 : -1),
+          },
+        };
+        queryClient.setQueryData(["project", projectId], revertedProject);
+      }
       toast.error("Failed to update follow status. Please try again.");
     },
   });
 
   const handleFollowProject = () => {
     followMutation.mutate();
-    setIsFollowing((prev) => !prev);
   };
 
   const postAsPostMutation = useMutation({
@@ -325,7 +427,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       return;
     }
 
+    setIsSubmittingUpdate(true);
     let imageUrl = null;
+
     if (updateImage) {
       const formData = new FormData();
       formData.append("file", updateImage);
@@ -346,6 +450,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       } catch (error) {
         console.error("Image upload failed:", error);
         toast.error("Image upload failed. Please try again.");
+        setIsSubmittingUpdate(false);
         return;
       }
     }
@@ -362,11 +467,13 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       setUpdateTitle("");
       setUpdateContent("");
       setUpdateImage(null);
+      setIsSubmittingUpdate(false);
 
       queryClient.invalidateQueries({ queryKey: ["project", projectId] });
     } catch (error) {
       console.error("Error sharing update:", error);
       toast.error("Failed to share update. Please try again.");
+      setIsSubmittingUpdate(false);
     }
   };
 
@@ -384,12 +491,52 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         content: reviewContent,
       });
     },
+    onMutate: () => {
+      // Optimistically update the UI
+      if (project) {
+        const optimisticProject = {
+          ...project,
+          _count: {
+            ...project._count,
+            reviews: project._count.reviews + 1,
+          },
+          reviews: [
+            ...(project.reviews || []),
+            {
+              id: "temp-" + Date.now(),
+              content: reviewContent,
+              createdAt: new Date().toISOString(),
+              user: {
+                id: session.data?.user.id,
+                visualName: session.data?.user.name,
+                image: session.data?.user.image,
+              },
+            },
+          ],
+        };
+        queryClient.setQueryData(["project", projectId], optimisticProject);
+      }
+    },
     onSuccess: () => {
       toast.success("Review added successfully!");
       queryClient.invalidateQueries({ queryKey: ["project", projectId] });
       setReviewContent("");
     },
     onError: () => {
+      // Revert optimistic update on error
+      if (project) {
+        const revertedProject = {
+          ...project,
+          _count: {
+            ...project._count,
+            reviews: project._count.reviews - 1,
+          },
+          reviews: project.reviews?.filter(
+            (review) => !review.id.startsWith("temp-"),
+          ),
+        };
+        queryClient.setQueryData(["project", projectId], revertedProject);
+      }
       toast.error("Failed to add review. Please try again.");
     },
   });
@@ -404,6 +551,18 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     }) => {
       await axios.put(`/api/project/review`, { reviewId, content });
     },
+    onMutate: ({ reviewId, content }) => {
+      // Optimistically update the UI
+      if (project) {
+        const optimisticProject = {
+          ...project,
+          reviews: project.reviews?.map((review) =>
+            review.id === reviewId ? { ...review, content } : review,
+          ),
+        };
+        queryClient.setQueryData(["project", projectId], optimisticProject);
+      }
+    },
     onSuccess: () => {
       toast.success("Review updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["project", projectId] });
@@ -412,6 +571,18 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       setEditingReviewContent("");
     },
     onError: () => {
+      // Revert optimistic update on error
+      if (project) {
+        const revertedProject = {
+          ...project,
+          reviews: project.reviews?.map((review) =>
+            review.id === editingReviewId
+              ? { ...review, content: editingReviewContent }
+              : review,
+          ),
+        };
+        queryClient.setQueryData(["project", projectId], revertedProject);
+      }
       toast.error("Failed to update review. Please try again.");
     },
   });
@@ -422,11 +593,40 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         data: { reviewId },
       });
     },
+    onMutate: (reviewId) => {
+      // Optimistically update the UI
+      if (project) {
+        const optimisticProject = {
+          ...project,
+          _count: {
+            ...project._count,
+            reviews: project._count.reviews - 1,
+          },
+          reviews: project.reviews?.filter((review) => review.id !== reviewId),
+        };
+        queryClient.setQueryData(["project", projectId], optimisticProject);
+      }
+    },
     onSuccess: () => {
       toast.success("Review deleted successfully!");
       queryClient.invalidateQueries({ queryKey: ["project", projectId] });
     },
     onError: () => {
+      // Revert optimistic update on error
+      if (project) {
+        const revertedProject = {
+          ...project,
+          _count: {
+            ...project._count,
+            reviews: project._count.reviews + 1,
+          },
+          reviews: [
+            ...(project.reviews || []),
+            project.reviews?.find((review) => review.id === reviewToDelete)!,
+          ],
+        };
+        queryClient.setQueryData(["project", projectId], revertedProject);
+      }
       toast.error("Failed to delete review. Please try again.");
     },
   });
@@ -608,13 +808,13 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           <div className="relative z-10 mb-4 flex items-center gap-3">
             <Badge
               variant="outline"
-              className="border-primary/30 bg-primary/10 font-geist text-xs font-normal text-white backdrop-blur-sm"
+              className="border-primary/30 h-8 rounded-full px-3 bg-primary/10 font-geist text-xs font-normal text-white backdrop-blur-sm"
             >
               {project?.status}
             </Badge>
             <Badge
               variant="outline"
-              className="border-secondary/30 bg-secondary/20 font-geist font-normal text-secondary-foreground backdrop-blur-sm"
+              className="border-secondary/30 h-8 rounded-full px-3 bg-secondary/20 font-geist font-normal text-secondary-foreground backdrop-blur-sm"
             >
               {project?.access}
             </Badge>
@@ -682,10 +882,10 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         <div className="space-y-8 lg:col-span-2">
           <div className="flex flex-wrap gap-2">
             {project?.category.map((cat: any) => (
-              <Badge
+              <Badge 
                 key={cat}
                 variant="outline"
-                className="border-border/40 bg-background/50 font-geist text-sm font-normal backdrop-blur-sm"
+                className="border-border/40 rounded-full h-8 px-3 bg-background/50 font-geist text-sm font-normal backdrop-blur-sm"
               >
                 {cat}
               </Badge>
@@ -1050,74 +1250,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Similar Projects */}
-          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-card/50">
-            <CardContent className="px-3 py-6">
-              <h2 className="mb-3 font-geist text-xl font-normal">
-                Similar Projects
-              </h2>
-              <div className="flex flex-col space-y-2">
-                <div className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white transition-all duration-300 hover:shadow-lg dark:border-gray-500/5 dark:bg-card/50">
-                  <div className="my-2 flex gap-2 px-1">
-                    <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-full">
-                      <Image
-                        src="/user.jpg?height=128&width=128"
-                        alt="Mars Rover"
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-black/60 to-transparent" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-geist font-normal">Lunar Gateway</h3>
-                      <p className="text-start font-geist text-xs font-normal text-muted-foreground">
-                        By NASA
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white transition-all duration-300 hover:shadow-lg dark:border-gray-500/5 dark:bg-card/50">
-                  <div className="my-2 flex gap-2 px-1">
-                    <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-full">
-                      <Image
-                        src="/user.jpg?height=128&width=128"
-                        alt="Mars Rover"
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-black/60 to-transparent" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-geist font-normal">Lunar Gateway</h3>
-                      <p className="text-start font-geist text-xs font-normal text-muted-foreground">
-                        By NASA
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white transition-all duration-300 hover:shadow-lg dark:border-gray-500/5 dark:bg-card/50">
-                  <div className="my-2 flex gap-2 px-1">
-                    <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-full">
-                      <Image
-                        src="/user.jpg?height=128&width=128"
-                        alt="Mars Rover"
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-black/60 to-transparent" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-geist font-normal">Lunar Gateway</h3>
-                      <p className="text-start font-geist text-xs font-normal text-muted-foreground">
-                        By NASA
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <RecommendedProjects />
         </div>
       </div>
 
@@ -1280,9 +1413,33 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                 <Button
                   onClick={handleShareUpdate}
                   className="h-11 w-fit gap-2 rounded-2xl"
+                  disabled={isSubmittingUpdate}
                 >
-                  <Check className="h-4 w-4" />
-                  Share Update
+                  {isSubmittingUpdate ? (
+                    <>
+                      <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Sharing...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Share Update
+                    </>
+                  )}
                 </Button>
               </div>
             </div>

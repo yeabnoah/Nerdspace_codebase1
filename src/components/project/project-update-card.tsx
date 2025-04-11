@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -78,9 +78,24 @@ export default function UpdateCard({
   const [isDeleteCardDialogOpen, setIsDeleteCardDialogOpen] = useState(false);
   const [optimisticLikes, setOptimisticLikes] = useState(update.likes.length);
   const [optimisticLiked, setOptimisticLiked] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
   const session = authClient.useSession();
 
   const { setProjectUpdate, projectUpdate } = useProjectUpdateStore();
+
+  // Add click outside handler
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
+        setShowComments(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Fetch if the user has liked the update
   const { data: liked, isLoading: isLikedLoading } = useQuery({
@@ -336,7 +351,10 @@ export default function UpdateCard({
 
   return (
     <TooltipProvider>
-      <Card className="my-6 overflow-hidden rounded-xl border border-none bg-card shadow-md transition-all duration-300 hover:shadow-xl dark:bg-black">
+      <Card 
+        ref={cardRef}
+        className="my-6 overflow-hidden rounded-xl border border-none bg-card shadow-md transition-all duration-300 hover:shadow-xl dark:bg-black"
+      >
         <div className="flex flex-col">
           <CardContent className="p-0">
             {/* Image Section */}

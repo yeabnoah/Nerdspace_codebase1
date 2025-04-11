@@ -57,9 +57,8 @@ const FollowList = () => {
   const nextCursor: string | null = data?.nextCursor || null;
 
   return (
-    <Card className="hidden min-h-32 rounded-2xl border border-gray-100 bg-transparent pt-4 shadow-none dark:border-gray-500/5 md:block">
+    <Card className="hidden min-h-32  w-64 rounded-2xl border border-gray-100 bg-transparent pt-4 shadow-none dark:border-gray-500/5 md:block">
       <div className="relative">
-        {/* Subtle gradient background effects */}
         <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/10 bg-gradient-to-br from-primary/5 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
         <h2
@@ -89,13 +88,13 @@ const FollowList = () => {
                 <div className="flex flex-1 flex-col">
                   <div className="flex items-center justify-between">
                     <p
-                      className="text-sm font-medium hover:underline"
+                      className="text-xs font-medium hover:underline"
                       title={u.visualName ?? ""}
                     >
-                      {u.visualName ?? ""}
+                      {u.visualName || u.name || ""}
                     </p>
                   </div>
-                  <div className="flex items-center text-sm gap-2">Nerd@{u.nerdAt}</div>
+                  <div className="flex items-center text-xs gap-2">Nerd@{u.nerdAt}</div>
                 </div>
                 <Button
                   size="sm"
