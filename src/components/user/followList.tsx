@@ -99,7 +99,7 @@ const FollowList = () => {
                 </div>
                 <Button
                   size="sm"
-                  className="border bg-transparent text-card-foreground shadow-none hover:bg-transparent dark:text-white"
+                  className="rounded-full border bg-transparent text-card-foreground shadow-none hover:bg-transparent dark:text-white"
                   onClick={() => handleFollow(u.id)}
                 >
                   Follow
@@ -114,7 +114,7 @@ const FollowList = () => {
           <div className="px-6 pb-4">
             <Button
               onClick={() => setCursor(nextCursor)}
-              className="w-full border bg-transparent text-card-foreground shadow-none hover:bg-transparent dark:text-white"
+              className="w-full rounded-full border bg-transparent text-card-foreground shadow-none hover:bg-transparent dark:text-white"
             >
               Load More
             </Button>
