@@ -1,10 +1,12 @@
+"use client";
+
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import { useFormStore } from "@/store/useFormStore";
 import useUserStore from "@/store/user.store";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { Edit } from "lucide-react";
+import { Edit, Check } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -131,54 +133,64 @@ const ProfileSettings = () => {
   };
 
   return (
-    <Card className="preview-card border-none bg-transparent shadow-none">
-      <CardHeader>
-        <CardTitle>Profile Settings</CardTitle>
-        <CardDescription>Please provide accurate information</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="md:px-4">
-          <div className="relative mb-4">
+    <div className="container relative mx-auto max-w-4xl overflow-hidden pb-8">
+      <div className="absolute -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
+
+      <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-black">
+        <CardHeader className="px-6">
+          <CardTitle className="font-geist text-3xl font-medium">
+            Profile Settings
+          </CardTitle>
+          <CardDescription className="font-geist text-muted-foreground">
+            Customize your profile to make it uniquely yours
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-8 px-6">
+          {/* Cover Image Section */}
+          <div className="group relative h-[200px] w-full overflow-hidden rounded-2xl shadow-lg">
             <Image
               src={coverPreviewUrl || user.coverImage || "/obsession.jpg"}
               alt="Cover Preview"
-              width={800}
-              height={200}
-              className="mt-2 h-36 w-full rounded-xl object-cover"
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
-
-            <Input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              id="cover-image-upload"
-              onChange={handleCoverFileChange}
-            />
-            <label
-              htmlFor="cover-image-upload"
-              className="absolute -bottom-5 right-[5%] cursor-pointer rounded-full bg-white p-1 p-3 text-white"
-            >
-              <Edit size={24} color="black" className="" />
-            </label>
+            <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 via-zinc-900/60 to-transparent p-8 dark:from-black/80 dark:via-black/50">
+              <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
+              <div className="relative z-10 flex justify-end">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  id="cover-image-upload"
+                  onChange={handleCoverFileChange}
+                />
+                <label
+                  htmlFor="cover-image-upload"
+                  className="flex cursor-pointer items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-white backdrop-blur-sm transition-all hover:bg-white/20"
+                >
+                  <Edit size={16} />
+                  <span className="text-sm font-medium">Change Cover</span>
+                </label>
+              </div>
+            </div>
           </div>
 
-          <div className="flex w-full flex-col md:flex-row md:items-center md:gap-10">
-            <div className="relative mb-4">
-              <Image
-                src={
-                  previewUrl ||
-                  user.image ||
-                  session?.data?.user?.image ||
-                  "/user_placeholder.jpg"
-                }
-                alt="Profile Preview"
-                width={200}
-                height={200}
-                className="mt-2 size-16 rounded-full object-cover"
-              />
-
-              {/* <div></div> */}
-
+          {/* Profile Image and Basic Info Section */}
+          <div className="flex flex-col gap-6 md:flex-row md:items-start">
+            <div className="relative flex-shrink-0">
+              <div className="relative h-24 w-24 overflow-hidden rounded-full ring-2 ring-primary/20">
+                <Image
+                  src={
+                    previewUrl ||
+                    user.image ||
+                    session?.data?.user?.image ||
+                    "/user_placeholder.jpg"
+                  }
+                  alt="Profile Preview"
+                  fill
+                  className="object-cover"
+                />
+              </div>
               <Input
                 type="file"
                 accept="image/*"
@@ -188,131 +200,149 @@ const ProfileSettings = () => {
               />
               <label
                 htmlFor="image-upload"
-                className="absolute bottom-0 left-[15%] cursor-pointer rounded-full bg-white p-1 text-white md:left-[70%]"
+                className="absolute -bottom-2 -right-2 flex cursor-pointer items-center gap-1 rounded-full bg-white px-2 py-1 text-xs font-medium shadow-sm transition-all hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700"
               >
-                <Edit size={13} color="black" />
+                <Edit size={12} />
+                <span>Edit</span>
               </label>
             </div>
 
-            <div className="mb-4">
-              <Label className="mb-2">Display name</Label>
-              <Input
-                placeholder="John Doe"
-                className="mt-1 bg-transparent py-2 text-sm shadow-none placeholder:text-sm"
-                value={displayName || ""}
-                onChange={(e) => setDisplayName(e.target.value)}
-              />
+            <div className="flex w-full flex-col gap-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label className="font-geist text-sm font-medium">
+                    Display name
+                  </Label>
+                  <Input
+                    placeholder="John Doe"
+                    className="h-11 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                    value={displayName || ""}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="font-geist text-sm font-medium">
+                    Personal Link
+                  </Label>
+                  <Input
+                    placeholder="https://johndoe.blog"
+                    className="h-11 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                    value={link || ""}
+                    onChange={(e) => setLink(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Info Section */}
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label className="font-geist text-sm font-medium">
+                Your Country
+              </Label>
+              {user?.country ? (
+                <p className="font-geist text-muted-foreground">
+                  {user?.country?.name}
+                </p>
+              ) : (
+                <CountryDropdown
+                  className="h-11 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                  placeholder="Select country"
+                  defaultValue={selectedCountry?.alpha3}
+                  onChange={(country) => setSelectedCountry(country)}
+                />
+              )}
             </div>
 
-            <div className="mb-4">
-              <Label className="mb-2">Personal Link</Label>
+            <div className="space-y-2">
+              <Label className="font-geist text-sm font-medium">
+                What are you nerd at
+              </Label>
               <Input
-                placeholder="https://johndoe.blog"
-                className="mt-1 bg-transparent py-2 text-sm shadow-none placeholder:text-sm"
-                value={link || ""}
-                onChange={(e) => setLink(e.target.value)}
+                placeholder="Music"
+                className="h-11 rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                value={nerdAt || ""}
+                onChange={(e) => setNerdAt(e.target.value)}
               />
             </div>
           </div>
-        </div>
 
-        <div className="mt-3 px-4">
-          <div className="mb-4 flex-1">
-            <Label>Your Country</Label>
-            {user?.country ? (
-              <p>{user?.country?.name}</p>
-            ) : (
-              <CountryDropdown
-                className="mt-2 shadow-none"
-                placeholder="Select country"
-                defaultValue={selectedCountry?.alpha3}
-                onChange={(country) => setSelectedCountry(country)}
-              />
-            )}
-          </div>
-          <div className="mb-4">
-            <Label className="mb-2">What are you nerd at</Label>
-            <Input
-              placeholder="Music"
-              className="mt-1 bg-transparent py-2 text-sm shadow-none placeholder:text-sm"
-              value={nerdAt || ""}
-              onChange={(e) => setNerdAt(e.target.value)}
-            />
-          </div>
-
-          <div className="mb-4">
-            <Label className="mb-2">Bio</Label>
+          <div className="space-y-2">
+            <Label className="font-geist text-sm font-medium">Bio</Label>
             <AutosizeTextarea
-              placeholder="Please provide your bio here"
-              className="mt-1 bg-transparent py-2 shadow-none"
+              placeholder="Tell us about yourself..."
+              className="min-h-[120px] w-full rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
               value={bio || ""}
               onChange={(e) => setBio(e.target.value)}
             />
           </div>
-        </div>
 
-        <div className="flex justify-end">
-          <Button
-            onClick={async () => {
-              let uploadedImageUrl = selectedImage;
-              let uploadedCoverImageUrl = selectedCoverImage;
+          <div className="flex justify-end">
+            <Button
+              onClick={async () => {
+                let uploadedImageUrl = selectedImage;
+                let uploadedCoverImageUrl = selectedCoverImage;
 
-              if (selectedImage instanceof File) {
-                const formData = new FormData();
-                formData.append("file", selectedImage);
-                formData.append("upload_preset", cloudinaryUploadPreset);
+                if (selectedImage instanceof File) {
+                  const formData = new FormData();
+                  formData.append("file", selectedImage);
+                  formData.append("upload_preset", cloudinaryUploadPreset);
 
-                try {
-                  const response = await axios.post(
-                    cloudinaryUploadUrl,
-                    formData,
-                  );
-                  uploadedImageUrl = response.data.secure_url;
-                } catch (error) {
-                  console.error("Image upload failed:", error);
-                  toast.error("Image upload failed");
-                  return;
+                  try {
+                    const response = await axios.post(
+                      cloudinaryUploadUrl,
+                      formData,
+                    );
+                    uploadedImageUrl = response.data.secure_url;
+                  } catch (error) {
+                    console.error("Image upload failed:", error);
+                    toast.error("Image upload failed");
+                    return;
+                  }
                 }
-              }
 
-              if (selectedCoverImage instanceof File) {
-                const formData = new FormData();
-                formData.append("file", selectedCoverImage);
-                formData.append("upload_preset", cloudinaryUploadPreset);
+                if (selectedCoverImage instanceof File) {
+                  const formData = new FormData();
+                  formData.append("file", selectedCoverImage);
+                  formData.append("upload_preset", cloudinaryUploadPreset);
 
-                try {
-                  const response = await axios.post(
-                    cloudinaryUploadUrl,
-                    formData,
-                  );
-                  uploadedCoverImageUrl = response.data.secure_url;
-                } catch (error) {
-                  console.error("Cover image upload failed:", error);
-                  toast.error("Cover image upload failed");
-                  return;
+                  try {
+                    const response = await axios.post(
+                      cloudinaryUploadUrl,
+                      formData,
+                    );
+                    uploadedCoverImageUrl = response.data.secure_url;
+                  } catch (error) {
+                    console.error("Cover image upload failed:", error);
+                    toast.error("Cover image upload failed");
+                    return;
+                  }
                 }
-              }
 
-              await mutation.mutate({
-                country: user?.country
-                  ? undefined
-                  : selectedCountry || undefined,
-                image: uploadedImageUrl || user.image || undefined,
-                coverImage:
-                  uploadedCoverImageUrl || user.coverImage || undefined,
-                nerdAt: nerdAt || undefined,
-                bio: bio || undefined,
-                displayName: displayName || undefined,
-                link: link || undefined,
-                firstTime: false,
-              });
-            }}
-          >
-            Update my info
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+                await mutation.mutate({
+                  country: user?.country
+                    ? undefined
+                    : selectedCountry || undefined,
+                  image: uploadedImageUrl || user.image || undefined,
+                  coverImage:
+                    uploadedCoverImageUrl || user.coverImage || undefined,
+                  nerdAt: nerdAt || undefined,
+                  bio: bio || undefined,
+                  displayName: displayName || undefined,
+                  link: link || undefined,
+                  firstTime: false,
+                });
+              }}
+              className="h-11 w-fit gap-2 rounded-2xl border border-gray-500/10 bg-gradient-to-r text-black dark:text-white dark:hover:border-black"
+            >
+              <Check className="h-4 w-4" />
+              Save Changes
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
