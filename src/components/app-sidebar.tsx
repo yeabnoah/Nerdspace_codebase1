@@ -40,7 +40,7 @@ export default function SettingsScreen() {
   ];
 
   return (
-    <div className="my-[3vh] flex h-[80%] min-w-[70vw] flex-col overflow-hidden rounded-xl border dark:border-gray-500/5 text-white md:flex-row">
+    <div className="my-[3vh] flex h-[80%] min-w-[80vw] flex-col overflow-hidden rounded-xl border dark:border-gray-500/5 text-white md:flex-row">
       {/* Left sidebar */}
       <div className="flex w-full md:w-16 justify-evenly flex-row border-r dark:border-r-gray-500/5 dark:border-zinc-800 md:min-w-60 md:flex-col">
         <div className="hidden items-center justify-between border-b p-4 dark:border-zinc-800 md:flex">
