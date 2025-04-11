@@ -58,6 +58,7 @@ import type ProjectInterface from "@/interface/auth/project.interface";
 import UpdateCard from "./project-update-card";
 import { GoStar, GoStarFill } from "react-icons/go";
 import RecommendedProjects from "../user/recommend-project";
+import { Toast } from "../ui/toast";
 
 const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
@@ -303,6 +304,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     },
     onSuccess: () => {
       toast.success("Project successfully updated");
+
       queryClient.invalidateQueries({ queryKey: ["project", projectId] });
       setIsEditModalOpen(false);
     },
@@ -808,13 +810,13 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           <div className="relative z-10 mb-4 flex items-center gap-3">
             <Badge
               variant="outline"
-              className="border-primary/30 h-8 rounded-full px-3 bg-primary/10 font-geist text-xs font-normal text-white backdrop-blur-sm"
+              className="h-8 rounded-full border-primary/30 bg-primary/10 px-3 font-geist text-xs font-normal text-white backdrop-blur-sm"
             >
               {project?.status}
             </Badge>
             <Badge
               variant="outline"
-              className="border-secondary/30 h-8 rounded-full px-3 bg-secondary/20 font-geist font-normal text-secondary-foreground backdrop-blur-sm"
+              className="h-8 rounded-full border-secondary/30 bg-secondary/20 px-3 font-geist font-normal text-secondary-foreground backdrop-blur-sm"
             >
               {project?.access}
             </Badge>
@@ -882,10 +884,10 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         <div className="space-y-8 lg:col-span-2">
           <div className="flex flex-wrap gap-2">
             {project?.category.map((cat: any) => (
-              <Badge 
+              <Badge
                 key={cat}
                 variant="outline"
-                className="border-border/40 rounded-full h-8 px-3 bg-background/50 font-geist text-sm font-normal backdrop-blur-sm"
+                className="h-8 rounded-full border-border/40 bg-background/50 px-3 font-geist text-sm font-normal backdrop-blur-sm"
               >
                 {cat}
               </Badge>
