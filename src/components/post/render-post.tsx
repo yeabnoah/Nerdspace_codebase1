@@ -467,7 +467,7 @@ const RenderPost = () => {
       </div>
 
       {/* Modals */}
-      <div className="fixed inset-0 z-50">
+      {/* <div className="fixed inset-0 z-50"> */}
         <ImagePreviewDialog
           images={selectedPostImages}
           initialIndex={selectedMediaIndex || 0}
@@ -512,7 +512,7 @@ const RenderPost = () => {
           onClose={() => setReportModalOpen(false)}
         />
       </div>
-    </div>
+    // </div>
   );
 };
 
