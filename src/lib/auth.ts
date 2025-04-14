@@ -63,5 +63,9 @@ export const auth = betterAuth({
       partitioned: true, // New browser standards will mandate this for foreign cookies
     },
   },
-  trustedOrigins: ["http://192.168.1.6:3000", "http://localhost:3000"],
+  trustedOrigins: [
+    "http://192.168.1.6:3000",
+    "http://localhost:3000",
+    "https://nerd-space-kappa.vercel.app",
+  ],
 });
