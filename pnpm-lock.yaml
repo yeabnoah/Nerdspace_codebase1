@@ -161,9 +161,6 @@ importers:
       nodemailer:
         specifier: ^6.10.0
         version: 6.10.0
-      prisma:
-        specifier: ^6.3.1
-        version: 6.3.1(typescript@5.7.3)
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -246,6 +243,9 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.6.11
         version: 0.6.11(prettier@3.5.0)
+      prisma:
+        specifier: ^6.3.1
+        version: 6.3.1(typescript@5.7.3)
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.17
