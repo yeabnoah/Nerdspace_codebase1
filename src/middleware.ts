@@ -10,6 +10,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  runtime: "experimental-edge",
+  runtime: "nodejs",
   matcher: ["/dashboard"],
 };
