@@ -7,24 +7,24 @@ type likeType = {
 };
 
 interface starProject {
-  id: String;
-  userId: String;
-  projectId: String;
+  id: string;
+  userId: string;
+  projectId: string;
 }
 
 export type ProjectFollowers = {
-  id: String;
-  userId: String;
-  projectId: String;
+  id: string;
+  userId: string;
+  projectId: string;
 };
 
 export type reviewProject = {
-  id: String;
-  userId: String;
-  projectId: String;
-  content: String;
+  id: string;
+  userId: string;
+  projectId: string;
+  content: string;
   user: UserInterface;
-  createdAt: String;
+  createdAt: string;
 };
 
 export type commentType = {
@@ -33,7 +33,7 @@ export type commentType = {
   updateId: string;
   content: string;
   createdAt: string;
-  updatedAt: String;
+  updatedAt: string;
   user: UserInterface;
 };
 

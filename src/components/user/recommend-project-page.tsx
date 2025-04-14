@@ -4,14 +4,13 @@ import UserInterface from "@/interface/auth/user.interface";
 import { authClient } from "@/lib/auth-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { Calendar, Star } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Button } from "../ui/button";
 import { ProjectRecommendationSkeleton } from "./FollowListSkeleton";
-import { Badge } from "@/components/ui/badge";
-import { Star, Calendar, ExternalLink, ArrowRight } from "lucide-react";
 
 const ProjectRecommendationList = () => {
   const [cursor, setCursor] = useState<string | null>(null);

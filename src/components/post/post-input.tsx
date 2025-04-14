@@ -38,7 +38,7 @@ const PostInput = () => {
     setMounted(true);
   }, []);
 
-  const { mutate, isPending, isError } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ["create-post"],
     mutationFn: createPost,
     onSuccess: () => {
@@ -78,6 +78,7 @@ const PostInput = () => {
       setDialogFiles([]);
       setIsDialogOpen(false);
     } catch (error) {
+      console.log(error);
       toast.error("An error occurred while uploading files");
     } finally {
       setIsUploading(false);
@@ -116,7 +117,7 @@ const PostInput = () => {
           <div className="p-4">
             <div className="flex w-full cursor-pointer items-start rounded-xl border border-gray-200 bg-gray-50/80 px-4 py-3 transition-all hover:border-gray-300 dark:border-gray-800/30 dark:bg-gray-800/20">
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                What's on your mind?
+                What&apos;s on your mind?
               </span>
             </div>
           </div>

@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { magicLink } from "better-auth/plugins";
 import sendEmail from "./sendEmail";
 import { PrismaClient } from "@prisma/client";
+import { nextCookies } from "better-auth/next-js";
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -48,7 +49,19 @@ export const auth = betterAuth({
         console.log(email, token, url, request);
       },
     }),
+    nextCookies(),
   ],
-
-  trustedOrigins: ["http://192.168.1.6:3000"],
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: true,
+      // domain: ".example.com", // Domain with a leading period
+    },
+    defaultCookieAttributes: {
+      secure: true,
+      httpOnly: true,
+      sameSite: "none", // Allows CORS-based cookie sharing across subdomains
+      partitioned: true, // New browser standards will mandate this for foreign cookies
+    },
+  },
+  trustedOrigins: ["http://192.168.1.6:3000", "http://localhost:3000"],
 });

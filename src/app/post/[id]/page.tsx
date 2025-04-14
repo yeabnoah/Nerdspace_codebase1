@@ -1,16 +1,16 @@
 "use client";
 
+import ExploreRenderPost from "@/components/explore/explore-render-post";
 import Navbar from "@/components/navbar";
 import LeftNavbar from "@/components/navbar/left-navbar";
 import MobileNavBar from "@/components/navbar/mobile-nav-bar";
 import RightNavbar from "@/components/navbar/right-navbar";
-import ExploreRenderPost from "@/components/explore/explore-render-post";
+import { Skeleton } from "@/components/ui/skeleton";
 import usePostStore from "@/store/post.store";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PostPage() {
   const params = useParams();

@@ -1,8 +1,6 @@
 import getUserSession from "@/functions/get-user";
-import postInterface from "@/interface/auth/post.interface";
 import { prisma } from "@/lib/prisma";
 import { postSchema } from "@/validation/post.validation";
-import { Inclusive_Sans } from "next/font/google";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {

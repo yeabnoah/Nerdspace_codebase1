@@ -7,13 +7,11 @@ import { cn } from "@/lib/utils";
 import { loginSchema, loginType } from "@/validation/login.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { FaGithub } from "react-icons/fa";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-
 export function LoginForm({
   className,
   ...props
@@ -38,7 +36,7 @@ export function LoginForm({
       {
         email: data.email,
         password: data.password,
-        callbackURL: "/",
+        // callbackURL: "/",
         // rememberMe: true,
       },
       {
@@ -50,7 +48,7 @@ export function LoginForm({
         onSuccess: async () => {
           toast.dismiss(loadingToastId);
           toast.success("You're successfully signed in");
-          router.push("/");
+          router.replace("/");
         },
         onError: (ctx) => {
           toast.dismiss(loadingToastId);

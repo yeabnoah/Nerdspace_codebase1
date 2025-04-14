@@ -96,7 +96,7 @@ export function OnboardingPrompt() {
               )}
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm">What you're nerd at</span>
+              <span className="text-sm">What you&apos;re nerd at</span>
               {profileCompletion.nerdAt ? (
                 <CheckCircle className="h-4 w-4 text-green-500" />
               ) : (

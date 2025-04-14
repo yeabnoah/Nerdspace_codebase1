@@ -2,23 +2,23 @@
 
 import LeftNavbar from "@/components/navbar/left-navbar";
 import MobileNavBar from "@/components/navbar/mobile-nav-bar";
+import { Button } from "@/components/ui/button";
 import { FollowResponse, followService } from "@/functions/follow";
+import { authClient } from "@/lib/auth-client";
 import {
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useInView } from "react-intersection-observer";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { useInView } from "react-intersection-observer";
 
-const FollowersPage = ({ params }: { params: { id: string } }) => {
+const FollowersPage = () => {
   const { ref, inView } = useInView();
   const queryClient = useQueryClient();
   const session = authClient.useSession();
@@ -26,7 +26,7 @@ const FollowersPage = ({ params }: { params: { id: string } }) => {
     {},
   );
 
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery<FollowResponse>({
       queryKey: ["followers"],
       queryFn: ({ pageParam }) =>
@@ -64,7 +64,7 @@ const FollowersPage = ({ params }: { params: { id: string } }) => {
       );
       return response.data;
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["followers"] });
       queryClient.invalidateQueries({ queryKey: ["following"] });
       queryClient.invalidateQueries({ queryKey: ["follow-status"] });
@@ -106,7 +106,7 @@ const FollowersPage = ({ params }: { params: { id: string } }) => {
             {followers.map((user) => (
               <div
                 key={user.id}
-                className="group relative overflow-hidden rounded-2xl border-none bg-gradient-to-br from-zinc-100 via-white to-zinc-50  transition-all duration-300 dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black"
+                className="group relative overflow-hidden rounded-2xl border-none bg-gradient-to-br from-zinc-100 via-white to-zinc-50 transition-all duration-300 dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black"
               >
                 <div className="relative z-10 flex items-center justify-between gap-4 p-3">
                   <Link
@@ -122,10 +122,10 @@ const FollowersPage = ({ params }: { params: { id: string } }) => {
                       />
                     </div>
                     <div>
-                      <h3 className="font-heading text-sm font-geist font-semibold text-zinc-900 dark:text-white">
+                      <h3 className="font-heading font-geist text-sm font-semibold text-zinc-900 dark:text-white">
                         {user.name}
                       </h3>
-                      <p className="text-sm text-zinc-500 font-geist dark:text-zinc-400">
+                      <p className="font-geist text-sm text-zinc-500 dark:text-zinc-400">
                         {user.bio || "No bio yet"}
                       </p>
                     </div>
@@ -138,7 +138,7 @@ const FollowersPage = ({ params }: { params: { id: string } }) => {
                       disabled={loadingStates[user.id]}
                       className="h-10 rounded-full px-4 transition-all duration-300 hover:scale-105"
                     >
-                      <span className="font-geist text-sm font-normal px-2">
+                      <span className="px-2 font-geist text-sm font-normal">
                         {loadingStates[user.id]
                           ? "Loading..."
                           : followStatus?.[user.id]

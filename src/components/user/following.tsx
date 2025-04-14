@@ -1,20 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import axios from "axios";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import axios from "axios";
+import Image from "next/image";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
 const Following = () => {
   const queryClient = useQueryClient();
   const session = authClient.useSession();
-  const router = useRouter();
 
   const {
     data,
@@ -96,7 +96,7 @@ const Following = () => {
       <h1 className="mb-6 font-instrument text-3xl">Following</h1>
       <div className="space-y-4">
         {following.length > 0 ? (
-          following.map((user: any) => (
+          following.map((user) => (
             <div
               key={user.id}
               className="flex items-center justify-between rounded-lg border p-4"

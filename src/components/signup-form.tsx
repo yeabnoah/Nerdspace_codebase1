@@ -1,18 +1,17 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { FaGithub } from "react-icons/fa";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SignupFormData, signupSchema } from "@/validation/signup.validation";
-import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
+import { SignupFormData, signupSchema } from "@/validation/signup.validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { FaGithub } from "react-icons/fa";
 
 export function SignUpForm({
   className,
@@ -30,7 +29,6 @@ export function SignUpForm({
   const [loading, setLoading] = useState(false);
 
   let loadingToastId: string | undefined;
-  const router = useRouter();
 
   const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
     console.log("worked signin", data);
@@ -97,11 +95,14 @@ export function SignUpForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={cn("mx-auto flex max-w-sm flex-col gap-6 text-card-foreground", className)}
+      className={cn(
+        "mx-auto flex max-w-sm flex-col gap-6 text-card-foreground",
+        className,
+      )}
       {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="font-playfair text-2xl md:text-3xl dark:text-white">
+        <h1 className="font-playfair text-2xl dark:text-white md:text-3xl">
           Welcome
           <span className="text-lime-00 px-2 font-itcThinItalic text-4xl">
             Nerdy
@@ -127,13 +128,15 @@ export function SignUpForm({
         </Button>
 
         <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-          <span className="relative z-10 bg-background dark:bg-textAlternative py-1 rounded-lg px-2 text-muted-foreground">
+          <span className="relative z-10 rounded-lg bg-background px-2 py-1 text-muted-foreground dark:bg-textAlternative">
             OR
           </span>
         </div>
 
         <div className="grid gap-2">
-          <Label htmlFor="name" className="dark:text-white">Full Name</Label>
+          <Label htmlFor="name" className="dark:text-white">
+            Full Name
+          </Label>
           <Input
             id="name"
             type="text"
@@ -147,7 +150,9 @@ export function SignUpForm({
         </div>
 
         <div className="grid gap-2">
-          <Label htmlFor="email" className="dark:text-white">Email</Label>
+          <Label htmlFor="email" className="dark:text-white">
+            Email
+          </Label>
           <Input
             id="email"
             type="email"
@@ -161,7 +166,9 @@ export function SignUpForm({
         </div>
 
         <div className="grid gap-2">
-          <Label htmlFor="password" className="dark:text-white">Password</Label>
+          <Label htmlFor="password" className="dark:text-white">
+            Password
+          </Label>
           <div className="relative">
             <Input
               id="password"
@@ -183,13 +190,19 @@ export function SignUpForm({
           </p>
         </div>
 
-        <Button type="submit" className="w-full bg-textAlternative dark:bg-white hover:bg-textAlternative/95">
+        <Button
+          type="submit"
+          className="w-full bg-textAlternative hover:bg-textAlternative/95 dark:bg-white"
+        >
           Sign Up
         </Button>
       </div>
       <div className="text-center text-sm dark:text-white/60">
         Have an account?{" "}
-        <Link href="/login" className="underline underline-offset-4 dark:text-white">
+        <Link
+          href="/login"
+          className="underline underline-offset-4 dark:text-white"
+        >
           Login
         </Link>
       </div>

@@ -2,13 +2,11 @@
 
 import type React from "react";
 
-import { useState } from "react";
-import { Upload, X, Check, AlertCircle, Globe, Lock, Tag } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -16,13 +14,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import ProjectInterface from "@/interface/auth/project.interface";
 import { cn } from "@/lib/utils";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import axios from "axios";
+import { AlertCircle, Check, Globe, Lock, Tag, Upload, X } from "lucide-react";
+import { useState } from "react";
 import toast from "react-hot-toast";
-import ProjectInterface from "@/interface/auth/project.interface";
 
 interface Project {
   name: string;

@@ -43,7 +43,7 @@ export const generateUsers = (count: number): User[] => {
     age: faker.number.int({ min: 18, max: 50 }),
     interest: faker.word.noun(),
     bio: faker.lorem.sentence(),
-    nickname: faker.internet.userName(),
+    nickname: faker.internet.username(),
     socialRating: faker.number.float({ min: 0, max: 10 }),
     socialClass: getRandomSocialClasses(),
   }));

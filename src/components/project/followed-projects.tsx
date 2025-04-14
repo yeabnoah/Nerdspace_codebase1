@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { formatDistanceToNow } from "date-fns";
-import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
-import { Share2, Calendar } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Button } from "../ui/button";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { formatDistanceToNow } from "date-fns";
+import { Calendar } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 
 interface Project {
   id: string;
@@ -28,7 +26,7 @@ interface Project {
 
 export default function FollowedProjects() {
   const router = useRouter();
-  const [cursor, setCursor] = useState<string | null>(null);
+  // const [cursor, setCursor] = useState<string | null>(null);
 
   const {
     data,

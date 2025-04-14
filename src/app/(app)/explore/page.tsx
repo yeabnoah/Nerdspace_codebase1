@@ -4,10 +4,10 @@ import ExploreEntry from "@/components/explore/explore-entry";
 import LeftNavbar from "@/components/navbar/left-navbar";
 import MobileNavBar from "@/components/navbar/mobile-nav-bar";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import useSearchStore from "@/store/search.store";
 
-const Explore = () => {
+const ExploreContent = () => {
   const searchParams = useSearchParams();
   const { setQuery } = useSearchStore();
 
@@ -29,6 +29,14 @@ const Explore = () => {
 
       <MobileNavBar />
     </div>
+  );
+};
+
+const Explore = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ExploreContent />
+    </Suspense>
   );
 };
 

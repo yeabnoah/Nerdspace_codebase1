@@ -1,16 +1,45 @@
 "use client";
 
-import { formatDistanceToNow } from "date-fns";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import postInterface from "@/interface/auth/post.interface";
+import ProjectInterface from "@/interface/auth/project.interface";
+import UserInterface from "@/interface/auth/user.interface";
+import { motion } from "framer-motion";
+import { MessageSquare, Star, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { MessageSquare, Star, Users } from "lucide-react";
-import { motion } from "framer-motion";
 
-export const UserCard = ({ user }: { user: any }) => (
+interface User {
+  name: string;
+  nerdAt: string;
+  image?: string;
+  bio?: string;
+  _count?: {
+    followers?: number;
+    posts?: number;
+  };
+}
+
+interface Post {
+  id: string;
+  content: string;
+  user: User;
+  media?: Media[];
+  _count?: {
+    likes?: number;
+    bookmarks?: number;
+  };
+}
+
+interface Media {
+  id: string;
+  url: string;
+}
+
+
+
+export const UserCard = ({ user }: { user: UserInterface }) => (
   <Link href={`/app/profile/${user.nerdAt}`}>
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -56,7 +85,7 @@ export const UserCard = ({ user }: { user: any }) => (
   </Link>
 );
 
-export const PostCard = ({ post }: { post: any }) => (
+export const PostCard = ({ post }: { post: postInterface }) => (
   <Link href={`/app/posts/${post.id}`}>
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -86,7 +115,7 @@ export const PostCard = ({ post }: { post: any }) => (
           <p className="text-sm sm:text-base">{post.content}</p>
           {post.media && post.media.length > 0 && (
             <div className="grid gap-2">
-              {post.media.map((media: any) => (
+              {post.media.map((media) => (
                 <div key={media.id} className="relative aspect-video overflow-hidden rounded-lg">
                   <Image
                     src={media.url}
@@ -114,7 +143,7 @@ export const PostCard = ({ post }: { post: any }) => (
   </Link>
 );
 
-export const ProjectCard = ({ project }: { project: any }) => (
+export const ProjectCard = ({ project }: { project: ProjectInterface }) => (
   <Link href={`/app/projects/${project.id}`}>
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -161,48 +190,48 @@ export const ProjectCard = ({ project }: { project: any }) => (
   </Link>
 );
 
-export const CommunityCard = ({ community }: { community: any }) => (
-  <Link href={`/app/communities/${community.id}`}>
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.02 }}
-      transition={{ duration: 0.2 }}
-    >
-      <Card className="group relative overflow-hidden rounded-xl border-border/50 bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-lg dark:border-border/5">
-        <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-        <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+// export const CommunityCard = ({ community }: { community: Community }) => (
+//   <Link href={`/app/communities/${community.id}`}>
+//     <motion.div
+//       initial={{ opacity: 0, y: 20 }}
+//       animate={{ opacity: 1, y: 0 }}
+//       whileHover={{ scale: 1.02 }}
+//       transition={{ duration: 0.2 }}
+//     >
+//       <Card className="group relative overflow-hidden rounded-xl border-border/50 bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-lg dark:border-border/5">
+//         <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+//         <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
         
-        <CardHeader className="flex flex-row items-center gap-3 p-4 sm:p-6">
-          <Avatar className="h-12 w-12 sm:h-16 sm:w-16">
-            <AvatarImage src={community.image || "/user.jpg"} alt={community.name} />
-            <AvatarFallback>{community.name.substring(0, 2).toUpperCase()}</AvatarFallback>
-          </Avatar>
-          <div>
-            <CardTitle className="text-base font-semibold sm:text-lg">
-              {community.name}
-            </CardTitle>
-            <p className="text-xs text-muted-foreground sm:text-sm">
-              @{community.nerdAt}
-            </p>
-            {community.description && (
-              <p className="mt-1 line-clamp-2 text-xs text-muted-foreground sm:text-sm">
-                {community.description}
-              </p>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent className="flex items-center gap-4 p-4 pt-0 sm:p-6 sm:pt-0">
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Users className="h-3.5 w-3.5" />
-            <span>{community._count?.members || 0} members</span>
-          </div>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <MessageSquare className="h-3.5 w-3.5" />
-            <span>{community._count?.posts || 0} posts</span>
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
-  </Link>
-); 
+//         <CardHeader className="flex flex-row items-center gap-3 p-4 sm:p-6">
+//           <Avatar className="h-12 w-12 sm:h-16 sm:w-16">
+//             <AvatarImage src={community.image || "/user.jpg"} alt={community.name} />
+//             <AvatarFallback>{community.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+//           </Avatar>
+//           <div>
+//             <CardTitle className="text-base font-semibold sm:text-lg">
+//               {community.name}
+//             </CardTitle>
+//             <p className="text-xs text-muted-foreground sm:text-sm">
+//               @{community.nerdAt}
+//             </p>
+//             {community.description && (
+//               <p className="mt-1 line-clamp-2 text-xs text-muted-foreground sm:text-sm">
+//                 {community.description}
+//               </p>
+//             )}
+//           </div>
+//         </CardHeader>
+//         <CardContent className="flex items-center gap-4 p-4 pt-0 sm:p-6 sm:pt-0">
+//           <div className="flex items-center gap-1 text-xs text-muted-foreground">
+//             <Users className="h-3.5 w-3.5" />
+//             <span>{community._count?.members || 0} members</span>
+//           </div>
+//           <div className="flex items-center gap-1 text-xs text-muted-foreground">
+//             <MessageSquare className="h-3.5 w-3.5" />
+//             <span>{community._count?.posts || 0} posts</span>
+//           </div>
+//         </CardContent>
+//       </Card>
+//     </motion.div>
+//   </Link>
+// ); 

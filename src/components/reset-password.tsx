@@ -1,5 +1,12 @@
 "use client";
 
+import { Suspense, useState, useEffect } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import toast from "react-hot-toast";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,17 +16,15 @@ import {
   resetPasswordSchema,
   resetPasswordType,
 } from "@/validation/reset-pass.validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react"; // Import useState
-import { SubmitHandler, useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 
-export function ResetPasswordFrom({
+function ResetPasswordFormContent({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams?.get("token");
+
   const {
     register,
     handleSubmit,
@@ -28,29 +33,32 @@ export function ResetPasswordFrom({
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  let loadingToastId: string | undefined;
-
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
 
-  const token = new URLSearchParams(window.location.search).get("token");
+  // Redirect to login if no token is present
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+    }
+  }, [token, router]);
+
+  // Don't render form if token is missing (redirecting)
   if (!token) {
-    router.push("/login");
+    return null;
   }
 
   const onSubmit: SubmitHandler<resetPasswordType> = async (data) => {
-    console.log("worked signin", data);
+    let loadingToastId: string | undefined;
 
     await authClient.resetPassword(
       {
         newPassword: data.password,
-        token: token!,
+        token: token,
       },
       {
         onRequest: () => {
           loadingToastId = toast.loading("Loading ... updating password");
         },
-
         onSuccess: () => {
           toast.dismiss(loadingToastId);
           toast.success("Password Changed Successfully");
@@ -58,12 +66,10 @@ export function ResetPasswordFrom({
         },
         onError: (ctx) => {
           toast.dismiss(loadingToastId);
-          toast.success(ctx.error.message);
+          toast.error(ctx.error.message);
         },
       },
     );
-
-    // console.log(data);
   };
 
   return (
@@ -80,20 +86,24 @@ export function ResetPasswordFrom({
           </span>
         </h1>
       </div>
+
       <div className="grid gap-3">
+        {/* New Password */}
         <div className="grid gap-2">
           <Label htmlFor="password">New Password</Label>
           <div className="relative">
             <Input
-              type={showPassword ? "text" : "password"} // Toggle input type
+              id="password"
+              type={showPassword ? "text" : "password"}
               placeholder="*********"
               className="rounded-lg text-sm placeholder:text-black/50"
               {...register("password")}
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+              onClick={() => setShowPassword(!showPassword)}
               className="absolute right-2 top-1/2 -translate-y-1/2 transform text-sm text-muted-foreground"
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? "Hide" : "Show"}
             </button>
@@ -103,10 +113,12 @@ export function ResetPasswordFrom({
           </p>
         </div>
 
+        {/* Confirm New Password */}
         <div className="grid gap-2">
-          <Label htmlFor="password">Confirm New Password</Label>
+          <Label htmlFor="confirmPassword">Confirm New Password</Label>
           <div className="relative">
             <Input
+              id="confirmPassword"
               type={showPassword ? "text" : "password"}
               placeholder="*********"
               className="rounded-lg text-sm placeholder:text-black/50"
@@ -116,6 +128,7 @@ export function ResetPasswordFrom({
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-2 top-1/2 -translate-y-1/2 transform text-sm text-muted-foreground"
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? "Hide" : "Show"}
             </button>
@@ -131,12 +144,24 @@ export function ResetPasswordFrom({
           Update Password
         </Button>
       </div>
+
       <div className="text-center text-sm">
-        have an account?{" "}
+        Have an account?{" "}
         <Link href="/login" className="underline underline-offset-4">
           Login
         </Link>
       </div>
     </form>
+  );
+}
+
+export function ResetPasswordFrom({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"form">) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordFormContent {...props} className={className} />
+    </Suspense>
   );
 }

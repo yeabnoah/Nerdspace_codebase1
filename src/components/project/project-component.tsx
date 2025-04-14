@@ -1,14 +1,12 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,38 +17,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Plus,
-  Search,
-  Upload,
-  Check,
-  X,
-  Globe,
-  Lock,
-  Tag,
-  AlertCircle,
-} from "lucide-react";
-import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import ProjectInterface, {
   ProjectInterfaceToSubmit,
 } from "@/interface/auth/project.interface";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import {
+  AlertCircle,
+  Check,
+  Globe,
+  Lock,
+  Plus,
+  Tag,
+  Upload,
+  X
+} from "lucide-react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { ProjectCardSkeleton } from "../skeleton/project-card";
-import ProjectCard from "./project-card";
 import LeaderboardPage from "./leaderBorad";
+import ProjectCard from "./project-card";
 
 const cloudinaryUploadUrl = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!;
 const cloudinaryUploadPreset =
   process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
 
 export default function ProjectsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newProject, setNewProject] = useState<ProjectInterfaceToSubmit>({
@@ -81,7 +77,6 @@ export default function ProjectsPage() {
   const {
     data: projecter,
     isLoading,
-    isError,
   } = useQuery<ProjectInterface[]>({
     queryKey: ["projects"],
     queryFn: async () => {
@@ -91,7 +86,7 @@ export default function ProjectsPage() {
     },
   });
 
-  const mutation = useMutation({
+  const mutation = useMutation<ProjectInterface, Error, ProjectInterfaceToSubmit>({
     mutationKey: ["create-project"],
     mutationFn: async (newProjectData) => {
       const response = await axios.post("/api/project", newProjectData);
@@ -101,9 +96,9 @@ export default function ProjectsPage() {
       toast.success("Project successfully created");
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
-    onError: (error: any) => {
+    onError: (error) => {
       const errorMessage =
-        error.response?.data?.message ||
+        error ||
         "An error occurred while creating the project";
       toast.error(errorMessage);
     },
@@ -119,33 +114,33 @@ export default function ProjectsPage() {
       toast.success("Project successfully updated");
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
-    onError: (error: any) => {
+    onError: (error) => {
       const errorMessage =
-        error.response?.data?.message ||
+        error ||
         "An error occurred while updating the project";
       toast.error(errorMessage);
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationKey: ["delete-project"],
-    mutationFn: async (projectId) => {
-      const response = await axios.delete("/api/project", {
-        data: { id: projectId },
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      toast.success("Project successfully deleted");
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-    },
-    onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred while deleting the project";
-      toast.error(errorMessage);
-    },
-  });
+  // const deleteMutation = useMutation({
+  //   mutationKey: ["delete-project"],
+  //   mutationFn: async (projectId) => {
+  //     const response = await axios.delete("/api/project", {
+  //       data: { id: projectId },
+  //     });
+  //     return response.data;
+  //   },
+  //   onSuccess: () => {
+  //     toast.success("Project successfully deleted");
+  //     queryClient.invalidateQueries({ queryKey: ["projects"] });
+  //   },
+  //   onError: (error) => {
+  //     const errorMessage =
+  //       error ||
+  //       "An error occurred while deleting the project";
+  //     toast.error(errorMessage);
+  //   },
+  // });
 
   const filteredProjects = projects?.filter((project) => {
     const matchesSearch =
@@ -191,8 +186,7 @@ export default function ProjectsPage() {
     };
 
     try {
-      await mutation.mutateAsync(newProjectData as any);
-      // Reset form and close modal
+      await mutation.mutateAsync(newProjectData);
       setNewProject({
         name: "",
         description: "",
@@ -211,56 +205,56 @@ export default function ProjectsPage() {
     }
   };
 
-  const handleUpdateProject = async () => {
-    let imageUrl = "";
+  // const handleUpdateProject = async () => {
+  //   let imageUrl = "";
 
-    if (selectedImage instanceof File) {
-      const formData = new FormData();
-      formData.append("file", selectedImage);
-      formData.append("upload_preset", cloudinaryUploadPreset);
+  //   if (selectedImage instanceof File) {
+  //     const formData = new FormData();
+  //     formData.append("file", selectedImage);
+  //     formData.append("upload_preset", cloudinaryUploadPreset);
 
-      try {
-        const response = await axios.post(cloudinaryUploadUrl, formData);
-        imageUrl = response.data.secure_url;
-      } catch (error) {
-        console.error("Image upload failed:", error);
-        toast.error("Image upload failed");
-        return;
-      }
-    }
+  //     try {
+  //       const response = await axios.post(cloudinaryUploadUrl, formData);
+  //       imageUrl = response.data.secure_url;
+  //     } catch (error) {
+  //       console.error("Image upload failed:", error);
+  //       toast.error("Image upload failed");
+  //       return;
+  //     }
+  //   }
 
-    const updatedProjectData: ProjectInterfaceToSubmit = {
-      name: newProject.name,
-      description: newProject.description,
-      status: newProject.status,
-      category: selectedCategories,
-      access: newProject.access,
-      image: imageUrl || newProject.image,
-    };
+  //   const updatedProjectData: ProjectInterfaceToSubmit = {
+  //     name: newProject.name,
+  //     description: newProject.description,
+  //     status: newProject.status,
+  //     category: selectedCategories,
+  //     access: newProject.access,
+  //     image: imageUrl || newProject.image,
+  //   };
 
-    await updateMutation.mutate(updatedProjectData as any);
+  //   await updateMutation.mutate(updatedProjectData as ProjectInterfaceToSubmit);
 
-    // Reset form and close modal
-    setNewProject({
-      name: "",
-      description: "",
-      status: "ONGOING",
-      category: [],
-      access: "private",
-      image: "",
-    });
-    setSelectedCategories([]);
-    setSelectedImage(null);
-    setIsCreateModalOpen(false);
-  };
+  //   // Reset form and close modal
+  //   setNewProject({
+  //     name: "",
+  //     description: "",
+  //     status: "ONGOING",
+  //     category: [],
+  //     access: "private",
+  //     image: "",
+  //   });
+  //   setSelectedCategories([]);
+  //   setSelectedImage(null);
+  //   setIsCreateModalOpen(false);
+  // };
 
-  const toggleCategory = (category: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category],
-    );
-  };
+  // const toggleCategory = (category: string) => {
+  //   setSelectedCategories((prev) =>
+  //     prev.includes(category)
+  //       ? prev.filter((c) => c !== category)
+  //       : [...prev, category],
+  //   );
+  // };
 
   const handleCategoryInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === " ") {
@@ -271,6 +265,8 @@ export default function ProjectsPage() {
       e.currentTarget.value = "";
     }
   };
+
+  console.log(activeTab, projecter)
 
   return (
     <div className="container mx-auto w-full px-8 py-2 dark:bg-black">

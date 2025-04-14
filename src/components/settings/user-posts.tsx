@@ -2,9 +2,6 @@
 
 import { timeAgo } from "@/functions/calculate-time-difference";
 import { getTrimLimit } from "@/functions/render-helper";
-import postInterface from "@/interface/auth/post.interface";
-import { authClient } from "@/lib/auth-client";
-import usePostStore from "@/store/post.store";
 import useUserProfileStore from "@/store/userProfile.store";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -17,17 +14,17 @@ import {
   Share2Icon,
 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useInView } from "react-intersection-observer";
-import { useRouter } from "next/navigation";
+import ImagePreviewDialog from "../image-preview";
+import RenderPostSkeleton from "../skeleton/render-post.skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import ImagePreviewDialog from "../image-preview";
-import RenderPostSkeleton from "../skeleton/render-post.skeleton";
 
 const fetchUserPosts = async ({ pageParam = null }: { pageParam: string | null }) => {
   const { userProfile } = useUserProfileStore.getState();
@@ -37,7 +34,6 @@ const fetchUserPosts = async ({ pageParam = null }: { pageParam: string | null }
 
 const RenderUserPosts = () => {
   const { ref, inView } = useInView();
-  const session = authClient.useSession();
   const router = useRouter();
   const { userProfile } = useUserProfileStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -123,7 +119,9 @@ const RenderUserPosts = () => {
           const isShortContent = contentWords.length < trimLimit;
           const isTooShort = contentWords.length < 10;
 
-          inView && hasNextPage && fetchNextPage();
+          if (inView && hasNextPage) {
+            fetchNextPage();
+          }
 
           return (
             <div

@@ -1,8 +1,6 @@
-import { authClient } from "@/lib/auth-client";
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 import getUserSession from "@/functions/get-user";
+import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {

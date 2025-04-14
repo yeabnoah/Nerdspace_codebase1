@@ -22,6 +22,7 @@ interface UserInterface {
   _count: {
     followers: number;
     following: number;
+    posts: number;
   };
 }
 

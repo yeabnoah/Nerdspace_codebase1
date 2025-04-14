@@ -53,7 +53,6 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
     },
     ref
   ) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [countryData, setCountryData] = useState<CountryData | undefined>();
     const [displayFlag, setDisplayFlag] = useState<string>("");
     const [hasInitialized, setHasInitialized] = useState(false);

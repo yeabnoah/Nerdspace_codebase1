@@ -1,10 +1,9 @@
 "use client";
 
-import { useRef, type ChangeEvent } from "react";
-import { X, ImageIcon, Film, File } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFileStore } from "@/store/fileStore";
-import axios from "axios";
+import { ImageIcon } from "lucide-react";
+import { useRef, type ChangeEvent } from "react";
 import { HiPhoto } from "react-icons/hi2";
 
 interface PostFileUploaderProps {
@@ -26,8 +25,7 @@ export function PostFileUploader({
     "video/quicktime",
   ],
 }: PostFileUploaderProps) {
-  const { files, addFiles, removeFile, clearFiles, setError, error } =
-    useFileStore();
+  const { files, addFiles, setError, error } = useFileStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -63,8 +61,12 @@ export function PostFileUploader({
 
     const newFilesWithPreview = validFiles.map((file) => {
       const id = crypto.randomUUID();
-      let type: "image" = "image";
-
+      let type: "image" | "video" | "gif" = "image";
+      if (file.type.startsWith("video/")) {
+        type = "video";
+      } else if (file.type.startsWith("image/gif")) {
+        type = "gif";
+      }
       return {
         file,
         id,
@@ -80,16 +82,16 @@ export function PostFileUploader({
     }
   };
 
-  const getFileIcon = (fileType: string) => {
-    if (fileType.startsWith("image/")) return <ImageIcon className="h-5 w-5" />;
-  };
+  // const getFileIcon = (fileType: string) => {
+  //   if (fileType.startsWith("image/")) return <ImageIcon className="h-5 w-5" />;
+  // };
 
   return (
     <div className="w-full space-y-4">
       <div className="flex gap-2">
         <Button
           variant="outline"
-          className="m-0 mx-5  rounded-lg dark:border-gray-500/5 bg-transparent p-0 shadow-none hover:bg-transparent"
+          className="m-0 mx-5 rounded-lg bg-transparent p-0 shadow-none hover:bg-transparent dark:border-gray-500/5"
           onClick={() => {
             fileInputRef.current?.setAttribute(
               "accept",

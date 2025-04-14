@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useInView } from "react-intersection-observer";
+import PostCard from "@/components/post/post-card";
+import { Skeleton } from "@/components/ui/skeleton";
+import postInterface from "@/interface/auth/post.interface";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Skeleton } from "@/components/ui/skeleton";
-import PostCard from "@/components/post/post-card";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import postInterface from "@/interface/auth/post.interface";
+import { useInView } from "react-intersection-observer";
 
 interface BookmarksResponse {
   data: postInterface[];
@@ -16,6 +16,12 @@ interface BookmarksResponse {
     hasNextPage: boolean;
     total: number;
   };
+}
+
+interface CommentType {
+  id: string;
+  content: string;
+  // Add other properties as needed
 }
 
 export default function BookmarksTab() {
@@ -37,13 +43,12 @@ export default function BookmarksTab() {
   const [modalEditOpened, setModalEditOpened] = useState(false);
   const [modalDeleteOpened, setModalDeleteOpened] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
-  const [commentId, setCommentId] = useState("");
-  const [commentLoading, setCommentLoading] = useState(false);
-  const [comments, setComments] = useState<any[]>([]);
-  const [hasNextCommentPage, setHasNextCommentPage] = useState(false);
-  const [isFetchingNextCommentPage, setIsFetchingNextCommentPage] =
-    useState(false);
-  const [selectedCommentReply, setSelectedCommentReply] = useState<any>(null);
+  const [, setCommentId] = useState("");
+  const [commentLoading] = useState(false);
+  const [comments] = useState([]);
+  const [hasNextCommentPage] = useState(false);
+  const [isFetchingNextCommentPage] = useState(false);
+  const [selectedCommentReply, setSelectedCommentReply] = useState<CommentType | null>(null);
 
   const { ref, inView } = useInView();
 
@@ -105,7 +110,7 @@ export default function BookmarksTab() {
     }));
   };
 
-  const handleReplySubmit = (commentId: string) => {
+  const handleReplySubmit = () => {
     // Implement reply submission logic
   };
 
@@ -116,20 +121,20 @@ export default function BookmarksTab() {
     }));
   };
 
-  const handleEditComment = (commentId: string) => {
+  const handleEditComment = () => {
     // Implement edit comment logic
   };
 
-  const handleDeleteComment = (commentId: string) => {
+  const handleDeleteComment = () => {
     // Implement delete comment logic
   };
 
-  const openEditModal = (comment: any) => {
+  const openEditModal = (comment: CommentType) => {
     setSelectedCommentReply(comment);
     setModalEditOpened(true);
   };
 
-  const openDeleteModal = (comment: any) => {
+  const openDeleteModal = (comment: CommentType) => {
     setSelectedCommentReply(comment);
     setModalDeleteOpened(true);
   };
@@ -138,19 +143,15 @@ export default function BookmarksTab() {
     // Implement fetch next comment page logic
   };
 
-  const changePostAccessType = (post: postInterface) => {
+  const changePostAccessType = () => {
     // Implement change post access type logic
   };
 
-  const handleFollow = (post: postInterface) => {
-    // Implement follow logic
-  };
-
-  const handleLike = (postId: string) => {
+  const handleLike = () => {
     // Implement like logic
   };
 
-  const handleBookmark = (postId: string) => {
+  const handleBookmark = () => {
     // Implement bookmark logic
   };
 
@@ -186,6 +187,8 @@ export default function BookmarksTab() {
       </div>
     );
   }
+
+  console.log(selectedCommentReply);
 
   return (
     <div className="space-y-4">
@@ -225,7 +228,7 @@ export default function BookmarksTab() {
           setEditModal={setModalEditOpened}
           setDeleteModal={setModalDeleteOpened}
           changePostAccessType={changePostAccessType}
-          handleFollow={handleFollow}
+          // handleFollow={handleFollow}
           handleLike={handleLike}
           handleBookmark={handleBookmark}
         />

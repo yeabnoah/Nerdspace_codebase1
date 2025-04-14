@@ -1,12 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import getUserSession from "@/functions/get-user";
+import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function GET(req: NextRequest) {
   try {
     const session = await getUserSession();
     if (!session) {
@@ -18,10 +15,12 @@ export async function GET(
       );
     }
 
-    const { id } = params;
     const url = new URL(req.url);
-    const cursor = url.searchParams.get("cursor");
-    const limit = parseInt(url.searchParams.get("limit") || "3", 10); // Default to 3 updates per page
+    const pathParts = url.pathname.split("/").filter((part) => part !== "");
+    const id = pathParts[pathParts.length - 1]; // Assuming the last part is the id
+
+    const cursor = req.nextUrl.searchParams.get("cursor");
+    const limit = parseInt(req.nextUrl.searchParams.get("limit") || "3", 10); // Default to 3 updates per page
 
     const project = await prisma.project.findFirst({
       where: { id },
@@ -62,7 +61,7 @@ export async function GET(
       },
       { status: 200 },
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching project data:", error);
     return NextResponse.json(
       { message: "Internal server error" },
@@ -77,10 +76,7 @@ const productUpdateSchema = z.object({
   content: z.string(),
 });
 
-export const POST = async (
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) => {
+export const POST = async (req: NextRequest) => {
   try {
     const session = await getUserSession();
     if (!session) {
@@ -92,7 +88,10 @@ export const POST = async (
       );
     }
 
-    const { id } = params;
+    const url = new URL(req.url);
+    const pathParts = url.pathname.split("/").filter((part) => part !== "");
+    const id = pathParts[pathParts.length - 1]; // Assuming the last part is the id
+
     const body = await req.json();
 
     const validation = productUpdateSchema.safeParse(body);
@@ -147,10 +146,7 @@ export const POST = async (
   }
 };
 
-export const DELETE = async (
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) => {
+export const DELETE = async (req: NextRequest) => {
   try {
     const session = await getUserSession();
     if (!session) {
@@ -160,7 +156,9 @@ export const DELETE = async (
       );
     }
 
-    const { id } = params;
+    const url = new URL(req.url);
+    const pathParts = url.pathname.split("/").filter((part) => part !== "");
+    const id = pathParts[pathParts.length - 1]; // Assuming the last part is the id
 
     const project = await prisma.project.findFirst({
       where: {

@@ -28,7 +28,7 @@ import { useState } from "react";
 
 interface RenderCommentsProps {
   comments: PostCommentInterface[];
-  parentId: String | null;
+  parentId: string | null;
   level: number;
   expandedComments: { [key: string]: boolean };
   toggleCommentExpand: (commentId: string) => void;

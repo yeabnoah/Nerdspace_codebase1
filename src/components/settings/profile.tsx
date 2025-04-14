@@ -1,42 +1,33 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Settings,
-  Grid3X3,
-  Bookmark,
-  Lock,
-  UsersRound,
-  Hammer,
-  ExternalLink,
-  CalendarIcon,
-  Dot,
-  SettingsIcon,
-} from "lucide-react";
 import useUserStore from "@/store/user.store";
-import RenderMyPost from "./myposts";
-import ProjectsTab from "./tabs/ProjectsTab";
-import CollectionsTab from "./tabs/CollectionsTab";
-import BookmarksTab from "./tabs/BookmarksTab";
-import PrivateTab from "./tabs/PrivateTab";
-import { Skeleton } from "../ui/skeleton";
-import { useRouter } from "next/navigation";
-import useUserProfileStore from "@/store/userProfile.store";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import {
+  Bookmark,
+  Dot,
+  Grid3X3,
+  Hammer,
+  Lock,
+  SettingsIcon,
+} from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
+import { Skeleton } from "../ui/skeleton";
+import RenderMyPost from "./myposts";
+import BookmarksTab from "./tabs/BookmarksTab";
+import CollectionsTab from "./tabs/CollectionsTab";
+import PrivateTab from "./tabs/PrivateTab";
+import ProjectsTab from "./tabs/ProjectsTab";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("posts");
   const { user, isloading, setuser, setIsLoading } = useUserStore();
-  const { userProfile } = useUserProfileStore();
-  const router = useRouter();
+
+  console.log(activeTab)
 
   const { isFetching, isPending } = useQuery({
     queryKey: ["fetch_who_am_i"],

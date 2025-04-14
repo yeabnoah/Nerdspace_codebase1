@@ -1,13 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export const GET = async (request: NextRequest) => {
   try {
+    const id = request.nextUrl.pathname.split("/").pop() as string;
+
     const post = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         user: {
           include: {
@@ -51,4 +50,4 @@ export async function GET(
       { status: 500 },
     );
   }
-}
+};

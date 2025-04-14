@@ -118,8 +118,6 @@ const PostCard = ({
   setEditModal,
   setDeleteModal,
   changePostAccessType,
-  handleLike,
-  handleBookmark,
   setCommentId,
 }: PostCardProps) => {
   const router = useRouter();
@@ -344,7 +342,7 @@ const PostCard = ({
       action: isFollowing ? "unfollow" : "follow",
     });
   };
-  const handleAccessChange = async (post: postInterface) => {
+  const handleAccessChange = async () => {
     setIsAccessDialogOpen(true);
   };
 
@@ -432,7 +430,7 @@ const PostCard = ({
                   (PostAccess.public as unknown as string) ? (
                     <DropdownMenuItem
                       onClick={() => {
-                        handleAccessChange(post);
+                        handleAccessChange();
                       }}
                       className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
                     >
@@ -442,7 +440,7 @@ const PostCard = ({
                   ) : (
                     <DropdownMenuItem
                       onClick={() => {
-                        handleAccessChange(post);
+                        handleAccessChange();
                       }}
                       className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
                     >

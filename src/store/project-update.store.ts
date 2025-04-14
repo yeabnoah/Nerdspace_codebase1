@@ -1,6 +1,4 @@
-import ProjectInterface, {
-  UpdateInterface,
-} from "@/interface/auth/project.interface";
+import { UpdateInterface } from "@/interface/auth/project.interface";
 import { create } from "zustand";
 
 interface ProjectUpdateInterface {

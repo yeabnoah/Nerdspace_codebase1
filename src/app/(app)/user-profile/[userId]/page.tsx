@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import UserInterface from "@/interface/auth/user.interface";
-import useUserProfileStore from "@/store/userProfile.store";
 import LeftNavbar from "@/components/navbar/left-navbar";
 import MobileNavBar from "@/components/navbar/mobile-nav-bar";
 import UserProfile from "@/components/settings/user-profile";
 import { Skeleton } from "@/components/ui/skeleton";
+import UserInterface from "@/interface/auth/user.interface";
+import useUserProfileStore from "@/store/userProfile.store";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function Page({
   params,
@@ -27,7 +27,7 @@ export default function Page({
   }, [params]);
 
   // Use React Query to fetch user data
-  const { data: user, isLoading } = useQuery<UserInterface>({
+  const { isLoading } = useQuery<UserInterface>({
     queryKey: ["user-fetch", userId],
     queryFn: async () => {
       if (!userId) return null;

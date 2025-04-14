@@ -1,7 +1,6 @@
 "use client";
 
-import type React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -17,14 +16,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Textarea } from "@/components/ui/textarea";
-import { formatDistanceToNow } from "date-fns";
-import { MessageSquare, MoreHorizontal, Bookmark, Heart } from "lucide-react";
+import { Bookmark, Heart, MessageSquare, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 // import { useCommunity } from "@/components/community-provider";
-import type { CommunityPost } from "@/lib/types";
 import { FollowButton } from "@/components/follow-button";
 import { Input } from "@/components/ui/input";
+import type { CommunityPost } from "@/lib/types";
 
 interface PostComment {
   id: string;
@@ -64,9 +61,9 @@ export function PostCard({ post, currentUser }: PostCardProps) {
   // const hasLiked = post.likes.some((like) => like.userId === currentUser.id);
 
   // Format the date
-  const formattedDate = formatDistanceToNow(new Date(post.createdAt), {
-    addSuffix: true,
-  });
+  // const formattedDate = formatDistanceToNow(new Date(post.createdAt), {
+  //   addSuffix: true,
+  // });
 
   const handleLike = async () => {
     try {
