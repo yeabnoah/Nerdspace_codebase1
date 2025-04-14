@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    nodeMiddleware: true,
+    // nodeMiddleware: true,
     staleTimes: {
       dynamic: 30,
     },

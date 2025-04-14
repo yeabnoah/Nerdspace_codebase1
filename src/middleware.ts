@@ -11,6 +11,6 @@ export async function middleware(request: NextRequest) {
 
 // const
 export const config = {
-  runtime: "nodejs",
+  runtime: "experimental-edge",
   matcher: ["/dashboard"],
 };
