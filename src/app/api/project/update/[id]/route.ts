@@ -2,10 +2,7 @@ import getUserSession from "@/functions/get-user";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) => {
+export const GET = async (req: NextRequest) => {
   try {
     const session = await getUserSession();
     if (!session) {
@@ -17,7 +14,10 @@ export const GET = async (
       );
     }
 
-    const { id } = params;
+    const url = new URL(req.url);
+    const pathParts = url.pathname.split("/").filter((part) => part !== "");
+    const id = pathParts[pathParts.length - 1]; // Assuming the last part is the id
+
     const projectUpdates = await prisma.projectUpdate.findMany({
       where: {
         projectId: id,
@@ -46,10 +46,7 @@ export const GET = async (
   }
 };
 
-export const POST = async (
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) => {
+export const POST = async (req: NextRequest) => {
   try {
     const session = await getUserSession();
     if (!session) {
@@ -61,7 +58,10 @@ export const POST = async (
       );
     }
 
-    const { id } = params;
+    const url = new URL(req.url);
+    const pathParts = url.pathname.split("/").filter((part) => part !== "");
+    const id = pathParts[pathParts.length - 1]; // Assuming the last part is the id
+
     const { image, title, content } = await req.json();
 
     const project = await prisma.project.findFirst({
@@ -104,10 +104,7 @@ export const POST = async (
   }
 };
 
-export const DELETE = async (
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) => {
+export const DELETE = async (req: NextRequest) => {
   try {
     const session = await getUserSession();
     if (!session) {
@@ -117,7 +114,9 @@ export const DELETE = async (
       );
     }
 
-    const { id } = params;
+    const url = new URL(req.url);
+    const pathParts = url.pathname.split("/").filter((part) => part !== "");
+    const id = pathParts[pathParts.length - 1]; // Assuming the last part is the id
 
     const update = await prisma.projectUpdate.findFirst({
       where: {

@@ -137,7 +137,7 @@ export function OnboardingForm() {
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <h2 className="text-2xl font-semibold">Let's start with your profile picture</h2>
+              <h2 className="text-2xl font-semibold">Let&apos;s start with your profile picture</h2>
               <p className="text-muted-foreground">Add a photo to help others recognize you</p>
             </div>
             <div className="flex flex-col items-center gap-4">

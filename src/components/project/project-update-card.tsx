@@ -1,35 +1,34 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type {
+  commentType,
+  UpdateInterface,
+} from "@/interface/auth/project.interface";
+import { authClient } from "@/lib/auth-client";
+import { queryClient } from "@/providers/tanstack-query-provider";
+import useProjectUpdateStore from "@/store/project-update.store";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
-import Image from "next/image";
+import { motion } from "framer-motion";
 import {
   EditIcon,
   Heart,
@@ -39,16 +38,9 @@ import {
   Share,
   Trash2,
 } from "lucide-react";
-import axios from "axios";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import type {
-  commentType,
-  UpdateInterface,
-} from "@/interface/auth/project.interface";
-import { queryClient } from "@/providers/tanstack-query-provider";
-import { authClient } from "@/lib/auth-client";
-import useProjectUpdateStore from "@/store/project-update.store";
 
 export default function UpdateCard({
   update,
@@ -61,7 +53,6 @@ export default function UpdateCard({
   initialComments?: number;
   isOwner: boolean;
 }) {
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isCommentDeleteDialogOpen, setIsCommentDeleteDialogOpen] =
@@ -91,9 +82,9 @@ export default function UpdateCard({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -242,18 +233,18 @@ export default function UpdateCard({
     },
   });
 
-  const handleDelete = () => {
-    deleteMutation.mutate(update.id, {
-      onSuccess: () => {
-        setIsDeleteDialogOpen(false);
-        queryClient.invalidateQueries({ queryKey: ["project"] });
-        toast.success("Update deleted successfully");
-      },
-      onError: () => {
-        toast.error("Failed to delete update. Please try again.");
-      },
-    });
-  };
+  // const handleDelete = () => {
+  //   deleteMutation.mutate(update.id, {
+  //     onSuccess: () => {
+  //       setIsDeleteDialogOpen(false);
+  //       queryClient.invalidateQueries({ queryKey: ["project"] });
+  //       toast.success("Update deleted successfully");
+  //     },
+  //     onError: () => {
+  //       toast.error("Failed to delete update. Please try again.");
+  //     },
+  //   });
+  // };
 
   const handleDeleteCard = () => {
     deleteMutation.mutate(update.id, {
@@ -293,7 +284,7 @@ export default function UpdateCard({
           queryKey: ["updateComments", update.id],
         });
         setIsCommentDeleteDialogOpen(false);
-        setProjectUpdate;
+        setProjectUpdate(update as UpdateInterface);
         toast.success("Comment deleted successfully.");
       },
     });
@@ -322,24 +313,24 @@ export default function UpdateCard({
     setIsEditDialogOpen(true);
   };
 
-  const handleEditComment = () => {
-    if (editingComment) {
-      handleUpdateComment(editingComment.id, editingComment.content);
-      setIsEditDialogOpen(false);
-    }
-  };
+  // const handleEditComment = () => {
+  //   if (editingComment) {
+  //     handleUpdateComment(editingComment.id, editingComment.content);
+  //     setIsEditDialogOpen(false);
+  //   }
+  // };
 
   const handleOpenDeleteCommentDialog = (commentId: string) => {
     setDeletingCommentId(commentId);
     setIsCommentDeleteDialogOpen(true);
   };
 
-  const handleConfirmDeleteComment = () => {
-    if (deletingCommentId) {
-      handleDeleteComment(deletingCommentId);
-      setIsCommentDeleteDialogOpen(false);
-    }
-  };
+  // const handleConfirmDeleteComment = () => {
+  //   if (deletingCommentId) {
+  //     handleDeleteComment(deletingCommentId);
+  //     setIsCommentDeleteDialogOpen(false);
+  //   }
+  // };
 
   // Format the date to be more readable
   const formattedDate = formatDistanceToNow(new Date(update.createdAt), {
@@ -347,11 +338,13 @@ export default function UpdateCard({
   });
 
   // Get user initials for avatar fallback
-  const userInitials = update.userId.substring(0, 2).toUpperCase();
+  // const userInitials = update.userId.substring(0, 2).toUpperCase();
+
+  console.log(initialLikes, initialComments, liked);
 
   return (
     <TooltipProvider>
-      <Card 
+      <Card
         ref={cardRef}
         className="my-6 overflow-hidden rounded-xl border border-none bg-card shadow-md transition-all duration-300 hover:shadow-xl dark:bg-black"
       >
@@ -377,7 +370,7 @@ export default function UpdateCard({
                 <div className="mt-2 flex items-center gap-2">
                   <Badge
                     variant="secondary"
-                    className="font-geist bg-white/20 text-white backdrop-blur-sm"
+                    className="bg-white/20 font-geist text-white backdrop-blur-sm"
                   >
                     ID: {update.id.substring(0, 6)}
                   </Badge>
@@ -388,7 +381,7 @@ export default function UpdateCard({
 
             {/* Content Section */}
             <div className="p-5">
-              <p className="font-geist mb-5 text-sm leading-relaxed text-muted-foreground md:text-sm">
+              <p className="mb-5 font-geist text-sm leading-relaxed text-muted-foreground md:text-sm">
                 {update.content}
               </p>
 
@@ -467,7 +460,7 @@ export default function UpdateCard({
                           setProjectUpdate(update);
                           setIsShareDialogOpen(true);
                         }}
-                        className="font-geist flex h-11 items-center gap-2 rounded-xl"
+                        className="flex h-11 items-center gap-2 rounded-xl font-geist"
                       >
                         <Share className="h-4 w-4" />
                         Share as post
@@ -475,7 +468,7 @@ export default function UpdateCard({
                       <Separator className="my-1" />
                       <DropdownMenuItem
                         onClick={() => setIsDeleteCardDialogOpen(true)}
-                        className="font-geist flex h-11 items-center gap-2 rounded-xl text-red-600 focus:text-red-600"
+                        className="flex h-11 items-center gap-2 rounded-xl font-geist text-red-600 focus:text-red-600"
                       >
                         <Trash2 className="h-4 w-4" />
                         Delete update
@@ -601,14 +594,15 @@ export default function UpdateCard({
                 <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
                 <div className="flex w-full flex-col px-6 pb-3">
-                  <div className="font-geist mb-2 text-3xl font-medium">
+                  <div className="mb-2 font-geist text-3xl font-medium">
                     Delete Comment
                   </div>
-                  <p className="font-geist mb-6 text-muted-foreground">
-                    Are you sure you want to delete this comment? This action cannot be undone.
+                  <p className="mb-6 font-geist text-muted-foreground">
+                    Are you sure you want to delete this comment? This action
+                    cannot be undone.
                   </p>
 
-                  <div className="font-geist mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5">
+                  <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
                     <Button
                       variant="outline"
                       className="h-11 w-24 rounded-2xl"
@@ -620,7 +614,8 @@ export default function UpdateCard({
                       variant="destructive"
                       className="h-11 w-24 rounded-2xl"
                       onClick={() => {
-                        if (deletingCommentId) handleDeleteComment(deletingCommentId);
+                        if (deletingCommentId)
+                          handleDeleteComment(deletingCommentId);
                       }}
                     >
                       Delete
@@ -641,16 +636,16 @@ export default function UpdateCard({
                 <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
                 <div className="flex w-full flex-col px-6 pb-3">
-                  <div className="font-geist mb-2 text-3xl font-medium">
+                  <div className="mb-2 font-geist text-3xl font-medium">
                     Edit Comment
                   </div>
-                  <p className="font-geist mb-6 text-muted-foreground">
+                  <p className="mb-6 font-geist text-muted-foreground">
                     Update your comment below.
                   </p>
 
                   <div className="space-y-4">
                     <Textarea
-                      className="font-geist resize-none rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                      className="resize-none rounded-xl border-input/50 font-geist shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
                       value={editingComment?.content || ""}
                       onChange={(e) =>
                         setEditingComment((prev) =>
@@ -660,7 +655,7 @@ export default function UpdateCard({
                     />
                   </div>
 
-                  <div className="font-geist mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5">
+                  <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
                     <Button
                       variant="outline"
                       className="h-11 w-24 rounded-2xl"
@@ -672,7 +667,10 @@ export default function UpdateCard({
                       className="h-11 w-24 rounded-2xl"
                       onClick={() => {
                         if (editingComment) {
-                          handleUpdateComment(editingComment.id, editingComment.content);
+                          handleUpdateComment(
+                            editingComment.id,
+                            editingComment.content,
+                          );
                         }
                       }}
                     >
@@ -694,14 +692,14 @@ export default function UpdateCard({
                 <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
                 <div className="flex w-full flex-col px-6 pb-3">
-                  <div className="font-geist mb-2 text-3xl font-medium">
+                  <div className="mb-2 font-geist text-3xl font-medium">
                     Share Update
                   </div>
-                  <p className="font-geist mb-6 text-muted-foreground">
+                  <p className="mb-6 font-geist text-muted-foreground">
                     Do you want to share this update as a post?
                   </p>
 
-                  <div className="font-geist mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5">
+                  <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
                     <Button
                       variant="outline"
                       className="h-11 w-24 rounded-2xl"
@@ -737,14 +735,15 @@ export default function UpdateCard({
                 <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
                 <div className="flex w-full flex-col px-6 pb-3">
-                  <div className="font-geist mb-2 text-3xl font-medium">
+                  <div className="mb-2 font-geist text-3xl font-medium">
                     Delete Update
                   </div>
-                  <p className="font-geist mb-6 text-muted-foreground">
-                    Are you sure you want to delete this update? This action cannot be undone.
+                  <p className="mb-6 font-geist text-muted-foreground">
+                    Are you sure you want to delete this update? This action
+                    cannot be undone.
                   </p>
 
-                  <div className="font-geist mt-8 flex justify-end gap-3 border-t pt-4 dark:border-gray-500/5">
+                  <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
                     <Button
                       variant="outline"
                       className="h-11 w-24 rounded-2xl"

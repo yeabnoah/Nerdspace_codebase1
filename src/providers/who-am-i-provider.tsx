@@ -7,19 +7,20 @@ import { ReactNode } from "react";
 
 const WhoAmIProvider = ({ children }: { children: ReactNode }) => {
   const { setuser, setIsLoading } = useUserStore();
-  const data = useQuery({
+
+  useQuery({
     queryKey: ["whoami"],
     queryFn: async () => {
       const response = await axios.get("/api/whoami", {
         withCredentials: true,
       });
 
-      
       setuser(response.data.data);
-      setIsLoading(false)
+      setIsLoading(false);
       return response.data;
     },
   });
+  
   return <div>{children}</div>;
 };
 

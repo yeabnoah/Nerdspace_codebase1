@@ -126,10 +126,10 @@ export function FileUploader({
     }
   };
 
-  const getFileIcon = (fileType: string) => {
-    if (fileType.startsWith("image/")) return <ImageIcon className="h-5 w-5" />;
-    return null;
-  };
+  // const getFileIcon = (fileType: string) => {
+  //   if (fileType.startsWith("image/")) return <ImageIcon className="h-5 w-5" />;
+  //   return null;
+  // };
 
   return (
     <div className="w-full space-y-6">

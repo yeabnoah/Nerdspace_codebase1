@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import likeSchema from "@/validation/like.validation";
 import { NextResponse } from "next/server";
 
-export const POST = async (req: NextResponse) => {
+export const POST = async (req: Request) => {
   try {
     const session = await getUserSession();
 

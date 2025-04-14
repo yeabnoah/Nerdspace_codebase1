@@ -3,10 +3,8 @@ import React from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { toast } from "sonner";
-``
-// import { Console } from "@/components/console";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,8 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Country } from "./ui/country-dropdown";
-import { CountryDropdown } from "./ui/country-dropdown";
+import { Country, CountryDropdown } from "./ui/country-dropdown";
 
 const FormSchema = z.object({
   country: z.string({

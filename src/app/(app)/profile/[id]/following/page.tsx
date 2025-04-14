@@ -2,23 +2,23 @@
 
 import LeftNavbar from "@/components/navbar/left-navbar";
 import MobileNavBar from "@/components/navbar/mobile-nav-bar";
+import { Button } from "@/components/ui/button";
 import { FollowResponse, followService } from "@/functions/follow";
+import { authClient } from "@/lib/auth-client";
 import {
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useInView } from "react-intersection-observer";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { useInView } from "react-intersection-observer";
 
-const FollowingPage = ({ params }: { params: { id: string } }) => {
+const FollowingPage = () => {
   const { ref, inView } = useInView();
   const queryClient = useQueryClient();
   const session = authClient.useSession();
@@ -26,7 +26,7 @@ const FollowingPage = ({ params }: { params: { id: string } }) => {
     {},
   );
 
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery<FollowResponse>({
       queryKey: ["following"],
       queryFn: ({ pageParam }) =>
@@ -64,7 +64,7 @@ const FollowingPage = ({ params }: { params: { id: string } }) => {
       );
       return response.data;
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["following"] });
       queryClient.invalidateQueries({ queryKey: ["followers"] });
       queryClient.invalidateQueries({ queryKey: ["follow-status"] });

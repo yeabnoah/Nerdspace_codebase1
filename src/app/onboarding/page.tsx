@@ -20,7 +20,7 @@ export default function OnboardingPage() {
             </span>
           </h1>
           <p className="mt-4 text-muted-foreground">
-            Let's set up your profile to help you connect with like-minded
+            Let&apos;s set up your profile to help you connect with like-minded
             people
           </p>
         </div>

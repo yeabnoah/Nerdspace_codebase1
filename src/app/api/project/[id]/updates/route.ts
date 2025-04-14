@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import getUserSession from "@/functions/get-user";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function GET(req: NextRequest) {
   try {
     const session = await getUserSession();
     if (!session) {
@@ -15,10 +12,12 @@ export async function GET(
       );
     }
 
-    const { id } = params;
     const url = new URL(req.url);
-    const cursor = url.searchParams.get("cursor");
-    const limit = parseInt(url.searchParams.get("limit") || "3", 10); // Default to 3 updates per page
+    const pathParts = url.pathname.split("/").filter((part) => part !== "");
+    const id = pathParts[pathParts.length - 1]; // Assuming the last part is the id
+
+    const cursor = req.nextUrl.searchParams.get("cursor");
+    const limit = parseInt(req.nextUrl.searchParams.get("limit") || "3", 10); // Default to 3 updates per page
 
     const updates = await prisma.projectUpdate.findMany({
       where: { projectId: id },

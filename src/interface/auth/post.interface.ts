@@ -16,6 +16,11 @@ interface postInterface {
   media: { id: string; url: string; type: string }[]; // Add media field
   replies?: PostCommentInterface[];
   project?: ProjectInterface;
+  _count: {
+    likes: number;
+    bookmarks: number;
+    replies: number;
+  };
 }
 
 enum postAccess {

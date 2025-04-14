@@ -1,17 +1,17 @@
 "use client";
 
-import { formatDistanceToNow } from "date-fns";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { Calendar, ArrowRight, Share2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type ProjectInterface from "@/interface/auth/project.interface";
+import { authClient } from "@/lib/auth-client";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { formatDistanceToNow } from "date-fns";
+import { ArrowRight, Calendar, Share2 } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 
 export default function ProjectCard(project: ProjectInterface) {

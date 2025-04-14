@@ -1,28 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Settings,
-  Grid3X3,
-  Bookmark,
-  Lock,
-  UsersRound,
-  Hammer,
-  Dot,
-  SettingsIcon,
-} from "lucide-react";
-import useUserProfileStore from "@/store/userProfile.store";
-import RenderUserPosts from "./user-posts";
-import ProjectsTab from "./tabs/ProjectsTab";
-import CollectionsTab from "./tabs/CollectionsTab";
-import BookmarksTab from "./tabs/BookmarksTab";
-import PrivateTab from "./tabs/PrivateTab";
-import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useUserProfileStore from "@/store/userProfile.store";
+import { Dot, Grid3X3, Hammer } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import ProjectsTab from "./tabs/ProjectsTab";
+import RenderUserPosts from "./user-posts";
 
 interface FollowCounts {
   followers: number;
@@ -36,6 +23,8 @@ export default function UserProfile() {
     followers: 0,
     following: 0,
   });
+
+  console.log(activeTab);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

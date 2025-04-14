@@ -2,49 +2,44 @@
 
 import React from "react";
 
-import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { EditProjectDialog } from "@/components/ui/edit-project-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import type ProjectInterface from "@/interface/auth/project.interface";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { formatDistanceToNow } from "date-fns";
 import {
   CalendarIcon,
+  Check,
+  ExternalLink,
   Flag,
   Heart,
   MessageSquare,
   PaintBucket,
+  PencilIcon,
+  Plus,
   PlusIcon,
   SettingsIcon,
   Share2,
   Star,
-  ExternalLink,
-  Trash2Icon,
-  PencilIcon,
-  Upload,
-  Check,
-  EditIcon,
   Trash2,
+  Trash2Icon,
+  Upload,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { GoStar, GoStarFill } from "react-icons/go";
 import ProjectDetailSkeleton from "../skeleton/project-detail.skeleton";
 import {
   DropdownMenu,
@@ -53,20 +48,13 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Separator } from "../ui/separator";
-import { EditProjectDialog } from "@/components/ui/edit-project-dialog";
-import type ProjectInterface from "@/interface/auth/project.interface";
-import UpdateCard from "./project-update-card";
-import { GoStar, GoStarFill } from "react-icons/go";
 import RecommendedProjects from "../user/recommend-project";
-import { Toast } from "../ui/toast";
+import UpdateCard from "./project-update-card";
 
 const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editedProject, setEditedProject] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isShareUpdateDialogOpen, setIsShareUpdateDialogOpen] = useState(false);
   const [updateTitle, setUpdateTitle] = useState("");
@@ -87,6 +75,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const [reviewToDelete, setReviewToDelete] = useState<string | null>(null);
   const session = authClient.useSession();
 
+  console.log(isEditingReview);
   useEffect(() => {
     const fetchFollowStatus = async () => {
       try {
@@ -117,7 +106,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   const likeMutation = useMutation({
     mutationFn: async () => {
-      await axios.post(`/api/project/update/like?projectId=${projectId}`);
+      await axios.post(`/api/project/like?projectId=${projectId}`);
     },
     onMutate: () => {
       // Optimistically update the UI
@@ -295,7 +284,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   const updateMutation = useMutation({
     mutationKey: ["update-project"],
-    mutationFn: async (updatedProjectData: any) => {
+    mutationFn: async (updatedProjectData: Partial<ProjectInterface>) => {
       const response = await axios.patch(
         `/api/project?id=${projectId}`,
         updatedProjectData,
@@ -308,7 +297,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       queryClient.invalidateQueries({ queryKey: ["project", projectId] });
       setIsEditModalOpen(false);
     },
-    onError: (error: any) => {
+    onError: (
+      error: Error & { response?: { data?: { message?: string } } },
+    ) => {
       const errorMessage =
         error.response?.data?.message ||
         "An error occurred while updating the project";
@@ -326,7 +317,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       toast.success("Project successfully deleted");
       router.push("/projects");
     },
-    onError: (error: any) => {
+    onError: (
+      error: Error & { response?: { data?: { message?: string } } },
+    ) => {
       const errorMessage =
         error.response?.data?.message ||
         "An error occurred while deleting the project";
@@ -338,38 +331,20 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     await deleteMutation.mutate();
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      console.log("Image selected:", file);
-      setSelectedImage(file);
-    }
-  };
+  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     console.log("Image selected:", file);
+  //     setSelectedImage(file);
+  //   }
+  // };
 
-  const handleImageCancel = () => {
-    setSelectedImage(null);
-  };
-
-  const handleCategoryChange = (value: string) => {
-    setSelectedCategory(value);
-  };
-
-  const handleCategoryInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === " ") {
-      const category = e.currentTarget.value.trim();
-      if (category && !selectedCategories.includes(category)) {
-        setSelectedCategories([...selectedCategories, category]);
-      }
-      e.currentTarget.value = "";
-    }
-  };
-
-  const handleRemoveCategory = (category: string) => {
-    setSelectedCategories((prev) => prev.filter((c) => c !== category));
-  };
+  // const handleImageCancel = () => {
+  //   setSelectedImage(null);
+  // };
 
   const handleEditProject = async (
-    updatedProjectData: Partial<typeof project>,
+    updatedProjectData: Partial<ProjectInterface>,
   ) => {
     let imageUrl = project?.image;
 
@@ -415,13 +390,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
     await updateMutation.mutate(finalProjectData);
   };
 
-  const handleDeleteUpdate = (updateId: string) => {
-    if (project) {
-      project.updates = project.updates.filter(
-        (update) => update.id !== updateId,
-      );
-    }
-  };
+  // const handleDeleteUpdate = (updateId: string) => {
+  //   if (project) {
+  //     queryClient.setQueryData(["project", projectId], {
+  //       ...project,
+  //       updates: project.updates.filter((update) => update.id !== updateId),
+  //     });
+  //   }
+  // };
 
   const handleShareUpdate = async () => {
     if (!updateTitle || !updateContent) {
@@ -624,8 +600,8 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           },
           reviews: [
             ...(project.reviews || []),
-            project.reviews?.find((review) => review.id === reviewToDelete)!,
-          ],
+            project.reviews?.find((review) => review.id === reviewToDelete),
+          ].filter(Boolean),
         };
         queryClient.setQueryData(["project", projectId], revertedProject);
       }
@@ -652,10 +628,15 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       toast.error("Review content cannot be empty.");
       return;
     }
-    editReviewMutation.mutate({
-      reviewId: editingReviewId!,
-      content: editingReviewContent,
-    });
+
+    if (editingReviewId) {
+      editReviewMutation.mutate({
+        reviewId: editingReviewId,
+        content: editingReviewContent,
+      });
+    } else {
+      toast.error("Review ID is missing");
+    }
   };
 
   const handleDeleteReview = (reviewId: string) => {
@@ -668,7 +649,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
     useEffect(() => {
       setLocalContent(editingReviewContent);
-    }, [editingReviewContent]);
+    }, []);
 
     const handleSave = () => {
       setEditingReviewContent(localContent);
@@ -883,7 +864,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
           <div className="flex flex-wrap gap-2">
-            {project?.category.map((cat: any) => (
+            {project?.category.map((cat: string) => (
               <Badge
                 key={cat}
                 variant="outline"
@@ -926,7 +907,10 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-card/50">
-                    <Heart className="h-4 w-4 text-foreground" />
+                    <Heart
+                      className="h-4 w-4 cursor-pointer text-foreground"
+                      onClick={handleLikeProject}
+                    />
                   </div>
                   <span className="font-geist text-lg font-normal">
                     {project?._count.followers}
@@ -1045,8 +1029,8 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                           No updates yet
                         </h3>
                         <p className="max-w-md text-gray-500 dark:text-gray-400">
-                          This project hasn't posted any updates. Check back
-                          later for progress on this mission to Mars.
+                          This project hasn&apos;t posted any updates. Check
+                          back later for progress on this mission to Mars.
                         </p>
                       </div>
                     )}
@@ -1117,6 +1101,19 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                                   <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
                                     <Button
                                       onClick={() =>
+                                        handleEditReview(
+                                          review.id as string,
+                                          review.content as string,
+                                        )
+                                      }
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8 rounded-full text-primary hover:text-primary/80"
+                                    >
+                                      <PencilIcon className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      onClick={() =>
                                         handleDeleteReview(review.id as string)
                                       }
                                       variant="ghost"
@@ -1179,16 +1176,24 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               {!isUserAuthor && (
                 <Button
                   variant={isFollowing ? "outline" : "default"}
-                  className={`h-9 w-full gap-2 rounded-md text-sm font-medium ${
+                  className={`h-11 w-full gap-2 rounded-full text-sm font-medium dark:text-black ${
                     isFollowing
-                      ? "h-12 rounded-full border-gray-100 bg-white text-gray-900 dark:border-gray-500/5 dark:bg-card/50 dark:text-gray-100"
-                      : "h-11 rounded-full bg-white"
+                      ? "border-gray-100 bg-white text-gray-900 hover:bg-gray-50 dark:border-gray-500/5 dark:bg-card/50 dark:text-gray-100"
+                      : "bg-primary text-white hover:bg-primary/90"
                   }`}
                   onClick={handleFollowProject}
                 >
-                  <span className="py-1">
-                    {isFollowing ? "Unfollow" : "Follow"}
-                  </span>
+                  {isFollowing ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      <span>Following</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-4 w-4" />
+                      <span>Follow</span>
+                    </>
+                  )}
                 </Button>
               )}
 
@@ -1320,7 +1325,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                 Share Update
               </div>
               <p className="mb-6 font-geist text-muted-foreground">
-                Share a new update about your project's progress
+                Share a new update about your project&apos;s progress
               </p>
 
               <div className="mt-4 flex flex-1 flex-col items-center justify-center">
@@ -1454,30 +1459,43 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         open={isShareProjectDialogOpen}
         onOpenChange={setIsShareProjectDialogOpen}
       >
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Share Project</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to share this project? This will make it
-              visible to others.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsShareProjectDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={async () => {
-                await postAsPostMutation.mutate();
-                setIsShareProjectDialogOpen(false);
-              }}
-            >
-              Share
-            </Button>
-          </DialogFooter>
+        <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+          <DialogTitle></DialogTitle>
+          <div className="relative flex flex-col">
+            {/* Glow effects */}
+            <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/50 bg-gradient-to-br from-primary/40 via-primary/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+
+            <div className="flex w-full flex-col px-6 pb-3">
+              <div className="mb-2 font-geist text-3xl font-medium">
+                Share Project
+              </div>
+              <p className="font-geist text-sm text-muted-foreground">
+                Share this project as a post to let others discover it. This
+                will create a new post featuring your project.
+              </p>
+
+              <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
+                <Button
+                  variant="outline"
+                  className="h-11 w-24 rounded-2xl"
+                  onClick={() => setIsShareProjectDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={async () => {
+                    await postAsPostMutation.mutate();
+                    setIsShareProjectDialogOpen(false);
+                  }}
+                  className="h-11 w-fit gap-2 rounded-2xl"
+                >
+                  <Share2 className="h-4 w-4" />
+                  Share as Post
+                </Button>
+              </div>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
 

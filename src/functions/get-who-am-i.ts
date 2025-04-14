@@ -6,7 +6,7 @@ const getWhoAmI = async () => {
     withCredentials: true,
   });
 
-  useUserStore.setState((state) => ({
+  useUserStore.setState(() => ({
     user: response.data.data,
   }));
 

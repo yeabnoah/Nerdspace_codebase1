@@ -1,22 +1,20 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  Bookmark,
+  ChevronDown,
   Clock,
   Computer,
   FolderKanbanIcon,
   HomeIcon,
-  Search,
   TrendingUp,
   Users,
-  UserCircle,
-  ChevronDown,
+  XIcon,
 } from "lucide-react";
-import { Button } from "../ui/button";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
-import { motion, AnimatePresence } from "framer-motion";
 
 const LeftNavbar = () => {
   const router = useRouter();
@@ -58,8 +56,8 @@ const LeftNavbar = () => {
     { name: "explore", icon: TrendingUp, path: "/explore" },
     { name: "project", icon: FolderKanbanIcon, path: "/project" },
     { name: "community", icon: Users, path: "/community" },
-    { name: "events", icon: Clock, path: "/events" },
-    { name: "nerd-ai", icon: Computer, path: "/nerd-ai" },
+    { name: "events", icon: Clock, path: "/event" },
+    { name: "nerd-ai", icon: Computer, path: "/ai" },
   ];
 
   const getActiveItem = () => {
@@ -73,7 +71,7 @@ const LeftNavbar = () => {
   };
 
   return (
-    <div className="sticky left-0 top-20  hidden w-full gap-1 px-5 py-5 md:flex md:flex-col lg:w-[17vw]">
+    <div className="sticky left-0 top-20 hidden w-full gap-1 px-5 py-5 md:flex md:flex-col lg:w-[17vw]">
       {/* Navigation Items */}
       {navItems.map((item) => (
         <motion.div
@@ -123,23 +121,23 @@ const LeftNavbar = () => {
       >
         {/* Glow effects */}
         <div className="absolute -right-4 top-0 size-32 -rotate-45 rounded-full border border-blue-300/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-        <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+        <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-tl from-blue-300/40 via-blue-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Profile Setup</span>
+            <span className="flex-1 text-sm font-medium">Profile Setup</span>
             <motion.div
-              animate={{ rotate: isExpanded ? 180 : 0 }}
+              className={`${!isExpanded && "hidden"}`}
               transition={{ duration: 0.2 }}
             >
-              <ChevronDown size={16} />
+              <XIcon size={16} />
             </motion.div>
           </div>
 
           <div className="mt-2 flex items-center gap-2">
             <Progress
               value={completionPercentage}
-              className="h-2 flex-1 bg-primary/10 [&>*]:bg-gradient-to-r [&>*]:from-purple-500 [&>*]:to-purple-500"
+              className="h-2 flex-1 bg-primary/10 [&>*]:from-purple-500 [&>*]:to-purple-500 [&>*]:bg-gradient-to-r"
             />
             <span className="text-xs font-medium text-muted-foreground">
               {loading ? "..." : `${completionPercentage}%`}
@@ -203,6 +201,13 @@ const LeftNavbar = () => {
             )}
           </AnimatePresence>
         </div>
+        <motion.div
+          className={`mx-auto w-full ${isExpanded && "hidden"}`}
+          animate={{ rotate: isExpanded ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronDown size={16} className="mx-auto" />
+        </motion.div>
       </motion.div>
     </div>
   );

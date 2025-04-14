@@ -11,15 +11,11 @@ import {
 } from "@tanstack/react-query";
 import axios from "axios";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import toast from "react-hot-toast";
 
 const Follower = () => {
-  const [cursor, setCursor] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const session = authClient.useSession();
-  const router = useRouter();
 
   const {
     data,
@@ -120,7 +116,7 @@ const Follower = () => {
       <h1 className="mb-6 font-instrument text-3xl">Followers</h1>
       <div className="space-y-4">
         {followers.length > 0 ? (
-          followers.map((follower: any) => {
+          followers.map((follower) => {
             const isFollowing = followStatus?.find(
               (status) => status.userId === follower.id,
             )?.isFollowing;

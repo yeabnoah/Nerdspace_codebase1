@@ -1,5 +1,7 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -9,54 +11,73 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import {
-  Loader2,
-  Search,
-  Filter,
-  SortAsc,
-  SortDesc,
-  Calendar,
-  ArrowRight,
-  Users,
-  MessageSquare,
-} from "lucide-react";
-import PostCard from "@/components/post/PostCard";
-import { useInView } from "react-intersection-observer";
 import { useDebounce } from "@/hooks/use-debounce";
+import PostCommentInterface from "@/interface/auth/comment.interface";
+import postInterface from "@/interface/auth/post.interface";
+import useSearchStore from "@/store/search.store";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { motion, AnimatePresence } from "framer-motion";
+import { formatDistanceToNow } from "date-fns";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Calendar,
+  Filter,
+  Loader2,
+  Search,
+  SortAsc
+} from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React, { useMemo, useState } from "react";
+import { useInView } from "react-intersection-observer";
 import { Label } from "../ui/label";
 import { Slider } from "../ui/slider";
-import ProjectExploreCard from "./project-explore-card";
 import ExplorePostCard from "./explore-post-card";
-import { useRouter } from "next/navigation";
-import useSearchStore from "@/store/search.store";
-import { formatDistanceToNow } from "date-fns";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
+// Type definitions
+interface User {
+  id: string;
+  name: string;
+  email?: string;
+  nerdAt?: string;
+  image?: string;
+  bio?: string;
+  createdAt: Date | string;
+  _count?: {
+    followers: number;
+    following: number;
+    posts: number;
+  };
+}
+
+
+
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  image?: string;
+  userId: string;
+  createdAt: Date | string;
+  user?: User;
+  status?: string;
+}
+
+interface Comment {
+  id: string;
+  content: string;
+  postId: string;
+  userId: string;
+  createdAt: Date | string;
+  user: User;
+}
 
 const ITEMS_PER_PAGE = 10;
 
@@ -65,7 +86,7 @@ const NoResultsFound = ({ type }: { type: string }) => (
     <Search className="h-12 w-12 text-muted-foreground" />
     <h3 className="mt-4 text-lg font-semibold">No {type} found</h3>
     <p className="mt-2 text-sm text-muted-foreground">
-      Try adjusting your search or filters to find what you're looking for
+      Try adjusting your search or filters to find what you&apos;re looking for
     </p>
   </div>
 );
@@ -74,8 +95,7 @@ const ExploreEntry = () => {
   const { query, setQuery } = useSearchStore();
   const [type, setType] = useState("all");
   const [sortBy, setSortBy] = useState("relevance");
-  const [activeTab, setActiveTab] = useState("users");
-  const [filters, setFilters] = useState({
+  const [filters] = useState({
     user: [],
     post: [],
     project: [],
@@ -84,7 +104,7 @@ const ExploreEntry = () => {
   const [showFilters, setShowFilters] = useState(false);
   const debouncedQuery = useDebounce(query, 500);
   const { ref, inView } = useInView();
-  const router = useRouter();
+  // const router = useRouter();
 
   const {
     data,
@@ -93,7 +113,6 @@ const ExploreEntry = () => {
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-    status,
   } = useInfiniteQuery({
     queryKey: ["explore", debouncedQuery, type, sortBy, filters],
     queryFn: async ({ pageParam = 1 }) => {
@@ -103,7 +122,6 @@ const ExploreEntry = () => {
       return response.data;
     },
     getNextPageParam: (lastPage, allPages) => {
-      const totalItems = allPages.length * ITEMS_PER_PAGE;
       const hasMore =
         lastPage.users?.length === ITEMS_PER_PAGE ||
         lastPage.posts?.length === ITEMS_PER_PAGE ||
@@ -124,8 +142,7 @@ const ExploreEntry = () => {
     setQuery(e.target.value);
   };
 
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
+  const handleTypeChange = (value: string) => {
     setType(value);
   };
 
@@ -149,12 +166,8 @@ const ExploreEntry = () => {
         />
       </motion.div>
     ),
-    [query],
+    [query, handleQueryChange],
   );
-
-  const handleTypeChange = (value: string) => {
-    setType(value);
-  };
 
   const filteredResults = useMemo(() => {
     if (!data?.pages) return null;
@@ -394,7 +407,7 @@ const ExploreEntry = () => {
   );
 };
 
-const UsersCard = ({ users }: { users: any[] }) => {
+const UsersCard = ({ users }: { users: User[] }) => {
   const router = useRouter();
 
   return (
@@ -466,34 +479,25 @@ const UsersCard = ({ users }: { users: any[] }) => {
   );
 };
 
-const PostsCard = ({ posts }: { posts: any[] }) => {
+const PostsCard = ({ posts }: { posts: postInterface[] }) => {
   const router = useRouter();
   const [expandedStates, setExpandedStates] = useState<boolean[]>([]);
-  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>(
-    {},
-  );
-  const [expandedComments, setExpandedComments] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>({});
+  const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
   const [replyShown, setReplyShown] = useState<{ [key: string]: boolean }>({});
-  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>(
-    {},
-  );
-  const [expandedReplies, setExpandedReplies] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
+  const [expandedReplies, setExpandedReplies] = useState<{ [key: string]: boolean }>({});
   const [modalEditOpened, setModalEditOpened] = useState(false);
   const [modalDeleteOpened, setModalDeleteOpened] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
-  const [commentId, setCommentId] = useState("");
-  const [commentLoading, setCommentLoading] = useState(false);
-  const [comments, setComments] = useState<any[]>([]);
-  const [hasNextCommentPage, setHasNextCommentPage] = useState(false);
-  const [isFetchingNextCommentPage, setIsFetchingNextCommentPage] =
-    useState(false);
-  const [selectedPost, setSelectedPost] = useState<any>(null);
+  const [selectedCommentId, setSelectedCommentId] = useState("");
+  const [commentLoading] = useState(false);
+  const [comments] = useState<PostCommentInterface[]>([]);
+  const [hasNextCommentPage] = useState(false);
+  const [isFetchingNextCommentPage] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<postInterface | null>(null);
 
-  const handlePostClick = (post: any) => {
+  const handlePostClick = (post: postInterface) => {
     setSelectedPost(post);
     router.push(`/post/${post.id}`);
   };
@@ -534,27 +538,28 @@ const PostsCard = ({ posts }: { posts: any[] }) => {
     }));
   };
 
-  const handleReplySubmit = (commentId: string) => {
+  // These functions are stubs that would be implemented later
+  const handleReplySubmit = () => {
     // Implement reply submission logic
   };
 
-  const handleEditComment = (commentId: string) => {
+  const handleEditComment = () => {
     // Implement edit comment logic
   };
 
-  const handleDeleteComment = (commentId: string) => {
+  const handleDeleteComment = () => {
     // Implement delete comment logic
   };
 
-  const openEditModal = (comment: any) => {
+  const openEditModal = () => {
     // Implement open edit modal logic
   };
 
-  const openDeleteModal = (comment: any) => {
+  const openDeleteModal = () => {
     // Implement open delete modal logic
   };
 
-  const setSelectedCommentReply = (comment: any) => {
+  const setSelectedCommentReply = () => {
     // Implement set selected comment reply logic
   };
 
@@ -566,11 +571,11 @@ const PostsCard = ({ posts }: { posts: any[] }) => {
     setModalDeleteOpened(open);
   };
 
-  const changePostAccessType = (post: any) => {
+  const changePostAccessType = () => {
     // Implement change post access type logic
   };
 
-  const handleFollow = (post: any) => {
+  const handleFollow = () => {
     // Implement handle follow logic
   };
 
@@ -602,7 +607,7 @@ const PostsCard = ({ posts }: { posts: any[] }) => {
           modalDeleteOpened={modalDeleteOpened}
           reportModalOpen={reportModalOpen}
           setReportModalOpen={setReportModalOpen}
-          setCommentId={setCommentId}
+          setCommentId={setSelectedCommentId}
           commentLoading={commentLoading}
           comments={comments}
           hasNextCommentPage={hasNextCommentPage}
@@ -645,7 +650,7 @@ const PostsCard = ({ posts }: { posts: any[] }) => {
             modalDeleteOpened={modalDeleteOpened}
             reportModalOpen={reportModalOpen}
             setReportModalOpen={setReportModalOpen}
-            setCommentId={setCommentId}
+            setCommentId={setSelectedCommentId}
             commentLoading={commentLoading}
             comments={comments}
             hasNextCommentPage={hasNextCommentPage}
@@ -662,7 +667,7 @@ const PostsCard = ({ posts }: { posts: any[] }) => {
   );
 };
 
-const ProjectsCard = ({ projects }: { projects: any[] }) => {
+const ProjectsCard = ({ projects }: { projects: Project[] }) => {
   const router = useRouter();
 
   return (

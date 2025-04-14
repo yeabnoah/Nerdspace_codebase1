@@ -1,61 +1,27 @@
 "use client";
 
-import changePostAccess from "@/functions/access-change-post";
 import fetchPosts from "@/functions/fetch-post";
-import { getTrimLimit } from "@/functions/render-helper";
-import PostCommentInterface from "@/interface/auth/comment.interface";
 import postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/providers/tanstack-query-provider";
+import useExploreStore from "@/store/explore.store";
 import usePostStore from "@/store/post.store";
 import useReportStore from "@/store/report.strore";
-import useUserProfileStore from "@/store/userProfile.store";
-import useExploreStore from "@/store/explore.store";
 import { PostAccess } from "@prisma/client";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import {
-  BanIcon,
-  Clock,
-  Edit,
-  LockIcon,
-  LockOpen,
-  MessageCircle,
-  MessageSquare,
-  MoreHorizontal,
-  Plus,
-  SendIcon,
-  Share2Icon,
-  Star,
-  TrashIcon,
-} from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { GoHeart, GoHeartFill } from "react-icons/go";
-import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
 import { useInView } from "react-intersection-observer";
 import ImagePreviewDialog from "../image-preview";
 import DeleteModal from "../modal/delete.modal";
 import EditModal from "../modal/edit.modal";
 import ReportModal from "../modal/report.modal";
-import CommentSkeleton from "../skeleton/comment.skelton";
-import MorePostsFetchSkeleton from "../skeleton/morepostFetch.skeleton";
-import RenderPostSkeleton from "../skeleton/render-post.skeleton";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Card } from "../ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../ui/dropdown-menu";
 import DeleteCommentModal from "../post/comment/DeleteCommentModal";
 import EditCommentModal from "../post/comment/EditCommentModal";
 import PostCard from "../post/post-card";
-import React from "react";
+import MorePostsFetchSkeleton from "../skeleton/morepostFetch.skeleton";
+import RenderPostSkeleton from "../skeleton/render-post.skeleton";
 
 interface ExploreRenderPostProps {
   selectedPost: postInterface;
@@ -76,10 +42,8 @@ interface Bookmark {
 const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
   const { ref, inView } = useInView();
   const session = authClient.useSession();
-  const { content, setContent } = usePostStore();
-  const { setUserProfile } = useUserProfileStore();
+  const { setContent } = usePostStore();
   const { setPostId, setCommentId } = useReportStore();
-  const router = useRouter();
   const [post, setPost] = useState(selectedPost);
 
   // Update post state when selectedPost changes
@@ -128,14 +92,9 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
     setDeleteReplyModalOpen,
     setSelectedComment,
     setSelectedCommentReply,
-    setSelectedMediaIndex,
-    setSelectedPostImages,
     setIsDialogOpen,
   } = useExploreStore();
 
-  const [commentContent, setCommentContent] = useState<string>("");
-  const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
-  const [bookmarkedPosts, setBookmarkedPosts] = useState<{ [key: string]: boolean }>({});
   const [expandedStates, setExpandedStates] = useState<boolean[]>([]);
 
   const {
@@ -207,11 +166,6 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
     }
   };
 
-  const handleReport = (postId: string) => {
-    setPostId(postId);
-    setReportModalOpen(true);
-  };
-
   const likeMutation = useMutation({
     mutationFn: async (postId: string) => {
       const response = await axios.post("/api/post/like", {
@@ -243,20 +197,21 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
                 {
                   id: Date.now().toString(),
                   postId,
-                  userId: session.data?.user.id!,
+                  userId: session.data?.user.id || "",
                 },
               ],
         }));
       }
 
       // Optimistically update the feed posts
-      queryClient.setQueryData(["posts"], (old: any) => {
-        if (!old) return old;
+      queryClient.setQueryData(["posts"], (old: unknown) => {
+        if (!old || typeof old !== "object") return old;
+        const typedOld = old as { pages: { data: postInterface[] }[] };
         return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
+          ...typedOld,
+          pages: typedOld.pages.map((page) => ({
             ...page,
-            data: page.data.map((post: any) => {
+            data: page.data.map((post) => {
               if (post.id === postId) {
                 const isLiked = post.likes.some(
                   (like: Like) => like.userId === session.data?.user.id,
@@ -272,7 +227,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
                         {
                           id: Date.now().toString(),
                           postId,
-                          userId: session.data?.user.id!,
+                          userId: session.data?.user.id || "",
                         },
                       ],
                 };
@@ -285,7 +240,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
 
       return { previousPosts };
     },
-    onError: (err, postId, context) => {
+    onError: (_err, postId, context) => {
       // Revert back to the previous value on error
       if (context?.previousPosts) {
         queryClient.setQueryData(["posts"], context.previousPosts);
@@ -322,27 +277,29 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
           ...prev!,
           bookmarks: isBookmarked
             ? prev!.bookmarks.filter(
-                (bookmark: Bookmark) => bookmark.userId !== session.data?.user.id,
+                (bookmark: Bookmark) =>
+                  bookmark.userId !== session.data?.user.id,
               )
             : [
                 ...prev!.bookmarks,
                 {
                   id: Date.now().toString(),
                   postId,
-                  userId: session.data?.user.id!,
+                  userId: session.data?.user.id || "",
                 },
               ],
         }));
       }
 
       // Optimistically update the feed posts
-      queryClient.setQueryData(["posts"], (old: any) => {
-        if (!old) return old;
+      queryClient.setQueryData(["posts"], (old: unknown) => {
+        if (!old || typeof old !== "object") return old;
+        const typedOld = old as { pages: { data: postInterface[] }[] };
         return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
+          ...typedOld,
+          pages: typedOld.pages.map((page) => ({
             ...page,
-            data: page.data.map((post: any) => {
+            data: page.data.map((post) => {
               if (post.id === postId) {
                 const isBookmarked = post.bookmarks.some(
                   (bookmark: Bookmark) =>
@@ -360,7 +317,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
                         {
                           id: Date.now().toString(),
                           postId,
-                          userId: session.data?.user.id!,
+                          userId: session.data?.user.id || "",
                         },
                       ],
                 };
@@ -373,7 +330,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
 
       return { previousPosts };
     },
-    onError: (err, postId, context) => {
+    onError: (_err, postId, context) => {
       // Revert back to the previous value on error
       if (context?.previousPosts) {
         queryClient.setQueryData(["posts"], context.previousPosts);
@@ -406,7 +363,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
       });
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       toast.success("Post access updated successfully");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Error updating post access");
     }
   };
@@ -416,7 +373,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
       await axios.post("/api/user/follow", { userId: post.user.id });
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       toast.success("User followed successfully");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Error following user");
     }
   };
@@ -498,7 +455,6 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
           setEditModal={setEditModalOpen}
           setDeleteModal={setDeleteModalOpen}
           changePostAccessType={changePostAccessType}
-          handleFollow={handleFollow}
           handleLike={handleLike}
           handleBookmark={handleBookmark}
         />
@@ -542,7 +498,6 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
                 setEditModal={setEditModalOpen}
                 setDeleteModal={setDeleteModalOpen}
                 changePostAccessType={changePostAccessType}
-                handleFollow={handleFollow}
                 handleLike={handleLike}
                 handleBookmark={handleBookmark}
               />
@@ -560,15 +515,18 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
         />
 
         <EditModal
-          selectedPost={currentPost}
+          incasePost={currentPost}
           setEditModal={setEditModalOpen}
           editModal={editModalOpen}
+          incaseContent={currentPost.content}
         />
 
         <DeleteModal
           selectedPost={currentPost}
           setDeleteModal={setDeleteModalOpen}
           deleteModal={deleteModalOpen}
+          content={currentPost.content}
+          setContent={setContent}
         />
 
         {selectedComment && (

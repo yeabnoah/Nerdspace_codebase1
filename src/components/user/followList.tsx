@@ -1,17 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import UserInterface from "@/interface/auth/user.interface";
-import { Button } from "../ui/button";
-import Image from "next/image";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { authClient } from "@/lib/auth-client";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import FollowListSkeleton from "./FollowListSkeleton";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import UserInterface from "@/interface/auth/user.interface";
+import { authClient } from "@/lib/auth-client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { Button } from "../ui/button";
+import FollowListSkeleton from "./FollowListSkeleton";
 
 const FollowList = () => {
   const [cursor, setCursor] = useState<string | null>(null);

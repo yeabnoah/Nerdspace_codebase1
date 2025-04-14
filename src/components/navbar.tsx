@@ -133,7 +133,7 @@ const Navbar = () => {
                         className="flex h-11 items-center gap-2 rounded-xl font-geist"
                       >
                         <Search className="h-4 w-4" />
-                        <span>Search "{query}"</span>
+                        <span>Search &quot;{query}&quot;</span>
                       </CommandItem>
                     </CommandGroup>
                   )}

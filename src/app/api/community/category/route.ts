@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET all categories
-export const GET = async (request: NextRequest) => {
+export const GET = async () => {
   try {
     const session = await getUserSession();
     if (!session) {
@@ -24,9 +24,9 @@ export const GET = async (request: NextRequest) => {
       { message: "categories fetched successfully", data: categories },
       { status: 200 },
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching categories:", error); // Added logging for debugging
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    return NextResponse.json({ message: error }, { status: 500 });
   }
 };
 
@@ -57,8 +57,8 @@ export const POST = async (request: NextRequest) => {
       { message: "category created successfully", data: category },
       { status: 201 },
     );
-  } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ message: error }, { status: 500 });
   }
 };
 
@@ -90,8 +90,8 @@ export const PUT = async (request: NextRequest) => {
       { message: "category updated successfully", data: updatedCategory },
       { status: 200 },
     );
-  } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ message: error }, { status: 500 });
   }
 };
 
@@ -122,7 +122,7 @@ export const DELETE = async (request: NextRequest) => {
       { message: "category deleted successfully" },
       { status: 204 },
     );
-  } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ message: error }, { status: 500 });
   }
 };

@@ -39,6 +39,7 @@ import {
 import ImagePreviewDialog from "../image-preview";
 import CommentSkeleton from "../skeleton/comment.skelton";
 import { renderComments } from "../post/comment/render-comments";
+import PostCommentInterface from "@/interface/auth/comment.interface";
 
 interface ExplorePostCardProps {
   post: postInterface;
@@ -60,16 +61,16 @@ interface ExplorePostCardProps {
   toggleReplies: (commentId: string) => void;
   handleEditComment: (commentId: string) => void;
   handleDeleteComment: (commentId: string) => void;
-  openEditModal: (comment: any) => void;
-  openDeleteModal: (comment: any) => void;
-  setSelectedCommentReply: (comment: any) => void;
+  openEditModal: (comment: PostCommentInterface) => void;
+  openDeleteModal: (comment: PostCommentInterface) => void;
+  setSelectedCommentReply: (comment: PostCommentInterface) => void;
   modalEditOpened: boolean;
   modalDeleteOpened: boolean;
   reportModalOpen: boolean;
   setReportModalOpen: (open: boolean) => void;
   setCommentId: (id: string) => void;
   commentLoading: boolean;
-  comments: any[];
+  comments: PostCommentInterface[];
   hasNextCommentPage: boolean;
   isFetchingNextCommentPage: boolean;
   fetchNextCommentPage: () => void;
@@ -157,18 +158,23 @@ const ExplorePostCard = ({
               {
                 id: Date.now().toString(),
                 postId,
-                userId: session.data?.user.id!,
+                userId: session.data?.user?.id || "",
               },
             ],
       };
 
-      queryClient.setQueryData(["posts"], (old: any) => {
+      queryClient.setQueryData(["posts"], (old: unknown) => {
         if (!old) return old;
+        const typedOld = old as {
+          pages: {
+            data: postInterface[];
+          }[];
+        };
         return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
+          ...typedOld,
+          pages: typedOld.pages.map((page) => ({
             ...page,
-            data: page.data.map((p: any) =>
+            data: page.data.map((p) =>
               p.id === postId ? updatedPost : p,
             ),
           })),
@@ -215,18 +221,23 @@ const ExplorePostCard = ({
               {
                 id: Date.now().toString(),
                 postId,
-                userId: session.data?.user.id!,
+                userId: session.data?.user?.id || "",
               },
             ],
       };
 
-      queryClient.setQueryData(["posts"], (old: any) => {
+      queryClient.setQueryData(["posts"], (old: unknown) => {
         if (!old) return old;
+        const typedOld = old as {
+          pages: {
+            data: postInterface[];
+          }[];
+        };
         return {
-          ...old,
-          pages: old.pages.map((page: any) => ({
+          ...typedOld,
+          pages: typedOld.pages.map((page) => ({
             ...page,
-            data: page.data.map((p: any) =>
+            data: page.data.map((p) =>
               p.id === postId ? updatedPost : p,
             ),
           })),
@@ -690,12 +701,12 @@ const ExplorePostCard = ({
                 openEditModal,
                 openDeleteModal,
                 setSelectedCommentReply,
-                modalEditOpened: modalEditOpened,
-                modalDeleteOpened: modalDeleteOpened,
+                modalEditOpened,
+                modalDeleteOpened,
                 reportModalOpen,
                 setReportModalOpen,
                 setCommentId,
-              })}
+              } as const)}
               {hasNextCommentPage && (
                 <Button
                   onClick={() => fetchNextCommentPage()}

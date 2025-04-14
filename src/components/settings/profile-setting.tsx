@@ -4,9 +4,11 @@ import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import { useFormStore } from "@/store/useFormStore";
 import useUserStore from "@/store/user.store";
-import { useMutation } from "@tanstack/react-query";
+import {
+  useMutation
+} from "@tanstack/react-query";
 import axios from "axios";
-import { Edit, Check } from "lucide-react";
+import { Check, Edit } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -18,13 +20,22 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { CountryDropdown } from "../ui/country-dropdown";
+import { Country, CountryDropdown } from "../ui/country-dropdown";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { AutosizeTextarea } from "../ui/resizeble-text-area";
 import { Skeleton } from "../ui/skeleton";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
-import FollowedProjects from "@/components/project/followed-projects";
+
+interface funcInterface {
+  country: Country | undefined;
+  image: string | File | undefined;
+  coverImage: string | File | undefined;
+  nerdAt: string | undefined;
+  bio: string | undefined;
+  displayName: string | undefined;
+  link: string | undefined;
+  firstTime: boolean;
+}
 
 const ProfileSettings = () => {
   const {
@@ -55,7 +66,7 @@ const ProfileSettings = () => {
 
   const mutation = useMutation({
     mutationKey: ["update-user"],
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: funcInterface) => {
       const response = await axios.patch("/api/onboarding", data, {
         withCredentials: true,
       });
@@ -66,9 +77,8 @@ const ProfileSettings = () => {
       toast.success("Data successfully updated");
       queryClient.invalidateQueries({ queryKey: ["whoami"] });
     },
-    onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.message || "An error occurred while onboarding";
+    onError: (error) => {
+      const errorMessage = error || "An error occurred while onboarding";
       toast.error(errorMessage);
     },
   });
@@ -237,7 +247,7 @@ const ProfileSettings = () => {
           </div>
 
           {/* Additional Info Section */}
-          <div className="grid  md:grid-cols-2">
+          <div className="grid md:grid-cols-2">
             <div className="space-y-2">
               <Label className="font-geist text-xs font-medium">
                 Your Country
@@ -272,7 +282,7 @@ const ProfileSettings = () => {
             <Label className="font-geist text-xs font-medium">Bio</Label>
             <AutosizeTextarea
               placeholder="Tell us about yourself..."
-                className="min-h-[120px] w-full rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/20"
+              className="min-h-[120px] w-full rounded-xl border-input/50 shadow-none focus-visible:ring-primary/50 dark:border-gray-500/20"
               value={bio || ""}
               onChange={(e) => setBio(e.target.value)}
             />
@@ -339,7 +349,7 @@ const ProfileSettings = () => {
                 setIsSaving(false);
               }}
               disabled={isSaving}
-              className="h-10 w-fit gap-2 hover:bg-white dark:hover:bg-black shadow-none rounded-2xl border border-gray-500/10 bg-gradient-to-r text-black dark:text-white dark:hover:border-black"
+              className="h-10 w-fit gap-2 rounded-2xl border border-gray-500/10 bg-gradient-to-r text-black shadow-none hover:bg-white dark:text-white dark:hover:border-black dark:hover:bg-black"
             >
               {isSaving ? (
                 <div className="flex items-center gap-2">

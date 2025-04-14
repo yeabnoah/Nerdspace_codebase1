@@ -1,20 +1,18 @@
 "use client";
 
 import changePostAccess from "@/functions/access-change-post";
-import { timeAgo } from "@/functions/calculate-time-difference";
-import fetchPosts from "@/functions/fetch-post";
+import fetchMyPosts from "@/functions/fetch-my-post";
 import { getTrimLimit } from "@/functions/render-helper";
 import postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
+import { queryClient } from "@/providers/tanstack-query-provider";
 import usePostStore from "@/store/post.store";
 import { PostAccess } from "@prisma/client";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
   BanIcon,
-  BookmarkIcon,
   Edit,
-  Heart,
   LockIcon,
   LockOpen,
   MessageCircle,
@@ -23,8 +21,13 @@ import {
   TrashIcon,
 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { GoHeart, GoHeartFill } from "react-icons/go";
+import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
 import { useInView } from "react-intersection-observer";
+import ImagePreviewDialog from "../image-preview";
 import DeleteModal from "../modal/delete.modal";
 import EditModal from "../modal/edit.modal";
 import RenderPostSkeleton from "../skeleton/render-post.skeleton";
@@ -35,13 +38,6 @@ import {
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
-import { queryClient } from "@/providers/tanstack-query-provider";
-import toast from "react-hot-toast";
-import fetchMyPosts from "@/functions/fetch-my-post";
-import { GoHeart, GoHeartFill } from "react-icons/go";
-import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
-import ImagePreviewDialog from "../image-preview";
-import { useRouter } from "next/navigation";
 
 const RenderMyPost = () => {
   const { ref, inView } = useInView();
@@ -49,12 +45,12 @@ const RenderMyPost = () => {
   const router = useRouter();
   const [editModal, setEditModal] = useState(false);
   const { selectedPost, setSelectedPost, content, setContent } = usePostStore();
-  const [editPostInput, setEditPostInput] = useState<String>();
+  // const [editPostInput, setEditPostInput] = useState<string>();
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
-  const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
-  const [bookmarkedPosts, setBookmarkedPosts] = useState<{
-    [key: string]: boolean;
-  }>({});
+  // const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
+  // // const [bookmarkedPosts, setBookmarkedPosts] = useState<{
+  //   [key: string]: boolean;
+  // }>({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(
     null,
@@ -156,7 +152,9 @@ const RenderMyPost = () => {
           const isShortContent = contentWords.length < trimLimit;
           const isTooShort = contentWords.length < 10;
 
-          inView && hasNextPage && fetchNextPage();
+          if (inView && hasNextPage) {
+            fetchNextPage();
+          }
 
           return (
             <div
@@ -474,13 +472,14 @@ const RenderMyPost = () => {
       />
 
       <EditModal
-        selectedPost={selectedPost}
         setEditModal={setEditModal}
         editModal={editModal}
+        incasePost={selectedPost as postInterface}
+        incaseContent={content}
       />
 
       <DeleteModal
-        selectedPost={selectedPost}
+        selectedPost={selectedPost as postInterface}
         setDeleteModal={setDeleteModal}
         deleteModal={deleteModal}
         content={content}

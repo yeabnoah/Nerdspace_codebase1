@@ -2,17 +2,14 @@
 
 import changePostAccess from "@/functions/access-change-post";
 import fetchPosts from "@/functions/fetch-post";
-import { getTrimLimit } from "@/functions/render-helper";
 import PostCommentInterface from "@/interface/auth/comment.interface";
 import postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import usePostStore from "@/store/post.store";
 import useReportStore from "@/store/report.strore";
-import useUserProfileStore from "@/store/userProfile.store";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useInView } from "react-intersection-observer";
@@ -27,13 +24,8 @@ import PostCard from "./post-card";
 const RenderPost = () => {
   const { ref, inView } = useInView();
   const session = authClient.useSession();
-  // const [editModal, setEditModal] = useState(false);
-  const { selectedPost, setSelectedPost, content, setContent } = usePostStore();
-  const [editPostInput, setEditPostInput] = useState<String>();
-  const [deleteModal, setDeleteModal] = useState<boolean>(false);
+  const { selectedPost, setSelectedPost } = usePostStore();
   const [reportModalOpen, setReportModalOpen] = useState(false);
-  const { setUserProfile } = useUserProfileStore();
-  const router = useRouter();
   const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>(
     {},
   );
@@ -44,7 +36,7 @@ const RenderPost = () => {
   const [replyContent, setReplyContent] = useState<{ [key: string]: string }>(
     {},
   );
-  const [commentContent, setCommentContent] = useState<string>("");
+  // const [commentContent, setCommentContent] = useState<string>("");
 
   const toggleCommentExpand = (commentId: string) => {
     setExpandedComments((prev) => ({
@@ -86,8 +78,6 @@ const RenderPost = () => {
       [commentId]: !prev[commentId],
     }));
   };
-
-  const [commentCursor, setCommentCursor] = useState<string | null>(null);
 
   const {
     data,
@@ -137,20 +127,20 @@ const RenderPost = () => {
     },
   });
 
-  const followMutation = useMutation({
-    mutationKey: ["follow-user", selectedPost?.user.id],
-    mutationFn: async () => {
-      const response = await axios.post(
-        `/api/user/follow?userId=${selectedPost?.user.id}`,
-      );
-      return response.data.message;
-    },
-    onSuccess: (message) => {
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-      toast.success(message);
-    },
-  });
+  // const followMutation = useMutation({
+  //   mutationKey: ["follow-user", selectedPost?.user.id],
+  //   mutationFn: async () => {
+  //     const response = await axios.post(
+  //       `/api/user/follow?userId=${selectedPost?.user.id}`,
+  //     );
+  //     return response.data.message;
+  //   },
+  //   onSuccess: (message) => {
+  //     queryClient.invalidateQueries({ queryKey: ["posts"] });
+  //     queryClient.invalidateQueries({ queryKey: ["users"] });
+  //     toast.success(message);
+  //   },
+  // });
 
   const replyMutation = useMutation({
     mutationKey: ["reply-comment"],
@@ -176,29 +166,29 @@ const RenderPost = () => {
     },
   });
 
-  const commentMutation = useMutation({
-    mutationKey: ["add-comment"],
-    mutationFn: async ({
-      postId,
-      content,
-    }: {
-      postId: string;
-      content: string;
-    }) => {
-      const response = await axios.post("/api/post/comment", {
-        postId,
-        content,
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["comment"] });
-      setCommentContent("");
-    },
-    onError: () => {
-      toast.error("Error occurred while adding comment");
-    },
-  });
+  // const commentMutation = useMutation({
+  //   mutationKey: ["add-comment"],
+  //   mutationFn: async ({
+  //     postId,
+  //     content,
+  //   }: {
+  //     postId: string;
+  //     content: string;
+  //   }) => {
+  //     const response = await axios.post("/api/post/comment", {
+  //       postId,
+  //       content,
+  //     });
+  //     return response.data;
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["comment"] });
+  //     setCommentContent("");
+  //   },
+  //   onError: () => {
+  //     toast.error("Error occurred while adding comment");
+  //   },
+  // });
 
   const handleReplySubmit = (commentId: string) => {
     if (replyContent[commentId]) {
@@ -207,32 +197,25 @@ const RenderPost = () => {
     }
   };
 
-  const handleCommentSubmit = () => {
-    if (commentContent) {
-      commentMutation.mutate({
-        postId: selectedPost?.id as string,
-        content: commentContent,
-      });
-    }
-  };
-
-  const [editCommentModal, setEditCommentModal] = useState(false);
-  const [deleteCommentModal, setDeleteCommentModal] = useState(false);
   const [selectedComment, setSelectedComment] =
     useState<PostCommentInterface | null>(null);
 
   const handleEditComment = (commentId: string) => {
-    const commentser = comments.find((c: any) => c.id === commentId);
-    if (commentser) {
-      setSelectedComment(commentser);
+    const commentFound = comments.find(
+      (c: PostCommentInterface) => c.id === commentId,
+    );
+    if (commentFound) {
+      setSelectedComment(commentFound);
       setEditCommentModalOpen(true);
     }
   };
 
   const handleDeleteComment = (commentId: string) => {
-    const commentser = comments.find((c: any) => c.id === commentId);
-    if (commentser) {
-      setSelectedComment(commentser);
+    const commentFound = comments.find(
+      (c: PostCommentInterface) => c.id === commentId,
+    );
+    if (commentFound) {
+      setSelectedComment(commentFound);
       setDeleteCommentModalOpen(true);
     }
   };
@@ -254,47 +237,13 @@ const RenderPost = () => {
   const [selectedCommentReply, setSelectedCommentReply] =
     useState<PostCommentInterface | null>(null);
 
-  const openEditModal = (comment: PostCommentInterface) => {
-    setSelectedComment(comment);
-    setEditModalOpen(true);
-  };
-
-  const openDeleteModal = (comment: PostCommentInterface) => {
-    setSelectedComment(comment);
-    setDeleteModalOpen(true);
-  };
-
   const [editCommentModalOpen, setEditCommentModalOpen] = useState(false);
   const [deleteCommentModalOpen, setDeleteCommentModalOpen] = useState(false);
   const [editReplyModalOpen, setEditReplyModalOpen] = useState(false);
   const [deleteReplyModalOpen, setDeleteReplyModalOpen] = useState(false);
 
-  const handleEditReply = (commentId: string) => {
-    const replies = comments.find((c: any) => c.id === commentId);
-    if (replies) {
-      setSelectedCommentReply(replies);
-      setEditReplyModalOpen(true);
-    }
-  };
-
-  const handleDeleteReply = (commentId: string) => {
-    const replies = comments.find((c: any) => c.id === commentId);
-    if (replies) {
-      setSelectedCommentReply(replies);
-      setDeleteReplyModalOpen(true);
-    }
-  };
-
-  const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
-  const [bookmarkedPosts, setBookmarkedPosts] = useState<{
-    [key: string]: boolean;
-  }>({});
   const { setPostId, setCommentId } = useReportStore();
-
-  const handleReport = (postId: string) => {
-    setPostId(postId);
-    setReportModalOpen(true);
-  };
+  console.log(setPostId);
 
   const likeMutation = useMutation({
     mutationFn: async (postId: string) => {
@@ -341,41 +290,19 @@ const RenderPost = () => {
     bookmarkMutation.mutate(postId);
   };
 
-  const handleFollow = async (post: postInterface) => {
-    if (session.data?.user.id === post.user.id) {
-      toast.error("You cannot follow yourself");
-      return;
-    }
-    await setSelectedPost(post);
-    await followMutation.mutate();
-    queryClient.invalidateQueries({ queryKey: ["posts"] });
-    queryClient.invalidateQueries({ queryKey: ["whoami"] });
-  };
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(
-    null,
-  );
-  const [selectedPostImages, setSelectedPostImages] = useState<string[]>([]);
+  const [selectedMediaIndex] = useState<number | null>(null);
+  const [selectedPostImages] = useState<string[]>([]);
+  const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<{
+    [key: string]: boolean;
+  }>({});
 
-  const handleMediaClick = (index: number, images: string[]) => {
-    setSelectedMediaIndex(index);
-    setSelectedPostImages(images);
-    setIsDialogOpen(true);
-  };
+  // console.log(likedPosts, bookmarkedPosts);
 
-  const getGridClass = (mediaCount: number) => {
-    switch (mediaCount) {
-      case 1:
-        return "grid-cols-1";
-      case 2:
-        return "grid-cols-2";
-      case 3:
-      case 4:
-        return "grid-cols-2";
-      default:
-        return "";
-    }
+  const changePostAccessType = async (currentPost: postInterface) => {
+    setSelectedPost(currentPost);
+    await mutation.mutate();
   };
 
   if (isLoading) {
@@ -398,29 +325,15 @@ const RenderPost = () => {
     );
   }
 
-  const changePostAccessType = async (currentPost: postInterface) => {
-    setSelectedPost(currentPost);
-    await mutation.mutate();
-  };
-
-  const handleUserProfileClick = (userId: string) => {
-    router.push(`/user-profile/${userId}`);
-  };
-
   return (
     <div className="relative">
       <div className="relative z-10">
         {data?.pages
           .flatMap((page) => page.data)
           .map((each: postInterface, index) => {
-            const contentWords = each.content.split(" ");
-            const trimLimit = getTrimLimit();
-            const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
-            const isLongContent = contentWords.length > trimLimit;
-            const isShortContent = contentWords.length < trimLimit;
-            const isTooShort = contentWords.length < 10;
-
-            inView && hasNextPage && fetchNextPage();
+            if (inView && hasNextPage) {
+              fetchNextPage();
+            }
 
             return (
               <PostCard
@@ -466,53 +379,50 @@ const RenderPost = () => {
         <div ref={ref}>{isFetchingNextPage && <MorePostsFetchSkeleton />}</div>
       </div>
 
-      {/* Modals */}
-      {/* <div className="fixed inset-0 z-50"> */}
-        <ImagePreviewDialog
-          images={selectedPostImages}
-          initialIndex={selectedMediaIndex || 0}
-          isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-        />
+      <ImagePreviewDialog
+        images={selectedPostImages}
+        initialIndex={selectedMediaIndex || 0}
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
 
-        {selectedComment && (
-          <>
-            <EditCommentModal
-              commentId={selectedComment.id}
-              postId={selectedPost?.id as string}
-              initialContent={selectedComment.content}
-              isOpen={editCommentModalOpen}
-              onClose={() => setEditCommentModalOpen(false)}
-            />
-            <DeleteCommentModal
-              commentId={selectedComment.id}
-              isOpen={deleteCommentModalOpen}
-              onClose={() => setDeleteCommentModalOpen(false)}
-            />
-          </>
-        )}
-        {selectedCommentReply && (
-          <>
-            <EditCommentModal
-              postId={selectedPost?.id as string}
-              commentId={selectedCommentReply.id}
-              initialContent={selectedCommentReply.content}
-              isOpen={editReplyModalOpen}
-              onClose={() => setEditReplyModalOpen(false)}
-            />
-            <DeleteCommentModal
-              commentId={selectedCommentReply.id}
-              isOpen={deleteReplyModalOpen}
-              onClose={() => setDeleteReplyModalOpen(false)}
-            />
-          </>
-        )}
-        <ReportModal
-          isOpen={reportModalOpen}
-          onClose={() => setReportModalOpen(false)}
-        />
-      </div>
-    // </div>
+      {selectedComment && (
+        <>
+          <EditCommentModal
+            commentId={selectedComment.id}
+            postId={selectedPost?.id as string}
+            initialContent={selectedComment.content}
+            isOpen={editCommentModalOpen}
+            onClose={() => setEditCommentModalOpen(false)}
+          />
+          <DeleteCommentModal
+            commentId={selectedComment.id}
+            isOpen={deleteCommentModalOpen}
+            onClose={() => setDeleteCommentModalOpen(false)}
+          />
+        </>
+      )}
+      {selectedCommentReply && (
+        <>
+          <EditCommentModal
+            postId={selectedPost?.id as string}
+            commentId={selectedCommentReply.id}
+            initialContent={selectedCommentReply.content}
+            isOpen={editReplyModalOpen}
+            onClose={() => setEditReplyModalOpen(false)}
+          />
+          <DeleteCommentModal
+            commentId={selectedCommentReply.id}
+            isOpen={deleteReplyModalOpen}
+            onClose={() => setDeleteReplyModalOpen(false)}
+          />
+        </>
+      )}
+      <ReportModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+      />
+    </div>
   );
 };
 

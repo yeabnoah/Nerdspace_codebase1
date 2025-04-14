@@ -1,14 +1,13 @@
 import getUserSession from "@/functions/get-user";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 
-const createCommunitySchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  description: z.string().min(1, "Description is required"),
-  image: z.string().optional(),
-  categoryId: z.string().optional(),
-});
+// const createCommunitySchema = z.object({
+//   name: z.string().min(1, "Name is required"),
+//   description: z.string().min(1, "Description is required"),
+//   image: z.string().optional(),
+//   categoryId: z.string().optional(),
+// });
 
 export const GET = async (request: NextRequest) => {
   try {
@@ -50,10 +49,10 @@ export const GET = async (request: NextRequest) => {
       },
       { status: 200 },
     );
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
       {
-        message: error.message,
+        message: error,
       },
       { status: 500 },
     );
@@ -101,8 +100,8 @@ export const POST = async (request: NextRequest) => {
       { message: "Post created successfully", data: post },
       { status: 201 },
     );
-  } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ message: error }, { status: 500 });
   }
 };
 
@@ -146,8 +145,8 @@ export const DELETE = async (request: NextRequest) => {
       { message: "Post deleted successfully" },
       { status: 200 },
     );
-  } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ message: error }, { status: 500 });
   }
 };
 
@@ -192,8 +191,8 @@ export const PATCH = async (request: NextRequest) => {
       { message: "Post updated successfully", data: updatedPost },
       { status: 200 },
     );
-  } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ message: error }, { status: 500 });
   }
 };
 
@@ -233,8 +232,8 @@ export const PATCH = async (request: NextRequest) => {
 //       { message: "Post liked successfully", data: like },
 //       { status: 201 },
 //     );
-//   } catch (error: any) {
-//     return NextResponse.json({ message: error.message }, { status: 500 });
+//   } catch (error) {
+//     return NextResponse.json({ message: error }, { status: 500 });
 //   }
 // };
 
@@ -276,7 +275,7 @@ export const PATCH = async (request: NextRequest) => {
 //       { message: "Comment added successfully", data: comment },
 //       { status: 201 },
 //     );
-//   } catch (error: any) {
-//     return NextResponse.json({ message: error.message }, { status: 500 });
+//   } catch (error) {
+//     return NextResponse.json({ message: error }, { status: 500 });
 //   }
 // };

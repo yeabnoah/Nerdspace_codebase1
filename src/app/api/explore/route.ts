@@ -1,8 +1,7 @@
-// app/api/explore/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import getUserSession from "@/functions/get-user";
+import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -80,16 +79,16 @@ export async function GET(req: NextRequest) {
     const results: any = {};
 
     // Helper function to create OR conditions for text search
-    const createTextSearchConditions = (fields: string[]) => {
-      return {
-        OR: fields.map((field) => ({
-          [field]: {
-            contains: query,
-            mode: "insensitive",
-          },
-        })),
-      };
-    };
+    // const createTextSearchConditions = (fields: string[]) => {
+    //   return {
+    //     OR: fields.map((field) => ({
+    //       [field]: {
+    //         contains: query,
+    //         mode: "insensitive",
+    //       },
+    //     })),
+    //   };
+    // };
 
     if (type === "all" || type === "user") {
       const users = await prisma.user.findMany({

@@ -5,7 +5,7 @@ import {
 } from "@/interface/auth/onboarding.interface";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
+import userInterface from "@/interface/auth/user.interface";
 export const PATCH = async (req: NextRequest) => {
   try {
     const session = await getUserSession();
@@ -28,7 +28,7 @@ export const PATCH = async (req: NextRequest) => {
 
     const { country, ...rest } = body;
 
-    const updateData: any = {
+    const updateData: Partial<userInterface> = {
       image: rest.image,
       visualName: rest.displayName,
       bio: rest.bio,
@@ -48,14 +48,14 @@ export const PATCH = async (req: NextRequest) => {
           }),
           prisma.user.update({
             where: { id: session.user.id },
-            data: updateData,
+            data: updateData as any,
             include: { country: true },
           }),
         ]
       : [
           prisma.user.update({
             where: { id: session.user.id },
-            data: updateData,
+            data: updateData as any,
             include: { country: true },
           }),
         ];

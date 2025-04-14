@@ -1,14 +1,18 @@
-import React from "react";
-import { notFound } from "next/navigation";
+// This is a Next.js server component for profile pages
+"use client";
 
-const ProfilePage = ({ params }: { params: { id: string } }) => {
-  // This is the main profile page
+import { use } from "react";
+
+export default function ProfilePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
+
   return (
     <div className="container mx-auto py-6">
-      <h1 className="text-2xl font-bold">Profile {params.id}</h1>
-      {/* Add your profile content here */}
+      <h1 className="text-2xl font-bold">Profile {id}</h1>
     </div>
   );
-};
-
-export default ProfilePage;
+}

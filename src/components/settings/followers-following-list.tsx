@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowRight } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface User {
@@ -79,7 +79,7 @@ export default function FollowersFollowingList({
 
   useEffect(() => {
     fetchData();
-  }, [userId, type]);
+  }, [userId, type, fetchData]);
 
   const { data: followStatus } = useQuery({
     queryKey: ["follow-status", users.map((u) => u.id).join(",")],
@@ -107,7 +107,7 @@ export default function FollowersFollowingList({
       );
       return response.data;
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["followers"] });
       queryClient.invalidateQueries({ queryKey: ["following"] });
       queryClient.invalidateQueries({ queryKey: ["follow-status"] });

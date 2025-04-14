@@ -1,30 +1,33 @@
 "use client";
 
 import changePostAccess from "@/functions/access-change-post";
-import { timeAgo } from "@/functions/calculate-time-difference";
-import fetchPosts from "@/functions/fetch-post";
+import fetchMyPrivatePosts from "@/functions/fetch-my-private-post";
 import { getTrimLimit } from "@/functions/render-helper";
 import postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
+import { queryClient } from "@/providers/tanstack-query-provider";
 import usePostStore from "@/store/post.store";
 import { PostAccess } from "@prisma/client";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import {
   BanIcon,
-  BookmarkIcon,
   Edit,
-  Heart,
   LockIcon,
   LockOpen,
   MessageCircle,
   MoreHorizontal,
   Share2Icon,
-  TrashIcon,
+  TrashIcon
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { GoHeart } from "react-icons/go";
+import { HiOutlineBookmark } from "react-icons/hi2";
 import { useInView } from "react-intersection-observer";
+import ImagePreviewDialog from "../image-preview";
 import DeleteModal from "../modal/delete.modal";
 import EditModal from "../modal/edit.modal";
 import RenderPostSkeleton from "../skeleton/render-post.skeleton";
@@ -35,17 +38,6 @@ import {
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
-import { queryClient } from "@/providers/tanstack-query-provider";
-import toast from "react-hot-toast";
-import fetchMyPosts from "@/functions/fetch-my-post";
-import fetchMyPrivatePosts from "@/functions/fetch-my-private-post";
-import { GoHeart, GoHeartFill } from "react-icons/go";
-import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
-import ImagePreviewDialog from "../image-preview";
-import { motion, AnimatePresence } from "framer-motion";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 
 const iconVariants = {
   initial: { scale: 1 },
@@ -58,12 +50,7 @@ const RenderMyPrivatePost = () => {
   const session = authClient.useSession();
   const [editModal, setEditModal] = useState(false);
   const { selectedPost, setSelectedPost, content, setContent } = usePostStore();
-  const [editPostInput, setEditPostInput] = useState<String>();
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
-  const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
-  const [bookmarkedPosts, setBookmarkedPosts] = useState<{
-    [key: string]: boolean;
-  }>({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(
     null,
@@ -167,7 +154,9 @@ const RenderMyPrivatePost = () => {
           const isShortContent = contentWords.length < trimLimit;
           const isTooShort = contentWords.length < 10;
 
-          inView && hasNextPage && fetchNextPage();
+          if (inView && hasNextPage) {
+            fetchNextPage();
+          }
 
           return (
             <motion.div
