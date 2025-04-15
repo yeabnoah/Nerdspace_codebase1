@@ -96,92 +96,64 @@ export function LoginForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={cn(
-        "relative mx-auto flex w-full max-w-md flex-col gap-6 rounded-xl border border-white/5 bg-black/30 p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] backdrop-blur-md transition-all duration-300 hover:shadow-[0_8px_32px_0_rgba(0,0,0,0.46)]",
-        className,
-      )}
+      className={cn("flex flex-col gap-4", className)}
       {...props}
     >
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="font-playfair text-3xl font-semibold text-white sm:text-4xl">
-          <span className="mx-1 font-itcThinItalic">Welcome</span> Back
-        </h1>
-        <p className="text-sm text-white/70">
-          Sign in to continue to your account
-        </p>
-      </div>
-
       <Button
         onClick={loginWithGithub}
         variant="outline"
-        className="group relative flex h-12 w-full items-center justify-center gap-3 overflow-hidden rounded-lg border border-white/5 bg-black/30 px-4 py-2 font-medium text-white transition-all hover:bg-black/40"
+        className="relative flex h-12 w-full items-center justify-center gap-3 overflow-hidden rounded-lg border border-white/10 bg-white/5 px-4 py-2 font-medium text-white transition-all hover:bg-white/10"
         type="button"
         disabled={loading}
       >
         {loading ? (
           <span className="flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />
-            Signing in...
+            connecting...
           </span>
         ) : (
           <>
             <Github className="h-5 w-5" />
-            <span>Continue with GitHub</span>
+            <span>Continue with Github</span>
           </>
         )}
       </Button>
 
-      <div className="relative flex items-center justify-center">
+      <div className="relative flex items-center justify-center py-2">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-white/5"></span>
+          <span className="w-full border-t border-white/10"></span>
         </div>
-        <span className="relative bg-black/30 px-3 text-xs text-white/70">
-          OR CONTINUE WITH EMAIL
+        <span className="relative bg-black px-2 text-sm text-white/40">
+          or continue with email
         </span>
       </div>
 
-      <div className="grid gap-4">
-        <div className="grid gap-2">
-          <Label className="text-sm font-medium" htmlFor="email">
-            Email
-          </Label>
+      <div className="space-y-4">
+        <div>
           <Input
             id="email"
             type="email"
-            placeholder="m@example.com"
-            className="h-11 rounded-lg border-white/5 bg-black/30 text-white placeholder:text-white/50 text-sm transition-colors focus-visible:border-white/40"
+            placeholder="email"
+            className="h-12 rounded-lg border-white/10 bg-white/5 text-sm text-white transition-colors placeholder:text-white/40 focus-visible:border-white/20 focus-visible:ring-0"
             {...register("email")}
           />
           {errors.email && (
-            <p className="text-xs font-medium text-red-500">
-              {errors.email.message}
-            </p>
+            <p className="mt-2 text-sm text-red-400">{errors.email.message}</p>
           )}
         </div>
 
-        <div className="grid gap-2">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium" htmlFor="password">
-              Password
-            </Label>
-            <Link
-              href="/forget-password"
-              className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Forgot password?
-            </Link>
-          </div>
+        <div>
           <div className="relative">
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
-              className="h-11 rounded-lg border-white/5 bg-black/30 text-white placeholder:text-white/50 pr-10 text-sm transition-colors focus-visible:border-white/40"
+              placeholder="password"
+              className="h-12 rounded-lg border-white/10 bg-white/5 pr-10 text-sm text-white transition-colors placeholder:text-white/40 focus-visible:border-white/20 focus-visible:ring-0"
               {...register("password")}
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-3 flex items-center text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              className="absolute inset-y-0 right-3 flex items-center text-white/40 transition-colors hover:text-white"
               onClick={() => setShowPassword((prev) => !prev)}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
@@ -193,7 +165,7 @@ export function LoginForm({
             </button>
           </div>
           {errors.password && (
-            <p className="text-xs font-medium text-red-500">
+            <p className="mt-2 text-sm text-red-400">
               {errors.password.message}
             </p>
           )}
@@ -201,31 +173,18 @@ export function LoginForm({
 
         <Button
           type="submit"
-          className="group relative h-11 w-full overflow-hidden rounded-lg bg-gradient-to-r from-primary to-primary/80 text-white transition-all duration-300 hover:from-primary/90 hover:to-primary/70 disabled:opacity-70"
+          className="relative h-12 w-full overflow-hidden rounded-lg bg-white font-medium text-black transition-all hover:bg-white/90 disabled:opacity-70"
           disabled={isSubmitting}
         >
-          <span className="relative z-10 flex items-center gap-2">
-            {isSubmitting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Signing in...
-              </>
-            ) : (
-              "Sign in"
-            )}
-          </span>
-          <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full"></span>
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              connecting...
+            </span>
+          ) : (
+            "let's go →"
+          )}
         </Button>
-      </div>
-
-      <div className="text-center text-sm">
-        Don&apos;t have an account?
-        <Link
-          href="/signup"
-          className="font-medium text-primary hover:underline"
-        >
-          Sign up
-        </Link>
       </div>
     </form>
   );

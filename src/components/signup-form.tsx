@@ -2,16 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { SignupFormData, signupSchema } from "@/validation/signup.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
+import { Eye, EyeOff, Github, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { FaGithub } from "react-icons/fa";
 
 export function SignUpForm({
   className,
@@ -20,7 +18,7 @@ export function SignUpForm({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
@@ -63,148 +61,107 @@ export function SignUpForm({
     );
   };
 
-  const signupWithGithub = async () => {
-    setLoading(true); // Set loading to true when the request starts
-    await authClient.signIn.social(
-      {
-        provider: "github",
-        callbackURL: "/",
-      },
-      {
-        onRequest: () => {
-          loadingToastId = toast.loading("Loading ... Signing up with GitHub");
-        },
-        onSuccess: () => {
-          toast.dismiss(loadingToastId);
-          toast.success("You're successfully signed up");
-          setLoading(false); // Set loading to false when the request succeeds
-        },
-        onError: (ctx) => {
-          toast.dismiss(loadingToastId);
-          if (ctx.error.status === 403) {
-            toast.error("Please verify your email address");
-          }
-
-          toast.error(ctx.error.message);
-          setLoading(false); // Set loading to false when the request fails
-        },
-      },
-    );
-  };
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={cn(
-        "mx-auto flex max-w-sm flex-col gap-6 text-card-foreground",
-        className,
-      )}
+      className={cn("flex w-full flex-col gap-4", className)}
       {...props}
     >
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="font-playfair text-2xl dark:text-white md:text-3xl">
-          Welcome
-          <span className="text-lime-00 px-2 font-itcThinItalic text-4xl">
-            Nerdy
+      <Button
+        onClick={() => {}} 
+        variant="outline"
+        className="relative flex h-12 w-full items-center justify-center gap-3 overflow-hidden rounded-lg border border-white/10 bg-white/5 px-4 py-2 font-medium text-white transition-all hover:bg-white/10"
+        type="button"
+      >
+        {loading ? (
+          <span className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            connecting...
           </span>
-        </h1>
-      </div>
-      <div className="grid gap-3">
-        <Button
-          onClick={signupWithGithub}
-          variant="outline"
-          className="w-full rounded-lg bg-inputBg py-5"
-          disabled={loading} // Disable the button when loading
-          type="button" // Ensure this button doesn't submit the form
-        >
-          {loading ? (
-            "Loading..."
-          ) : (
-            <>
-              <FaGithub size={30} />
-              <h1 className="text-base font-medium">Sign up with GitHub</h1>
-            </>
-          )}
-        </Button>
+        ) : (
+          <>
+            <Github className="h-5 w-5" />
+            <span>Continue with Github</span>
+          </>
+        )}
+      </Button>
 
-        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-          <span className="relative z-10 rounded-lg bg-background px-2 py-1 text-muted-foreground dark:bg-textAlternative">
-            OR
-          </span>
+      <div className="relative flex items-center justify-center py-2">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-white/10"></span>
         </div>
+        <span className="relative bg-[#0A0A0A] px-2 text-sm text-white/40">
+          or continue with email
+        </span>
+      </div>
 
-        <div className="grid gap-2">
-          <Label htmlFor="name" className="dark:text-white">
-            Full Name
-          </Label>
+      <div className="space-y-4">
+        <div>
           <Input
             id="name"
             type="text"
-            placeholder="John Doe"
-            className="rounded-lg text-sm placeholder:text-black/50"
+            placeholder="full name"
+            className="h-12 rounded-lg border-white/10 bg-white/5 text-white placeholder:text-white/40 text-sm transition-colors focus-visible:border-white/20 focus-visible:ring-0"
             {...register("name")}
           />
-          <p className="text-xs text-red-400">
-            {errors.name && <span>{errors.name.message}</span>}
-          </p>
+          {errors.name && (
+            <p className="mt-2 text-sm text-red-400">{errors.name.message}</p>
+          )}
         </div>
 
-        <div className="grid gap-2">
-          <Label htmlFor="email" className="dark:text-white">
-            Email
-          </Label>
+        <div>
           <Input
             id="email"
             type="email"
-            placeholder="m@example.com"
-            className="rounded-lg text-sm placeholder:text-black/50"
+            placeholder="email"
+            className="h-12 rounded-lg border-white/10 bg-white/5 text-white placeholder:text-white/40 text-sm transition-colors focus-visible:border-white/20 focus-visible:ring-0"
             {...register("email")}
           />
-          <p className="text-xs text-red-400">
-            {errors.email && <span>{errors.email.message}</span>}
-          </p>
+          {errors.email && (
+            <p className="mt-2 text-sm text-red-400">{errors.email.message}</p>
+          )}
         </div>
 
-        <div className="grid gap-2">
-          <Label htmlFor="password" className="dark:text-white">
-            Password
-          </Label>
+        <div>
           <div className="relative">
             <Input
               id="password"
-              type={showPassword ? "text" : "password"} // Toggle input type
-              placeholder="*********"
-              className="rounded-lg text-sm placeholder:text-black/50"
+              type={showPassword ? "text" : "password"}
+              placeholder="password"
+              className="h-12 rounded-lg border-white/10 bg-white/5 text-white placeholder:text-white/40 pr-10 text-sm transition-colors focus-visible:border-white/20 focus-visible:ring-0"
               {...register("password")}
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
-              className="absolute right-2 top-1/2 -translate-y-1/2 transform text-sm text-muted-foreground"
+              className="absolute inset-y-0 right-3 flex items-center text-white/40 transition-colors hover:text-white"
+              onClick={() => setShowPassword((prev) => !prev)}
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
-          <p className="text-xs text-red-400">
-            {errors.password && <span>{errors.password.message}</span>}
-          </p>
+          {errors.password && (
+            <p className="mt-2 text-sm text-red-400">{errors.password.message}</p>
+          )}
         </div>
 
         <Button
           type="submit"
-          className="w-full bg-textAlternative hover:bg-textAlternative/95 dark:bg-white"
+          className="relative h-12 w-full overflow-hidden rounded-lg bg-white text-black font-medium transition-all hover:bg-white/90 disabled:opacity-70"
+          disabled={isSubmitting}
         >
-          Sign Up
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              creating account...
+            </span>
+          ) : (
+            "create account →"
+          )}
         </Button>
-      </div>
-      <div className="text-center text-sm dark:text-white/60">
-        Have an account?{" "}
-        <Link
-          href="/login"
-          className="underline underline-offset-4 dark:text-white"
-        >
-          Login
-        </Link>
       </div>
     </form>
   );
