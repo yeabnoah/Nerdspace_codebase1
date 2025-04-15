@@ -87,13 +87,13 @@ const LeftNavbar = () => {
             variant="outline"
             className={`group relative w-fit md:w-full justify-start gap-2 rounded-xl border-none bg-transparent px-3 py-4 shadow-none transition-all duration-300 hover:bg-primary/5 dark:border-gray-500/5 ${
               getActiveItem() === item.name
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground"
+                ? "bg-primary/10 text-primary font-medium"
+                : "text-muted-foreground hover:text-primary"
             }`}
           >
             <item.icon
               className={`hidden transition-transform duration-300 group-hover:scale-110 md:block ${
-                getActiveItem() === item.name ? "text-primary" : ""
+                getActiveItem() === item.name ? "text-primary" : "text-muted-foreground group-hover:text-primary"
               }`}
               size={20}
             />
