@@ -85,7 +85,7 @@ const LeftNavbar = () => {
               router.push(item.path);
             }}
             variant="outline"
-            className={`group relative w-full justify-start gap-2 rounded-xl border-none bg-transparent px-3 py-4 shadow-none transition-all duration-300 hover:bg-primary/5 dark:border-gray-500/5 ${
+            className={`group relative w-fit md:w-full justify-start gap-2 rounded-xl border-none bg-transparent px-3 py-4 shadow-none transition-all duration-300 hover:bg-primary/5 dark:border-gray-500/5 ${
               getActiveItem() === item.name
                 ? "bg-primary/10 text-primary"
                 : "text-muted-foreground"
