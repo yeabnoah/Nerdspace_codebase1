@@ -46,7 +46,7 @@ export default function SettingsScreen({ defaultTab = "profile" }: SettingsScree
 
   return (
     <div className="flex min-h-screen w-full">
-      <div className="fixed left-[10vw] min-h-screen top-[13vh] w-64 border-r border-gray-200 dark:border-gray-500/10 bg-white dark:bg-black p-4 dark:border-dark">
+      <div className="fixed left-[10vw] min-h-screen top-[13vh] w-64 border-r border-gray-200 dark:border-gray-500/10 bg-white/50 dark:bg-black/50 p-4 backdrop-blur-sm">
         <div className="mb-8 border-b pb-3">
           <h2 className="text-xl font-geist">Settings</h2>
         </div>
@@ -58,10 +58,10 @@ export default function SettingsScreen({ defaultTab = "profile" }: SettingsScree
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className={cn(
-                "group relative flex w-full h-11 items-center gap-2 rounded-lg px-3 py-2 text-base transition-all duration-300",
+                "group relative flex w-full h-11 items-center gap-2 rounded-xl px-3 py-2 text-base transition-all duration-300 border-none bg-transparent shadow-none",
                 activeTab === tab.id
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted"
+                  ? "bg-primary/10 text-primary font-medium"
+                  : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
               )}
             >
               {tab.icon}
@@ -69,7 +69,7 @@ export default function SettingsScreen({ defaultTab = "profile" }: SettingsScree
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="activeIndicator"
-                  className="absolute left-0 h-full w-2 rounded-full bg-gray-500"
+                  className="absolute left-0 h-full w-1 rounded-full bg-gradient-to-b from-primary to-primary/50"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.2 }}

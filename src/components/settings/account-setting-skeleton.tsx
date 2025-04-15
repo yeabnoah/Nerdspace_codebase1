@@ -5,114 +5,138 @@ import { LogOut } from "lucide-react";
 
 export function AccountSettingSkeleton() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mx-auto max-w-5xl">
-        <div className="mb-8 flex items-center justify-between">
-          <Skeleton className="h-8 w-48" />
-          <Button
-            variant="destructive"
-            className="flex items-center gap-2"
-            disabled
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </Button>
-        </div>
+    <div className="container relative mx-auto w-[60vw] overflow-hidden pb-8">
+      <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Profile Section Skeleton */}
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <CardTitle>Profile</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center text-center">
-              <div className="relative mb-6">
-                <Skeleton className="h-24 w-24 rounded-full" />
-                <Skeleton className="absolute bottom-0 right-0 h-6 w-20 rounded-full" />
-              </div>
-
-              <Skeleton className="mb-1 h-6 w-32" />
-              <Skeleton className="mb-4 h-4 w-48" />
-
-              <div className="w-full space-y-3 text-left">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-4 w-2/3" />
-              </div>
-
-              <div className="mt-6 w-full">
-                <Skeleton className="mb-2 h-4 w-24" />
-                <Skeleton className="h-24 w-full rounded-md" />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Main Content Section Skeleton */}
-          <div className="space-y-6 lg:col-span-2">
-            {/* Stats Section Skeleton */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Statistics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                  {[...Array(6)].map((_, i) => (
-                    <div key={i} className="rounded-lg border p-4 text-center">
-                      <Skeleton className="mb-1 h-4 w-20" />
-                      <Skeleton className="h-8 w-12" />
-                    </div>
-                  ))}
+      <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-black">
+        <CardHeader className="px-6">
+          <CardTitle className="font-geist text-2xl font-medium">
+            Account Settings
+          </CardTitle>
+          <Skeleton className="h-4 w-48" />
+        </CardHeader>
+        <CardContent className="space-y-8 px-6">
+          {/* Profile Section */}
+          <div className="group relative h-[150px] w-full overflow-hidden rounded-2xl shadow-lg">
+            <Skeleton className="h-full w-full" />
+            <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 via-zinc-900/60 to-transparent px-8 dark:from-black/80 dark:via-black/50">
+              <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
+              <div className="relative z-10 flex items-center gap-4">
+                <Skeleton className="h-20 w-20 rounded-full" />
+                <div>
+                  <Skeleton className="mb-2 h-6 w-32" />
+                  <Skeleton className="h-4 w-48" />
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Sessions Section Skeleton */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Active Sessions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {[...Array(2)].map((_, i) => (
-                  <div key={i} className="rounded-lg border p-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-4 w-24" />
-                    </div>
-                    <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-full" />
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Connected Accounts Section Skeleton */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Connected Accounts</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {[...Array(2)].map((_, i) => (
-                  <div key={i} className="rounded-lg border p-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-4 w-32" />
-                    </div>
-                    <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-full" />
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+
+          {/* Stats Section */}
+          <div className="grid gap-4 md:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-500/5 dark:bg-black">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+                <Skeleton className="mt-2 h-8 w-12" />
+              </div>
+            ))}
+          </div>
+
+          {/* Account Information Section */}
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-48" />
+            <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-500/5 dark:bg-black">
+              <div className="grid gap-6 md:grid-cols-2">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-4" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Security Section */}
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-32" />
+            <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-500/5 dark:bg-black">
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-48" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-48" />
+                  </div>
+                  <Skeleton className="h-9 w-24 rounded-xl" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Connected Accounts Section */}
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-48" />
+            <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-500/5 dark:bg-black">
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-48" />
+                </div>
+                {[...Array(2)].map((_, i) => (
+                  <div key={i} className="flex items-center justify-between rounded-lg border p-3">
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="h-8 w-8 rounded-full" />
+                      <div>
+                        <Skeleton className="mb-1 h-4 w-24" />
+                        <Skeleton className="h-3 w-32" />
+                      </div>
+                    </div>
+                    <Skeleton className="h-8 w-24 rounded-xl" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Account Activity Section */}
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-48" />
+            <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-500/5 dark:bg-black">
+              <div className="space-y-6">
+                {[...Array(2)].map((_, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-4 w-48" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Logout Button */}
+          <div className="flex justify-end">
+            <Button
+              variant="destructive"
+              className="h-10 w-fit gap-2 rounded-lg"
+              disabled
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 } 
