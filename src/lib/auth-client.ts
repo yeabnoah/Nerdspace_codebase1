@@ -8,6 +8,10 @@ export const authClient = createAuthClient({
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
   },
+
+  fetchOptions: {
+    credentials: "include",
+  },
 });
 
 export const { signIn, signUp, useSession } = createAuthClient();

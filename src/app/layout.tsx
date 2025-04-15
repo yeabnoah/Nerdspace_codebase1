@@ -12,6 +12,7 @@ import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import TanstackQueryProvider from "@/providers/tanstack-query-provider";
 import WhoAmIProvider from "@/providers/who-am-i-provider";
+import { MobileViewMessage } from "@/components/mobile-view-message";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -97,7 +98,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TanstackQueryProvider>
-            <WhoAmIProvider>{children}</WhoAmIProvider>
+            <WhoAmIProvider>
+              <MobileViewMessage />
+              {children}
+            </WhoAmIProvider>
           </TanstackQueryProvider>
           <Toaster
             position="bottom-right"

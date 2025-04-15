@@ -69,4 +69,9 @@ export const auth = betterAuth({
     "https://nerdspacer.com",
     "https://nerd-space-kappa.vercel.app/",
   ],
+  session: {
+    cookieCache: {
+      enabled: true,
+    },
+  },
 });
