@@ -2,13 +2,13 @@
 
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Bell, File, IdCard, User2Icon } from "lucide-react";
+import { Bell, File, User2Icon } from "lucide-react";
 import { useState } from "react";
+import { FaIdCard } from "react-icons/fa";
 import AccountSetting from "./settings/account-setting";
 import NotificationSetting from "./settings/notification-setting";
 import ProfileSettings from "./settings/profile-setting";
 import ThermsConditions from "./settings/therms-conditions";
-import { FaIdCard } from "react-icons/fa";
 
 interface SettingsScreenProps {
   defaultTab?: string;
