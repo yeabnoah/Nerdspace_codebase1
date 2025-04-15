@@ -1,8 +1,15 @@
+"use client";
+
 import { authClient } from "@/lib/auth-client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { Clock, Globe, LinkIcon, LogOut, Mail, User } from "lucide-react";
 
 interface UserData {
   id: string;
@@ -79,20 +86,20 @@ const AccountSetting = () => {
   }, []);
 
   const handleLogout = async () => {
-    let loadingToastId = toast.loading("Loading ... logging out");
+    let loadingToastId = toast.loading("Logging out...");
     await authClient.signOut({
       fetchOptions: {
         onRequest: () => {
-          loadingToastId = toast.loading("Loading ... logging out");
+          loadingToastId = toast.loading("Logging out...");
         },
         onSuccess: () => {
           toast.dismiss(loadingToastId);
-          toast.success("you're successfully logged Out");
+          toast.success("You've successfully logged out");
           router.push("/login");
         },
         onError: () => {
           toast.dismiss(loadingToastId);
-          toast.error("error happened while trying to LogOut");
+          toast.error("Error happened while trying to log out");
         },
       },
     });
@@ -100,228 +107,265 @@ const AccountSetting = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-1 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
+      <div className="flex min-h-[50vh] flex-1 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
       </div>
     );
   }
 
   if (!userData) {
     return (
-      <div className="flex flex-1 items-center justify-center">
-        <p className="text-red-500">Failed to load user data</p>
+      <div className="flex min-h-[50vh] flex-1 items-center justify-center">
+        <p className="text-destructive">Failed to load user data</p>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 p-6">
-      <div className="mx-auto max-w-4xl">
-        <div className="rounded-lg bg-white p-6 shadow-md">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Account Settings</h2>
-            <button
-              onClick={handleLogout}
-              className="rounded-md bg-red-500 px-4 py-2 text-white transition-colors hover:bg-red-600"
-            >
-              Logout
-            </button>
-          </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-3xl font-bold">Account Settings</h1>
+          <Button
+            variant="destructive"
+            onClick={handleLogout}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
+        </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-4">
-              <div>
-                <h3 className="mb-2 text-lg font-semibold">Profile Information</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Name:</span> {userData.name}
-                  </p>
-                  <p>
-                    <span className="font-medium">Email:</span> {userData.email}
-                  </p>
-                  <p>
-                    <span className="font-medium">Email Status:</span>{" "}
-                    <span className={userData.emailVerified ? "text-green-500" : "text-red-500"}>
-                      {userData.emailVerified ? "Verified" : "Not Verified"}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Profile Section */}
+          <Card className="lg:col-span-1">
+            <CardHeader>
+              <CardTitle>Profile</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center text-center">
+              <div className="relative mb-6">
+                {userData.image ? (
+                  <Avatar className="h-24 w-24 border-4 border-background">
+                    <AvatarImage
+                      src={userData.image || "/placeholder.svg"}
+                      alt={userData.name}
+                    />
+                    <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                ) : (
+                  <Avatar className="h-24 w-24 border-4 border-background">
+                    <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                )}
+                <Badge
+                  className={`absolute bottom-0 right-0 ${
+                    userData.emailVerified
+                      ? "bg-emerald-500 hover:bg-emerald-600"
+                      : "bg-destructive"
+                  }`}
+                  variant="secondary"
+                >
+                  {userData.emailVerified ? "Verified" : "Unverified"}
+                </Badge>
+              </div>
+
+              <h2 className="mb-1 text-xl font-semibold">{userData.name}</h2>
+              <p className="mb-4 flex items-center justify-center gap-1 text-muted-foreground">
+                <Mail className="h-3 w-3" /> {userData.email}
+              </p>
+
+              <div className="w-full space-y-3 text-left">
+                {userData.bio && (
+                  <div className="text-sm">
+                    <span className="font-medium">Bio:</span> {userData.bio}
+                  </div>
+                )}
+
+                {userData.country && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Globe className="h-4 w-4 text-muted-foreground" />
+                    <span>
+                      {userData.country.emoji} {userData.country.name}
                     </span>
-                  </p>
-                  <p>
-                    <span className="font-medium">Bio:</span>{" "}
-                    {userData.bio || "No bio set"}
-                  </p>
-                  <p>
-                    <span className="font-medium">Location:</span>{" "}
-                    {userData.country
-                      ? `${userData.country.emoji} ${userData.country.name}`
-                      : "Not set"}
-                  </p>
-                  <p>
-                    <span className="font-medium">Website:</span>{" "}
-                    {userData.link || "Not set"}
-                  </p>
-                  <p>
-                    <span className="font-medium">Account Created:</span>{" "}
+                  </div>
+                )}
+
+                {userData.link && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <LinkIcon className="h-4 w-4 text-muted-foreground" />
+                    <a
+                      href={userData.link}
+                      className="truncate text-primary hover:underline"
+                    >
+                      {userData.link.replace(/^https?:\/\//, "")}
+                    </a>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2 text-sm">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span>
+                    Joined{" "}
                     {new Date(userData.accountCreated).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+
+              {userData.coverImage && (
+                <div className="mt-6 w-full">
+                  <p className="mb-2 text-left text-sm font-medium">
+                    Cover Image
                   </p>
-                  <p>
-                    <span className="font-medium">Last Updated:</span>{" "}
-                    {new Date(userData.lastUpdated).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="mb-2 text-lg font-semibold">Profile Images</h3>
-                <div className="space-y-4">
-                  <div>
-                    <p className="mb-2 font-medium">Profile Picture</p>
-                    {userData.image ? (
-                      <Image
-                        src={userData.image}
-                        alt="Profile"
-                        width={100}
-                        height={100}
-                        className="rounded-full"
-                      />
-                    ) : (
-                      <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gray-200">
-                        <span className="text-gray-500">No image</span>
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <p className="mb-2 font-medium">Cover Image</p>
-                    {userData.coverImage ? (
-                      <Image
-                        src={userData.coverImage}
-                        alt="Cover"
-                        width={200}
-                        height={100}
-                        className="rounded-md"
-                      />
-                    ) : (
-                      <div className="flex h-32 w-full items-center justify-center rounded-md bg-gray-200">
-                        <span className="text-gray-500">No cover image</span>
-                      </div>
-                    )}
+                  <div className="relative h-24 w-full overflow-hidden rounded-md">
+                    <Image
+                      src={userData.coverImage || "/placeholder.svg"}
+                      alt="Cover"
+                      fill
+                      className="object-cover"
+                    />
                   </div>
                 </div>
-              </div>
-            </div>
+              )}
+            </CardContent>
+          </Card>
 
-            <div className="space-y-6">
-              <div>
-                <h3 className="mb-4 text-lg font-semibold">Account Statistics</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-lg bg-gray-50 p-4">
-                    <p className="text-sm text-gray-500">Followers</p>
-                    <p className="text-2xl font-bold">
-                      {userData.stats.followers}
-                    </p>
-                  </div>
-                  <div className="rounded-lg bg-gray-50 p-4">
-                    <p className="text-sm text-gray-500">Following</p>
-                    <p className="text-2xl font-bold">
-                      {userData.stats.following}
-                    </p>
-                  </div>
-                  <div className="rounded-lg bg-gray-50 p-4">
-                    <p className="text-sm text-gray-500">Posts</p>
-                    <p className="text-2xl font-bold">{userData.stats.posts}</p>
-                  </div>
-                  <div className="rounded-lg bg-gray-50 p-4">
-                    <p className="text-sm text-gray-500">Projects</p>
-                    <p className="text-2xl font-bold">
-                      {userData.stats.projects}
-                    </p>
-                  </div>
-                  <div className="rounded-lg bg-gray-50 p-4">
-                    <p className="text-sm text-gray-500">Communities</p>
-                    <p className="text-2xl font-bold">
-                      {userData.stats.communities}
-                    </p>
-                  </div>
-                  <div className="rounded-lg bg-gray-50 p-4">
-                    <p className="text-sm text-gray-500">Active Sessions</p>
-                    <p className="text-2xl font-bold">
-                      {userData.stats.activeSessions}
-                    </p>
-                  </div>
+          {/* Main Content Section */}
+          <div className="space-y-6 lg:col-span-2">
+            {/* Stats Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Statistics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  <StatCard
+                    label="Followers"
+                    value={userData.stats.followers}
+                  />
+                  <StatCard
+                    label="Following"
+                    value={userData.stats.following}
+                  />
+                  <StatCard label="Posts" value={userData.stats.posts} />
+                  <StatCard label="Projects" value={userData.stats.projects} />
+                  <StatCard
+                    label="Communities"
+                    value={userData.stats.communities}
+                  />
+                  <StatCard
+                    label="Active Sessions"
+                    value={userData.stats.activeSessions}
+                  />
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              <div>
-                <h3 className="mb-4 text-lg font-semibold">Active Sessions</h3>
-                <div className="space-y-4">
-                  {userData.security.sessions.map((session) => (
-                    <div
-                      key={session.id}
-                      className={`rounded-lg border p-4 ${
-                        session.isCurrent ? "border-green-500 bg-green-50" : "border-gray-200"
-                      }`}
-                    >
-                      <div className="flex justify-between">
-                        <p className="font-medium">
-                          {session.isCurrent ? "Current Session" : "Other Session"}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {new Date(session.createdAt).toLocaleDateString()}
-                        </p>
+            {/* Sessions Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Active Sessions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {userData.security.sessions.map((session) => (
+                  <div
+                    key={session.id}
+                    className={`rounded-lg border p-4 ${session.isCurrent ? "border-primary bg-primary/5" : ""}`}
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <div className="flex items-center gap-2 font-medium">
+                        <User className="h-4 w-4" />
+                        {session.isCurrent
+                          ? "Current Session"
+                          : "Other Session"}
+                        {session.isCurrent && (
+                          <Badge variant="outline" className="ml-2 text-xs">
+                            Current
+                          </Badge>
+                        )}
                       </div>
-                      <div className="mt-2 space-y-1 text-sm">
-                        <p>
-                          <span className="font-medium">Device:</span>{" "}
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(session.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-1 gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
+                      <p className="truncate">
+                        <span className="font-medium">Device:</span>{" "}
+                        <span className="text-muted-foreground">
                           {session.device.userAgent}
-                        </p>
-                        <p>
-                          <span className="font-medium">IP Address:</span>{" "}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="font-medium">IP:</span>{" "}
+                        <span className="text-muted-foreground">
                           {session.device.ipAddress}
-                        </p>
-                        <p>
-                          <span className="font-medium">Last Active:</span>{" "}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="font-medium">Last Active:</span>{" "}
+                        <span className="text-muted-foreground">
                           {new Date(session.device.lastActive).toLocaleString()}
-                        </p>
-                        <p>
-                          <span className="font-medium">Expires:</span>{" "}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="font-medium">Expires:</span>{" "}
+                        <span className="text-muted-foreground">
                           {new Date(session.expiresAt).toLocaleString()}
-                        </p>
-                      </div>
+                        </span>
+                      </p>
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
 
-              <div>
-                <h3 className="mb-4 text-lg font-semibold">Connected Accounts</h3>
-                <div className="space-y-4">
-                  {userData.security.connectedAccounts.map((account) => (
-                    <div
-                      key={account.provider}
-                      className="rounded-lg border border-gray-200 p-4"
-                    >
-                      <div className="flex justify-between">
-                        <p className="font-medium capitalize">{account.provider}</p>
-                        <p className="text-sm text-gray-500">
-                          Connected: {new Date(account.connectedAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="mt-2 space-y-1 text-sm">
-                        <p>
-                          <span className="font-medium">Email:</span> {account.email}
-                        </p>
-                        <p>
-                          <span className="font-medium">Last Used:</span>{" "}
-                          {new Date(account.lastUsed).toLocaleString()}
-                        </p>
-                      </div>
+            {/* Connected Accounts Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Connected Accounts</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {userData.security.connectedAccounts.map((account) => (
+                  <div key={account.provider} className="rounded-lg border p-4">
+                    <div className="mb-2 flex items-center justify-between">
+                      <p className="font-medium capitalize">
+                        {account.provider}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Connected:{" "}
+                        {new Date(account.connectedAt).toLocaleDateString()}
+                      </p>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+                    <div className="grid grid-cols-1 gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
+                      <p>
+                        <span className="font-medium">Email:</span>{" "}
+                        <span className="text-muted-foreground">
+                          {account.email}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="font-medium">Last Used:</span>{" "}
+                        <span className="text-muted-foreground">
+                          {new Date(account.lastUsed).toLocaleString()}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+// Stat Card Component
+const StatCard = ({ label, value }: { label: string; value: number }) => {
+  return (
+    <div className="rounded-lg border p-4 text-center">
+      <p className="mb-1 text-sm text-muted-foreground">{label}</p>
+      <p className="text-2xl font-bold">{value}</p>
     </div>
   );
 };
