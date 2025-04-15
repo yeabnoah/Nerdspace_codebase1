@@ -1,6 +1,12 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useUserStore from "@/store/user.store";
 import { useQuery } from "@tanstack/react-query";
@@ -8,13 +14,16 @@ import axios from "axios";
 import {
   Bookmark,
   Dot,
+  File,
   Grid3X3,
   Hammer,
   Lock,
   SettingsIcon,
+  User2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import RenderMyPost from "./myposts";
@@ -26,8 +35,9 @@ import ProjectsTab from "./tabs/ProjectsTab";
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("posts");
   const { user, isloading, setuser, setIsLoading } = useUserStore();
+  const router = useRouter();
 
-  console.log(activeTab)
+  console.log(activeTab);
 
   const { isFetching, isPending } = useQuery({
     queryKey: ["fetch_who_am_i"],
@@ -46,9 +56,9 @@ export default function ProfilePage() {
   if (isloading || isFetching || isPending) {
     return (
       <div className="container relative mx-10 pb-8 font-geist">
-        <div className="absolute hidden md:block -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
+        <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
 
-        <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl shadow-lg md:h-[200px]">
+        <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl shadow-lg md:h-[250px]">
           <Skeleton className="h-full w-full" />
         </div>
 
@@ -86,9 +96,9 @@ export default function ProfilePage() {
 
   return (
     <div className="container relative mx-10 pb-8 font-geist">
-      <div className="absolute hidden md:block -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
+      <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
 
-      <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-xl shadow-lg md:h-[300px]">
+      <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-xl shadow-lg md:h-[250px]">
         <Image
           src={user.coverImage || "/obsession.jpg"}
           alt="Cover Image"
@@ -101,12 +111,39 @@ export default function ProfilePage() {
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
         </div>
 
-        <Link
-          href="/settings"
-          className="absolute right-4 top-4 rounded-full bg-black p-2"
-        >
-          <SettingsIcon className="size-4 cursor-pointer rounded-full text-white" />
-        </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="absolute right-4 top-4 rounded-full bg-black p-2">
+              <SettingsIcon className="size-4 cursor-pointer rounded-full text-white" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            className="w-48 rounded-2xl border-none bg-white/80 shadow-lg backdrop-blur-sm dark:bg-black/80"
+          >
+            <DropdownMenuItem
+              onClick={() => router.push("/settings")}
+              className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+            >
+              <SettingsIcon className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push("/settings?tab=account")}
+              className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+            >
+              <User2 className="mr-2 h-4 w-4" />
+              <span>Account</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push("/settings?tab=terms")}
+              className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+            >
+              <File className="mr-2 h-4 w-4" />
+              <span>Terms & Conditions</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="relative z-10 mx-2 my-5 -mt-10 flex flex-col items-start gap-1">

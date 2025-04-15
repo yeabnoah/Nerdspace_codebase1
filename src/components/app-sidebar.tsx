@@ -1,80 +1,86 @@
 "use client";
 
-import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import { Bell, File, IdCard, Search, Settings, User2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { Bell, File, IdCard, User2Icon } from "lucide-react";
 import { useState } from "react";
-import ProfileSettings from "./settings/profile-setting";
 import AccountSetting from "./settings/account-setting";
-import ThermsConditions from "./settings/therms-conditions";
 import NotificationSetting from "./settings/notification-setting";
+import ProfileSettings from "./settings/profile-setting";
+import ThermsConditions from "./settings/therms-conditions";
+import { FaIdCard } from "react-icons/fa";
 
-export default function SettingsScreen() {
-  const [activeTab, setActiveTab] = useState("profile");
+interface SettingsScreenProps {
+  defaultTab?: string;
+}
+
+export default function SettingsScreen({ defaultTab = "profile" }: SettingsScreenProps) {
+  const [activeTab, setActiveTab] = useState(defaultTab);
 
   const tabs = [
     {
       id: "profile",
       label: "Profile",
-      icon: <IdCard className="h-5 w-5 text-card-foreground dark:text-white" />,
+      icon: <User2Icon className="h-5 w-5" />,
       component: <ProfileSettings />,
     },
     {
       id: "account",
       label: "Account",
-      icon: <User2 className="h-5 w-5 text-card-foreground dark:text-white" />,
+      icon: <FaIdCard className="h-5 w-5" />,
       component: <AccountSetting />,
     },
     {
-      id: "Therms & conditions",
-      label: "Therms & conditions",
-      icon: <File className="h-5 w-5 text-card-foreground dark:text-white" />,
+      id: "terms",
+      label: "Terms & Conditions",
+      icon: <File className="h-5 w-5" />,
       component: <ThermsConditions />,
     },
     {
       id: "notification",
       label: "Notification",
-      icon: <Bell className="h-5 w-5 text-card-foreground dark:text-white" />,
+      icon: <Bell className="h-5 w-5" />,
       component: <NotificationSetting />,
     },
   ];
 
   return (
-    <div className="my-[3vh] flex h-[80%] min-w-[80vw] flex-col overflow-hidden rounded-xl border dark:border-gray-500/5 text-white md:flex-row">
-      {/* Left sidebar */}
-      <div className="flex w-full md:w-16 justify-evenly flex-row border-r dark:border-r-gray-500/5 dark:border-zinc-800 md:min-w-60 md:flex-col">
-        <div className="hidden items-center justify-between border-b p-4 dark:border-zinc-800 md:flex">
-          <h1 className="font-instrument text-2xl text-card-foreground dark:text-white">
-            Settings
-          </h1>
-          <button className="rounded-full p-1 hover:bg-zinc-800">
-            <Search className="h-5 w-5 text-zinc-400" />
-          </button>
+    <div className="flex min-h-screen w-full">
+      <div className="fixed left-[10vw] min-h-screen top-[13vh] w-64 border-r border-gray-200 dark:border-gray-500/10 bg-white dark:bg-black p-4 dark:border-dark">
+        <div className="mb-8 border-b pb-3">
+          <h2 className="text-xl font-geist">Settings</h2>
         </div>
-
-        <div className="flex-1 overflow-auto flex flex-row md:flex-col">
+        <nav className="space-y-1">
           {tabs.map((tab) => (
-            <button
+            <motion.button
               key={tab.id}
-              className={cn(
-                "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-zinc-800/50",
-                activeTab === tab.id &&
-                  "bg-textAlternative/20 text-card-foreground dark:bg-zinc-800",
-              )}
               onClick={() => setActiveTab(tab.id)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={cn(
+                "group relative flex w-full h-11 items-center gap-2 rounded-lg px-3 py-2 text-base transition-all duration-300",
+                activeTab === tab.id
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted"
+              )}
             >
               {tab.icon}
-              <span className="hidden text-card-foreground dark:text-white lg:inline">
-                {tab.label}
-              </span>
-            </button>
+              {tab.label}
+              {activeTab === tab.id && (
+                <motion.div
+                  layoutId="activeIndicator"
+                  className="absolute left-0 h-full w-2 rounded-full bg-gray-500"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                />
+              )}
+            </motion.button>
           ))}
-        </div>
+        </nav>
       </div>
-
-      {/* Main content */}
-      <div className="flex flex-1 flex-col">
-        <div className="flex-1 overflow-auto pb-6 md:px-6">
+      <div className="ml-64 flex-1 p-8">
+        <div className="mx-auto w-[60vw]">
           {tabs.find((tab) => tab.id === activeTab)?.component}
         </div>
       </div>

@@ -101,7 +101,7 @@ export default function UserProfile() {
     <div className="container relative mx-10 pb-8 font-geist">
       <div className="absolute hidden md:block -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
 
-      <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl md:h-[200px]">
+      <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-xl shadow-lg md:h-[250px]">
         <Image
           src={userProfile?.coverImage || "/obsession.jpg"}
           alt="Cover Image"
@@ -116,7 +116,7 @@ export default function UserProfile() {
       </div>
 
       <div className="relative z-10 mx-2 my-5 -mt-10 flex flex-col items-start gap-1">
-        <div className="relative mx-5 -mt-16 h-28 w-28 overflow-hidden rounded-full ring-2 ring-white/20">
+        <div className="relative mx-5 -mt-16 h-24 w-24 overflow-hidden rounded-full ring-2 ring-white/20">
           <Image
             src={userProfile?.image || "/user.jpg?height=128&width=128"}
             alt={userProfile?.visualName || userProfile?.name || ""}
