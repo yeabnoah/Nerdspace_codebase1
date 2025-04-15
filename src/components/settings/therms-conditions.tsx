@@ -35,7 +35,7 @@ export default function ThermsConditions() {
             </p>
             
             <p className="mb-6 font-geist text-muted-foreground">
-              By accessing or using NerdSpace, you agree to be bound by these Terms and Conditions ("Terms"). 
+              By accessing or using NerdSpace, you agree to be bound by these Terms and Conditions (&quot;Terms&quot;). 
               If you do not agree, please do not use the platform.
             </p>
 
