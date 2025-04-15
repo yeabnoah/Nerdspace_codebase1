@@ -116,7 +116,7 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
               </div>
             ))
           ) : (
-            <p className="text-center text-sm text-gray-500">
+            <p className="text-center my-5 font-geist text-sm text-gray-500">
               No suggestions available
             </p>
           )}
