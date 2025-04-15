@@ -43,7 +43,7 @@ export default function RecommendedProjects() {
           {data && data.length == 0 && (
             <div className="flex flex-1 flex-col">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium hover:underline">
+                <p className="text-sm font-geist text-center my-5 hover:underline">
                   no projects to recommend
                 </p>
               </div>
