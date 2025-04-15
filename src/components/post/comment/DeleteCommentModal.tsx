@@ -17,10 +17,12 @@ interface DeleteCommentModalProps {
   onClose: () => void;
 }
 
+// TODO: Add a confirmation modal
 const DeleteCommentModal: React.FC<DeleteCommentModalProps> = ({
   commentId,
   isOpen,
   onClose,
+
 }) => {
   const queryClient = useQueryClient();
 
