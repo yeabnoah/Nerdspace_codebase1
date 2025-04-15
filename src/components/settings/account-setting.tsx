@@ -617,7 +617,7 @@ const AccountSetting = () => {
               Verify Your Email
             </DialogTitle>
             <DialogDescription>
-              We'll send you a verification link to your email address
+              We&apos;ll send you a verification link to your email address
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">

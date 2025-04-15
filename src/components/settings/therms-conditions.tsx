@@ -112,7 +112,7 @@ export default function ThermsConditions() {
             <div className="mb-6 flex w-full items-start gap-3 rounded-lg bg-primary/5 p-4">
               <Info className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
               <p className="text-sm text-muted-foreground">
-                By clicking "I Accept", you acknowledge that you have read and agree to be bound by these Terms and Conditions.
+                By clicking &quot;I Accept&quot;, you acknowledge that you have read and agree to be bound by these Terms and Conditions.
               </p>
             </div>
             
