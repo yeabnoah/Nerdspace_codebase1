@@ -1,4 +1,7 @@
+import { MobileViewMessage } from "@/components/mobile-view-message";
 import { ThemeProvider } from "@/components/theme-provider";
+import TanstackQueryProvider from "@/providers/tanstack-query-provider";
+import WhoAmIProvider from "@/providers/who-am-i-provider";
 import type { Metadata } from "next";
 import {
   Geist,
@@ -10,9 +13,6 @@ import {
 import localFont from "next/font/local";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
-import TanstackQueryProvider from "@/providers/tanstack-query-provider";
-import WhoAmIProvider from "@/providers/who-am-i-provider";
-import { MobileViewMessage } from "@/components/mobile-view-message";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
