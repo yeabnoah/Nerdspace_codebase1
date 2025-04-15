@@ -3,8 +3,9 @@
 import SettingsScreen from "@/components/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-const ProfileScreen = () => {
+const ProfileScreenContent = () => {
   const searchParams = useSearchParams();
   const tab = searchParams?.get("tab") || "profile";
 
@@ -14,6 +15,14 @@ const ProfileScreen = () => {
         <SettingsScreen defaultTab={tab} />
       </div>
     </SidebarProvider>
+  );
+};
+
+const ProfileScreen = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProfileScreenContent />
+    </Suspense>
   );
 };
 
