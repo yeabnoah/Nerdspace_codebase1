@@ -578,7 +578,7 @@ const AccountSetting = () => {
                       Account Created
                     </h4>
                     <p className="font-geist text-sm text-muted-foreground">
-                      {new Date(userData?.accountCreated!).toLocaleDateString()}
+                      {new Date(userData?.accountCreated || '').toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -588,7 +588,7 @@ const AccountSetting = () => {
                       Last Updated
                     </h4>
                     <p className="font-geist text-sm text-muted-foreground">
-                      {new Date(userData?.lastUpdated!).toLocaleDateString()}
+                      {new Date(userData?.lastUpdated || '').toLocaleDateString()}
                     </p>
                   </div>
                 </div>
