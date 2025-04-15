@@ -58,8 +58,8 @@ const ProjectRecommendationList = () => {
   return (
     <div className="container relative mx-auto pb-8">
       {/* Gradient background effects */}
-      <div className="absolute -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full border border-amber-300/50 bg-gradient-to-br from-amber-300/40 via-amber-400/50 to-transparent blur-[80px] dark:from-orange-300/40 dark:via-orange-400/50"></div>
-      <div className="absolute -left-10 -bottom-20 h-[300px] w-[300px] rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-tl from-blue-300/40 via-blue-400/50 to-transparent blur-[80px] dark:from-indigo-300/40 dark:via-indigo-400/50"></div>
+      <div className="absolute hidden md:block -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full border border-amber-300/50 bg-gradient-to-br from-amber-300/40 via-amber-400/50 to-transparent blur-[80px] dark:from-orange-300/40 dark:via-orange-400/50"></div>
+      <div className="absolute hidden md:block -left-10 -bottom-20 h-[300px] w-[300px] rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-tl from-blue-300/40 via-blue-400/50 to-transparent blur-[80px] dark:from-indigo-300/40 dark:via-indigo-400/50"></div>
 
       <div className="group relative z-10 my-5 hidden gap-2 overflow-hidden rounded-xl border border-gray-100 bg-gradient-to-br from-white/50 via-white/30 to-transparent px-4 py-5 shadow-none transition-all duration-500 hover:border-gray-200/50 dark:border-gray-500/5 dark:from-black/50 dark:via-black/30 md:flex md:flex-col lg:w-[19vw]">
         {/* Subtle animated glow effect */}

@@ -81,7 +81,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="sticky top-0 z-50 mx-auto  flex w-full md:max-w-6xl flex-row items-center justify-between bg-white px-2 py-4 dark:bg-black md:px-6">
+    <div className="sticky top-0 z-50 mx-auto  flex w-full lg:max-w-6xl flex-row items-center justify-between bg-white px-2 py-4 dark:bg-black md:px-6">
       <div
         onClick={() => {
           router.push("/");
@@ -107,8 +107,8 @@ const Navbar = () => {
 
               <div className="relative flex flex-col px-6 pb-4">
                 {/* Glow effects */}
-                <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-                <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+                <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+                <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
                 <CommandInput
                   value={query}

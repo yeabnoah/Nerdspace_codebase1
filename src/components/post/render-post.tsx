@@ -327,7 +327,7 @@ const RenderPost = () => {
 
   return (
     <div className="relative">
-      <div className="relative z-10">
+      <div className="relative z-10 px-4 md:px-0">
         {data?.pages
           .flatMap((page) => page.data)
           .map((each: postInterface, index) => {

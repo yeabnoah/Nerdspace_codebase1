@@ -273,8 +273,8 @@ const ExploreEntry = () => {
   return (
     <div className="relative mx-auto max-w-7xl p-4 sm:p-6">
       {/* Glow effects */}
-      <div className="absolute -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
-      <div className="absolute -bottom-20 -left-10 h-[300px] w-[300px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 to-transparent blur-[80px] dark:from-indigo-300/10"></div>
+      <div className="absolute hidden md:block -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
+      <div className="absolute hidden md:block -bottom-20 -left-10 h-[300px] w-[300px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 to-transparent blur-[80px] dark:from-indigo-300/10"></div>
 
       <motion.h1
         initial={{ opacity: 0, y: -20 }}

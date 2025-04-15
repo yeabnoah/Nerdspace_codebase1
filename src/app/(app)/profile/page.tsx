@@ -4,7 +4,7 @@ import ProfilePage from "@/components/settings/profile";
 
 export default function Profile() {
   return (
-    <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start">
+    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-row items-start px-4 md:px-0">
       <LeftNavbar />
       <div className="my-5 flex min-h-fit flex-1 flex-row items-start px-[.3px]">
         <ProfilePage />
