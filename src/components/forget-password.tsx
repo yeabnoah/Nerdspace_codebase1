@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 export function ForgetPasswordForm({
   className,
@@ -20,12 +21,10 @@ export function ForgetPasswordForm({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<ForgotPasswordType>({
     resolver: zodResolver(ForgotPasswordSchema),
   });
-
-  let loadingToastId: string | undefined;
 
   const onSubmit: SubmitHandler<ForgotPasswordType> = async (data) => {
     await authClient.forgetPassword(
@@ -35,18 +34,16 @@ export function ForgetPasswordForm({
       },
       {
         onRequest: () => {
-          loadingToastId = toast.loading(
+          toast.loading(
             "Loading ... checking your credentials",
           );
         },
 
         onSuccess: () => {
-          toast.dismiss(loadingToastId);
           toast.success("email successfully sent please check your email");
         },
 
         onError: (ctx) => {
-          toast.dismiss(loadingToastId);
           toast.success(ctx.error.message);
         },
       },
@@ -56,47 +53,44 @@ export function ForgetPasswordForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={cn(
-        "mx-auto flex max-w-sm flex-col gap-3 text-card-foreground",
-        className,
-      )}
+      className={cn("flex w-full flex-col gap-4", className)}
       {...props}
     >
-      <div className="mb-3 flex flex-col items-center gap-2 text-center">
-        <h1 className="font-playfair text-3xl text-card-foreground">
-          Forgot{" "}
-          <span className="mx-1 font-itcThinItalic text-4xl">Password</span>
-        </h1>
-      </div>
-
-      <div className="grid gap-6">
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
+      <div className="space-y-4">
+        <div>
           <Input
             id="email"
             type="email"
-            placeholder="m@example.com"
-            className="rounded-lg text-sm"
+            placeholder="email"
+            className="h-12 rounded-lg border-white/10 bg-white/5 text-white placeholder:text-white/40 text-sm transition-colors focus-visible:border-white/20 focus-visible:ring-0"
             {...register("email")}
           />
-          <p className="text-xs text-red-400">
-            {errors.email && <span>{errors.email.message}</span>}
-          </p>
+          {errors.email && (
+            <p className="mt-2 text-sm text-red-400">{errors.email.message}</p>
+          )}
         </div>
 
         <Button
           type="submit"
-          className="w-full bg-textAlternative hover:bg-textAlternative/95"
+          className="relative h-12 w-full overflow-hidden rounded-lg bg-white text-black font-medium transition-all hover:bg-white/90 disabled:opacity-70"
+          disabled={isSubmitting}
         >
-          Send Email
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              sending reset link...
+            </span>
+          ) : (
+            "send reset link →"
+          )}
         </Button>
       </div>
-      <div className="text-center text-sm">
+      {/* <div className="text-center text-sm">
         have an account?{" "}
         <Link href="/login" className="underline underline-offset-4">
           Login
         </Link>
-      </div>
+      </div> */}
     </form>
   );
 }

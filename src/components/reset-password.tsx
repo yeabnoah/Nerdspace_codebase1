@@ -1,41 +1,37 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import toast from "react-hot-toast";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import {
   resetPasswordSchema,
   resetPasswordType,
 } from "@/validation/reset-pass.validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
-function ResetPasswordFormContent({
+export function ResetPasswordFrom({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams?.get("token");
-
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<resetPasswordType>({
     resolver: zodResolver(resetPasswordSchema),
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams?.get("token");
 
-  // Redirect to login if no token is present
   useEffect(() => {
     if (!token) {
       router.push("/login");
@@ -75,93 +71,81 @@ function ResetPasswordFormContent({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={cn("mx-auto flex max-w-sm flex-col gap-6", className)}
+      className={cn("flex flex-col gap-4", className)}
       {...props}
     >
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="font-playfair text-2xl md:text-3xl">
-          Reset
-          <span className="text-lime-00 px-2 font-itcThinItalic text-4xl">
-            Password
-          </span>
-        </h1>
-      </div>
-
-      <div className="grid gap-3">
-        {/* New Password */}
-        <div className="grid gap-2">
-          <Label htmlFor="password">New Password</Label>
+      <div className="space-y-4">
+        <div>
           <div className="relative">
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="*********"
-              className="rounded-lg text-sm placeholder:text-black/50"
+              placeholder="new password"
+              className="h-12 rounded-lg border-white/10 bg-white/5 pr-10 text-sm text-white transition-colors placeholder:text-white/40 focus-visible:border-white/20 focus-visible:ring-0"
               {...register("password")}
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 transform text-sm text-muted-foreground"
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute inset-y-0 right-3 flex items-center text-white/40 transition-colors hover:text-white"
+              onClick={() => setShowPassword((prev) => !prev)}
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
-          <p className="text-xs text-red-400">
-            {errors.password && <span>{errors.password.message}</span>}
-          </p>
+          {errors.password && (
+            <p className="mt-2 text-sm text-red-400">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
-        {/* Confirm New Password */}
-        <div className="grid gap-2">
-          <Label htmlFor="confirmPassword">Confirm New Password</Label>
+        <div>
           <div className="relative">
             <Input
               id="confirmPassword"
               type={showPassword ? "text" : "password"}
-              placeholder="*********"
-              className="rounded-lg text-sm placeholder:text-black/50"
+              placeholder="confirm new password"
+              className="h-12 rounded-lg border-white/10 bg-white/5 pr-10 text-sm text-white transition-colors placeholder:text-white/40 focus-visible:border-white/20 focus-visible:ring-0"
               {...register("confirmPassword")}
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 transform text-sm text-muted-foreground"
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute inset-y-0 right-3 flex items-center text-white/40 transition-colors hover:text-white"
+              onClick={() => setShowPassword((prev) => !prev)}
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
-          <p className="text-xs text-red-400">
-            {errors.confirmPassword && (
-              <span>{errors.confirmPassword.message}</span>
-            )}
-          </p>
+          {errors.confirmPassword && (
+            <p className="mt-2 text-sm text-red-400">
+              {errors.confirmPassword.message}
+            </p>
+          )}
         </div>
 
-        <Button type="submit" className="w-full">
-          Update Password
+        <Button
+          type="submit"
+          className="relative h-12 w-full overflow-hidden rounded-lg bg-white font-medium text-black transition-all hover:bg-white/90 disabled:opacity-70"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              updating password...
+            </span>
+          ) : (
+            "update password →"
+          )}
         </Button>
       </div>
-
-      <div className="text-center text-sm">
-        Have an account?{" "}
-        <Link href="/login" className="underline underline-offset-4">
-          Login
-        </Link>
-      </div>
     </form>
-  );
-}
-
-export function ResetPasswordFrom({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"form">) {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ResetPasswordFormContent {...props} className={className} />
-    </Suspense>
   );
 }
