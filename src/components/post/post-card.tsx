@@ -347,21 +347,21 @@ const PostCard = ({
   };
 
   return (
-    <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-4 px-3 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/10 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/20 after:to-transparent [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/20 [&>div]:before:to-transparent">
+    <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-2 px-2 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/10 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/20 after:to-transparent sm:p-4 sm:px-3 [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/20 [&>div]:before:to-transparent">
       {/* Orange diagonal glow from bottom-left to top-right */}
 
       {/* Blue diagonal glow from bottom-right to top-left */}
-      <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+      <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
-      <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+      <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
-      <div className="relative pl-5 backdrop-blur-sm">
-        <div className="mr-2 flex w-full items-center justify-between pb-2">
-          <div className="flex flex-1 items-center gap-3">
+      <div className="relative md:pl-3 backdrop-blur-sm sm:pl-5">
+        <div className="mr-2 flex w-full flex-col items-start justify-between gap-2 pb-2 sm:flex-row sm:items-center sm:gap-0">
+          <div className="flex flex-1 items-center gap-2 sm:gap-3">
             <Image
               src={post.user.image || "/user.jpg"}
               alt="user"
-              className="size-10 cursor-pointer rounded-full shadow-[0_0_3px_rgba(0,122,255,0.5),0_0_5px_rgba(255,165,0,0.5),0_0_7px_rgba(0,122,255,0.4)] transition-all"
+              className="size-8 cursor-pointer rounded-full shadow-[0_0_3px_rgba(0,122,255,0.5),0_0_5px_rgba(255,165,0,0.5),0_0_7px_rgba(0,122,255,0.4)] transition-all sm:size-10"
               height={200}
               width={200}
               onClick={() => handleUserProfileClick(post.user.id)}
@@ -371,20 +371,22 @@ const PostCard = ({
               onClick={() => handleUserProfileClick(post.user.id)}
               className="cursor-pointer"
             >
-              <h1 className="text-sm font-medium">{post.user.name}</h1>
-              <h1 className="text-xs text-muted-foreground text-purple-500">
+              <h1 className="text-xs font-medium sm:text-sm">
+                {post.user.name}
+              </h1>
+              <h1 className="text-[10px] text-muted-foreground text-purple-500 sm:text-xs">
                 Nerd@
                 <span className="text-white">{post.user.nerdAt}</span>
               </h1>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex w-full items-center gap-2 sm:w-auto">
             {session?.data?.user?.id !== post.user.id && (
               <Button
                 variant={"outline"}
                 size="sm"
-                className={`mx-0 h-11 rounded-xl bg-transparent px-2 text-xs shadow-none hover:bg-transparent md:text-sm`}
+                className={`h-9 w-full rounded-xl bg-transparent px-2 text-xs shadow-none hover:bg-transparent sm:h-11 sm:w-auto md:text-sm`}
                 onClick={() => {
                   handleFollow(post);
                 }}
@@ -397,8 +399,12 @@ const PostCard = ({
             )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreHorizontal className="h-4 w-4" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 sm:h-8 sm:w-8"
+                >
+                  <MoreHorizontal className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </DropdownMenuTrigger>
               {session?.data?.user?.id === post.user.id ? (
@@ -473,7 +479,7 @@ const PostCard = ({
             isShortContent && isTooShort ? "flex-col" : "flex-row"
           } items-start justify-center`}
         >
-          <div className="flex w-[100%] flex-1 flex-col justify-start gap-5">
+          <div className="flex w-[100%] flex-1 flex-col justify-start gap-3 sm:gap-5">
             {post?.shared && (
               <Card
                 onClick={() => {
@@ -481,8 +487,8 @@ const PostCard = ({
                 }}
                 className="overflow-hidden border-gray-100 opacity-80 shadow-none transition-all hover:cursor-pointer hover:opacity-100 dark:border-gray-500/5"
               >
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <div className="relative h-48 w-full sm:h-auto sm:w-1/3">
+                <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                  <div className="relative h-32 w-full sm:h-48 sm:w-1/3">
                     <Image
                       fill
                       src={post?.project?.image || "/placeholder.svg"}
@@ -491,22 +497,22 @@ const PostCard = ({
                       sizes="(max-width: 640px) 100vw, 33vw"
                     />
                   </div>
-                  <div className="flex flex-1 flex-col justify-between p-4">
-                    <div className="space-y-2">
-                      <h3 className="font-medium tracking-tight">
+                  <div className="flex flex-1 flex-col justify-between p-2 sm:p-4">
+                    <div className="space-y-1 sm:space-y-2">
+                      <h3 className="text-sm font-medium tracking-tight sm:text-base">
                         {post?.project?.name}
                       </h3>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1 sm:gap-2">
                         <Badge
                           variant="outline"
-                          className="bg-primary/5 text-xs font-normal"
+                          className="bg-primary/5 text-[10px] font-normal sm:text-xs"
                         >
                           {post?.project?.status}
                         </Badge>
                         {post?.project?.category && (
                           <Badge
                             variant="outline"
-                            className="bg-primary/5 text-xs font-normal"
+                            className="bg-primary/5 text-[10px] font-normal sm:text-xs"
                           >
                             {post?.project?.category}
                           </Badge>
@@ -514,17 +520,17 @@ const PostCard = ({
                       </div>
                     </div>
 
-                    <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground sm:mt-4 sm:gap-4 sm:text-sm">
                       <div className="flex items-center gap-1">
-                        <Clock className="h-3.5 w-3.5" />
+                        <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                         <span>{post?.project?._count.updates}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Star className="h-3.5 w-3.5" />
+                        <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                         <span>{post?.project?._count.stars}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <MessageSquare className="h-3.5 w-3.5" />
+                        <MessageSquare className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                         <span>{post?.project?._count.reviews}</span>
                       </div>
                     </div>
@@ -534,13 +540,13 @@ const PostCard = ({
             )}
             {post.media && post.media.length > 0 && (
               <div
-                className={`${!post.shared && "mt-4"} grid w-[100%] flex-1 gap-2 ${getGridClass(
+                className={`${!post.shared && "mt-2 sm:mt-4"} grid w-[100%] flex-1 gap-1 sm:gap-2 ${getGridClass(
                   post.media.length,
                 )}`}
               >
                 {post.media.length === 1 && (
                   <div
-                    className="relative h-[30vh] md:h-[36vh]"
+                    className="relative h-[25vh] sm:h-[30vh] md:h-[36vh]"
                     onClick={() =>
                       handleMediaClick(
                         0,
@@ -560,7 +566,7 @@ const PostCard = ({
                   post.media.map((media, mediaIndex) => (
                     <div
                       key={media.id}
-                      className="relative h-[20vh] md:h-[28vh]"
+                      className="relative h-[15vh] sm:h-[20vh] md:h-[28vh]"
                       onClick={() =>
                         handleMediaClick(
                           mediaIndex,
@@ -577,7 +583,7 @@ const PostCard = ({
                     </div>
                   ))}
                 {post.media.length >= 3 && (
-                  <div className="grid h-[36vh] w-[82vw] grid-cols-[auto_120px] gap-2 md:w-[36vw]">
+                  <div className="grid h-[30vh] w-full max-w-[82vw] grid-cols-[auto_100px] gap-1 sm:h-[36vh] sm:grid-cols-[auto_120px] sm:gap-2 md:w-[36vw]">
                     <div
                       className="relative h-full w-full"
                       onClick={() =>
@@ -595,7 +601,7 @@ const PostCard = ({
                       />
                     </div>
 
-                    <div className="flex w-full flex-col gap-2">
+                    <div className="flex w-full flex-col gap-1 sm:gap-2">
                       {post.media.slice(1, 4).map((media, mediaIndex) => (
                         <div
                           key={media.id}
@@ -614,7 +620,7 @@ const PostCard = ({
                             className="h-full w-full rounded-xl object-cover"
                           />
                           {mediaIndex === 2 && post.media.length > 4 && (
-                            <div className="absolute bottom-2 right-2 rounded-full bg-black/50 px-2 py-1 text-white">
+                            <div className="absolute bottom-1 right-1 rounded-full bg-black/50 px-1 py-0.5 text-[10px] text-white sm:bottom-2 sm:right-2 sm:px-2 sm:py-1 sm:text-xs">
                               +{post.media.length - 4}
                             </div>
                           )}
@@ -627,14 +633,14 @@ const PostCard = ({
             )}
 
             <div className="flex-1 break-words">
-              <h4 className="break-all text-sm md:text-base">
+              <h4 className="break-all text-xs sm:text-sm md:text-base">
                 {expandedStates[index] || !isLongContent
                   ? post.content
                   : `${truncatedContent}...`}
               </h4>
               {isLongContent && (
                 <button
-                  className="mt-2 text-sm text-primary hover:underline"
+                  className="mt-1 text-xs text-primary hover:underline sm:mt-2 sm:text-sm"
                   onClick={() => toggleExpand(index)}
                 >
                   {expandedStates[index] ? "See less" : "See more"}
@@ -645,12 +651,14 @@ const PostCard = ({
 
           <div
             className={`flex ${
-              isShortContent && isTooShort ? "mt-5 flex-row" : "mt-5 flex-col"
-            } gap-5 md:w-16`}
+              isShortContent && isTooShort
+                ? "mt-3 flex-row sm:mt-5"
+                : "mt-3 flex-col sm:mt-5"
+            } gap-3 sm:gap-5 md:w-16`}
           >
             <motion.div
               className={`rounded-full ${
-                isShortContent && isTooShort ? "pr-2" : "px-2"
+                isShortContent && isTooShort ? "pr-1 sm:pr-2" : "px-1 sm:px-2"
               } cursor-pointer md:mx-auto`}
               onClick={() => likeMutation.mutate(post.id)}
               variants={likeVariants}
@@ -672,16 +680,16 @@ const PostCard = ({
             >
               {optimisticLikes[post.id] !== undefined ? (
                 optimisticLikes[post.id] ? (
-                  <GoHeartFill className="size-5 text-red-500" />
+                  <GoHeartFill className="size-4 text-red-500 sm:size-5" />
                 ) : (
-                  <GoHeart className="size-5" />
+                  <GoHeart className="size-4 sm:size-5" />
                 )
               ) : post.likes?.some(
                   (like) => like.userId === session.data?.user.id,
                 ) ? (
-                <GoHeartFill className="size-5 text-red-500" />
+                <GoHeartFill className="size-4 text-red-500 sm:size-5" />
               ) : (
-                <GoHeart className="size-5" />
+                <GoHeart className="size-4 sm:size-5" />
               )}
             </motion.div>
 
@@ -694,19 +702,19 @@ const PostCard = ({
                 });
               }}
               className={`mx-auto cursor-pointer rounded-full ${
-                isShortContent && isTooShort ? "pr-2" : "px-2"
+                isShortContent && isTooShort ? "pr-1 sm:pr-2" : "px-1 sm:px-2"
               }`}
               variants={iconVariants}
               whileHover="hover"
               whileTap="tap"
               transition={{ duration: 0.2 }}
             >
-              <MessageCircle className="size-5" />
+              <MessageCircle className="size-4 sm:size-5" />
             </motion.div>
 
             <motion.div
               className={`mx-auto rounded-full ${
-                isShortContent && isTooShort ? "pr-2" : "px-2"
+                isShortContent && isTooShort ? "pr-1 sm:pr-2" : "px-1 sm:px-2"
               } cursor-pointer`}
               onClick={() => bookmarkMutation.mutate(post.id)}
               variants={bookmarkVariants}
@@ -728,16 +736,16 @@ const PostCard = ({
             >
               {optimisticBookmarks[post.id] !== undefined ? (
                 optimisticBookmarks[post.id] ? (
-                  <HiBookmark className="size-5 text-primary" />
+                  <HiBookmark className="size-4 text-primary sm:size-5" />
                 ) : (
-                  <HiOutlineBookmark className="size-5" />
+                  <HiOutlineBookmark className="size-4 sm:size-5" />
                 )
               ) : post.bookmarks.some(
                   (bookmark) => bookmark.userId === session.data?.user.id,
                 ) ? (
-                <HiBookmark className="size-5 text-primary" />
+                <HiBookmark className="size-4 text-primary sm:size-5" />
               ) : (
-                <HiOutlineBookmark className="size-5" />
+                <HiOutlineBookmark className="size-4 sm:size-5" />
               )}
             </motion.div>
           </div>
@@ -745,23 +753,23 @@ const PostCard = ({
 
         {commentShown[post.id] && (
           <div>
-            <hr className="mb-2 mt-5" />
+            <hr className="mb-2 mt-3 sm:mt-5" />
             <div className="itemc flex gap-2">
               <input
                 placeholder="Comment here"
-                className="w-full border-0 border-b border-b-textAlternative/20 bg-transparent text-sm placeholder:font-instrument placeholder:text-lg focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0 dark:border-white/50"
+                className="w-full border-0 border-b border-b-textAlternative/20 bg-transparent text-xs placeholder:font-instrument placeholder:text-base focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0 dark:border-white/50 sm:text-sm sm:placeholder:text-lg"
                 value={commentContent}
                 onChange={(e) => setCommentContent(e.target.value)}
               />
               <Button
                 onClick={handleCommentSubmit}
-                className="border bg-transparent shadow-none hover:bg-transparent focus:outline-none focus:ring-0"
+                className="h-8 border bg-transparent shadow-none hover:bg-transparent focus:outline-none focus:ring-0 sm:h-9"
               >
-                <SendIcon className="text-card-foreground dark:text-white" />
+                <SendIcon className="size-4 text-card-foreground dark:text-white sm:size-5" />
               </Button>
             </div>
             {commentLoading && <CommentSkeleton />}
-            <div className="mt-4">
+            <div className="mt-3 sm:mt-4">
               {renderComments({
                 comments: comments,
                 parentId: null,
@@ -790,7 +798,7 @@ const PostCard = ({
                 <Button
                   onClick={() => fetchNextCommentPage()}
                   disabled={isFetchingNextCommentPage}
-                  className="mt-4 w-full"
+                  className="mt-3 h-8 w-full text-xs sm:mt-4 sm:h-9 sm:text-sm"
                 >
                   {isFetchingNextCommentPage ? "Loading..." : "Load More"}
                 </Button>

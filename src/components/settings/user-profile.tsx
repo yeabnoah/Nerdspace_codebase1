@@ -59,7 +59,7 @@ export default function UserProfile() {
   if (loading) {
     return (
       <div className="container relative mx-10 pb-8 font-geist">
-        <div className="absolute -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
+        <div className="absolute hidden md:block -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
 
         <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl md:h-[200px]">
           <Skeleton className="h-full w-full" />
@@ -99,7 +99,7 @@ export default function UserProfile() {
 
   return (
     <div className="container relative mx-10 pb-8 font-geist">
-      <div className="absolute -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
+      <div className="absolute hidden md:block -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
 
       <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl md:h-[200px]">
         <Image

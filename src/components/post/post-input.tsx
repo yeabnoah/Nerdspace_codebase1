@@ -90,7 +90,7 @@ const PostInput = () => {
   }
 
   return (
-    <div className="mb-6 w-full rounded-2xl border border-gray-100 bg-white shadow-sm transition-all dark:border-gray-700/10 dark:bg-black">
+    <div className="mx-auto mb-6 w-[93vw] rounded-2xl border border-gray-100 bg-white shadow-sm transition-all dark:border-gray-700/10 dark:bg-black md:w-full">
       <div className="flex items-center gap-4 border-b border-gray-100 p-4 dark:border-gray-800/30">
         <div className="relative">
           {mounted && (
@@ -140,7 +140,7 @@ const PostInput = () => {
               className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
             >
               <FolderIcon />
-              Document
+              <span className="hidden md:block">Document</span>
             </Button>
             <Button
               disabled
@@ -149,7 +149,7 @@ const PostInput = () => {
               className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
             >
               <MessagesSquareIcon />
-              Poll
+              <span className="hidden md:block">Poll</span>
             </Button>
           </div>
           <Button
@@ -158,7 +158,7 @@ const PostInput = () => {
             size="sm"
             className="rounded-lg bg-gray-100 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-black dark:text-gray-300 dark:hover:bg-gray-700"
           >
-            Post
+            <span className="hidden md:block">Post</span>
           </Button>
         </div>
 
@@ -218,7 +218,7 @@ const PostInput = () => {
                       className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
                     >
                       <FolderIcon />
-                      Document
+                      <span className="hidden md:block">Document</span>
                     </Button>
                     <Button
                       disabled
@@ -227,7 +227,7 @@ const PostInput = () => {
                       className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
                     >
                       <MessagesSquareIcon />
-                      Poll
+                      <span className="hidden md:block">Poll</span>
                     </Button>
                   </div>
                 </div>

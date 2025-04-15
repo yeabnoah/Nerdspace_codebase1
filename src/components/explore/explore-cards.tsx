@@ -48,8 +48,8 @@ export const UserCard = ({ user }: { user: UserInterface }) => (
       transition={{ duration: 0.2 }}
     >
       <Card className="group relative overflow-hidden rounded-xl border-border/50 bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-lg dark:border-border/5">
-        <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-        <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+        <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+        <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
         
         <CardHeader className="flex flex-row items-center gap-3 p-4 sm:p-6">
           <Avatar className="h-12 w-12 sm:h-16 sm:w-16">
@@ -94,8 +94,8 @@ export const PostCard = ({ post }: { post: postInterface }) => (
       transition={{ duration: 0.2 }}
     >
       <Card className="group relative overflow-hidden rounded-xl border-border/50 bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-lg dark:border-border/5">
-        <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-        <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+        <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+        <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
         
         <CardHeader className="flex flex-row items-center gap-3 p-4 sm:p-6">
           <Avatar className="h-10 w-10">
@@ -152,8 +152,8 @@ export const ProjectCard = ({ project }: { project: ProjectInterface }) => (
       transition={{ duration: 0.2 }}
     >
       <Card className="group relative overflow-hidden rounded-xl border-border/50 bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-lg dark:border-border/5">
-        <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-        <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+        <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+        <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
         
         <CardHeader className="space-y-2 p-4 sm:p-6">
           <CardTitle className="text-lg font-semibold sm:text-xl">
@@ -199,8 +199,8 @@ export const ProjectCard = ({ project }: { project: ProjectInterface }) => (
 //       transition={{ duration: 0.2 }}
 //     >
 //       <Card className="group relative overflow-hidden rounded-xl border-border/50 bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-lg dark:border-border/5">
-//         <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-//         <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+//         <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+//         <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
         
 //         <CardHeader className="flex flex-row items-center gap-3 p-4 sm:p-6">
 //           <Avatar className="h-12 w-12 sm:h-16 sm:w-16">

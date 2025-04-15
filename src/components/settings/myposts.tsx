@@ -163,10 +163,10 @@ const RenderMyPost = () => {
               onClick={() => router.push(`/post/${each.id}`)}
             >
               {/* Orange diagonal glow from bottom-left to top-right */}
-              <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+              <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
               {/* Blue diagonal glow from bottom-right to top-left */}
-              <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+              <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
               <div className="relative pl-5 backdrop-blur-sm">
                 <div className="mr-2 flex w-full items-center justify-between pb-2">

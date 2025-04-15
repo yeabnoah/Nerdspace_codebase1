@@ -145,7 +145,7 @@ const ProfileSettings = () => {
 
   return (
     <div className="container relative mx-auto max-w-4xl overflow-hidden pb-8">
-      <div className="absolute -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
+      <div className="absolute hidden md:block -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
 
       <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-black">
         <CardHeader className="px-6">
