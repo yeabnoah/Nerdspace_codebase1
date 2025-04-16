@@ -592,58 +592,50 @@ const PostCard = ({
             isShortContent && isTooShort ? "flex-col" : "flex-row"
           } items-start justify-center`}
         >
-          <div className="flex w-[100%] flex-1 flex-col justify-start gap-3 sm:gap-5">
+          <div className="flex w-[100%] flex-1 flex-col justify-start gap-3">
             {post?.shared && (
               <Card
-                onClick={() => {
-                  router.push(`project/${post.project?.id}`);
-                }}
-                className="overflow-hidden border-gray-100 opacity-80 shadow-none transition-all hover:cursor-pointer hover:opacity-100 dark:border-gray-500/5"
+                onClick={() => router.push(`project/${post.project?.id}`)}
+                className="overflow-hidden border-gray-100 opacity-80 shadow-none h-24 transition-all hover:cursor-pointer hover:opacity-100 dark:border-gray-500/5"
               >
-                <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
-                  <div className="relative h-32 w-full sm:h-48 sm:w-1/3">
+                <div className="flex h-full gap-3">
+                  <div className="relative h-full w-24">
                     <Image
                       fill
                       src={post?.project?.image || "/placeholder.svg"}
                       alt={post?.project?.name as string}
                       className="object-cover"
-                      sizes="(max-width: 640px) 100vw, 33vw"
+                      sizes="96px"
                     />
                   </div>
-                  <div className="flex flex-1 flex-col justify-between p-2 sm:p-4">
-                    <div className="space-y-1 sm:space-y-2">
-                      <h3 className="text-sm font-medium tracking-tight sm:text-base">
+                  <div className="flex flex-1 flex-col justify-between p-2">
+                    <div>
+                      <h3 className="line-clamp-1 text-sm font-medium tracking-tight">
                         {post?.project?.name}
                       </h3>
-                      <div className="flex flex-wrap gap-1 sm:gap-2">
-                        <Badge
-                          variant="outline"
-                          className="bg-primary/5 text-[10px] font-normal sm:text-xs"
-                        >
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        <Badge variant="outline" className="bg-primary/5 text-[10px] font-normal">
                           {post?.project?.status}
                         </Badge>
                         {post?.project?.category && (
-                          <Badge
-                            variant="outline"
-                            className="bg-primary/5 text-[10px] font-normal sm:text-xs"
-                          >
+                          <Badge variant="outline" className="bg-primary/5 text-[10px] font-normal">
                             {post?.project?.category}
                           </Badge>
                         )}
                       </div>
                     </div>
 
-                    <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground sm:mt-4 sm:gap-4 sm:text-sm">
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                        <Clock className="h-3 w-3" />
                         <span>{post?.project?._count.updates}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                        <Star className="h-3 w-3" />
                         <span>{post?.project?._count.stars}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <MessageSquare className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                        <MessageSquare className="h-3 w-3" />
                         <span>{post?.project?._count.reviews}</span>
                       </div>
                     </div>
