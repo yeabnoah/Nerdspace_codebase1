@@ -4,62 +4,51 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useUserProfileStore from "@/store/userProfile.store";
-import { Dot, Grid3X3, Hammer } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { Dot, Grid3X3, Hammer, LinkIcon, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ProjectsTab from "./tabs/ProjectsTab";
 import RenderUserPosts from "./user-posts";
 
-interface FollowCounts {
-  followers: number;
-  following: number;
-}
+// interface FollowCounts {
+//   followers: number;
+//   following: number;
+// }
 
 export default function UserProfile() {
   const [activeTab, setActiveTab] = useState("posts");
   const { userProfile } = useUserProfileStore();
-  const [followCounts, setFollowCounts] = useState<FollowCounts>({
-    followers: 0,
-    following: 0,
-  });
-
-  console.log(activeTab);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchFollowCounts = async () => {
-      if (!userProfile?.id) return;
+  const { data: userData, isLoading: isLoadingUser } = useQuery({
+    queryKey: ["user-data", userProfile?.id],
+    queryFn: async () => {
+      if (!userProfile?.id) return null;
 
       try {
-        const [followersRes, followingRes] = await Promise.all([
-          fetch(`/api/users/${userProfile.id}/followers?limit=1`),
-          fetch(`/api/users/${userProfile.id}/following?limit=1`),
-        ]);
-
-        const [followersData, followingData] = await Promise.all([
-          followersRes.json(),
-          followingRes.json(),
-        ]);
-
-        setFollowCounts({
-          followers: followersData.pagination.total,
-          following: followingData.pagination.total,
-        });
+        const response = await axios.get(`/api/users/${userProfile.id}`);
+        return response.data.data;
       } catch (error) {
-        console.error("Error fetching follow counts:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching user data:", error);
+        return null;
       }
-    };
+    },
+    enabled: !!userProfile?.id,
+  });
 
-    fetchFollowCounts();
-  }, [userProfile?.id]);
+  useEffect(() => {
+    if (userProfile) {
+      setLoading(false);
+    }
+  }, [userProfile]);
 
-  if (loading) {
+  if (loading || isLoadingUser) {
     return (
       <div className="container relative mx-10 pb-8 font-geist">
-        <div className="absolute hidden md:block -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
+        <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
 
         <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl md:h-[200px]">
           <Skeleton className="h-full w-full" />
@@ -97,9 +86,19 @@ export default function UserProfile() {
     );
   }
 
+  if (!userProfile) {
+    return (
+      <div className="container relative mx-10 pb-8 font-geist">
+        <div className="flex h-[50vh] items-center justify-center">
+          <p className="text-muted-foreground">No user profile found</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container relative mx-10 pb-8 font-geist">
-      <div className="absolute hidden md:block -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
+      <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
 
       <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-xl shadow-lg md:h-[250px]">
         <Image
@@ -115,8 +114,8 @@ export default function UserProfile() {
         </div>
       </div>
 
-      <div className="relative z-10 mx-2 my-5 -mt-10 flex flex-col items-start gap-1">
-        <div className="relative mx-5 -mt-16 h-24 w-24 overflow-hidden rounded-full ring-2 ring-white/20">
+      <div className="relative z-10 mx-2 my-5 -mt-8 ml-5 flex flex-col items-start gap-1">
+        <div className="relative -mt-16 h-20 w-20 shrink-0 overflow-hidden rounded-full ring-2 ring-white/20">
           <Image
             src={userProfile?.image || "/user.jpg?height=128&width=128"}
             alt={userProfile?.visualName || userProfile?.name || ""}
@@ -124,38 +123,79 @@ export default function UserProfile() {
             className="object-cover"
           />
         </div>
-        <h1 className="mt-2 flex flex-row items-center font-geist text-2xl font-medium text-foreground">
-          <span className="font-geist text-sm font-medium text-foreground">
-            {userProfile?.visualName || userProfile?.name}
-          </span>
-          <Dot className="mx-1 h-2 w-2" />
-          <span className="font-geist text-sm font-medium text-foreground">
-            Nerd@{userProfile?.nerdAt}
-          </span>
-        </h1>
 
-        <h1 className="font-geist text-sm font-normal text-foreground">
-          {userProfile?.bio || "No bio"}
-        </h1>
-        <div className="flex gap-4">
-          <Link
-            href={`/profile/user/${userProfile?.id}/followers`}
-            className="font-geist text-sm font-normal text-foreground hover:text-primary"
-          >
-            {followCounts.followers} Followers
-          </Link>
-          <Link
-            href={`/profile/user/${userProfile?.id}/following`}
-            className="font-geist text-sm font-normal text-foreground hover:text-primary"
-          >
-            {followCounts.following} Following
-          </Link>
+        <div className="flex w-full flex-col">
+          <div className="flex items-start justify-between">
+            <div className="flex flex-col">
+              <h1 className="font-geist text-xl font-medium text-foreground">
+                {userProfile?.visualName || userProfile?.name}
+              </h1>
+              <div className="flex items-center gap-2">
+                <p className="font-geist text-sm text-muted-foreground">
+                  Nerd@{userProfile?.nerdAt}
+                </p>
+                {userProfile?.country && (
+                  <>
+                    <Dot className="h-4 w-4 text-muted-foreground" />
+                    <p className="font-geist text-sm text-muted-foreground">
+                      {userProfile.country.emoji} {userProfile.country.name}
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col items-start gap-2">
+              {userProfile?.link && (
+                <div className="flex items-center gap-2">
+                  <LinkIcon className="h-4 w-4 text-muted-foreground" />
+                  <a
+                    href={userProfile.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-geist text-sm text-purple-500 hover:underline"
+                  >
+                    {userProfile.link}
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-1 flex flex-col gap-2">
+            <div className="flex items-center">
+              <p className="font-geist text-sm text-muted-foreground">
+                {userProfile?.bio || "No bio"}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <Link
+                href={`/user-profile/${userProfile?.id}/followers`}
+                className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-5 py-2.5 shadow-sm hover:bg-gray-50 dark:border-gray-500/10 dark:bg-black dark:hover:bg-gray-900"
+              >
+                <Users className="h-4 w-4" />
+                <span className="font-geist text-sm font-medium">
+                  {userData?._count?.followers || 0} Followers
+                </span>
+              </Link>
+              <Link
+                href={`/user-profile/${userProfile?.id}/following`}
+                className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-5 py-2.5 shadow-sm hover:bg-gray-50 dark:border-gray-500/10 dark:bg-black dark:hover:bg-gray-900"
+              >
+                <Users className="h-4 w-4" />
+                <span className="font-geist text-sm font-medium">
+                  {userData?._count?.following || 0} Following
+                </span>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="mt-8">
         <div className="space-y-8 lg:col-span-2">
-          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-black">
+          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-black">
             <CardContent className="p-8">
               <Tabs
                 defaultValue="posts"

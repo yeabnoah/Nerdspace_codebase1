@@ -43,7 +43,6 @@ export default function Page({
   if (!userId) {
     return (
       <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start justify-center">
-        <LeftNavbar />
         <div className="mx-auto min-h-screen w-[70%] px-4 sm:px-6 lg:px-8">
           <div className="relative h-40 overflow-hidden rounded-xl border">
             <Skeleton className="h-full w-full" />
@@ -65,7 +64,6 @@ export default function Page({
             </div>
           </div>
         </div>
-        <MobileNavBar />
       </div>
     );
   }
@@ -73,7 +71,6 @@ export default function Page({
   if (isLoading) {
     return (
       <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start justify-center">
-        <LeftNavbar />
         <div className="mx-auto min-h-screen w-[70%] px-4 sm:px-6 lg:px-8">
           <div className="relative h-40 overflow-hidden rounded-xl border">
             <Skeleton className="h-full w-full" />
@@ -95,16 +92,15 @@ export default function Page({
             </div>
           </div>
         </div>
-        <MobileNavBar />
       </div>
     );
   }
 
   return (
     <div className="mx-auto flex flex-1 flex-row items-start justify-center md:max-w-6xl">
-      <LeftNavbar />
+      {/* <LeftNavbar /> */}
       <UserProfile />
-      <MobileNavBar />
+      {/* <MobileNavBar /> */}
     </div>
   );
 }
