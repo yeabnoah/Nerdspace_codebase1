@@ -6,12 +6,55 @@ import { ResetPasswordFrom } from "@/components/reset-password";
 import { SignUpForm } from "@/components/signup-form";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 type FormType = "landing" | "login" | "signup" | "reset" | "forget";
 
 export default function LoginPage() {
   const [currentForm, setCurrentForm] = useState<FormType>("landing");
+
+  const imageList = useMemo(
+    () => [
+      "/03.png",
+      "/01.png",
+      "/Enistine.png",
+      "/Elon.png",
+      "/05.png",
+      "/04.png",
+    ],
+    []
+  );
+
+  function shuffleArray(array: string[]) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  const [shuffledImages, setShuffledImages] = useState<string[]>(imageList);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    setShuffledImages(shuffleArray(imageList));
+    setCurrentImageIndex(0);
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => {
+        if (prevIndex + 1 >= shuffledImages.length) {
+          setShuffledImages(shuffleArray(imageList));
+          return 0;
+        }
+        return prevIndex + 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [shuffledImages, currentImageIndex, imageList]);
 
   const formTitles = {
     landing: {
@@ -143,12 +186,6 @@ export default function LoginPage() {
                     <div className="flex gap-4">
                       {currentForm === "login" && (
                         <>
-                          {/* <button 
-                            onClick={() => setCurrentForm("signup")}
-                            className="text-[#8F8F8F] hover:text-white transition-colors text-sm"
-                          >
-                            Create account
-                          </button> */}
                           <button 
                             onClick={() => setCurrentForm("forget")}
                             className="text-[#8F8F8F] hover:text-white transition-colors text-sm"
@@ -184,7 +221,7 @@ export default function LoginPage() {
         <div className="relative col-span-4 hidden lg:block">
           <div className="absolute inset-0">
             <Image
-              src="/bg9.jpg"
+              src={shuffledImages[currentImageIndex]}
               alt="Background"
               fill
               className="object-cover brightness-[0.8]"
@@ -201,6 +238,18 @@ export default function LoginPage() {
               mixBlendMode: 'overlay'
             }}
           />
+          {/* Built by text at bottom right */}
+          <div className="absolute font-bold bottom-4 right-4 z-30 text-gray-400 text-sm">
+            Built by{' '}
+            <a
+              href="https://x.com/technerd556"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-white transition-colors"
+            >
+              TechNerd
+            </a>
+          </div>
         </div>
       </div>
       {/* Add subtle grain effect to entire page */}
