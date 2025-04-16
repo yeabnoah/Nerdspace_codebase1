@@ -116,7 +116,7 @@ export default function ThermsConditions() {
               </p>
             </div>
             
-            <div className="flex w-full flex-col gap-4 sm:flex-row sm:w-auto">
+            {/* <div className="flex w-full flex-col gap-4 sm:flex-row sm:w-auto">
               <Button 
                 variant="outline" 
                 className="sm:w-32"
@@ -138,7 +138,7 @@ export default function ThermsConditions() {
                   "I Accept"
                 )}
               </Button>
-            </div>
+            </div> */}
           </div>
         </CardContent>
       </Card>
