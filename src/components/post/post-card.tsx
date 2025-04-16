@@ -139,6 +139,16 @@ const PostCard = ({
   }>({});
   const [isAccessDialogOpen, setIsAccessDialogOpen] = useState(false);
 
+  const formatCount = (count: number) => {
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}m`;
+    }
+    if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}k`;
+    }
+    return count.toString();
+  };
+
   const contentWords = post.content.split(" ");
   const trimLimit = getTrimLimit();
   const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
@@ -159,12 +169,47 @@ const PostCard = ({
 
       const previousPosts = queryClient.getQueryData(["posts"]);
 
+      // Optimistically update the UI
       setOptimisticLikes((prev) => ({
         ...prev,
         [postId]: !post.likes?.some(
           (like) => like.userId === session.data?.user.id,
         ),
       }));
+
+      // Optimistically update the count
+      queryClient.setQueryData(["posts"], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            data: page.data.map((p: any) => {
+              if (p.id === postId) {
+                const isLiked = p.likes?.some(
+                  (like: any) => like.userId === session.data?.user.id,
+                );
+                return {
+                  ...p,
+                  likes: isLiked
+                    ? p.likes.filter(
+                        (like: any) => like.userId !== session.data?.user.id,
+                      )
+                    : [
+                        ...p.likes,
+                        { userId: session.data?.user.id, postId: p.id },
+                      ],
+                  _count: {
+                    ...p._count,
+                    likes: isLiked ? p._count.likes - 1 : p._count.likes + 1,
+                  },
+                };
+              }
+              return p;
+            }),
+          })),
+        };
+      });
 
       return { previousPosts };
     },
@@ -191,10 +236,8 @@ const PostCard = ({
       return response.data.data;
     },
     onMutate: async (postId) => {
-      // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: ["posts"] });
 
-      // Snapshot the previous value
       const previousPosts = queryClient.getQueryData(["posts"]);
 
       // Optimistically update the UI
@@ -204,6 +247,43 @@ const PostCard = ({
           (bookmark) => bookmark.userId === session.data?.user.id,
         ),
       }));
+
+      // Optimistically update the count
+      queryClient.setQueryData(["posts"], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            data: page.data.map((p: any) => {
+              if (p.id === postId) {
+                const isBookmarked = p.bookmarks.some(
+                  (bookmark: any) => bookmark.userId === session.data?.user.id,
+                );
+                return {
+                  ...p,
+                  bookmarks: isBookmarked
+                    ? p.bookmarks.filter(
+                        (bookmark: any) =>
+                          bookmark.userId !== session.data?.user.id,
+                      )
+                    : [
+                        ...p.bookmarks,
+                        { userId: session.data?.user.id, postId: p.id },
+                      ],
+                  _count: {
+                    ...p._count,
+                    bookmarks: isBookmarked
+                      ? p._count.bookmarks - 1
+                      : p._count.bookmarks + 1,
+                  },
+                };
+              }
+              return p;
+            }),
+          })),
+        };
+      });
 
       return { previousPosts };
     },
@@ -235,20 +315,53 @@ const PostCard = ({
       });
       return response.data;
     },
+    onMutate: async ({ postId, content }) => {
+      await queryClient.cancelQueries({ queryKey: ["posts"] });
+
+      const previousPosts = queryClient.getQueryData(["posts"]);
+
+      // Optimistically update the comment count
+      queryClient.setQueryData(["posts"], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            data: page.data.map((p: any) => {
+              if (p.id === postId) {
+                return {
+                  ...p,
+                  _count: {
+                    ...p._count,
+                    replies: (p._count?.replies || 0) + 1,
+                  },
+                };
+              }
+              return p;
+            }),
+          })),
+        };
+      });
+
+      return { previousPosts };
+    },
+    onError: (err, variables, context) => {
+      // Revert the optimistic update on error
+      queryClient.setQueryData(["posts"], context?.previousPosts);
+      toast.error("Error occurred while adding comment");
+    },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
       queryClient.invalidateQueries({ queryKey: ["comment"] });
       setCommentContent("");
-    },
-    onError: () => {
-      toast.error("Error occurred while adding comment");
     },
   });
 
   const handleCommentSubmit = () => {
-    if (commentContent) {
+    if (commentContent.trim()) {
       commentMutation.mutate({
         postId: post.id,
-        content: commentContent,
+        content: commentContent.trim(),
       });
     }
   };
@@ -654,11 +767,11 @@ const PostCard = ({
               isShortContent && isTooShort
                 ? "mt-3 flex-row sm:mt-5"
                 : "mt-3 flex-col sm:mt-5"
-            } gap-3 sm:gap-5 md:w-16`}
+            } gap-2 sm:gap-3 md:w-16`}
           >
             <motion.div
               className={`rounded-full ${
-                isShortContent && isTooShort ? "pr-1 sm:pr-2" : "px-1 sm:px-2"
+                isShortContent && isTooShort ? "pr-0.5 sm:pr-1" : "px-0.5 sm:px-1"
               } cursor-pointer md:mx-auto`}
               onClick={() => likeMutation.mutate(post.id)}
               variants={likeVariants}
@@ -678,19 +791,22 @@ const PostCard = ({
               whileTap="tap"
               transition={{ duration: 0.2 }}
             >
-              {optimisticLikes[post.id] !== undefined ? (
-                optimisticLikes[post.id] ? (
+              <div className="flex flex-col items-center gap-0.5">
+                {optimisticLikes[post.id] !== undefined ? (
+                  optimisticLikes[post.id] ? (
+                    <GoHeartFill className="size-4 text-red-500 sm:size-5" />
+                  ) : (
+                    <GoHeart className="size-4 sm:size-5" />
+                  )
+                ) : post.likes?.some(
+                    (like) => like.userId === session.data?.user.id,
+                  ) ? (
                   <GoHeartFill className="size-4 text-red-500 sm:size-5" />
                 ) : (
                   <GoHeart className="size-4 sm:size-5" />
-                )
-              ) : post.likes?.some(
-                  (like) => like.userId === session.data?.user.id,
-                ) ? (
-                <GoHeartFill className="size-4 text-red-500 sm:size-5" />
-              ) : (
-                <GoHeart className="size-4 sm:size-5" />
-              )}
+                )}
+                <span className="text-xs font-medium">{formatCount(post._count?.likes || 0)}</span>
+              </div>
             </motion.div>
 
             <motion.div
@@ -702,19 +818,22 @@ const PostCard = ({
                 });
               }}
               className={`mx-auto cursor-pointer rounded-full ${
-                isShortContent && isTooShort ? "pr-1 sm:pr-2" : "px-1 sm:px-2"
+                isShortContent && isTooShort ? "pr-0.5 sm:pr-1" : "px-0.5 sm:px-1"
               }`}
               variants={iconVariants}
               whileHover="hover"
               whileTap="tap"
               transition={{ duration: 0.2 }}
             >
-              <MessageCircle className="size-4 sm:size-5" />
+              <div className="flex flex-col items-center gap-0.5">
+                <MessageCircle className="size-4 sm:size-5" />
+                <span className="text-xs font-medium">{formatCount(post._count?.replies || 0)}</span>
+              </div>
             </motion.div>
 
             <motion.div
               className={`mx-auto rounded-full ${
-                isShortContent && isTooShort ? "pr-1 sm:pr-2" : "px-1 sm:px-2"
+                isShortContent && isTooShort ? "pr-0.5 sm:pr-1" : "px-0.5 sm:px-1"
               } cursor-pointer`}
               onClick={() => bookmarkMutation.mutate(post.id)}
               variants={bookmarkVariants}
@@ -734,19 +853,22 @@ const PostCard = ({
               whileTap="tap"
               transition={{ duration: 0.2 }}
             >
-              {optimisticBookmarks[post.id] !== undefined ? (
-                optimisticBookmarks[post.id] ? (
+              <div className="flex flex-col items-center gap-0.5">
+                {optimisticBookmarks[post.id] !== undefined ? (
+                  optimisticBookmarks[post.id] ? (
+                    <HiBookmark className="size-4 text-primary sm:size-5" />
+                  ) : (
+                    <HiOutlineBookmark className="size-4 sm:size-5" />
+                  )
+                ) : post.bookmarks.some(
+                    (bookmark) => bookmark.userId === session.data?.user.id,
+                  ) ? (
                   <HiBookmark className="size-4 text-primary sm:size-5" />
                 ) : (
                   <HiOutlineBookmark className="size-4 sm:size-5" />
-                )
-              ) : post.bookmarks.some(
-                  (bookmark) => bookmark.userId === session.data?.user.id,
-                ) ? (
-                <HiBookmark className="size-4 text-primary sm:size-5" />
-              ) : (
-                <HiOutlineBookmark className="size-4 sm:size-5" />
-              )}
+                )}
+                <span className="text-xs font-medium">{formatCount(post._count?.bookmarks || 0)}</span>
+              </div>
             </motion.div>
           </div>
         </div>

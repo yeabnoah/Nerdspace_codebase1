@@ -21,6 +21,13 @@ export const GET = async (request: NextRequest) => {
             _count: true,
           },
         },
+        _count: {
+          select: {
+            likes: true,
+            bookmarks: true,
+            postcomments: true,
+          },
+        },
       },
     });
 

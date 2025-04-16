@@ -78,7 +78,7 @@ const ReportModal = ({
               Please select a reason for reporting this {postId ? "post" : "comment"}
             </p>
 
-            <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-2">
               {reasons.map((r) => (
                 <Button
                   key={r.value}
