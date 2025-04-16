@@ -184,7 +184,7 @@ export function OnboardingForm() {
                 />
               </div>
               <div>
-                <Label>What are you nerd at?</Label>
+                <Label>nerd @</Label>
                 <Input
                   placeholder="e.g., Programming, Music, Gaming"
                   value={nerdAt || ""}
