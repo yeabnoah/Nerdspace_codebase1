@@ -39,6 +39,13 @@ export async function GET(request: NextRequest) {
             _count: true,
           },
         },
+        _count: {
+          select: {
+            likes: true,
+            bookmarks: true,
+            postcomments: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
       take: limit,
