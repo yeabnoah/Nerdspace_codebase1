@@ -1,7 +1,5 @@
 "use client";
 
-import LeftNavbar from "@/components/navbar/left-navbar";
-import MobileNavBar from "@/components/navbar/mobile-nav-bar";
 import UserProfile from "@/components/settings/user-profile";
 import { Skeleton } from "@/components/ui/skeleton";
 import UserInterface from "@/interface/auth/user.interface";
@@ -98,9 +96,7 @@ export default function Page({
 
   return (
     <div className="mx-auto flex flex-1 flex-row items-start justify-center md:max-w-6xl">
-      {/* <LeftNavbar /> */}
       <UserProfile />
-      {/* <MobileNavBar /> */}
     </div>
   );
 }

@@ -113,6 +113,7 @@ export default function UserFollowersPage() {
 
   return (
     <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start">
+      
       <div className="mx-10 my-5 flex min-h-fit flex-1 flex-row items-start px-[.3px]">
         <div className="container mx-auto py-6">
           <h1 className="mb-6 font-instrument text-3xl">Followers</h1>

@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSession } from "@/lib/auth-client";
 import useUserProfileStore from "@/store/userProfile.store";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -10,6 +11,7 @@ import { Dot, Grid3X3, Hammer, LinkIcon, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import FollowButton from "./follow-button";
 import ProjectsTab from "./tabs/ProjectsTab";
 import RenderUserPosts from "./user-posts";
 
@@ -22,6 +24,7 @@ export default function UserProfile() {
   const [activeTab, setActiveTab] = useState("posts");
   const { userProfile } = useUserProfileStore();
   const [loading, setLoading] = useState(true);
+  const session = useSession();
 
   const { data: userData, isLoading: isLoadingUser } = useQuery({
     queryKey: ["user-data", userProfile?.id],
@@ -37,6 +40,18 @@ export default function UserProfile() {
       }
     },
     enabled: !!userProfile?.id,
+  });
+
+  const { data: followStatus } = useQuery({
+    queryKey: ["follow-status", userProfile?.id],
+    queryFn: async () => {
+      if (!userProfile?.id || !session?.data?.user?.id) return null;
+      const response = await axios.get(
+        `/api/users/check-follow?userIds=${userProfile.id}`,
+      );
+      return response.data;
+    },
+    enabled: !!userProfile?.id && !!session?.data?.user?.id,
   });
 
   useEffect(() => {
@@ -126,10 +141,20 @@ export default function UserProfile() {
 
         <div className="flex w-full flex-col">
           <div className="flex items-start justify-between">
-            <div className="flex flex-col">
-              <h1 className="font-geist text-xl font-medium text-foreground">
-                {userProfile?.visualName || userProfile?.name}
-              </h1>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <h1 className="font-geist text-xl font-medium text-foreground">
+                  {userProfile?.visualName || userProfile?.name}
+                </h1>
+                <Dot className="h-4 w-4 text-muted-foreground" />
+                {session?.data?.user?.id !== userProfile?.id && (
+                  <FollowButton
+                    userId={userProfile?.id}
+                    isCurrentUser={session?.data?.user?.id === userProfile?.id}
+                    isFollowing={followStatus?.[userProfile?.id] || false}
+                  />
+                )}
+              </div>
               <div className="flex items-center gap-2">
                 <p className="font-geist text-sm text-muted-foreground">
                   Nerd@{userProfile?.nerdAt}
@@ -145,21 +170,19 @@ export default function UserProfile() {
               </div>
             </div>
 
-            <div className="flex flex-col items-start gap-2">
-              {userProfile?.link && (
-                <div className="flex items-center gap-2">
-                  <LinkIcon className="h-4 w-4 text-muted-foreground" />
-                  <a
-                    href={userProfile.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-geist text-sm text-purple-500 hover:underline"
-                  >
-                    {userProfile.link}
-                  </a>
-                </div>
-              )}
-            </div>
+            {userProfile?.link && (
+              <div className="flex items-center gap-2">
+                <LinkIcon className="h-4 w-4 text-muted-foreground" />
+                <a
+                  href={userProfile.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-geist text-sm text-purple-500 hover:underline"
+                >
+                  {userProfile.link}
+                </a>
+              </div>
+            )}
           </div>
 
           <div className="mt-1 flex flex-col gap-2">
@@ -169,22 +192,22 @@ export default function UserProfile() {
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <Link
                 href={`/user-profile/${userProfile?.id}/followers`}
-                className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-5 py-2.5 shadow-sm hover:bg-gray-50 dark:border-gray-500/10 dark:bg-black dark:hover:bg-gray-900"
+                className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-4 py-1.5 shadow-sm hover:bg-gray-50 dark:border-gray-500/10 dark:bg-black dark:hover:bg-gray-900"
               >
-                <Users className="h-4 w-4" />
-                <span className="font-geist text-sm font-medium">
+                <Users className="h-3.5 w-3.5" />
+                <span className="font-geist text-xs font-medium">
                   {userData?._count?.following || 0} Followers
                 </span>
               </Link>
               <Link
                 href={`/user-profile/${userProfile?.id}/following`}
-                className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-5 py-2.5 shadow-sm hover:bg-gray-50 dark:border-gray-500/10 dark:bg-black dark:hover:bg-gray-900"
+                className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-4 py-1.5 shadow-sm hover:bg-gray-50 dark:border-gray-500/10 dark:bg-black dark:hover:bg-gray-900"
               >
-                <Users className="h-4 w-4" />
-                <span className="font-geist text-sm font-medium">
+                <Users className="h-3.5 w-3.5" />
+                <span className="font-geist text-xs font-medium">
                   {userData?._count?.followers || 0} Following
                 </span>
               </Link>
