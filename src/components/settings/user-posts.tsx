@@ -108,7 +108,7 @@ const RenderUserPosts = () => {
   }
 
   return (
-    <div className="md:w-[80%]">
+    <div className="">
       {data?.pages
         .flatMap((page) => page.data)
         .map((each, index) => {

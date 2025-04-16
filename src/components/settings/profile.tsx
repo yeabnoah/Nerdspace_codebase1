@@ -15,11 +15,15 @@ import {
   Bookmark,
   Dot,
   File,
+  Globe,
   Grid3X3,
   Hammer,
+  IdCard,
+  LinkIcon,
   Lock,
   SettingsIcon,
   User2,
+  Users,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -146,8 +150,8 @@ export default function ProfilePage() {
         </DropdownMenu>
       </div>
 
-      <div className="relative z-10 mx-2 my-5 -mt-10 flex flex-col items-start gap-1">
-        <div className="relative mx-5 -mt-16 h-24 w-24 overflow-hidden rounded-full ring-2 ring-white/20">
+      <div className="relative z-10 mx-2 my-5 -mt-8 ml-5 flex flex-col items-start gap-1">
+        <div className="relative h-20 w-20 -mt-16 shrink-0 overflow-hidden rounded-full ring-2 ring-white/20">
           <Image
             src={user.image || "/user.jpg?height=128&width=128"}
             alt={user.visualName || user.name}
@@ -155,32 +159,73 @@ export default function ProfilePage() {
             className="object-cover"
           />
         </div>
-        <h1 className="mt-2 flex flex-row items-center font-geist text-2xl font-medium text-foreground">
-          <span className="font-geist text-sm font-medium text-foreground">
-            {user.visualName || user.name}
-          </span>
-          <Dot className="mx-1 h-2 w-2" />
-          <span className="font-geist text-sm font-medium text-foreground">
-            Nerd@{user.nerdAt}
-          </span>
-        </h1>
 
-        <h1 className="font-geist text-sm font-normal text-foreground">
-          {user.bio || "No bio"}
-        </h1>
-        <div className="flex gap-4">
-          <Link
-            href={`/profile/${user.id}/followers`}
-            className="font-geist text-sm font-normal text-foreground hover:text-primary"
-          >
-            {user._count?.following || 0} Followers
-          </Link>
-          <Link
-            href={`/profile/${user.id}/following`}
-            className="font-geist text-sm font-normal text-foreground hover:text-primary"
-          >
-            {user._count?.followers || 0} Following
-          </Link>
+        <div className="flex w-full flex-col">
+          <div className="flex items-start justify-between">
+            <div className="flex flex-col">
+              <h1 className="font-geist text-xl font-medium text-foreground">
+                {user.visualName || user.name}
+              </h1>
+              <div className="flex items-center gap-2">
+                <p className="font-geist text-sm text-muted-foreground">
+                  Nerd@{user.nerdAt}
+                </p>
+                {user.country && (
+                  <>
+                    <Dot className="h-4 w-4 text-muted-foreground" />
+                    <p className="font-geist text-sm text-muted-foreground">
+                      {user.country.emoji} {user.country.name}
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col items-start gap-2">
+              {user.link && (
+                <div className="flex items-center gap-2">
+                  <LinkIcon className="h-4 w-4 text-muted-foreground" />
+                  <a 
+                    href={user.link}
+                    target="_blank"
+                    rel="noopener noreferrer" 
+                    className="font-geist text-purple-500 text-sm hover:underline"
+                  >
+                    {user.link}
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 mt-1">
+            <div className="flex items-center">
+              <p className="font-geist text-sm text-muted-foreground">
+                {user.bio || "No bio"}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <Link
+                href={`/profile/${user.id}/followers`}
+                className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-5 py-2.5 shadow-sm hover:bg-gray-50 dark:border-gray-500/10 dark:bg-black dark:hover:bg-gray-900"
+              >
+                <Users className="h-4 w-4" />
+                <span className="font-geist text-sm font-medium">
+                  {user._count?.following || 0} Followers
+                </span>
+              </Link>
+              <Link
+                href={`/profile/${user.id}/following`}
+                className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-5 py-2.5 shadow-sm hover:bg-gray-50 dark:border-gray-500/10 dark:bg-black dark:hover:bg-gray-900"
+              >
+                <Users className="h-4 w-4" />
+                <span className="font-geist text-sm font-medium">
+                  {user._count?.followers || 0} Following
+                </span>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
       <div className="">

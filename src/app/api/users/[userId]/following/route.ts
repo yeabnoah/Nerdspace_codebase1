@@ -1,12 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { userId: string } },
+) {
   try {
-    const url = new URL(request.url);
-    const pathParts = url.pathname.split("/").filter((part) => part !== "");
-    const userId = pathParts[pathParts.length - 1]; // Assuming the last part is the userId
-
+    const userId = params.userId;
     const cursor = request.nextUrl.searchParams.get("cursor");
     const limit = parseInt(request.nextUrl.searchParams.get("limit") || "10");
 
