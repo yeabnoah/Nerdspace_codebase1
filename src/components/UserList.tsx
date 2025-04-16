@@ -148,7 +148,7 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
                   No suggestions available
                 </h3>
                 <p className="max-w-md text-gray-500 dark:text-gray-400">
-                  We couldn't find any users to suggest at the moment. Check
+                  We couldn&apos;t find any users to suggest at the moment. Check
                   back later for new recommendations.
                 </p>
               </CardContent>
