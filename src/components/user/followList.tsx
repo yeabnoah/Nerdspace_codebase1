@@ -73,7 +73,8 @@ const FollowList = () => {
             users.map((u) => (
               <div
                 key={u.id}
-                className="group relative flex flex-row items-center gap-3 rounded-xl border border-gray-100/50 bg-gray-500/5 p-2 transition-all duration-300 dark:border-gray-500/5"
+                onClick={() => router.push(`/user-profile/${u.id}`)}
+                className="group relative flex flex-row items-center gap-3 rounded-xl border border-gray-100/50 bg-gray-500/5 p-2 transition-all duration-300 hover:cursor-pointer dark:border-gray-500/5"
               >
                 <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-white/10">
                   <Image
