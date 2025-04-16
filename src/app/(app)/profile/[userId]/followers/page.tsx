@@ -3,8 +3,8 @@
 import LeftNavbar from "@/components/navbar/left-navbar";
 import MobileNavBar from "@/components/navbar/mobile-nav-bar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
 import { FollowResponse, followService } from "@/functions/follow";
 import { authClient } from "@/lib/auth-client";
 import {
@@ -40,7 +40,7 @@ const FollowersPage = () => {
   const followers =
     data?.pages.flatMap((page: FollowResponse) => page.data) || [];
 
-  const { data: followStatus } = useQuery({
+  const { data: followStatus, isLoading: isLoadingFollowStatus } = useQuery({
     queryKey: ["follow-status", followers.map((f) => f.id).join(",")],
     queryFn: async () => {
       if (followers.length === 0) return {};
@@ -98,36 +98,41 @@ const FollowersPage = () => {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (true) {
+  if (isLoadingFollowStatus) {
     return (
-      <div className="container mx-auto max-w-4xl bg-transparent p-4">
-        <Card className="border-none shadow-none dark:bg-black">
-          <CardContent className="p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <h1 className="mb-6 font-instrument text-3xl">Followers</h1>
-            </div>
-            <div className="space-y-4">
-              {[...Array(5)].map((_, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-4 rounded-2xl bg-black/5 p-2 dark:bg-gray-400/5"
-                >
-                  <Skeleton className="h-12 w-12 rounded-full" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-3 w-24" />
+      <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start">
+        <LeftNavbar />
+        <div className="container mx-auto max-w-4xl bg-transparent p-4">
+          <Card className="border-none shadow-none dark:bg-black">
+            <CardContent className="p-6">
+              <div className="mb-4 flex items-center gap-2">
+                <h1 className="mb-6 font-instrument text-3xl">Followers</h1>
+              </div>
+              <div className="space-y-4">
+                {[...Array(5)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-4 rounded-2xl bg-black/5 p-2 dark:bg-gray-400/5"
+                  >
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-3 w-24" />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <MobileNavBar />
       </div>
     );
   }
 
   return (
     <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start">
+      <LeftNavbar />
       <div className="mx-10 my-5 flex min-h-fit flex-1 flex-row items-start px-[.3px]">
         <div className="container mx-auto py-6">
           <h1 className="mb-6 font-instrument text-3xl">Followers</h1>
@@ -139,7 +144,7 @@ const FollowersPage = () => {
               >
                 <div className="relative z-10 flex items-center justify-between gap-4 p-3">
                   <Link
-                    href={`/profile/${user.id}`}
+                    href={`/user-profile/${user.id}`}
                     className="flex flex-1 items-center gap-4"
                   >
                     <div className="relative h-12 w-12 overflow-hidden rounded-full ring-2 ring-white dark:ring-zinc-800">
@@ -192,6 +197,7 @@ const FollowersPage = () => {
           )}
         </div>
       </div>
+      <MobileNavBar />
     </div>
   );
 };
