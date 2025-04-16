@@ -7,7 +7,7 @@
     "generate": "prisma generate",
     "build": "next build",
     "prisma-workflow": "pnpm run migrate-deploy && pnpm run generate && pnpm run build",
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbo",
     "start": "next start",
     "lint": "next lint"
   },
