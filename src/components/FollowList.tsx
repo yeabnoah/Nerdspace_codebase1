@@ -25,7 +25,7 @@ interface FollowListProps {
 
 export default function FollowList({ type }: FollowListProps) {
   const params = useParams();
-  const userId = params.userId as string;
+  const userId = params?.userId as string;
 
   const { data, isLoading } = useQuery({
     queryKey: [`fetch_${type}`, userId],
