@@ -172,7 +172,7 @@ export default function UserFollowersPage() {
                   No followers yet
                 </p>
                 <p className="text-sm text-gray-400 dark:text-gray-500">
-                  When someone follows you, they'll appear here
+                  When someone follows you, they&apos;ll appear here
                 </p>
               </div>
             )}

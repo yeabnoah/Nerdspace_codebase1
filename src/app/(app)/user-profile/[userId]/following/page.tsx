@@ -163,7 +163,7 @@ export default function UserFollowingPage() {
               <div className="flex flex-col items-center justify-center py-12">
                 <Users className="h-12 w-12 text-gray-400" />
                 <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">Not following anyone yet</p>
-                <p className="text-sm text-gray-400 dark:text-gray-500">When you follow someone, they'll appear here</p>
+                <p className="text-sm text-gray-400 dark:text-gray-500">When you follow someone, they&apos;ll appear here</p>
               </div>
             )}
           </div>
