@@ -61,14 +61,43 @@ export function SignUpForm({
     );
   };
 
+  const loginWithGithub = async () => {
+    setLoading(true);
+    await authClient.signIn.social(
+      {
+        provider: "github",
+        callbackURL: "/",
+      },
+      {
+        onRequest: () => {
+          loadingToastId = toast.loading("Loading... Signing in with Github");
+        },
+        onSuccess: () => {
+          toast.dismiss(loadingToastId);
+          toast.success("You're successfully signed in");
+          setLoading(false);
+        },
+        onError: (ctx) => {
+          toast.dismiss(loadingToastId);
+          if (ctx.error.status === 403) {
+            toast.error("Please verify your email address");
+          } else {
+            toast.error(ctx.error.message);
+          }
+          setLoading(false);
+        },
+      },
+    );
+  };
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className={cn("flex w-full flex-col gap-4", className)}
       {...props}
     >
-      <Button
-        onClick={() => {}} 
+      <Button   
+        onClick={loginWithGithub} 
         variant="outline"
         className="relative flex h-12 w-full items-center justify-center gap-3 overflow-hidden rounded-lg border border-white/10 bg-white/5 px-4 py-2 font-medium text-white transition-all hover:bg-white/10"
         type="button"
