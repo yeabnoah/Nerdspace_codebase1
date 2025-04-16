@@ -111,38 +111,39 @@ export default function UserFollowingPage() {
 
   return (
     <div className="container mx-auto max-w-4xl p-4">
-      <Card className="rounded-xl border-none shadow-none">
+      <Card className="rounded-xl border-none shadow-lg transition-all duration-300 hover:shadow-xl dark:bg-gray-900">
         <CardContent className="p-6">
-          <div className="mb-4 flex items-center gap-2">
-            <h2 className="font-instrument text-3xl">Following</h2>
+          <div className="mb-6 flex items-center gap-3">
+            <Users className="h-6 w-6 text-blue-500" />
+            <h2 className="font-instrument text-3xl font-semibold">Following</h2>
           </div>
           <div className="space-y-4">
             {following.map((followed: any) => (
               <div
                 key={followed.id}
-                className="flex items-center justify-between rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="group flex items-center justify-between rounded-xl p-3 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 <Link
                   href={`/user-profile/${followed.id}`}
                   className="flex flex-1 items-center gap-4"
                 >
-                  <div className="relative h-12 w-12 overflow-hidden rounded-full">
+                  <div className="relative h-14 w-14 overflow-hidden rounded-full ring-2 ring-blue-500 ring-offset-2 transition-all duration-300 group-hover:ring-blue-600">
                     <Image
                       src={followed.image || "/user.jpg"}
                       alt={followed.name}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   </div>
                   <div>
-                    <h3 className="font-medium">{followed.name}</h3>
-                    <p className="text-sm text-gray-500">@{followed.nerdAt}</p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{followed.name}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">@{followed.nerdAt}</p>
                   </div>
                 </Link>
                 {session.data?.user.id !== followed.id && (
                   <button
                     onClick={() => handleFollow(followed.id)}
-                    className={`rounded-full px-4 py-2 text-sm font-medium ${
+                    className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
                       followStatus?.[followed.id]
                         ? "bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
                         : "bg-blue-500 text-white hover:bg-blue-600"
@@ -159,9 +160,11 @@ export default function UserFollowingPage() {
               </div>
             ))}
             {following.length === 0 && (
-              <p className="text-center text-gray-500">
-                Not following anyone yet
-              </p>
+              <div className="flex flex-col items-center justify-center py-12">
+                <Users className="h-12 w-12 text-gray-400" />
+                <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">Not following anyone yet</p>
+                <p className="text-sm text-gray-400 dark:text-gray-500">When you follow someone, they'll appear here</p>
+              </div>
             )}
           </div>
         </CardContent>
