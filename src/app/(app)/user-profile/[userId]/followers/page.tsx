@@ -14,17 +14,18 @@ import toast from "react-hot-toast";
 
 export default function UserFollowersPage() {
   const params = useParams();
-  if (!params?.userId) return null;
-  const userId = params.userId as string;
+  const userId = params?.userId as string;
   const session = useSession();
   const queryClient = useQueryClient();
 
   const { data: response, isLoading } = useQuery({
     queryKey: ["user-followers", userId],
     queryFn: async () => {
+      if (!userId) return { data: [] };
       const response = await axios.get(`/api/users/${userId}/followers`);
       return response.data;
     },
+    enabled: !!userId,
   });
 
   const followers = response?.data || [];
@@ -76,6 +77,8 @@ export default function UserFollowersPage() {
       action: isFollowing ? "unfollow" : "follow",
     });
   };
+
+  if (!userId) return null;
 
   if (isLoading) {
     return (

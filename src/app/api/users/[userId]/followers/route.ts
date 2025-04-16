@@ -1,20 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { userId: string } },
-) {
+export async function GET(request: NextRequest) {
   try {
-    const userId = params.userId;
+    // Extract userId from the pathname, e.g., /api/users/123/followers
+    // You can use a regex or split the path
+    const pathnameParts = request.nextUrl.pathname.split("/");
+    const userId = pathnameParts[pathnameParts.indexOf("users") + 1];
+
     const cursor = request.nextUrl.searchParams.get("cursor");
     const limit = parseInt(request.nextUrl.searchParams.get("limit") || "10");
 
     if (!userId) {
       return NextResponse.json(
-        {
-          message: "User ID is required",
-        },
+        { message: "User ID is required" },
         { status: 400 },
       );
     }
@@ -24,9 +23,7 @@ export async function GET(
         where: {
           followingId: userId,
           ...(cursor && {
-            createdAt: {
-              lt: new Date(cursor),
-            },
+            createdAt: { lt: new Date(cursor) },
           }),
         },
         include: {
@@ -42,15 +39,11 @@ export async function GET(
             },
           },
         },
-        orderBy: {
-          createdAt: "desc",
-        },
+        orderBy: { createdAt: "desc" },
         take: limit + 1,
       }),
       prisma.follows.count({
-        where: {
-          followingId: userId,
-        },
+        where: { followingId: userId },
       }),
     ]);
 

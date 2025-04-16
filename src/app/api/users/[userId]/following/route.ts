@@ -1,20 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { userId: string } },
-) {
+export async function GET(request: NextRequest) {
   try {
-    const userId = params.userId;
+    // Extract userId from the pathname
+    const pathname = request.nextUrl.pathname; // e.g. /api/users/123/following
+    const match = pathname.match(/\/users\/([^/]+)\/following/);
+    const userId = match ? match[1] : null;
+
     const cursor = request.nextUrl.searchParams.get("cursor");
     const limit = parseInt(request.nextUrl.searchParams.get("limit") || "10");
 
     if (!userId) {
       return NextResponse.json(
-        {
-          message: "User ID is required",
-        },
+        { message: "User ID is required" },
         { status: 400 },
       );
     }
