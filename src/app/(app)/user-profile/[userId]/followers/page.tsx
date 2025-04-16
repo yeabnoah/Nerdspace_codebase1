@@ -31,7 +31,10 @@ export default function UserFollowersPage() {
   const followers = response?.data || [];
 
   const { data: followStatus } = useQuery({
-    queryKey: ["follow-status", followers.map((f: { id: string }) => f.id).join(",")],
+    queryKey: [
+      "follow-status",
+      followers.map((f: { id: string }) => f.id).join(","),
+    ],
     queryFn: async () => {
       if (followers.length === 0) return {};
       const response = await axios.get(
@@ -108,35 +111,45 @@ export default function UserFollowersPage() {
 
   return (
     <div className="container mx-auto max-w-4xl p-4">
-      <Card className="rounded-xl border-none shadow-none">
+      <Card className="rounded-xl border-none shadow-lg transition-all duration-300 hover:shadow-xl dark:bg-gray-900">
         <CardContent className="p-6">
-          <div className="mb-4 flex items-center gap-2">
-            <h2 className="font-instrument text-3xl">Followers</h2>
+          <div className="mb-6 flex items-center gap-3">
+            <Users className="h-6 w-6 text-blue-500" />
+            <h2 className="font-instrument text-3xl font-semibold">
+              Followers
+            </h2>
           </div>
           <div className="space-y-4">
             {followers.map((follower: any) => (
-              <div key={follower.id} className="flex items-center justify-between rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-800">
+              <div
+                key={follower.id}
+                className="group flex items-center justify-between rounded-xl p-3 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+              >
                 <Link
                   href={`/user-profile/${follower.id}`}
-                  className="flex items-center gap-4 flex-1"
+                  className="flex flex-1 items-center gap-4"
                 >
-                  <div className="relative h-12 w-12 overflow-hidden rounded-full">
+                  <div className="relative h-14 w-14 overflow-hidden rounded-full ring-2 ring-blue-500 ring-offset-2 transition-all duration-300 group-hover:ring-blue-600">
                     <Image
                       src={follower.image || "/user.jpg"}
                       alt={follower.name}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   </div>
                   <div>
-                    <h3 className="font-medium">{follower.name}</h3>
-                    <p className="text-sm text-gray-500">@{follower.nerdAt}</p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {follower.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      @{follower.nerdAt}
+                    </p>
                   </div>
                 </Link>
                 {session.data?.user.id !== follower.id && (
                   <button
                     onClick={() => handleFollow(follower.id)}
-                    className={`rounded-full px-4 py-2 text-sm font-medium ${
+                    className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
                       followStatus?.[follower.id]
                         ? "bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
                         : "bg-blue-500 text-white hover:bg-blue-600"
@@ -153,7 +166,15 @@ export default function UserFollowersPage() {
               </div>
             ))}
             {followers.length === 0 && (
-              <p className="text-center text-gray-500">No followers yet</p>
+              <div className="flex flex-col items-center justify-center py-12">
+                <Users className="h-12 w-12 text-gray-400" />
+                <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">
+                  No followers yet
+                </p>
+                <p className="text-sm text-gray-400 dark:text-gray-500">
+                  When someone follows you, they'll appear here
+                </p>
+              </div>
             )}
           </div>
         </CardContent>
