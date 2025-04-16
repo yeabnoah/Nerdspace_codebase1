@@ -251,7 +251,7 @@ const AccountSetting = () => {
         </CardHeader>
         <CardContent className="space-y-8 px-6">
           {/* Profile Section */}
-          <div className="group relative h-[150px] w-full overflow-hidden rounded-2xl shadow-lg">
+          <div className="group relative h-[250px] w-full overflow-hidden rounded-2xl shadow-lg">
             <Image
               src={userData?.coverImage || "/obsession.jpg"}
               alt="Cover Preview"
