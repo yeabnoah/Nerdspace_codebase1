@@ -3,6 +3,8 @@
 import LeftNavbar from "@/components/navbar/left-navbar";
 import MobileNavBar from "@/components/navbar/mobile-nav-bar";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { FollowResponse, followService } from "@/functions/follow";
 import { authClient } from "@/lib/auth-client";
 import {
@@ -96,9 +98,36 @@ const FollowersPage = () => {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  if (true) {
+    return (
+      <div className="container mx-auto max-w-4xl bg-transparent p-4">
+        <Card className="border-none shadow-none dark:bg-black">
+          <CardContent className="p-6">
+            <div className="mb-4 flex items-center gap-2">
+              <h1 className="mb-6 font-instrument text-3xl">Followers</h1>
+            </div>
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-4 rounded-2xl bg-black/5 p-2 dark:bg-gray-400/5"
+                >
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start">
-      <LeftNavbar />
       <div className="mx-10 my-5 flex min-h-fit flex-1 flex-row items-start px-[.3px]">
         <div className="container mx-auto py-6">
           <h1 className="mb-6 font-instrument text-3xl">Followers</h1>
@@ -136,7 +165,11 @@ const FollowersPage = () => {
                       size="sm"
                       onClick={() => handleFollow(user.id)}
                       disabled={loadingStates[user.id]}
-                      className="h-10 rounded-full px-4 transition-all duration-300 hover:scale-105"
+                      className={`h-10 rounded-full px-4 transition-all duration-300 hover:scale-105 ${
+                        followStatus?.[user.id]
+                          ? "bg-zinc-100 text-zinc-900 hover:bg-zinc-200 dark:border dark:border-gray-500/10 dark:bg-black dark:text-zinc-100"
+                          : "bg-black text-white dark:bg-white dark:text-black"
+                      } mx-4`}
                     >
                       <span className="px-2 font-geist text-sm font-normal">
                         {loadingStates[user.id]
@@ -153,11 +186,12 @@ const FollowersPage = () => {
           </div>
           <div ref={ref} className="h-4" />
           {isFetchingNextPage && (
-            <div className="py-4 text-center">Loading more...</div>
+            <div className="py-4 text-center font-geist text-sm text-zinc-500 dark:text-zinc-400">
+              Loading more...
+            </div>
           )}
         </div>
       </div>
-      <MobileNavBar />
     </div>
   );
 };

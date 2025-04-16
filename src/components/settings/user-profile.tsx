@@ -176,7 +176,7 @@ export default function UserProfile() {
               >
                 <Users className="h-4 w-4" />
                 <span className="font-geist text-sm font-medium">
-                  {userData?._count?.followers || 0} Followers
+                  {userData?._count?.following || 0} Followers
                 </span>
               </Link>
               <Link
@@ -185,7 +185,7 @@ export default function UserProfile() {
               >
                 <Users className="h-4 w-4" />
                 <span className="font-geist text-sm font-medium">
-                  {userData?._count?.following || 0} Following
+                  {userData?._count?.followers || 0} Following
                 </span>
               </Link>
             </div>
