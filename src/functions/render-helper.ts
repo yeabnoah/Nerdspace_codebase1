@@ -1,7 +1,7 @@
 const trimLimits = {
-  sm: 30,
-  md: 20,
-  lg: 55,
+  sm: 15,
+  md: 12,
+  lg: 25,
 };
 
 export const getTrimLimit = () => {
