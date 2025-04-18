@@ -18,7 +18,7 @@ export async function GET() {
           not: session.user.id,
         },
       },
-      take: 3,
+      take: 9,
       orderBy: { createdAt: "desc" },
       include: {
         followers: true,
