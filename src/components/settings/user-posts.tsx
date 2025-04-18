@@ -36,6 +36,51 @@ import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  EmojiPicker,
+  EmojiPickerSearch,
+  EmojiPickerContent,
+  EmojiPickerFooter,
+} from "@/components/ui/emoji-picker";
+import { SmileIcon, SendIcon } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { renderComments } from "../post/comment/render-comments";
+import CommentSkeleton from "../skeleton/comment.skelton";
+
+const iconVariants = {
+  initial: { scale: 1 },
+  hover: { scale: 1.2 },
+  tap: { scale: 0.9 },
+};
+
+const likeVariants = {
+  initial: { scale: 1, color: "currentColor" },
+  liked: { scale: [1, 1.2, 1], color: "#ef4444" },
+};
+
+const bookmarkVariants = {
+  initial: { scale: 1, color: "currentColor" },
+  bookmarked: { scale: [1, 1.2, 1], color: "var(--primary)" },
+};
+
+const getGridClass = (mediaCount: number) => {
+  switch (mediaCount) {
+    case 1:
+      return "grid-cols-1";
+    case 2:
+      return "grid-cols-2";
+    case 3:
+    case 4:
+      return "grid-cols-2";
+    default:
+      return "";
+  }
+};
 
 const RenderUserPosts = () => {
   const { ref, inView } = useInView();
@@ -51,12 +96,17 @@ const RenderUserPosts = () => {
   const [expandedStates, setExpandedStates] = useState<Record<string, boolean>>(
     {},
   );
-  const [optimisticLikes, setOptimisticLikes] = useState<
-    Record<string, boolean>
-  >({});
-  const [optimisticBookmarks, setOptimisticBookmarks] = useState<
-    Record<string, boolean>
-  >({});
+  const [commentContent, setCommentContent] = useState("");
+  const [cursorPosition, setCursorPosition] = useState<number>(0);
+  const [isEmojiOpen, setIsEmojiOpen] = useState(false);
+  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>({});
+  const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
+  const [replyShown, setReplyShown] = useState<{ [key: string]: boolean }>({});
+  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
+  const [expandedReplies, setExpandedReplies] = useState<{ [key: string]: boolean }>({});
+  const [commentId, setCommentId] = useState<string>("");
+  const [optimisticLikes, setOptimisticLikes] = useState<{ [key: string]: boolean }>({});
+  const [optimisticBookmarks, setOptimisticBookmarks] = useState<{ [key: string]: boolean }>({});
 
   // Fetch user posts with infinite query
   const {
@@ -92,13 +142,11 @@ const RenderUserPosts = () => {
       await queryClient.cancelQueries({ queryKey: ["user-posts"] });
       const previousPosts = queryClient.getQueryData(["user-posts"]);
 
-      // Optimistically update the UI
       setOptimisticLikes((prev) => ({
         ...prev,
         [postId]: !prev[postId],
       }));
 
-      // Optimistically update the count
       queryClient.setQueryData(["user-posts"], (old: any) => {
         if (!old) return old;
         return {
@@ -159,13 +207,11 @@ const RenderUserPosts = () => {
       await queryClient.cancelQueries({ queryKey: ["user-posts"] });
       const previousPosts = queryClient.getQueryData(["user-posts"]);
 
-      // Optimistically update the UI
       setOptimisticBookmarks((prev) => ({
         ...prev,
         [postId]: !prev[postId],
       }));
 
-      // Optimistically update the count
       queryClient.setQueryData(["user-posts"], (old: any) => {
         if (!old) return old;
         return {
@@ -217,7 +263,127 @@ const RenderUserPosts = () => {
     },
   });
 
-  // Format count numbers
+  const commentMutation = useMutation({
+    mutationFn: async ({
+      postId,
+      content,
+    }: {
+      postId: string;
+      content: string;
+    }) => {
+      const response = await axios.post("/api/post/comment", {
+        postId,
+        content,
+      });
+      return response.data;
+    },
+    onMutate: async ({ postId, content }) => {
+      await queryClient.cancelQueries({ queryKey: ["user-posts"] });
+      const previousPosts = queryClient.getQueryData(["user-posts"]);
+
+      queryClient.setQueryData(["user-posts"], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            data: page.data.map((p: any) => {
+              if (p.id === postId) {
+                return {
+                  ...p,
+                  _count: {
+                    ...p._count,
+                    replies: (p._count?.replies || 0) + 1,
+                  },
+                };
+              }
+              return p;
+            }),
+          })),
+        };
+      });
+
+      return { previousPosts };
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(["user-posts"], context?.previousPosts);
+      toast.error("Error occurred while adding comment");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["comment"] });
+      setCommentContent("");
+    },
+  });
+
+  const handleCommentSubmit = (postId: string) => {
+    if (commentContent.trim()) {
+      commentMutation.mutate({
+        postId,
+        content: commentContent.trim(),
+      });
+    }
+  };
+
+  const toggleCommentShown = (postId: string) => {
+    setCommentShown((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+  };
+
+  const toggleCommentExpand = (commentId: string) => {
+    setExpandedComments((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const toggleReplyShown = (commentId: string) => {
+    setReplyShown((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const handleReplySubmit = (commentId: string) => {
+    if (replyContent[commentId]?.trim()) {
+      // Add your reply submission logic here
+    }
+  };
+
+  const toggleReplies = (commentId: string) => {
+    setExpandedReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const handleLike = (postId: string) => {
+    if (!session.data?.user?.id) {
+      toast.error("Please sign in to like posts");
+      return;
+    }
+    likeMutation.mutate(postId);
+  };
+
+  const handleBookmark = (postId: string) => {
+    if (!session.data?.user?.id) {
+      toast.error("Please sign in to bookmark posts");
+      return;
+    }
+    bookmarkMutation.mutate(postId);
+  };
+
+  const onEmojiClick = (emojiObject: any) => {
+    const text = commentContent;
+    const before = text.slice(0, cursorPosition);
+    const after = text.slice(cursorPosition);
+    const newText = before + emojiObject.emoji + after;
+    setCommentContent(newText);
+    setCursorPosition(cursorPosition + emojiObject.emoji.length);
+  };
+
   const formatCount = (count: number) => {
     if (count >= 1000000) {
       return `${(count / 1000000).toFixed(1)}m`;
@@ -248,41 +414,6 @@ const RenderUserPosts = () => {
       ...prev,
       [postId]: !prev[postId],
     }));
-  };
-
-  // Handle like
-  const handleLike = (postId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!session.data?.user?.id) {
-      toast.error("Please sign in to like posts");
-      return;
-    }
-    likeMutation.mutate(postId);
-  };
-
-  // Handle bookmark
-  const handleBookmark = (postId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!session.data?.user?.id) {
-      toast.error("Please sign in to bookmark posts");
-      return;
-    }
-    bookmarkMutation.mutate(postId);
-  };
-
-  // Get grid class based on media count
-  const getGridClass = (mediaCount: number) => {
-    switch (mediaCount) {
-      case 1:
-        return "grid-cols-1";
-      case 2:
-        return "grid-cols-2";
-      case 3:
-      case 4:
-        return "grid-cols-[2fr_1fr]";
-      default:
-        return "";
-    }
   };
 
   // Load more posts when scrolling to the bottom
@@ -333,7 +464,7 @@ const RenderUserPosts = () => {
 
   return (
     <div className="md:w-[80%]">
-      {posts.map((post) => {
+      {posts.map((post, index) => {
         const contentWords = post.content.split(" ");
         const trimLimit = getTrimLimit();
         const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
@@ -350,8 +481,11 @@ const RenderUserPosts = () => {
         );
 
         return (
-          <div
+          <motion.div
             key={post.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
             className="relative my-5 w-full flex-1 border-b border-r border-transparent p-4 px-3 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/50 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/50 after:to-transparent [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/50 [&>div]:before:to-transparent"
             onClick={() => router.push(`/post/${post.id}`)}
           >
@@ -398,9 +532,11 @@ const RenderUserPosts = () => {
                 </DropdownMenu>
               </div>
 
-              <div className={`mt-2 flex w-full flex-1 ${
-                isShortContent && isTooShort ? "flex-col" : "flex-row"
-              } items-start justify-center`}>
+              <div
+                className={`mt-2 flex w-full flex-1 ${
+                  isShortContent && isTooShort ? "flex-col" : "flex-row"
+                } items-start justify-center`}
+              >
                 <div className="flex w-[100%] flex-1 flex-col justify-start gap-5">
                   {post.media && post.media.length > 0 && (
                     <div className={`mt-4 grid w-[100%] flex-1 gap-2 ${getGridClass(post.media.length)}`}>
@@ -472,58 +608,193 @@ const RenderUserPosts = () => {
                   )}
 
                   <div className="flex-1 break-words">
-                    <h4 className="break-all text-sm md:text-base">
-                      {isExpanded || !isLongContent ? post.content : `${truncatedContent}...`}
+                    <h4 className="whitespace-pre-wrap break-all text-xs sm:text-sm md:text-sm">
+                      {(expandedStates[index] || !isLongContent
+                        ? post.content
+                        : truncatedContent
+                      ).split(/(\s+)/).map((word: string, i: number) => (
+                        word.startsWith('#') 
+                          ? <span key={i} className="text-purple-500">{word}</span>
+                          : word
+                      ))}
+                      {!expandedStates[index] && isLongContent && '...'}
                     </h4>
                     {isLongContent && (
                       <button
-                        className="mt-2 text-sm text-primary hover:underline"
+                        className="mt-1 text-xs text-purple-500 hover:underline sm:mt-2 sm:text-sm"
                         onClick={(e) => toggleExpand(post.id, e)}
                       >
-                        {isExpanded ? "See less" : "See more"}
+                        {expandedStates[index] ? "See less" : "See more"}
                       </button>
                     )}
                   </div>
                 </div>
 
-                <div className={`flex ${
-                  isShortContent && isTooShort ? "mt-5 flex-row" : "mt-5 flex-col"
-                } gap-5 md:w-16`}>
-                  <div className={`rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"} md:mx-auto`}>
-                    <button
-                      onClick={(e) => handleLike(post.id, e)}
-                      className="flex items-center gap-1"
-                    >
-                      {post.likes?.some(
-                        (like: { userId: string }) => like.userId === session.data?.user.id
-                      ) ? (
-                        <GoHeartFill className="size-5 text-red-500" />
+                <div
+                  className={`flex ${
+                    isShortContent && isTooShort
+                      ? "mt-3 flex-row sm:mt-5"
+                      : "mt-3 flex-col sm:mt-5"
+                  } gap-2 sm:gap-3 md:w-16`}
+                >
+                  <motion.div
+                    className={`rounded-full ${
+                      isShortContent && isTooShort ? "pr-0.5 sm:pr-1 flex items-center gap-1" : "px-0.5 sm:px-1"
+                    } cursor-pointer md:mx-auto`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleLike(post.id);
+                    }}
+                    variants={likeVariants}
+                    initial="initial"
+                    animate={
+                      optimisticLikes[post.id] !== undefined
+                        ? optimisticLikes[post.id]
+                          ? "liked"
+                          : "initial"
+                        : post.likes?.some(
+                              (like: { userId: string }) => like.userId === session.data?.user.id,
+                            )
+                          ? "liked"
+                          : "initial"
+                    }
+                    whileHover="hover"
+                    whileTap="tap"
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center gap-0.5"}`}>
+                      {optimisticLikes[post.id] !== undefined ? (
+                        optimisticLikes[post.id] ? (
+                          <GoHeartFill className="size-4 text-red-500 sm:size-5" />
+                        ) : (
+                          <GoHeart className="size-4 sm:size-5" />
+                        )
+                      ) : post.likes?.some(
+                          (like: { userId: string }) => like.userId === session.data?.user.id,
+                        ) ? (
+                        <GoHeartFill className="size-4 text-red-500 sm:size-5" />
                       ) : (
-                        <GoHeart className="size-5" />
+                        <GoHeart className="size-4 sm:size-5" />
                       )}
-                    </button>
-                  </div>
-                  <div className={`mx-auto cursor-pointer rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}>
-                    <MessageCircle className="size-5" />
-                  </div>
-                  <div className={`mx-auto rounded-full ${isShortContent && isTooShort ? "pr-2" : "px-2"}`}>
-                    <button
-                      onClick={(e) => handleBookmark(post.id, e)}
-                      className="flex items-center gap-1"
-                    >
-                      {post.bookmarks?.some(
-                        (bookmark: { userId: string }) => bookmark.userId === session.data?.user.id
-                      ) ? (
-                        <HiBookmark className="size-5 text-primary" />
+                      <span className="text-xs font-medium">{formatCount(post._count?.likes || 0)}</span>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleCommentShown(post.id);
+                    }}
+                    className={`mx-auto cursor-pointer rounded-full ${
+                      isShortContent && isTooShort ? "pr-0.5 sm:pr-1 flex items-center gap-1" : "px-0.5 sm:px-1"
+                    }`}
+                    variants={iconVariants}
+                    whileHover="hover"
+                    whileTap="tap"
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center gap-0.5"}`}>
+                      <MessageCircle className="size-4 sm:size-5" />
+                      <span className="text-xs font-medium">{formatCount(post._count?.replies || 0)}</span>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    className={`mx-auto rounded-full ${
+                      isShortContent && isTooShort ? "pr-0.5 sm:pr-1 flex items-center gap-1" : "px-0.5 sm:px-1"
+                    } cursor-pointer`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleBookmark(post.id);
+                    }}
+                    variants={bookmarkVariants}
+                    initial="initial"
+                    animate={
+                      optimisticBookmarks[post.id] !== undefined
+                        ? optimisticBookmarks[post.id]
+                          ? "bookmarked"
+                          : "initial"
+                        : post.bookmarks.some(
+                              (bookmark: { userId: string }) => bookmark.userId === session.data?.user.id,
+                            )
+                          ? "bookmarked"
+                          : "initial"
+                    }
+                    whileHover="hover"
+                    whileTap="tap"
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center gap-0.5"}`}>
+                      {optimisticBookmarks[post.id] !== undefined ? (
+                        optimisticBookmarks[post.id] ? (
+                          <HiBookmark className="size-4 text-primary sm:size-5" />
+                        ) : (
+                          <HiOutlineBookmark className="size-4 sm:size-5" />
+                        )
+                      ) : post.bookmarks.some(
+                          (bookmark: { userId: string }) => bookmark.userId === session.data?.user.id,
+                        ) ? (
+                        <HiBookmark className="size-4 text-primary sm:size-5" />
                       ) : (
-                        <HiOutlineBookmark className="size-5" />
+                        <HiOutlineBookmark className="size-4 sm:size-5" />
                       )}
-                    </button>
-                  </div>
+                      <span className="text-xs font-medium">{formatCount(post._count?.bookmarks || 0)}</span>
+                    </div>
+                  </motion.div>
                 </div>
               </div>
+
+              {commentShown[post.id] && (
+                <div>
+                  <hr className="mb-2 mt-3 sm:mt-5" />
+                  <div className="itemc flex gap-2 py-2">
+                    <div className="relative flex-1">
+                      <input
+                        placeholder="Comment here"
+                        className="w-full border-0 border-b border-b-textAlternative/20 bg-transparent text-xs placeholder:font-instrument placeholder:text-base focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0 py-2 px-2 dark:border-white/50 sm:text-sm sm:placeholder:text-lg"
+                        value={commentContent}
+                        onChange={(e) => setCommentContent(e?.target?.value)}
+                        onSelect={(e) => setCursorPosition(e?.currentTarget?.selectionStart || 0)}
+                      />
+                      <div className="absolute bottom-1 right-2">
+                        <Popover onOpenChange={setIsEmojiOpen} open={isEmojiOpen}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 rounded-lg p-0 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                            >
+                              <SmileIcon className="h-4 w-4" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-fit p-0">
+                            <EmojiPicker
+                              className="h-[342px]"
+                              onEmojiSelect={({ emoji }) => {
+                                setIsEmojiOpen(false);
+                                onEmojiClick({ emoji });
+                              }}
+                            >
+                              <EmojiPickerSearch />
+                              <EmojiPickerContent />
+                              <EmojiPickerFooter />
+                            </EmojiPicker>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => handleCommentSubmit(post.id)}
+                      className="h-8 border bg-transparent shadow-none hover:bg-transparent focus:outline-none focus:ring-0 sm:h-9"
+                    >
+                      <SendIcon className="size-4 text-card-foreground dark:text-white sm:size-5" />
+                    </Button>
+                  </div>
+                  {/* Add comment loading and rendering logic here */}
+                </div>
+              )}
             </div>
-          </div>
+          </motion.div>
         );
       })}
 
