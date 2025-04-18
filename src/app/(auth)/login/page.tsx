@@ -7,6 +7,7 @@ import { SignUpForm } from "@/components/signup-form";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
 
 type FormType = "landing" | "login" | "signup" | "reset" | "forget";
 
@@ -22,7 +23,7 @@ export default function LoginPage() {
       "/05.png",
       "/04.png",
     ],
-    []
+    [],
   );
 
   function shuffleArray(array: string[]) {
@@ -77,9 +78,7 @@ export default function LoginPage() {
     signup: {
       title: "Join",
       subtitle: "nerdspace.",
-      description: [
-        "create your account here.",
-      ],
+      description: ["create your account here."],
     },
     reset: {
       title: "reset your",
@@ -92,18 +91,15 @@ export default function LoginPage() {
     forget: {
       title: "forgot",
       subtitle: "password?",
-      description: [
-        "don't worry, we'll help you",
-        "get back to your account.",
-      ],
+      description: ["don't worry, we'll help you", "get back to your account."],
     },
   };
 
   return (
     <div className="relative min-h-svh bg-[#0A0A0A]">
       <div className="relative grid min-h-svh grid-cols-6">
-        <div className="relative col-span-2 flex flex-col p-12 lg:p-16 border-r border-white/10">
-          <div className="fixed bottom-14 left-8 flex max-w-[370px] w-full flex-1 flex-col justify-end">
+        <div className="relative col-span-2 flex flex-col border-r border-white/10 p-12 lg:p-16">
+          <div className="fixed bottom-14 left-8 flex w-full max-w-[370px] flex-1 flex-col justify-end">
             <AnimatePresence mode="wait">
               {currentForm === "landing" ? (
                 <motion.div
@@ -115,7 +111,9 @@ export default function LoginPage() {
                 >
                   <h1 className="mb-3 text-[72px] font-bold leading-[1.1] text-white">
                     {formTitles.landing.title} <br />
-                    <span className="text-white">{formTitles.landing.subtitle}</span>
+                    <span className="text-white">
+                      {formTitles.landing.subtitle}
+                    </span>
                   </h1>
 
                   <p className="mb-8 text-lg text-[#8F8F8F]">
@@ -128,15 +126,18 @@ export default function LoginPage() {
                   </p>
 
                   <div className="flex gap-3">
-                    <button 
+                    <button
                       onClick={() => setCurrentForm("signup")}
                       className="rounded border-[0.5px] border-[#3D3D3D] bg-white px-6 py-3 text-[15px] font-medium text-black transition-colors hover:bg-[#EFEFEF]"
                     >
                       Get Started
                     </button>
-                    <button className="rounded border-[0.5px] border-[#3D3D3D] bg-[#1C1C1C] px-6 py-3 text-[15px] font-medium text-white transition-colors hover:bg-[#2C2C2C]">
+                    <Link
+                      href="/story"
+                      className="rounded border-[0.5px] border-[#3D3D3D] bg-[#1C1C1C] px-6 py-3 text-[15px] font-medium text-white transition-colors hover:bg-[#2C2C2C]"
+                    >
                       Read about the story
-                    </button>
+                    </Link>
                   </div>
                 </motion.div>
               ) : (
@@ -149,7 +150,9 @@ export default function LoginPage() {
                 >
                   <h1 className="mb-3 text-[72px] font-bold leading-[1.1] text-white">
                     {formTitles[currentForm].title} <br />
-                    <span className="text-white">{formTitles[currentForm].subtitle}</span>
+                    <span className="text-white">
+                      {formTitles[currentForm].subtitle}
+                    </span>
                   </h1>
 
                   <p className="mb-8 text-lg text-[#8F8F8F]">
@@ -177,35 +180,36 @@ export default function LoginPage() {
                   </div>
 
                   <div className="mt-6 flex items-center justify-between">
-                    <button 
+                    <button
                       onClick={() => setCurrentForm("landing")}
-                      className="text-[#8F8F8F] hover:text-white transition-colors text-sm"
+                      className="text-sm text-[#8F8F8F] transition-colors hover:text-white"
                     >
                       ← Back to home
                     </button>
                     <div className="flex gap-4">
                       {currentForm === "login" && (
                         <>
-                          <button 
+                          <button
                             onClick={() => setCurrentForm("forget")}
-                            className="text-[#8F8F8F] hover:text-white transition-colors text-sm"
+                            className="text-sm text-[#8F8F8F] transition-colors hover:text-white"
                           >
                             Forgot password?
                           </button>
                         </>
                       )}
                       {currentForm === "signup" && (
-                        <button 
+                        <button
                           onClick={() => setCurrentForm("login")}
-                          className="text-[#8F8F8F] hover:text-white transition-colors text-sm"
+                          className="text-sm text-[#8F8F8F] transition-colors hover:text-white"
                         >
                           Already have an account?
                         </button>
                       )}
-                      {(currentForm === "forget" || currentForm === "reset") && (
-                        <button 
+                      {(currentForm === "forget" ||
+                        currentForm === "reset") && (
+                        <button
                           onClick={() => setCurrentForm("login")}
-                          className="text-[#8F8F8F] hover:text-white transition-colors text-sm"
+                          className="text-sm text-[#8F8F8F] transition-colors hover:text-white"
                         >
                           Back to login
                         </button>
@@ -231,21 +235,21 @@ export default function LoginPage() {
           </div>
           <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A] via-transparent to-transparent"></div>
           {/* Add noise/grain overlay */}
-          <div 
+          <div
             className="absolute inset-0 opacity-50"
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-              mixBlendMode: 'overlay'
+              mixBlendMode: "overlay",
             }}
           />
           {/* Built by text at bottom right */}
-          <div className="absolute font-bold bottom-4 right-4 z-30 text-gray-400 text-sm">
-            Built by{' '}
+          <div className="absolute bottom-4 right-4 z-30 text-sm font-bold text-gray-400">
+            Built by{" "}
             <a
               href="https://x.com/technerd556"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-white transition-colors"
+              className="underline transition-colors hover:text-white"
             >
               TechNerd
             </a>
@@ -253,11 +257,11 @@ export default function LoginPage() {
         </div>
       </div>
       {/* Add subtle grain effect to entire page */}
-      <div 
+      <div
         className="pointer-events-none fixed inset-0 opacity-20"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          mixBlendMode: 'overlay'
+          mixBlendMode: "overlay",
         }}
       />
     </div>
