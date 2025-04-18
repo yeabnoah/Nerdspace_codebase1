@@ -10,26 +10,29 @@ export default function StoryPage() {
     <div className="relative min-h-svh bg-[#0A0A0A]">
       <div className="relative grid min-h-svh grid-cols-6">
         <div className="relative col-span-2 flex flex-col border-r border-white/10">
-          <div className="h-full overflow-y-auto p-12 lg:p-16">
+          <div className="flex h-full flex-col p-12 lg:p-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
+              className="flex flex-col h-full"
             >
-              <Link 
-                href="/login"
-                className="mb-8 flex items-center gap-2 text-[#8F8F8F] hover:text-white transition-colors"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to home
-              </Link>
+              <div className="flex-none">
+                <Link 
+                  href="/login"
+                  className="mb-8 flex items-center gap-2 text-[#8F8F8F] hover:text-white transition-colors"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to home
+                </Link>
 
-              <h1 className="mb-3 text-[72px] font-bold leading-[1.1] text-white">
-                My <br />
-                <span className="text-white">Story</span>
-              </h1>
+                <h1 className="mb-3 text-[72px] font-bold leading-[1.1] text-white">
+                  My <br />
+                  <span className="text-white">Story</span>
+                </h1>
+              </div>
 
-              <div className="space-y-6 text-lg text-[#8F8F8F]">
+              <div className="space-y-6 text-lg text-[#8F8F8F] flex-1 overflow-y-auto pr-4 custom-scrollbar">
                 <p>
                   I&apos;ve always been that kid who dives way too deep into things. Whether it was tech, storytelling, music, or random historical rabbit holes at 2 a.m., I never knew how to do &quot;casual interest.&quot; If I loved something, I obsessed over it. I wanted to understand how it worked, where it came from, and how far I could take it.
                 </p>
