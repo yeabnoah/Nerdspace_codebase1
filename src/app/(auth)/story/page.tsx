@@ -9,8 +9,8 @@ export default function StoryPage() {
   return (
     <div className="relative min-h-svh bg-[#0A0A0A]">
       <div className="relative grid min-h-svh grid-cols-6">
-        <div className="relative col-span-2 flex flex-col p-12 lg:p-16 border-r border-white/10">
-          <div className="fixed bottom-14 left-8 flex max-w-[370px] w-full flex-1 flex-col justify-end">
+        <div className="relative col-span-2 flex flex-col border-r border-white/10">
+          <div className="h-full overflow-y-auto p-12 lg:p-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -62,7 +62,7 @@ export default function StoryPage() {
                   Welcome to NerdSpace. I&apos;m glad you&apos;re here.
                 </p>
 
-                <div className="pt-8">
+                <div className="pt-8 pb-4">
                   <p className="text-white">Yeabsra Ashebir (Tech Nerd)</p>
                   <div className="mt-4 flex gap-4">
                     <a
