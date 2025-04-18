@@ -7,15 +7,15 @@ import { ArrowLeft } from "lucide-react";
 
 export default function StoryPage() {
   return (
-    <div className="relative min-h-svh bg-[#0A0A0A]">
-      <div className="relative grid min-h-svh grid-cols-6">
+    <div className="fixed inset-0 bg-[#0A0A0A]">
+      <div className="grid h-full grid-cols-6">
         <div className="relative col-span-2 flex flex-col border-r border-white/10">
           <div className="flex h-full flex-col p-12 lg:p-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="flex flex-col h-full"
+              className="flex h-full flex-col"
             >
               <div className="flex-none">
                 <Link 
@@ -26,64 +26,68 @@ export default function StoryPage() {
                   Back to home
                 </Link>
 
-                <h1 className="mb-3 text-[72px] font-bold leading-[1.1] text-white">
+                <h1 className="mb-12 text-[72px] font-bold leading-[1.1] text-white">
                   My <br />
                   <span className="text-white">Story</span>
                 </h1>
               </div>
 
-              <div className="space-y-6 text-lg text-[#8F8F8F] flex-1 overflow-y-auto pr-4 custom-scrollbar">
-                <p>
-                  I&apos;ve always been that kid who dives way too deep into things. Whether it was tech, storytelling, music, or random historical rabbit holes at 2 a.m., I never knew how to do &quot;casual interest.&quot; If I loved something, I obsessed over it. I wanted to understand how it worked, where it came from, and how far I could take it.
-                </p>
+              <div className="flex-1 min-h-0">
+                <div className="h-full overflow-y-auto pr-4 custom-scrollbar">
+                  <div className="space-y-6 text-lg text-[#8F8F8F]">
+                    <p>
+                      I&apos;ve always been that kid who dives way too deep into things. Whether it was tech, storytelling, music, or random historical rabbit holes at 2 a.m., I never knew how to do &quot;casual interest.&quot; If I loved something, I obsessed over it. I wanted to understand how it worked, where it came from, and how far I could take it.
+                    </p>
 
-                <p>
-                  But somewhere along the way, I realized that kind of passion can feel lonely. You know, when your eyes light up talking about something you love, and the people around you just smile politely — but don&apos;t really get it. That&apos;s when I started thinking: what if there was a space where that energy — that nerdiness — was the norm, not the exception?
-                </p>
+                    <p>
+                      But somewhere along the way, I realized that kind of passion can feel lonely. You know, when your eyes light up talking about something you love, and the people around you just smile politely — but don&apos;t really get it. That&apos;s when I started thinking: what if there was a space where that energy — that nerdiness — was the norm, not the exception?
+                    </p>
 
-                <p>
-                  That&apos;s how NerdSpace was born.
-                </p>
+                    <p>
+                      That&apos;s how NerdSpace was born.
+                    </p>
 
-                <p>
-                  I didn&apos;t want to build just another social network. I wanted to create a home for people like me — and maybe like you — who are obsessed with their craft, who love sharing their process, geeking out with others, and getting inspired by others doing the same.
-                </p>
+                    <p>
+                      I didn&apos;t want to build just another social network. I wanted to create a home for people like me — and maybe like you — who are obsessed with their craft, who love sharing their process, geeking out with others, and getting inspired by others doing the same.
+                    </p>
 
-                <p>
-                  NerdSpace is where we celebrate deep dives, midnight breakthroughs, weird side projects, and the joy of building, exploring, and learning. It&apos;s where artists, coders, scientists, writers, gamers, historians, engineers, tinkerers — all kinds of nerds — can find each other, learn from each other, and maybe even create something together.
-                </p>
+                    <p>
+                      NerdSpace is where we celebrate deep dives, midnight breakthroughs, weird side projects, and the joy of building, exploring, and learning. It&apos;s where artists, coders, scientists, writers, gamers, historians, engineers, tinkerers — all kinds of nerds — can find each other, learn from each other, and maybe even create something together.
+                    </p>
 
-                <p>
-                  I&apos;m still learning and growing as a builder, and NerdSpace is growing with me. It&apos;s not perfect, and it never will be — because like any passion project, it&apos;ll always be evolving.
-                </p>
+                    <p>
+                      I&apos;m still learning and growing as a builder, and NerdSpace is growing with me. It&apos;s not perfect, and it never will be — because like any passion project, it&apos;ll always be evolving.
+                    </p>
 
-                <p>
-                  But it&apos;s real. It&apos;s built with care. And it&apos;s for us.
-                </p>
+                    <p>
+                      But it&apos;s real. It&apos;s built with care. And it&apos;s for us.
+                    </p>
 
-                <p>
-                  Welcome to NerdSpace. I&apos;m glad you&apos;re here.
-                </p>
+                    <p>
+                      Welcome to NerdSpace. I&apos;m glad you&apos;re here.
+                    </p>
 
-                <div className="pt-8 pb-4">
-                  <p className="text-white">Yeabsra Ashebir (Tech Nerd)</p>
-                  <div className="mt-4 flex gap-4">
-                    <a
-                      href="https://t.me/selfmadecoder"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#8F8F8F] hover:text-white transition-colors"
-                    >
-                      Telegram
-                    </a>
-                    <a
-                      href="https://x.com/technerd556"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#8F8F8F] hover:text-white transition-colors"
-                    >
-                      Twitter
-                    </a>
+                    <div className="pt-8 pb-4">
+                      <p className="text-white">Yeabsra Ashebir (Tech Nerd)</p>
+                      <div className="mt-4 flex gap-4">
+                        <a
+                          href="https://t.me/selfmadecoder"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#8F8F8F] hover:text-white transition-colors"
+                        >
+                          Telegram
+                        </a>
+                        <a
+                          href="https://x.com/technerd556"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#8F8F8F] hover:text-white transition-colors"
+                        >
+                          Twitter
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
