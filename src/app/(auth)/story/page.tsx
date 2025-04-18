@@ -24,14 +24,14 @@ export default function StoryPage() {
               Back to home
             </Link>
 
-            <h1 className="mb-3 text-[72px] font-bold leading-[1.1] text-white">
-              My <br />
-              <span className="text-white">Story</span>
-            </h1>
-
             {/* Scrollable story container */}
-            <div className="h-[calc(100vh-280px)] overflow-y-auto pr-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20 hover:scrollbar-thumb-white/40">
-              <div className="space-y-6 text-lg text-[#8F8F8F]">
+            <div className="h-[calc(100vh-150px)] overflow-y-auto pr-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20 hover:scrollbar-thumb-white/40">
+              <h1 className="mb-8 text-[60px] font-bold leading-[1.1] text-white">
+                My <br />
+                <span className="text-white">Story</span>
+              </h1>
+
+              <div className="space-y-6 text-lg text-[#8F8F8F] pb-16">
                 <p>
                   I&apos;ve always been that kid who dives way too deep into things. Whether it was tech, storytelling, music, or random historical rabbit holes at 2 a.m., I never knew how to do &quot;casual interest.&quot; If I loved something, I obsessed over it. I wanted to understand how it worked, where it came from, and how far I could take it.
                 </p>
