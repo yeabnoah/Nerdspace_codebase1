@@ -767,7 +767,7 @@ const PostCard = ({
           >
             <motion.div
               className={`rounded-full ${
-                isShortContent && isTooShort ? "pr-0.5 sm:pr-1" : "px-0.5 sm:px-1"
+                isShortContent && isTooShort ? "pr-0.5 sm:pr-1 flex items-center gap-1" : "px-0.5 sm:px-1"
               } cursor-pointer md:mx-auto`}
               onClick={() => likeMutation.mutate(post.id)}
               variants={likeVariants}
@@ -787,7 +787,7 @@ const PostCard = ({
               whileTap="tap"
               transition={{ duration: 0.2 }}
             >
-              <div className="flex flex-col items-center gap-0.5">
+              <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center gap-0.5"}`}>
                 {optimisticLikes[post.id] !== undefined ? (
                   optimisticLikes[post.id] ? (
                     <GoHeartFill className="size-4 text-red-500 sm:size-5" />
@@ -814,14 +814,14 @@ const PostCard = ({
                 });
               }}
               className={`mx-auto cursor-pointer rounded-full ${
-                isShortContent && isTooShort ? "pr-0.5 sm:pr-1" : "px-0.5 sm:px-1"
+                isShortContent && isTooShort ? "pr-0.5 sm:pr-1 flex items-center gap-1" : "px-0.5 sm:px-1"
               }`}
               variants={iconVariants}
               whileHover="hover"
               whileTap="tap"
               transition={{ duration: 0.2 }}
             >
-              <div className="flex flex-col items-center gap-0.5">
+              <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center gap-0.5"}`}>
                 <MessageCircle className="size-4 sm:size-5" />
                 <span className="text-xs font-medium">{formatCount(post._count?.replies || 0)}</span>
               </div>
@@ -829,7 +829,7 @@ const PostCard = ({
 
             <motion.div
               className={`mx-auto rounded-full ${
-                isShortContent && isTooShort ? "pr-0.5 sm:pr-1" : "px-0.5 sm:px-1"
+                isShortContent && isTooShort ? "pr-0.5 sm:pr-1 flex items-center gap-1" : "px-0.5 sm:px-1"
               } cursor-pointer`}
               onClick={() => bookmarkMutation.mutate(post.id)}
               variants={bookmarkVariants}
@@ -849,7 +849,7 @@ const PostCard = ({
               whileTap="tap"
               transition={{ duration: 0.2 }}
             >
-              <div className="flex flex-col items-center gap-0.5">
+              <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center gap-0.5"}`}>
                 {optimisticBookmarks[post.id] !== undefined ? (
                   optimisticBookmarks[post.id] ? (
                     <HiBookmark className="size-4 text-primary sm:size-5" />

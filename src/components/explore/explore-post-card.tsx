@@ -326,6 +326,16 @@ const ExplorePostCard = ({
     setReportModalOpen(true);
   };
 
+  const formatCount = (count: number) => {
+    if (count >= 1000000) {
+      return (count / 1000000).toFixed(1) + 'M';
+    } else if (count >= 1000) {
+      return (count / 1000).toFixed(1) + 'K';
+    } else {
+      return count.toString();
+    }
+  };
+
   return (
     <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-4 px-3 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/50 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/50 after:to-transparent [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/50 [&>div]:before:to-transparent">
       <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
@@ -599,9 +609,15 @@ const ExplorePostCard = ({
 
             <div className="flex-1 break-words">
               <h4 className="break-all text-sm md:text-base">
-                {expandedStates[index] || !isLongContent
+                {(expandedStates[index] || !isLongContent
                   ? post.content
-                  : `${truncatedContent}...`}
+                  : truncatedContent
+                ).split(/(\s+)/).map((word, i) => (
+                  word.startsWith('#') 
+                    ? <span key={i} className="text-purple-500">{word}</span>
+                    : word
+                ))}
+                {!expandedStates[index] && isLongContent && '...'}
               </h4>
               {isLongContent && (
                 <button
@@ -621,17 +637,20 @@ const ExplorePostCard = ({
           >
             <div
               className={`rounded-full ${
-                isShortContent && isTooShort ? "pr-2" : "px-2"
+                isShortContent && isTooShort ? "flex items-center gap-2 pr-2" : "px-2"
               } md:mx-auto`}
               onClick={() => handleLike(post.id)}
             >
-              {post.likes?.some(
-                (like) => like.userId === session.data?.user.id,
-              ) ? (
-                <GoHeartFill className="size-5 text-red-500" />
-              ) : (
-                <GoHeart className="size-5" />
-              )}
+              <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center"}`}>
+                {post.likes?.some(
+                  (like) => like.userId === session.data?.user.id,
+                ) ? (
+                  <GoHeartFill className="size-5 text-red-500" />
+                ) : (
+                  <GoHeart className="size-5" />
+                )}
+                <span className="text-xs font-medium">{formatCount(post._count?.likes || 0)}</span>
+              </div>
             </div>
             <div
               onClick={async () => {
@@ -642,24 +661,30 @@ const ExplorePostCard = ({
                 });
               }}
               className={`mx-auto cursor-pointer rounded-full ${
-                isShortContent && isTooShort ? "pr-2" : "px-2"
+                isShortContent && isTooShort ? "flex items-center gap-2 pr-2" : "px-2"
               }`}
             >
-              <MessageCircle className="size-5" />
+              <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center"}`}>
+                <MessageCircle className="size-5" />
+                <span className="text-xs font-medium">{formatCount(post._count?.replies || 0)}</span>
+              </div>
             </div>
             <div
               className={`mx-auto rounded-full ${
-                isShortContent && isTooShort ? "pr-2" : "px-2"
+                isShortContent && isTooShort ? "flex items-center gap-2 pr-2" : "px-2"
               }`}
               onClick={() => handleBookmark(post.id)}
             >
-              {post.bookmarks.some(
-                (bookmark) => bookmark.userId === session.data?.user.id,
-              ) ? (
-                <HiBookmark className="size-5 text-primary" />
-              ) : (
-                <HiOutlineBookmark className="size-5" />
-              )}
+              <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center"}`}>
+                {post.bookmarks.some(
+                  (bookmark) => bookmark.userId === session.data?.user.id,
+                ) ? (
+                  <HiBookmark className="size-5 text-primary" />
+                ) : (
+                  <HiOutlineBookmark className="size-5" />
+                )}
+                <span className="text-xs font-medium">{formatCount(post._count?.bookmarks || 0)}</span>
+              </div>
             </div>
           </div>
         </div>
