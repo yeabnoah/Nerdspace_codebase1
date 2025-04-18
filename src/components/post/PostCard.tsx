@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Heart, MessageSquare, Star } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 const PostCard = ({
   post,
@@ -20,6 +21,12 @@ const PostCard = ({
   onCommentToggle?: (postId: string) => void;
   onMediaClick?: (index: number, images: string[]) => void;
 }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const contentWords = post.content.split(" ");
+  const trimLimit = 50; // You can adjust this number
+  const truncatedContent = contentWords.slice(0, trimLimit).join(" ");
+  const isLongContent = contentWords.length > trimLimit;
+
   const handleMediaClick = (index: number) => {
     if (onMediaClick) {
       onMediaClick(index, post.media.map((media: any) => media.url));
@@ -44,7 +51,24 @@ const PostCard = ({
         </div>
       </div>
       <div className="mb-4">
-        <p className="text-sm">{post.content}</p>
+        <p className="text-sm">
+          {(isExpanded || !isLongContent ? post.content : truncatedContent)
+            .split(/(\s+)/)
+            .map((word: string, i: number) => (
+              word.startsWith('#') 
+                ? <span key={i} className="text-purple-500">{word}</span>
+                : word
+            ))}
+          {!isExpanded && isLongContent && '...'}
+        </p>
+        {isLongContent && (
+          <button
+            className="mt-2 text-sm text-purple-500 hover:underline"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            {isExpanded ? "See less" : "See more"}
+          </button>
+        )}
       </div>
       {post.media?.length > 0 && (
         <div className="grid gap-2">

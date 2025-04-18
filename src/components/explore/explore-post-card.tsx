@@ -644,7 +644,7 @@ const ExplorePostCard = ({
               </h4>
               {isLongContent && (
                 <button
-                  className="mt-2 text-sm text-primary hover:underline"
+                  className="mt-2 text-sm text-purple-500 hover:underline"
                   onClick={() => toggleExpand(index)}
                 >
                   {expandedStates[index] ? "See less" : "See more"}
