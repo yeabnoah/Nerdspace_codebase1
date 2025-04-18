@@ -44,6 +44,18 @@ import {
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { renderComments } from "./comment/render-comments";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  EmojiPicker,
+  EmojiPickerSearch,
+  EmojiPickerContent,
+  EmojiPickerFooter,
+} from "@/components/ui/emoji-picker";
+import { SmileIcon } from "lucide-react";
 
 interface PostCardProps {
   post: postInterface;
@@ -138,6 +150,8 @@ const PostCard = ({
     [key: string]: boolean;
   }>({});
   const [isAccessDialogOpen, setIsAccessDialogOpen] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState<number>(0);
+  const [isEmojiOpen, setIsEmojiOpen] = useState(false);
 
   const formatCount = (count: number) => {
     if (count >= 1000000) {
@@ -457,6 +471,15 @@ const PostCard = ({
   };
   const handleAccessChange = async () => {
     setIsAccessDialogOpen(true);
+  };
+
+  const onEmojiClick = (emojiObject: any) => {
+    const text = commentContent;
+    const before = text.slice(0, cursorPosition);
+    const after = text.slice(cursorPosition);
+    const newText = before + emojiObject.emoji + after;
+    setCommentContent(newText);
+    setCursorPosition(cursorPosition + emojiObject.emoji.length);
   };
 
   return (
@@ -872,13 +895,42 @@ const PostCard = ({
         {commentShown[post.id] && (
           <div>
             <hr className="mb-2 mt-3 sm:mt-5" />
-            <div className="itemc flex gap-2">
-              <input
-                placeholder="Comment here"
-                className="w-full border-0 border-b border-b-textAlternative/20 bg-transparent text-xs placeholder:font-instrument placeholder:text-base focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0 dark:border-white/50 sm:text-sm sm:placeholder:text-lg"
-                value={commentContent}
-                onChange={(e) => setCommentContent(e.target.value)}
-              />
+            <div className="itemc flex gap-2 py-2">
+              <div className="relative flex-1">
+                <input
+                  placeholder="Comment here"
+                  className="w-full border-0 border-b border-b-textAlternative/20 bg-transparent text-xs placeholder:font-instrument placeholder:text-base focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0 py-2 px-2 dark:border-white/50 sm:text-sm sm:placeholder:text-lg"
+                  value={commentContent}
+                  onChange={(e) => setCommentContent(e?.target?.value)}
+                  onSelect={(e) => setCursorPosition(e?.currentTarget?.selectionStart || 0)}
+                />
+                <div className="absolute bottom-1 right-2">
+                  <Popover onOpenChange={setIsEmojiOpen} open={isEmojiOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 rounded-lg p-0 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                      >
+                        <SmileIcon className="h-4 w-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-fit p-0">
+                      <EmojiPicker
+                        className="h-[342px]"
+                        onEmojiSelect={({ emoji }) => {
+                          setIsEmojiOpen(false);
+                          onEmojiClick({ emoji });
+                        }}
+                      >
+                        <EmojiPickerSearch />
+                        <EmojiPickerContent />
+                        <EmojiPickerFooter />
+                      </EmojiPicker>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
               <Button
                 onClick={handleCommentSubmit}
                 className="h-8 border bg-transparent shadow-none hover:bg-transparent focus:outline-none focus:ring-0 sm:h-9"
