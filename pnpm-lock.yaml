@@ -161,6 +161,9 @@ importers:
       nodemailer:
         specifier: ^6.10.0
         version: 6.10.0
+      onborda:
+        specifier: ^1.2.5
+        version: 1.2.5(@radix-ui/react-portal@1.1.4(@types/react-dom@19.0.3(@types/react@19.0.8))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(framer-motion@12.6.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(next@15.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       posthog-js:
         specifier: ^1.236.2
         version: 1.236.2
@@ -2643,6 +2646,15 @@ packages:
   object.values@1.2.1:
     resolution: {integrity: sha512-gXah6aZrcUxjWg2zR2MwouP2eHlCBzdV4pygudehaKXSGW4v2AsRQUK+lwwXhii6KFZcunEnmSUoYp5CXibxtA==}
     engines: {node: '>= 0.4'}
+
+  onborda@1.2.5:
+    resolution: {integrity: sha512-S9EtQpKr8oYz7j0Bmr0w7BdG4Q4ud6QuNxBsSShzcf9khhuLEEjkbhYYMmdMlVa56QK/rXW/9pc8JJvBXUhOeA==}
+    peerDependencies:
+      '@radix-ui/react-portal': '>=1.1.1'
+      framer-motion: '>=11'
+      next: '>=13'
+      react: '>=18'
+      react-dom: '>=18'
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -5961,6 +5973,14 @@ snapshots:
       call-bound: 1.0.3
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
+
+  onborda@1.2.5(@radix-ui/react-portal@1.1.4(@types/react-dom@19.0.3(@types/react@19.0.8))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(framer-motion@12.6.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(next@15.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      '@radix-ui/react-portal': 1.1.4(@types/react-dom@19.0.3(@types/react@19.0.8))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      framer-motion: 12.6.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      next: 15.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
 
   optionator@0.9.4:
     dependencies:

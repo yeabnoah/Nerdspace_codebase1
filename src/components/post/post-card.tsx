@@ -462,8 +462,6 @@ const PostCard = ({
   return (
     <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-2 px-2 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/10 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/20 after:to-transparent sm:p-4 sm:px-3 [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/20 [&>div]:before:to-transparent">
       {/* Orange diagonal glow from bottom-left to top-right */}
-
-      {/* Blue diagonal glow from bottom-right to top-left */}
       <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
       <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
@@ -487,9 +485,9 @@ const PostCard = ({
               <h1 className="text-xs font-medium sm:text-sm">
                 {post.user.name}
               </h1>
-              <h1 className="text-[10px] text-muted-foreground text-purple-500 sm:text-xs">
+              <h1 className="text-[10px] text-muted-foreground sm:text-xs">
                 Nerd@
-                <span className="text-white">{post.user.nerdAt}</span>
+                <span className="text-purple-500">{post.user.nerdAt}</span>
               </h1>
             </div>
           </div>
@@ -738,10 +736,16 @@ const PostCard = ({
             )}
 
             <div className="flex-1 break-words">
-              <h4 className="break-all text-xs sm:text-sm md:text-base">
-                {expandedStates[index] || !isLongContent
+              <h4 className="whitespace-pre-wrap break-all text-xs sm:text-sm md:text-sm">
+                {(expandedStates[index] || !isLongContent
                   ? post.content
-                  : `${truncatedContent}...`}
+                  : truncatedContent
+                ).split(/(\s+)/).map((word, i) => (
+                  word.startsWith('#') 
+                    ? <span key={i} className="text-purple-500">{word}</span>
+                    : word
+                ))}
+                {!expandedStates[index] && isLongContent && '...'}
               </h4>
               {isLongContent && (
                 <button
