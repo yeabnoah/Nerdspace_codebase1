@@ -182,7 +182,11 @@ export function PostCard({ post, currentUser }: PostCardProps) {
             transition={{ delay: 0.2 }}
             className="text-sm"
           >
-            {post.content}
+            {post.content.split(/(\s+)/).map((word, i) => (
+              word.startsWith('#') 
+                ? <span key={i} className="text-purple-500">{word}</span>
+                : word
+            ))}
           </motion.p>
           {post.image && (
             <motion.div
