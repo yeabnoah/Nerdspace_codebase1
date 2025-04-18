@@ -17,3 +17,4 @@ export default function Home() {
     </div>
   );
 }
+// console.log the current url
