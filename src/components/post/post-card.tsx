@@ -772,7 +772,7 @@ const PostCard = ({
               </h4>
               {isLongContent && (
                 <button
-                  className="mt-1 text-xs text-primary hover:underline sm:mt-2 sm:text-sm"
+                  className="mt-1 text-xs text-purple-500 hover:underline sm:mt-2 sm:text-sm"
                   onClick={() => toggleExpand(index)}
                 >
                   {expandedStates[index] ? "See less" : "See more"}
