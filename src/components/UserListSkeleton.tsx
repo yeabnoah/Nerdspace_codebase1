@@ -1,29 +1,34 @@
 import React from "react";
+import { Card, CardContent } from "./ui/card";
+import { Skeleton } from "./ui/skeleton";
 
 const UserListSkeleton: React.FC = () => {
   return (
-    <div className="container mx-auto my-5 max-w-4xl">
-      <h1 className="mb-5 font-instrument text-3xl">Who to Follow</h1>
-      <div className="rounded-lg bg-white p-5">
-        <div className="space-y-4">
-          {[...Array(5)].map((_, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between border-b border-gray-200 p-4 animate-pulse"
-            >
+    <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {[...Array(6)].map((_, index) => (
+          <Card
+            key={index}
+            className="overflow-hidden rounded-2xl border border-zinc-200 bg-white/80 shadow-sm dark:border-zinc-800/50 dark:bg-black/80 backdrop-blur-sm"
+          >
+            <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
-                <div className="flex flex-col">
-                  <div className="h-4 w-24 bg-gray-300 rounded"></div>
-                  <div className="h-3 w-16 bg-gray-200 rounded mt-1"></div>
+                <div className="relative">
+                  <Skeleton className="h-16 w-16 rounded-full" />
+                </div>
+                <div className="min-w-0 flex-1 space-y-2">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
                 </div>
               </div>
-              <div className="h-8 w-20 bg-gray-300 rounded"></div>
-            </div>
-          ))}
-        </div>
-        <div className="h-10 w-full bg-gray-300 rounded mt-4"></div>
+              <Skeleton className="mt-3 h-4 w-full" />
+              <Skeleton className="mt-2 h-4 w-3/4" />
+              <Skeleton className="mt-4 h-12 w-full rounded-full" />
+            </CardContent>
+          </Card>
+        ))}
       </div>
+      <Skeleton className="mt-6 h-12 w-full rounded-full" />
     </div>
   );
 };

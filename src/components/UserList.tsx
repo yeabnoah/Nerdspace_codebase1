@@ -7,7 +7,7 @@ import axios from "axios";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import UserListSkeleton from "@/components/UserListSkeleton";
-import { ExternalLink, Users, UserPlus, FileText } from "lucide-react";
+import { ExternalLink, Users, UserPlus, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -19,9 +19,7 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
   const [cursor, setCursor] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const session = authClient.useSession();
-  const [followLoading, setFollowLoading] = useState<Record<string, boolean>>(
-    {},
-  );
+  const [followLoading, setFollowLoading] = useState<Record<string, boolean>>({});
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["users", cursor],
@@ -73,19 +71,13 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
   const nextCursor: string | null = data?.nextCursor || null;
 
   return (
-    <div className="container relative mx-auto my-5 max-w-4xl px-4 sm:px-6 lg:px-8">
-      <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
-
-      <h1 className="mb-5 text-center font-instrument text-3xl sm:text-left">
-        Who to Follow
-      </h1>
-
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {users.length > 0 ? (
           users.map((u) => (
             <Card
               key={u.id}
-              className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition-all duration-300 hover:border-zinc-300 hover:shadow-lg dark:border-zinc-800 dark:bg-black dark:border-gray-500/5"
+              className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white/80 shadow-sm transition-all duration-300 hover:border-zinc-300 hover:shadow-lg dark:border-zinc-800/50 dark:bg-black/80 dark:hover:border-zinc-700/50 backdrop-blur-sm"
             >
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
@@ -103,9 +95,12 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
                     <h3 className="font-heading truncate text-lg font-semibold text-zinc-900 dark:text-white">
                       {u?.visualName || u.name}
                     </h3>
-                    <p className="truncate text-sm text-zinc-500 dark:text-zinc-400">
-                      Nerd@{u?.nerdAt || u.username}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <Star className="h-3 w-3 text-yellow-500" />
+                      <p className="truncate text-sm text-zinc-500 dark:text-zinc-400">
+                        Nerd@{u?.nerdAt || u.username}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -115,11 +110,9 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
                   </p>
                 )}
 
-               
-
                 <Button
                   variant={u.isFollowingAuthor ? "secondary" : "default"}
-                  className="mt-4 py-5 rounded-full w-full gap-2 transition-all"
+                  className="mt-4 w-full gap-2 rounded-full py-5 transition-all hover:bg-primary/90 dark:hover:bg-primary/80"
                   onClick={() => handleFollowClick(u.id)}
                   disabled={followLoading[u.id]}
                 >
@@ -129,9 +122,15 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
                       Loading...
                     </span>
                   ) : u.isFollowingAuthor ? (
-                    "Following"
+                    <>
+                      <Users className="h-4 w-4" />
+                      Following
+                    </>
                   ) : (
-                    "Follow"
+                    <>
+                      <UserPlus className="h-4 w-4" />
+                      Follow
+                    </>
                   )}
                 </Button>
               </CardContent>
@@ -139,8 +138,8 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
           ))
         ) : (
           <div className="col-span-full">
-            <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-card/50">
-              <CardContent className="flex flex-col items-center justify-center rounded-xl bg-white py-12 text-center dark:bg-card/50">
+            <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white/80 shadow-sm backdrop-blur-sm dark:border-gray-500/5 dark:bg-black/80">
+              <CardContent className="flex flex-col items-center justify-center rounded-xl py-12 text-center">
                 <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/10 to-indigo-500/10">
                   <Users className="h-10 w-10 text-indigo-500" />
                 </div>
@@ -160,7 +159,7 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
       {nextCursor && (
         <Button
           onClick={() => setCursor(nextCursor)}
-          className="mt-6 w-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+          className="mt-6 w-full rounded-full bg-zinc-100 py-6 text-zinc-900 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
         >
           Load More
         </Button>
