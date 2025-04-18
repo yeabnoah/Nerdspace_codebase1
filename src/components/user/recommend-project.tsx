@@ -50,7 +50,7 @@ export default function RecommendedProjects() {
             </div>
           )}
           {data &&
-            data.map((each, index: number) => (
+            data.slice(0, 3).map((each, index: number) => (
               <Link
                 key={index}
                 href={`/project/${each.id}`}
@@ -71,7 +71,9 @@ export default function RecommendedProjects() {
                       className="text-sm font-medium hover:underline"
                       title={each.name}
                     >
-                      {each.name}
+                      {each.name.length > 15
+                        ? `${each.name.substring(0, 15)}...`
+                        : each.name}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
