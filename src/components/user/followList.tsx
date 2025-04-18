@@ -70,7 +70,7 @@ const FollowList = () => {
         </h2>
         <CardContent className="flex flex-col space-y-3 px-2">
           {users.length > 0 ? (
-            users.map((u) => (
+            users.slice(0, 3).map((u) => (
               <div
                 key={u.id}
                 onClick={() => router.push(`/user-profile/${u.id}`)}
@@ -120,7 +120,7 @@ const FollowList = () => {
             <p className="text-sm text-gray-500">No suggestions available</p>
           )}
         </CardContent>
-        {nextCursor && (
+        {/* {nextCursor && (
           <div className="px-6 pb-4">
             <Button
               onClick={() => setCursor(nextCursor)}
@@ -129,7 +129,7 @@ const FollowList = () => {
               Load More
             </Button>
           </div>
-        )}
+        )} */}
       </div>
     </Card>
   );
