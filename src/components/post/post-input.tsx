@@ -1,25 +1,38 @@
 "use client";
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import createPost from "@/functions/create-post";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { FolderIcon, MessagesSquareIcon, SmileIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { Button } from "../ui/button";
-import { AutosizeTextarea } from "../ui/resizeble-text-area";
+import { HiPhoto } from "react-icons/hi2";
 import { PostFileUploader } from "../media/post-file-uploader";
-import axios from "axios";
+import { Button } from "../ui/button";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogTitle,
+  DialogTrigger,
 } from "../ui/dialog";
-import { FolderIcon, MessagesSquareIcon, X } from "lucide-react";
-import { HiPhoto } from "react-icons/hi2";
+import { AutosizeTextarea } from "../ui/resizeble-text-area";
+
+import {
+  EmojiPicker,
+  EmojiPickerSearch,
+  EmojiPickerContent,
+  EmojiPickerFooter,
+} from "@/components/ui/emoji-picker";
+
 
 const cloudinaryUploadUrl = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!;
 const cloudinaryUploadPreset =
@@ -29,14 +42,30 @@ const PostInput = () => {
   const [dialogPost, setDialogPost] = useState<string>("");
   const [dialogFiles, setDialogFiles] = useState<File[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [cursorPosition, setCursorPosition] = useState<number>(0);
   const session = authClient.useSession();
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const onEmojiClick = (emojiObject: any) => {
+    const text = dialogPost;
+    const before = text.slice(0, cursorPosition);
+    const after = text.slice(cursorPosition);
+    const newText = before + emojiObject.emoji + after;
+    setDialogPost(newText);
+    setCursorPosition(cursorPosition + emojiObject.emoji.length);
+  };
+
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDialogPost(e.target.value);
+    setCursorPosition(e.target.selectionStart);
+  };
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["create-post"],
@@ -196,40 +225,67 @@ const PostInput = () => {
                 </div>
               </div>
 
-              <AutosizeTextarea
-                maxHeight={300}
-                placeholder="What's on your mind?"
-                className="h-64 w-full rounded-xl border bg-transparent text-base outline-none placeholder:text-gray-400 focus:outline-none focus:ring-0 focus-visible:ring-0 dark:border-gray-500/10 dark:placeholder:text-gray-500"
-                value={dialogPost}
-                onChange={(e) => setDialogPost(e.target.value)}
-              />
-            </div>
+              <div className="relative">
+                <AutosizeTextarea
+                  maxHeight={300}
+                  placeholder="What's on your mind?"
+                  className="h-64 w-full rounded-xl border bg-transparent text-base outline-none placeholder:text-gray-400 focus:outline-none focus:ring-0 focus-visible:ring-0 dark:border-gray-500/10 dark:placeholder:text-gray-500"
+                  value={dialogPost}
+                  onChange={handleTextareaChange}
+                  onSelect={(e) =>
+                    setCursorPosition(e.currentTarget.selectionStart)
+                  }
+                />
+                <div className="absolute bottom-4 right-4">
+                  <Popover onOpenChange={setIsOpen} open={isOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                      >
+                        <SmileIcon className="h-5 w-5" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-fit p-0">
+                      <EmojiPicker
+                        className="h-[342px]"
+                        onEmojiSelect={({ emoji }) => {
+                          setIsOpen(false);
+                          onEmojiClick({ emoji });
+                        }}
+                      >
+                        <EmojiPickerSearch />
+                        <EmojiPickerContent />
+                        <EmojiPickerFooter />
+                      </EmojiPicker>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
 
-            <div className="border-t border-gray-200 p-2 dark:border-gray-500/10">
               <div className="flex items-center justify-between pb-4">
-                <PostFileUploader onFilesSelected={setDialogFiles} />
+                <div className="flex items-center gap-2">
+                  <PostFileUploader onFilesSelected={setDialogFiles} />
 
-                <div className="flex items-center justify-between px-4">
-                  <div className="flex items-center gap-1">
-                    <Button
-                      disabled
-                      variant="ghost"
-                      size="sm"
-                      className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
-                    >
-                      <FolderIcon />
-                      <span className="hidden md:block">Document</span>
-                    </Button>
-                    <Button
-                      disabled
-                      variant="ghost"
-                      size="sm"
-                      className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
-                    >
-                      <MessagesSquareIcon />
-                      <span className="hidden md:block">Poll</span>
-                    </Button>
-                  </div>
+                  <Button
+                    disabled
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
+                  >
+                    <FolderIcon />
+                    <span className="hidden md:block">Document</span>
+                  </Button>
+                  <Button
+                    disabled
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
+                  >
+                    <MessagesSquareIcon />
+                    <span className="hidden md:block">Poll</span>
+                  </Button>
                 </div>
               </div>
 
