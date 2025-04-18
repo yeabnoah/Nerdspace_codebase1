@@ -31,35 +31,35 @@ export default function StoryPage() {
 
               <div className="space-y-6 text-lg text-[#8F8F8F]">
                 <p>
-                  I've always been that kid who dives way too deep into things. Whether it was tech, storytelling, music, or random historical rabbit holes at 2 a.m., I never knew how to do "casual interest." If I loved something, I obsessed over it. I wanted to understand how it worked, where it came from, and how far I could take it.
+                  I&apos;ve always been that kid who dives way too deep into things. Whether it was tech, storytelling, music, or random historical rabbit holes at 2 a.m., I never knew how to do &quot;casual interest.&quot; If I loved something, I obsessed over it. I wanted to understand how it worked, where it came from, and how far I could take it.
                 </p>
 
                 <p>
-                  But somewhere along the way, I realized that kind of passion can feel lonely. You know, when your eyes light up talking about something you love, and the people around you just smile politely — but don't really get it. That's when I started thinking: what if there was a space where that energy — that nerdiness — was the norm, not the exception?
+                  But somewhere along the way, I realized that kind of passion can feel lonely. You know, when your eyes light up talking about something you love, and the people around you just smile politely — but don&apos;t really get it. That&apos;s when I started thinking: what if there was a space where that energy — that nerdiness — was the norm, not the exception?
                 </p>
 
                 <p>
-                  That's how NerdSpace was born.
+                  That&apos;s how NerdSpace was born.
                 </p>
 
                 <p>
-                  I didn't want to build just another social network. I wanted to create a home for people like me — and maybe like you — who are obsessed with their craft, who love sharing their process, geeking out with others, and getting inspired by others doing the same.
+                  I didn&apos;t want to build just another social network. I wanted to create a home for people like me — and maybe like you — who are obsessed with their craft, who love sharing their process, geeking out with others, and getting inspired by others doing the same.
                 </p>
 
                 <p>
-                  NerdSpace is where we celebrate deep dives, midnight breakthroughs, weird side projects, and the joy of building, exploring, and learning. It's where artists, coders, scientists, writers, gamers, historians, engineers, tinkerers — all kinds of nerds — can find each other, learn from each other, and maybe even create something together.
+                  NerdSpace is where we celebrate deep dives, midnight breakthroughs, weird side projects, and the joy of building, exploring, and learning. It&apos;s where artists, coders, scientists, writers, gamers, historians, engineers, tinkerers — all kinds of nerds — can find each other, learn from each other, and maybe even create something together.
                 </p>
 
                 <p>
-                  I'm still learning and growing as a builder, and NerdSpace is growing with me. It's not perfect, and it never will be — because like any passion project, it'll always be evolving.
+                  I&apos;m still learning and growing as a builder, and NerdSpace is growing with me. It&apos;s not perfect, and it never will be — because like any passion project, it&apos;ll always be evolving.
                 </p>
 
                 <p>
-                  But it's real. It's built with care. And it's for us.
+                  But it&apos;s real. It&apos;s built with care. And it&apos;s for us.
                 </p>
 
                 <p>
-                  Welcome to NerdSpace. I'm glad you're here.
+                  Welcome to NerdSpace. I&apos;m glad you&apos;re here.
                 </p>
 
                 <div className="pt-8">
@@ -105,7 +105,7 @@ export default function StoryPage() {
             className="absolute inset-0 opacity-50"
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-              mixBlendMode: 'overlay'
+              mixBlendMode: "overlay"
             }}
           />
         </div>
@@ -115,7 +115,7 @@ export default function StoryPage() {
         className="pointer-events-none fixed inset-0 opacity-20"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          mixBlendMode: 'overlay'
+          mixBlendMode: "overlay"
         }}
       />
     </div>
