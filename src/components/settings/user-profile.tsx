@@ -16,6 +16,11 @@ import ProjectsTab from "./tabs/ProjectsTab";
 import RenderUserPosts from "./user-posts";
 import { toast } from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import PostCard from "../post/post-card";
+import type postInterface from "@/interface/auth/post.interface";
+import { useRouter } from "next/navigation";
+import ExplorePostCard from "../explore/explore-post-card";
+import PostCommentInterface from "@/interface/auth/comment.interface";
 
 // interface FollowCounts {
 //   followers: number;
@@ -28,6 +33,97 @@ export default function UserProfile() {
   const [loading, setLoading] = useState(true);
   const session = useSession();
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const [expandedStates, setExpandedStates] = useState<boolean[]>([]);
+  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>({});
+  const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
+  const [replyShown, setReplyShown] = useState<{ [key: string]: boolean }>({});
+  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
+  const [expandedReplies, setExpandedReplies] = useState<{ [key: string]: boolean }>({});
+  const [modalEditOpened, setModalEditOpened] = useState(false);
+  const [modalDeleteOpened, setModalDeleteOpened] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [commentId, setCommentId] = useState("");
+
+  const toggleExpand = (index: number) => {
+    setExpandedStates((prev) => {
+      const newStates = [...prev];
+      newStates[index] = !newStates[index];
+      return newStates;
+    });
+  };
+
+  const toggleCommentShown = (postId: string) => {
+    setCommentShown((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+  };
+
+  const toggleCommentExpand = (commentId: string) => {
+    setExpandedComments((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const toggleReplyShown = (commentId: string) => {
+    setReplyShown((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const toggleReplies = (commentId: string) => {
+    setExpandedReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const handleReplySubmit = (commentId: string) => {
+    // Implement reply submission logic
+  };
+
+  const handleEditComment = (commentId: string) => {
+    // Implement edit comment logic
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    // Implement delete comment logic
+  };
+
+  const openEditModal = () => {
+    setModalEditOpened(true);
+  };
+
+  const openDeleteModal = () => {
+    setModalDeleteOpened(true);
+  };
+
+  const setSelectedCommentReply = () => {
+    // Implement set selected comment reply logic
+  };
+
+  const setEditModal = (open: boolean) => {
+    setModalEditOpened(open);
+  };
+
+  const setDeleteModal = (open: boolean) => {
+    setModalDeleteOpened(open);
+  };
+
+  const changePostAccessType = () => {
+    // Implement change post access type logic
+  };
+
+  const handleFollow = () => {
+    // Implement follow logic
+  };
+
+  const handlePostClick = (post: postInterface) => {
+    router.push(`/post/${post.id}`);
+  };
 
   const { data: userData, isLoading: isLoadingUser } = useQuery({
     queryKey: ["user-data", userProfile?.id],
@@ -79,6 +175,15 @@ export default function UserProfile() {
     onError: () => {
       toast.error("Error occurred while following/unfollowing user");
     },
+  });
+
+  const { data: posts } = useQuery({
+    queryKey: ["user-posts", userProfile?.id],
+    queryFn: async () => {
+      const response = await axios.get(`/api/user/posts?userId=${userProfile?.id}`);
+      return response.data.data;
+    },
+    enabled: !!userProfile?.id,
   });
 
   useEffect(() => {
@@ -270,7 +375,52 @@ export default function UserProfile() {
                 </TabsList>
 
                 <TabsContent value="posts" className="mt-0">
-                  <RenderUserPosts />
+                  <div className="space-y-4">
+                    {posts?.map((post : postInterface, index : number) => (
+                      <div
+                        key={post.id}
+                        onClick={() => handlePostClick(post)}
+                        className="cursor-pointer"
+                      >
+                        <ExplorePostCard
+                          post={post}
+                          index={index}
+                          expandedStates={expandedStates}
+                          toggleExpand={toggleExpand}
+                          commentShown={commentShown}
+                          toggleCommentShown={toggleCommentShown}
+                          expandedComments={expandedComments}
+                          toggleCommentExpand={toggleCommentExpand}
+                          replyShown={replyShown}
+                          toggleReplyShown={toggleReplyShown}
+                          replyContent={replyContent}
+                          setReplyContent={setReplyContent}
+                          handleReplySubmit={handleReplySubmit}
+                          expandedReplies={expandedReplies}
+                          toggleReplies={toggleReplies}
+                          handleEditComment={handleEditComment}
+                          handleDeleteComment={handleDeleteComment}
+                          openEditModal={openEditModal}
+                          openDeleteModal={openDeleteModal}
+                          setSelectedCommentReply={setSelectedCommentReply}
+                          modalEditOpened={modalEditOpened}
+                          modalDeleteOpened={modalDeleteOpened}
+                          reportModalOpen={reportModalOpen}
+                          setReportModalOpen={setReportModalOpen}
+                          commentLoading={false}
+                          comments={[]}
+                          hasNextCommentPage={false}
+                          isFetchingNextCommentPage={false}
+                          fetchNextCommentPage={() => {}}
+                          setEditModal={setEditModal}
+                          setDeleteModal={setDeleteModal}
+                          changePostAccessType={changePostAccessType}
+                          handleFollow={handleFollow}
+                          setCommentId={setCommentId}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </TabsContent>
                 <TabsContent value="projects" className="mt-0">
                   <ProjectsTab />
