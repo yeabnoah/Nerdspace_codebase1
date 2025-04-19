@@ -21,9 +21,10 @@ const geistSans = Geist({
 });
 
 const playfairDisplay = Playfair_Display({
-  variable: "--font-playfair-display", // Unique variable name
+  variable: "--font-playfair-display",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "600", "700"],
+  preload: true,
 });
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -33,7 +34,8 @@ const geistMono = Geist_Mono({
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"], // Specify all weights
+  weight: ["400", "500", "600", "700"],
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -90,7 +92,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${InstrumentSerif.variable} ${inter.variable} ${itcThin.variable} ${itcBold.variable} ${itcThinItalic.variable} overflow-x-hidden font-geist antialiased dark:bg-black`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${InstrumentSerif.variable} ${inter.variable} ${itcThin.variable} ${itcBold.variable} ${itcThinItalic.variable} antialiased dark:bg-black overflow-x-hidden font-geist`}
       >
         <ThemeProvider
           attribute="class"
@@ -99,11 +101,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TanstackQueryProvider>
-            {/* <WhoAmIProvider> */}
-            <MobileViewMessage />
-            {children}
-            <FeedbackButton />
-            {/* </WhoAmIProvider> */}
+            <WhoAmIProvider>
+              <MobileViewMessage />
+              {children}
+              <FeedbackButton />
+            </WhoAmIProvider>
           </TanstackQueryProvider>
           <Toaster
             position="bottom-right"
