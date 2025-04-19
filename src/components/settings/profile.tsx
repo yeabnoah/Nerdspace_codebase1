@@ -37,12 +37,24 @@ import PrivateTab from "./tabs/PrivateTab";
 import ProjectsTab from "./tabs/ProjectsTab";
 import { toast } from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import PostCard from "../post/post-card";
+import type postInterface from "@/interface/auth/post.interface";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("posts");
   const { user, isloading, setuser, setIsLoading } = useUserStore();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [expandedStates, setExpandedStates] = useState<boolean[]>([]);
+  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>({});
+  const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
+  const [replyShown, setReplyShown] = useState<{ [key: string]: boolean }>({});
+  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
+  const [expandedReplies, setExpandedReplies] = useState<{ [key: string]: boolean }>({});
+  const [modalEditOpened, setEditModal] = useState(false);
+  const [modalDeleteOpened, setDeleteModal] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [commentId, setCommentId] = useState("");
 
   console.log(activeTab);
 
@@ -58,6 +70,15 @@ export default function ProfilePage() {
       //console.log(test)
       return response.data;
     },
+  });
+
+  const { data: posts } = useQuery({
+    queryKey: ["my-posts", user?.id],
+    queryFn: async () => {
+      const response = await axios.get(`/api/posts/user/${user?.id}`);
+      return response.data.data;
+    },
+    enabled: !!user?.id,
   });
 
   const followMutation = useMutation({
@@ -89,6 +110,81 @@ export default function ProfilePage() {
       toast.error("Error occurred while following/unfollowing user");
     },
   });
+
+  const toggleExpand = (index: number) => {
+    setExpandedStates((prev) => {
+      const newStates = [...prev];
+      newStates[index] = !newStates[index];
+      return newStates;
+    });
+  };
+
+  const toggleCommentShown = (postId: string) => {
+    setCommentShown((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+  };
+
+  const toggleCommentExpand = (commentId: string) => {
+    setExpandedComments((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const toggleReplyShown = (commentId: string) => {
+    setReplyShown((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const handleReplySubmit = (commentId: string) => {
+    // Implement reply submit logic
+    console.log("Reply submitted for comment:", commentId);
+  };
+
+  const toggleReplies = (commentId: string) => {
+    setExpandedReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const handleEditComment = (commentId: string) => {
+    // Implement edit comment logic
+    console.log("Edit comment:", commentId);
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    // Implement delete comment logic
+    console.log("Delete comment:", commentId);
+  };
+
+  const openEditModal = (comment: any) => {
+    setEditModal(true);
+  };
+
+  const openDeleteModal = (comment: any) => {
+    setDeleteModal(true);
+  };
+
+  const setSelectedCommentReply = (comment: any) => {
+    // Implement selected comment reply logic
+  };
+
+  const changePostAccessType = (post: any) => {
+    // Implement change post access type logic
+  };
+
+  const handleLike = (postId: string) => {
+    // Implement like logic
+  };
+
+  const handleBookmark = (postId: string) => {
+    // Implement bookmark logic
+  };
 
   if (isloading || isFetching || isPending) {
     return (
@@ -302,7 +398,48 @@ export default function ProfilePage() {
                 </TabsList>
 
                 <TabsContent value="posts" className="mt-0">
-                  <RenderMyPost />
+                  <div className="space-y-4">
+                    {posts?.map((post : postInterface, index : number) => (
+                      <PostCard
+                        key={post.id}
+                        post={post}
+                        index={index}
+                        expandedStates={expandedStates}
+                        toggleExpand={toggleExpand}
+                        commentShown={commentShown}
+                        toggleCommentShown={toggleCommentShown}
+                        expandedComments={expandedComments}
+                        toggleCommentExpand={toggleCommentExpand}
+                        replyShown={replyShown}
+                        toggleReplyShown={toggleReplyShown}
+                        replyContent={replyContent}
+                        setReplyContent={setReplyContent}
+                        handleReplySubmit={handleReplySubmit}
+                        expandedReplies={expandedReplies}
+                        toggleReplies={toggleReplies}
+                        handleEditComment={handleEditComment}
+                        handleDeleteComment={handleDeleteComment}
+                        openEditModal={openEditModal}
+                        openDeleteModal={openDeleteModal}
+                        setSelectedCommentReply={setSelectedCommentReply}
+                        modalEditOpened={modalEditOpened}
+                        modalDeleteOpened={modalDeleteOpened}
+                        reportModalOpen={reportModalOpen}
+                        setReportModalOpen={setReportModalOpen}
+                        commentLoading={false}
+                        comments={[]}
+                        hasNextCommentPage={false}
+                        isFetchingNextCommentPage={false}
+                        fetchNextCommentPage={() => {}}
+                        setEditModal={setEditModal}
+                        setDeleteModal={setDeleteModal}
+                        changePostAccessType={changePostAccessType}
+                        handleLike={handleLike}
+                        handleBookmark={handleBookmark}
+                        setCommentId={setCommentId}
+                      />
+                    ))}
+                  </div>
                 </TabsContent>
                 <TabsContent value="projects" className="mt-0">
                   <ProjectsTab />
