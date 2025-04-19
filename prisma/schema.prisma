@@ -55,6 +55,7 @@ model User {
   CommunityMembership  CommunityMembership[]
   CommunityPost        CommunityPost[]
   interests            CommunityCategory[]    @relation("UserInterests")
+  bugReport            bugReport[]
 
   @@unique([email])
   @@map("user")
@@ -373,6 +374,29 @@ model CommunityCategory {
   name        String      @unique
   communities Community[]
   users       User[]      @relation("UserInterests")
+}
+
+model bugReport {
+  id          String            @id @default(uuid())
+  userId      String
+  content     String
+  bugseverity bugReportSeverity @default(LOW)
+  status      bugReportStatus   @default(PENDING)
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+enum bugReportSeverity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum bugReportStatus {
+  PENDING
+  RESOLVED
+  REJECTED
 }
 
 enum CommunityRole {
