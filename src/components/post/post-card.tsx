@@ -953,6 +953,8 @@ const PostCard = ({
         </Dialog>
       </div>
 
+      {/* Edit Modal */}
+
       <EditModal
         incasePost={post}
         setEditModal={setEditModal}
