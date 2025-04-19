@@ -795,7 +795,7 @@ const PostCard = ({
             </div>
           </div>
 
-          <div className="mt-4 flex w-full items-center justify-start gap-6 border-t pt-3">
+          <div className="mt-4 flex w-full items-center justify-start gap-6 border-t border-t-gray-500/10 pt-3">
             <motion.div
               className="flex cursor-pointer items-center gap-2"
               onClick={() => likeMutation.mutate(post.id)}
