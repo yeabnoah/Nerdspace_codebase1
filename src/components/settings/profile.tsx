@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useUserStore from "@/store/user.store";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import {
   Bookmark,
@@ -35,11 +35,14 @@ import BookmarksTab from "./tabs/BookmarksTab";
 import CollectionsTab from "./tabs/CollectionsTab";
 import PrivateTab from "./tabs/PrivateTab";
 import ProjectsTab from "./tabs/ProjectsTab";
+import { toast } from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("posts");
   const { user, isloading, setuser, setIsLoading } = useUserStore();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   console.log(activeTab);
 
@@ -54,6 +57,36 @@ export default function ProfilePage() {
       setIsLoading(false);
       //console.log(test)
       return response.data;
+    },
+  });
+
+  const followMutation = useMutation({
+    mutationFn: async ({
+      userId,
+      action,
+    }: {
+      userId: string;
+      action: "follow" | "unfollow";
+    }) => {
+      const response = await axios.post(
+        `/api/user/follow?userId=${userId}&action=${action}`,
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      // Invalidate all relevant queries to ensure UI consistency
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["who-to-follow"] });
+      queryClient.invalidateQueries({ queryKey: ["follow-status"] });
+      queryClient.invalidateQueries({ queryKey: ["user-followers"] });
+      queryClient.invalidateQueries({ queryKey: ["user-following"] });
+      queryClient.invalidateQueries({ queryKey: ["explore"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["user-data"] });
+      toast.success(data.message);
+    },
+    onError: () => {
+      toast.error("Error occurred while following/unfollowing user");
     },
   });
 
