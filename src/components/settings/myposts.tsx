@@ -189,8 +189,6 @@ const RenderMyPost = () => {
                             />
                           </div>
 
-                          console.log("this is gona happen : ")
-
                           <div className="flex w-full flex-col gap-1 sm:gap-2">
                             {each.media.slice(1, 4).map((media: { url: string }, mediaIndex: number) => (
                               <div
