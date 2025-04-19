@@ -10,6 +10,7 @@ import UserListSkeleton from "@/components/UserListSkeleton";
 import { ExternalLink, Users, UserPlus, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 
 interface UserListProps {
   handleFollow: (userId: string) => void;
@@ -19,7 +20,10 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
   const [cursor, setCursor] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const session = authClient.useSession();
-  const [followLoading, setFollowLoading] = useState<Record<string, boolean>>({});
+  const [followLoading, setFollowLoading] = useState<Record<string, boolean>>(
+    {},
+  );
+  const router = useRouter();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["users", cursor],
@@ -77,7 +81,8 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
           users.map((u) => (
             <Card
               key={u.id}
-              className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white/80 shadow-sm transition-all duration-300 hover:border-zinc-300 hover:shadow-lg dark:border-zinc-800/50 dark:bg-black/80 dark:hover:border-zinc-700/50 backdrop-blur-sm"
+              className="group relative cursor-pointer overflow-hidden rounded-2xl border border-zinc-200 bg-white/80 shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-zinc-300 hover:shadow-lg dark:border-zinc-800/50 dark:bg-black/80 dark:hover:border-zinc-700/50"
+              onClick={() => router.push(`/user-profile/${u.id}`)}
             >
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
@@ -113,7 +118,10 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
                 <Button
                   variant={u.isFollowingAuthor ? "secondary" : "default"}
                   className="mt-4 w-full gap-2 rounded-full py-5 transition-all hover:bg-primary/90 dark:hover:bg-primary/80"
-                  onClick={() => handleFollowClick(u.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFollowClick(u.id);
+                  }}
                   disabled={followLoading[u.id]}
                 >
                   {followLoading[u.id] ? (
@@ -147,8 +155,8 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
                   No suggestions available
                 </h3>
                 <p className="max-w-md text-gray-500 dark:text-gray-400">
-                  We couldn&apos;t find any users to suggest at the moment. Check
-                  back later for new recommendations.
+                  We couldn&apos;t find any users to suggest at the moment.
+                  Check back later for new recommendations.
                 </p>
               </CardContent>
             </Card>
