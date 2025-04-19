@@ -19,7 +19,7 @@ export const OnboardingSchema = z.object({
   nerdAt: z.string().optional(),
   image: z.string().url().optional(),
   firstTime: z.boolean(),
-  link: z.string().url().optional(),
+  link: z.string().optional(),
   coverImage: z.string().url().optional(),
 });
 
