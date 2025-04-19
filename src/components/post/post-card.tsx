@@ -608,11 +608,7 @@ const PostCard = ({
           </div>
         </div>
 
-        <div
-          className={`mt-2 flex w-full flex-1 ${
-            isShortContent && isTooShort ? "flex-col" : "flex-row"
-          } items-start justify-center`}
-        >
+        <div className={`mt-2 flex w-full flex-1 flex-col items-start justify-center`}>
           <div className="flex w-[100%] flex-1 flex-col justify-start gap-3">
             {post?.shared && (
               <Card
@@ -665,11 +661,7 @@ const PostCard = ({
               </Card>
             )}
             {post.media && post.media.length > 0 && (
-              <div
-                className={`${!post.shared && "mt-2 sm:mt-4"} grid w-[100%] flex-1 gap-1 sm:gap-2 ${getGridClass(
-                  post.media.length,
-                )}`}
-              >
+              <div className={`${!post.shared && "mt-2 sm:mt-4"} grid w-[100%] flex-1 gap-1 sm:gap-2 ${getGridClass(post.media.length)}`}>
                 {post.media.length === 1 && (
                   <div
                     className="relative h-[25vh] sm:h-[30vh] md:h-[36vh]"
@@ -781,17 +773,9 @@ const PostCard = ({
             </div>
           </div>
 
-          <div
-            className={`flex ${
-              isShortContent && isTooShort
-                ? "mt-3 flex-row sm:mt-5"
-                : "mt-3 flex-col sm:mt-5"
-            } gap-2 sm:gap-3 md:w-16`}
-          >
+          <div className="mt-4 flex w-full items-center justify-start gap-6 border-t pt-3">
             <motion.div
-              className={`rounded-full ${
-                isShortContent && isTooShort ? "pr-0.5 sm:pr-1 flex items-center gap-1" : "px-0.5 sm:px-1"
-              } cursor-pointer md:mx-auto`}
+              className="flex cursor-pointer items-center gap-2"
               onClick={() => likeMutation.mutate(post.id)}
               variants={likeVariants}
               initial="initial"
@@ -810,22 +794,20 @@ const PostCard = ({
               whileTap="tap"
               transition={{ duration: 0.2 }}
             >
-              <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center gap-0.5"}`}>
-                {optimisticLikes[post.id] !== undefined ? (
-                  optimisticLikes[post.id] ? (
-                    <GoHeartFill className="size-4 text-red-500 sm:size-5" />
-                  ) : (
-                    <GoHeart className="size-4 sm:size-5" />
-                  )
-                ) : post.likes?.some(
-                    (like) => like.userId === session.data?.user.id,
-                  ) ? (
-                  <GoHeartFill className="size-4 text-red-500 sm:size-5" />
+              {optimisticLikes[post.id] !== undefined ? (
+                optimisticLikes[post.id] ? (
+                  <GoHeartFill className="size-5 text-red-500" />
                 ) : (
-                  <GoHeart className="size-4 sm:size-5" />
-                )}
-                <span className="text-xs font-medium">{formatCount(post._count?.likes || 0)}</span>
-              </div>
+                  <GoHeart className="size-5" />
+                )
+              ) : post.likes?.some(
+                  (like) => like.userId === session.data?.user.id,
+                ) ? (
+                <GoHeartFill className="size-5 text-red-500" />
+              ) : (
+                <GoHeart className="size-5" />
+              )}
+              <span className="text-sm font-medium">{formatCount(post._count?.likes || 0)}</span>
             </motion.div>
 
             <motion.div
@@ -836,24 +818,18 @@ const PostCard = ({
                   queryKey: ["comment", post.id],
                 });
               }}
-              className={`mx-auto cursor-pointer rounded-full ${
-                isShortContent && isTooShort ? "pr-0.5 sm:pr-1 flex items-center gap-1" : "px-0.5 sm:px-1"
-              }`}
+              className="flex cursor-pointer items-center gap-2"
               variants={iconVariants}
               whileHover="hover"
               whileTap="tap"
               transition={{ duration: 0.2 }}
             >
-              <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center gap-0.5"}`}>
-                <MessageCircle className="size-4 sm:size-5" />
-                <span className="text-xs font-medium">{formatCount(post._count?.replies || 0)}</span>
-              </div>
+              <MessageCircle className="size-5" />
+              <span className="text-sm font-medium">{formatCount(post._count?.replies || 0)}</span>
             </motion.div>
 
             <motion.div
-              className={`mx-auto rounded-full ${
-                isShortContent && isTooShort ? "pr-0.5 sm:pr-1 flex items-center gap-1" : "px-0.5 sm:px-1"
-              } cursor-pointer`}
+              className="flex cursor-pointer items-center gap-2"
               onClick={() => bookmarkMutation.mutate(post.id)}
               variants={bookmarkVariants}
               initial="initial"
@@ -872,22 +848,20 @@ const PostCard = ({
               whileTap="tap"
               transition={{ duration: 0.2 }}
             >
-              <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center gap-0.5"}`}>
-                {optimisticBookmarks[post.id] !== undefined ? (
-                  optimisticBookmarks[post.id] ? (
-                    <HiBookmark className="size-4 text-primary sm:size-5" />
-                  ) : (
-                    <HiOutlineBookmark className="size-4 sm:size-5" />
-                  )
-                ) : post.bookmarks.some(
-                    (bookmark) => bookmark.userId === session.data?.user.id,
-                  ) ? (
-                  <HiBookmark className="size-4 text-primary sm:size-5" />
+              {optimisticBookmarks[post.id] !== undefined ? (
+                optimisticBookmarks[post.id] ? (
+                  <HiBookmark className="size-5 text-primary" />
                 ) : (
-                  <HiOutlineBookmark className="size-4 sm:size-5" />
-                )}
-                <span className="text-xs font-medium">{formatCount(post._count?.bookmarks || 0)}</span>
-              </div>
+                  <HiOutlineBookmark className="size-5" />
+                )
+              ) : post.bookmarks.some(
+                  (bookmark) => bookmark.userId === session.data?.user.id,
+                ) ? (
+                <HiBookmark className="size-5 text-primary" />
+              ) : (
+                <HiOutlineBookmark className="size-5" />
+              )}
+              <span className="text-sm font-medium">{formatCount(post._count?.bookmarks || 0)}</span>
             </motion.div>
           </div>
         </div>
