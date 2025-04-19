@@ -440,7 +440,6 @@ const PostCard = ({
       return response.data;
     },
     onSuccess: (data) => {
-      // Invalidate all relevant queries to ensure UI consistency
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       queryClient.invalidateQueries({ queryKey: ["who-to-follow"] });
       queryClient.invalidateQueries({ queryKey: ["follow-status"] });
@@ -849,7 +848,7 @@ const PostCard = ({
             >
               <MessageCircle className="size-5" />
               <span className="text-sm font-medium">
-                {formatCount(post._count?.replies || 0)}
+                {formatCount(post._count?.postcomments || 0)}
               </span>
             </motion.div>
 
