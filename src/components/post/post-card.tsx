@@ -528,10 +528,15 @@ const PostCard = ({
                 onClick={() => {
                   handleFollow(post);
                 }}
+                disabled={followMutation.isPending}
               >
                 <span className="flex items-center gap-1 px-2">
-                  <Plus size={15} />
-                  Follow
+                  {followMutation.isPending ? (
+                    <div className="size-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  ) : (
+                    <Plus size={15} />
+                  )}
+                  {followMutation.isPending ? "Following..." : "Follow"}
                 </span>
               </Button>
             )}
