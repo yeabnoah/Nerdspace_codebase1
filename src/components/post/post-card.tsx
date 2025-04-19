@@ -521,7 +521,7 @@ const PostCard = ({
           </div>
 
           <div className="flex w-full items-center gap-2 sm:w-auto">
-            {session?.data?.user?.id !== post.user.id && (
+            {session?.data?.user?.id !== post.user.id && !post.user?.isFollowingAuthor && (
               <Button
                 variant={"outline"}
                 size="sm"
@@ -531,8 +531,8 @@ const PostCard = ({
                 }}
               >
                 <span className="flex items-center gap-1 px-2">
-                  {!post.user?.isFollowingAuthor && <Plus size={15} />}
-                  {post.user?.isFollowingAuthor ? "Following" : "Follow"}
+                  <Plus size={15} />
+                  Follow
                 </span>
               </Button>
             )}
