@@ -191,7 +191,7 @@ const ProfileSettings = () => {
                 />
               </div>
               <span className="font-geist font-medium text-white">
-                {user?.visualName || "Your Name"}
+                {user?.visualName || "Your Name"}not too white, becuase its consuming the white contents
               </span>
             </div>
           </div>
