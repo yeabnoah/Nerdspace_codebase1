@@ -40,21 +40,13 @@ export function FeedbackButton({ position = "bottom-right", apiEndpoint = "/api/
       })
     },
     onSuccess: () => {
-      toast({
-        title: "Feedback submitted",
-        description: "Thank you for your feedback!",
-        icon: <CheckCircle2 className="h-5 w-5 text-green-500" />,
-      })
+      toast.success("Feedback submitted")
       setContent("")
       setSeverity("LOW")
       setIsOpen(false)
     },
     onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to submit feedback. Please try again.",
-        variant: "destructive",
-      })
+      toast.error("Failed to submit feedback. Please try again.")
     },
   })
 
