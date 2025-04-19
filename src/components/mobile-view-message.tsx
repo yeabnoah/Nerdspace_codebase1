@@ -75,7 +75,7 @@ export function MobileViewMessage() {
           <span className="text-white">coming soon.</span>
         </h1>
         <p className="text-base text-[#8F8F8F]">
-          we're working on bringing NerdSpace<br />
+          we&apos;re working on bringing NerdSpace<br />
           to mobile devices. please use a<br />
           larger screen for the best experience.
         </p>
