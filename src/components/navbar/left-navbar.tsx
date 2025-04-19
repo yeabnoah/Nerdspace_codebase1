@@ -85,15 +85,17 @@ const LeftNavbar = () => {
               router.push(item.path);
             }}
             variant="outline"
-            className={`group relative w-fit md:w-full justify-start gap-2 rounded-xl border-none bg-transparent px-3 py-4 shadow-none transition-all duration-300 hover:bg-primary/5 dark:border-gray-500/5 ${
+            className={`group relative w-fit justify-start gap-2 rounded-xl border-none bg-transparent px-3 py-4 shadow-none transition-all duration-300 hover:bg-primary/5 dark:border-gray-500/5 md:w-full ${
               getActiveItem() === item.name
-                ? "bg-primary/10 text-primary font-medium"
+                ? "bg-primary/10 font-medium text-primary"
                 : "text-muted-foreground hover:text-primary"
             }`}
           >
             <item.icon
               className={`hidden transition-transform duration-300 group-hover:scale-110 md:block ${
-                getActiveItem() === item.name ? "text-primary" : "text-muted-foreground group-hover:text-primary"
+                getActiveItem() === item.name
+                  ? "text-primary"
+                  : "text-muted-foreground group-hover:text-primary"
               }`}
               size={20}
             />
@@ -114,101 +116,106 @@ const LeftNavbar = () => {
       ))}
 
       {/* Profile Setup Card */}
-      <motion.div
-        className="relative mt-14 w-full cursor-pointer overflow-hidden rounded-xl border border-transparent bg-card/50 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md"
-        onClick={() => setIsExpanded(!isExpanded)}
-        whileHover={{ scale: 1.01 }}
-      >
-        {/* Glow effects */}
-        <div className="absolute -right-4 top-0 size-32 -rotate-45 rounded-full border border-blue-300/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-        <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-tl from-blue-300/40 via-blue-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
 
-        <div className="relative z-10">
-          <div className="flex items-center justify-between">
-            <span className="flex-1 text-sm font-medium">Profile Setup</span>
-            <motion.div
-              className={`${!isExpanded && "hidden"}`}
-              transition={{ duration: 0.2 }}
-            >
-              <XIcon size={16} />
-            </motion.div>
-          </div>
+      {completionPercentage < 100 && (
+        <motion.div
+          className="relative mt-14 w-full cursor-pointer overflow-hidden rounded-xl border border-transparent bg-card/50 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md"
+          onClick={() => setIsExpanded(!isExpanded)}
+          whileHover={{ scale: 1.01 }}
+        >
+          {/* Optimized glow effects using simpler gradients */}
+          {/* <div className="absolute -right-4 top-0 size-32 -rotate-45 rounded-full bg-blue-300/10" />
+          <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full bg-blue-300/20" /> */}
 
-          <div className="mt-2 flex items-center gap-2">
-            <Progress
-              value={completionPercentage}
-              className="h-2 flex-1 bg-primary/10 [&>*]:from-purple-500 [&>*]:to-purple-500 [&>*]:bg-gradient-to-r"
-            />
-            <span className="text-xs font-medium text-muted-foreground">
-              {loading ? "..." : `${completionPercentage}%`}
-            </span>
-          </div>
-
-          {/* "Complete Profile" Button */}
-          <Button
-            variant="link"
-            size="sm"
-            className="mt-2 w-full justify-center py-0 text-xs text-primary transition-colors hover:text-primary/80"
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push("/settings");
-            }}
-          >
-            Complete Profile
-          </Button>
-
-          <AnimatePresence>
-            {isExpanded && (
+          <div className="relative z-10">
+            <div className="flex items-center justify-between">
+              <span className="flex-1 text-sm font-medium">Profile Setup</span>
               <motion.div
-                initial={{ height: 0, opacity: 0, marginTop: 0 }}
-                animate={{ height: "auto", opacity: 1, marginTop: "1rem" }}
-                exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                transition={{ duration: 0.3 }}
-                className="overflow-hidden"
+                className={`${!isExpanded && "hidden"}`}
+                transition={{ duration: 0.2 }}
               >
-                <div className="mb-1 border-t border-gray-500/10 dark:border-white/10"></div>
-                <span className="text-sm font-medium text-muted-foreground">
-                  Complete your profile
-                </span>
-                <div className="mt-2 space-y-1">
-                  {profileItems.map((item) => (
-                    <motion.div
-                      key={item.name}
-                      className="flex items-center gap-2 text-xs"
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{
-                        delay: 0.1 + profileItems.indexOf(item) * 0.05,
-                      }}
-                    >
+                <XIcon size={16} />
+              </motion.div>
+            </div>
+
+            <div className="mt-2 flex items-center gap-2">
+              <Progress
+                value={completionPercentage}
+                className="h-2 flex-1 bg-primary/10 [&>*]:bg-purple-500"
+              />
+              <span className="text-xs font-medium text-muted-foreground">
+                {loading ? "..." : `${completionPercentage}%`}
+              </span>
+            </div>
+
+            {/* "Complete Profile" Button */}
+            <Button
+              variant="link"
+              size="sm"
+              className="mt-2 w-full justify-center py-0 text-xs text-primary transition-colors hover:text-primary/80"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push("/settings");
+              }}
+            >
+              Complete Profile
+            </Button>
+
+            <AnimatePresence>
+              {isExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                  animate={{ height: "auto", opacity: 1, marginTop: "1rem" }}
+                  exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="mb-1 border-t border-gray-500/10 dark:border-white/10"></div>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Complete your profile
+                  </span>
+                  <div className="mt-2 space-y-1">
+                    {profileItems.map((item) => (
                       <motion.div
-                        className={`size-3 rounded-full border transition-colors duration-300 ${
-                          completionPercentage >= item.threshold
-                            ? "border-purple-400 bg-purple-500"
-                            : "border-gray-300 dark:border-gray-600"
-                        }`}
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
+                        key={item.name}
+                        className="flex items-center gap-2 text-xs"
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
                         transition={{
                           delay: 0.1 + profileItems.indexOf(item) * 0.05,
                         }}
-                      />
-                      <span className="text-muted-foreground">{item.name}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-        <motion.div
-          className={`mx-auto w-full ${isExpanded && "hidden"}`}
-          animate={{ rotate: isExpanded ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <ChevronDown size={16} className="mx-auto" />
+                      >
+                        <motion.div
+                          className={`size-3 rounded-full border transition-colors duration-300 ${
+                            completionPercentage >= item.threshold
+                              ? "border-purple-400 bg-purple-500"
+                              : "border-gray-300 dark:border-gray-600"
+                          }`}
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{
+                            delay: 0.1 + profileItems.indexOf(item) * 0.05,
+                          }}
+                        />
+                        <span className="text-muted-foreground">
+                          {item.name}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          <motion.div
+            className={`mx-auto w-full ${isExpanded && "hidden"}`}
+            animate={{ rotate: isExpanded ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronDown size={16} className="mx-auto" />
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </div>
   );
 };
