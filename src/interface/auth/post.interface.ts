@@ -20,6 +20,7 @@ interface postInterface {
     likes: number;
     bookmarks: number;
     replies: number;
+    postcomments: number;
   };
 }
 
