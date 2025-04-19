@@ -1,17 +1,17 @@
 "use client";
 
 import type React from "react";
-
-import { getTrimLimit } from "@/functions/render-helper";
-import type postInterface from "@/interface/auth/post.interface";
-import { authClient } from "@/lib/auth-client";
-import usePostStore from "@/store/post.store";
-import useReportStore from "@/store/report.strore";
-import { PostAccess } from "@prisma/client";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { PostAccess } from "@prisma/client";
+import { GoHeart, GoHeartFill } from "react-icons/go";
+import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
 import {
   BanIcon,
   Clock,
@@ -23,15 +23,16 @@ import {
   MoreHorizontal,
   Plus,
   SendIcon,
+  SmileIcon,
   Star,
   TrashIcon,
 } from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import toast from "react-hot-toast";
-import { GoHeart, GoHeartFill } from "react-icons/go";
-import { HiBookmark, HiOutlineBookmark } from "react-icons/hi2";
+
+import { getTrimLimit } from "@/functions/render-helper";
+import type postInterface from "@/interface/auth/post.interface";
+import { authClient } from "@/lib/auth-client";
+import usePostStore from "@/store/post.store";
+import useReportStore from "@/store/report.strore";
 import ImagePreviewDialog from "../image-preview";
 import DeleteModal from "../modal/delete.modal";
 import EditModal from "../modal/edit.modal";
@@ -45,7 +46,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
-import { renderComments } from "./comment/render-comments";
 import {
   Popover,
   PopoverContent,
@@ -57,7 +57,7 @@ import {
   EmojiPickerContent,
   EmojiPickerFooter,
 } from "@/components/ui/emoji-picker";
-import { SmileIcon } from "lucide-react";
+import { renderComments } from "./comment/render-comments";
 
 interface PostCardProps {
   post: postInterface;
@@ -132,6 +132,8 @@ const PostCard = ({
   setEditModal,
   setDeleteModal,
   changePostAccessType,
+  handleLike,
+  handleBookmark,
   setCommentId,
 }: PostCardProps) => {
   const router = useRouter();
@@ -141,16 +143,10 @@ const PostCard = ({
   const { setPostId } = useReportStore();
   const [commentContent, setCommentContent] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(
-    null,
-  );
+  const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(null);
   const [selectedPostImages, setSelectedPostImages] = useState<string[]>([]);
-  const [optimisticLikes, setOptimisticLikes] = useState<{
-    [key: string]: boolean;
-  }>({});
-  const [optimisticBookmarks, setOptimisticBookmarks] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [optimisticLikes, setOptimisticLikes] = useState<{ [key: string]: boolean }>({});
+  const [optimisticBookmarks, setOptimisticBookmarks] = useState<{ [key: string]: boolean }>({});
   const [isAccessDialogOpen, setIsAccessDialogOpen] = useState(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [isEmojiOpen, setIsEmojiOpen] = useState(false);
@@ -485,81 +481,76 @@ const PostCard = ({
   };
 
   return (
-    <div className="relative my-5 w-full flex-1 border-b border-transparent p-2 px-2 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/10 before:to-transparent after:absolute after:left-0 after:top-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/20 after:to-transparent [&>*:last-child]:after:absolute [&>*:last-child]:after:right-[-17px] [&>*:last-child]:after:top-0 [&>*:last-child]:after:h-full [&>*:last-child]:after:w-[1px] [&>*:last-child]:after:bg-gradient-to-b [&>*:last-child]:after:from-transparent [&>*:last-child]:after:via-blue-500/20 [&>*:last-child]:after:to-transparent sm:p-4 sm:px-3">
-     
-      {/* <div className="pointer-events-none absolute inset-0 overflow-visible">
-    
-        <div className="hidden md:block">
-          <div className="absolute -right-4 size-40 -rotate-45 rounded-full bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent opacity-80 blur-[100px]"></div>
-          <div className="absolute -bottom-5 left-12 size-40 rotate-45 rounded-full bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent opacity-80 blur-[100px]"></div>
-        </div>
-      </div> */}
+    <div className="relative my-5 w-full flex-1 overflow-hidden rounded-2xl border border-gray-50 bg-white/90 shadow-sm backdrop-blur-sm transition-all dark:border-gray-500/5 dark:bg-black">
+      <div className="absolute -right-10 -top-10 h-[200px] w-[200px] rotate-12 rounded-full bg-gradient-to-br from-primary/5 to-transparent blur-[80px]"></div>
+      <div className="absolute -left-10 -bottom-10 h-[200px] w-[200px] -rotate-12 rounded-full bg-gradient-to-tl from-secondary/5 to-transparent blur-[80px]"></div>
 
-      <div className="relative backdrop-blur-sm sm:pl-5 md:pl-3">
-        <div className="mr-2 flex w-full flex-col items-start justify-between gap-2 pb-2 sm:flex-row sm:items-center sm:gap-0">
-          <div className="flex flex-1 items-center gap-2 sm:gap-3">
-            <Image
-              src={post.user.image || "/user.jpg"}
-              alt="user"
-              className="size-8 cursor-pointer rounded-full shadow-[0_0_3px_rgba(0,122,255,0.5),0_0_5px_rgba(255,165,0,0.5),0_0_7px_rgba(0,122,255,0.4)] transition-all sm:size-10"
-              height={200}
-              width={200}
-              onClick={() => handleUserProfileClick(post.user.id)}
-            />
+      <div className="relative p-6">
+        <div className="flex w-full flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="absolute -inset-0.5 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 blur-sm"></div>
+              <Image
+                src={post.user.image || "/user.jpg"}
+                alt="user"
+                className="relative size-10 cursor-pointer rounded-full ring-2 ring-white/90 transition-all hover:ring-primary dark:ring-gray-800/5 sm:size-12"
+                height={200}
+                width={200}
+                onClick={() => handleUserProfileClick(post.user.id)}
+              />
+            </div>
 
-            <div
-              onClick={() => handleUserProfileClick(post.user.id)}
-              className="cursor-pointer"
-            >
-              <h1 className="text-xs font-medium sm:text-sm">
-                {post.user.name}
-              </h1>
-              <h1 className="text-[10px] text-muted-foreground sm:text-xs">
-                Nerd@
-                <span className="text-purple-500">{post.user.nerdAt}</span>
-              </h1>
+            <div onClick={() => handleUserProfileClick(post.user.id)} className="cursor-pointer">
+              <h1 className="font-geist text-base font-medium">{post.user.name}</h1>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>Nerd@</span>
+                <span className="text-primary">{post.user.nerdAt}</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex w-full items-center gap-2 sm:w-auto">
+          <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
             {session?.data?.user?.id !== post.user.id && (
               <Button
-                variant={"outline"}
+                variant="outline"
                 size="sm"
-                className={`h-9 w-full rounded-xl bg-transparent px-2 text-xs shadow-none hover:bg-transparent sm:h-11 sm:w-auto md:text-sm`}
-                onClick={() => {
-                  handleFollow(post);
-                }}
+                className={`h-10 rounded-full px-4 text-sm font-medium transition-colors sm:h-11 ${
+                  post.user?.isFollowingAuthor
+                    ? "border-primary/50 text-primary hover:bg-primary/10"
+                    : ""
+                }`}
+                onClick={() => handleFollow(post)}
               >
-                <span className="flex items-center gap-1 px-2">
-                  {!post.user?.isFollowingAuthor && <Plus size={15} />}
+                <span className="flex items-center gap-2">
+                  {!post.user?.isFollowingAuthor && <Plus className="size-4" />}
                   {post.user?.isFollowingAuthor ? "Following" : "Follow"}
                 </span>
               </Button>
             )}
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 sm:h-8 sm:w-8"
+                  className="h-10 w-10 rounded-full hover:bg-gray-100 dark:hover:bg-white/5"
                 >
-                  <MoreHorizontal className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <MoreHorizontal className="size-5" />
                 </Button>
               </DropdownMenuTrigger>
               {session?.data?.user?.id === post.user.id ? (
                 <DropdownMenuContent
                   align="end"
-                  className="w-48 rounded-2xl border-none bg-white/80 shadow-lg backdrop-blur-sm dark:bg-black/80"
+                  className="w-48 rounded-xl border-gray-100 bg-white/90 shadow-lg backdrop-blur-sm dark:border-gray-500/5 dark:bg-black"
                 >
                   <DropdownMenuItem
                     onClick={() => {
                       setSelectedPost(post);
                       setEditModal(true);
                     }}
-                    className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+                    className="flex h-11 cursor-pointer items-center gap-2 rounded-lg px-4 hover:bg-gray-100 dark:hover:bg-black"
                   >
-                    <Edit className="mr-2 h-4 w-4" />
+                    <Edit className="size-4" />
                     <span>Edit</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
@@ -567,30 +558,25 @@ const PostCard = ({
                       setSelectedPost(post);
                       setDeleteModal(true);
                     }}
-                    className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+                    className="flex h-11 cursor-pointer items-center gap-2 rounded-lg px-4 text-red-600 hover:bg-gray-100 dark:hover:bg-black"
                   >
-                    <TrashIcon className="mr-2 h-4 w-4" />
+                    <TrashIcon className="size-4" />
                     <span>Delete</span>
                   </DropdownMenuItem>
-                  {(post?.access as unknown as string) ===
-                  (PostAccess.public as unknown as string) ? (
+                  {(post?.access as unknown as string) === (PostAccess.public as unknown as string) ? (
                     <DropdownMenuItem
-                      onClick={() => {
-                        handleAccessChange();
-                      }}
-                      className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+                      onClick={handleAccessChange}
+                      className="flex h-11 cursor-pointer items-center gap-2 rounded-lg px-4 hover:bg-gray-100 dark:hover:bg-black"
                     >
-                      <LockIcon className="mr-2 h-4 w-4" />
+                      <LockIcon className="size-4" />
                       <span>Go Private</span>
                     </DropdownMenuItem>
                   ) : (
                     <DropdownMenuItem
-                      onClick={() => {
-                        handleAccessChange();
-                      }}
-                      className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+                      onClick={handleAccessChange}
+                      className="flex h-11 cursor-pointer items-center gap-2 rounded-lg px-4 hover:bg-gray-100 dark:hover:bg-black"
                     >
-                      <LockOpen className="mr-2 h-4 w-4" />
+                      <LockOpen className="size-4" />
                       <span>Go Public</span>
                     </DropdownMenuItem>
                   )}
@@ -598,14 +584,13 @@ const PostCard = ({
               ) : (
                 <DropdownMenuContent
                   align="end"
-                  className="w-48 rounded-2xl border-none bg-white/80 shadow-lg backdrop-blur-sm dark:bg-black/80"
+                  className="w-48 rounded-xl border-gray-100 bg-white/90 shadow-lg backdrop-blur-sm dark:border-gray-500/10 dark:bg-black"
                 >
                   <DropdownMenuItem
                     onClick={() => handleReport(post.id)}
-                    disabled={session?.data?.user?.id === post.user.id}
-                    className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+                    className="flex h-11 cursor-pointer items-center gap-2 rounded-lg px-4 text-red-600 hover:bg-gray-100 dark:hover:bg-black"
                   >
-                    <BanIcon className="mr-2 h-4 w-4" />
+                    <BanIcon className="size-4" />
                     <span>Report</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -614,73 +599,102 @@ const PostCard = ({
           </div>
         </div>
 
-        <div
-          className={`mt-2 flex w-full flex-1 flex-col items-start justify-center`}
-        >
-          <div className="flex w-[100%] flex-1 flex-col justify-start gap-3">
-            {post?.shared && (
-              <Card
-                onClick={() => router.push(`project/${post.project?.id}`)}
-                className="h-24 overflow-hidden border-gray-100 opacity-80 shadow-none transition-all hover:cursor-pointer hover:opacity-100 dark:border-gray-500/5"
-              >
-                <div className="flex h-full gap-3">
-                  <div className="relative h-full w-24">
-                    <Image
-                      fill
-                      src={post?.project?.image || "/placeholder.svg"}
-                      alt={post?.project?.name as string}
-                      className="object-cover"
-                      sizes="96px"
-                    />
-                  </div>
-                  <div className="flex flex-1 flex-col justify-between p-2">
-                    <div>
-                      <h3 className="line-clamp-1 text-sm font-medium tracking-tight">
-                        {post?.project?.name}
-                      </h3>
-                      <div className="mt-1 flex flex-wrap gap-1">
-                        <Badge
-                          variant="outline"
-                          className="bg-primary/5 text-[10px] font-normal"
-                        >
-                          {post?.project?.status}
+        <div className="mt-6 flex w-full flex-col items-start justify-center">
+          {post?.shared && (
+            <Card
+              onClick={() => router.push(`project/${post.project?.id}`)}
+              className="mb-6 h-28 w-full overflow-hidden rounded-xl border-gray-100 bg-white/80 shadow-sm transition-all hover:cursor-pointer hover:shadow-md dark:border-gray-500/5 dark:bg-gray-900/80"
+            >
+              <div className="flex h-full gap-4">
+                <div className="relative h-full w-28">
+                  <Image
+                    fill
+                    src={post?.project?.image || "/placeholder.svg"}
+                    alt={post?.project?.name as string}
+                    className="object-cover"
+                    sizes="112px"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col justify-between p-4">
+                  <div>
+                    <h3 className="line-clamp-1 font-geist text-lg font-medium tracking-tight">
+                      {post?.project?.name}
+                    </h3>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <Badge variant="outline" className="bg-primary/5 text-xs font-normal text-primary">
+                        {post?.project?.status}
+                      </Badge>
+                      {post?.project?.category && (
+                        <Badge variant="outline" className="bg-secondary/5 text-xs font-normal text-secondary">
+                          {post?.project?.category}
                         </Badge>
-                        {post?.project?.category && (
-                          <Badge
-                            variant="outline"
-                            className="bg-primary/5 text-[10px] font-normal"
-                          >
-                            {post?.project?.category}
-                          </Badge>
-                        )}
-                      </div>
+                      )}
                     </div>
+                  </div>
 
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        <span>{post?.project?._count.updates}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="h-3 w-3" />
-                        <span>{post?.project?._count.stars}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MessageSquare className="h-3 w-3" />
-                        <span>{post?.project?._count.reviews}</span>
-                      </div>
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Clock className="size-4" />
+                      <span>{post?.project?._count.updates}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Star className="size-4" />
+                      <span>{post?.project?._count.stars}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MessageSquare className="size-4" />
+                      <span>{post?.project?._count.reviews}</span>
                     </div>
                   </div>
                 </div>
-              </Card>
-            )}
-            {post.media && post.media.length > 0 && (
-              <div
-                className={`${!post.shared && "mt-2 sm:mt-4"} grid w-[100%] flex-1 gap-1 sm:gap-2 ${getGridClass(post.media.length)}`}
-              >
-                {post.media.length === 1 && (
+              </div>
+            </Card>
+          )}
+
+          {post.media && post.media.length > 0 && (
+            <div className={`${!post.shared && "mt-4"} grid w-full gap-2 ${getGridClass(post.media.length)}`}>
+              {post.media.length === 1 && (
+                <div
+                  className="relative h-[25vh] overflow-hidden rounded-xl sm:h-[30vh] md:h-[36vh]"
+                  onClick={() =>
+                    handleMediaClick(
+                      0,
+                      post.media.map((media) => media.url),
+                    )
+                  }
+                >
+                  <Image
+                    fill
+                    src={post.media[0].url || "/placeholder.svg"}
+                    alt="Post media"
+                    className="w-full object-cover transition-transform hover:scale-105"
+                  />
+                </div>
+              )}
+              {post.media.length === 2 &&
+                post.media.map((media, mediaIndex) => (
                   <div
-                    className="relative h-[25vh] sm:h-[30vh] md:h-[36vh]"
+                    key={media.id}
+                    className="relative h-[15vh] overflow-hidden rounded-xl sm:h-[20vh] md:h-[28vh]"
+                    onClick={() =>
+                      handleMediaClick(
+                        mediaIndex,
+                        post.media.map((media) => media.url),
+                      )
+                    }
+                  >
+                    <Image
+                      fill
+                      src={media.url || "/placeholder.svg"}
+                      alt="Post media"
+                      className="h-full w-full object-cover transition-transform hover:scale-105"
+                    />
+                  </div>
+                ))}
+              {post.media.length >= 3 && (
+                <div className="grid h-[30vh] w-full max-w-[82vw] grid-cols-[auto_100px] gap-1 sm:h-[36vh] sm:grid-cols-[auto_120px] sm:gap-2 md:w-[36vw]">
+                  <div
+                    className="relative h-full w-full overflow-hidden rounded-xl"
                     onClick={() =>
                       handleMediaClick(
                         0,
@@ -692,110 +706,67 @@ const PostCard = ({
                       fill
                       src={post.media[0].url || "/placeholder.svg"}
                       alt="Post media"
-                      className="w-full rounded-xl object-cover"
+                      className="h-full w-full object-cover transition-transform hover:scale-105"
                     />
                   </div>
-                )}
-                {post.media.length === 2 &&
-                  post.media.map((media, mediaIndex) => (
-                    <div
-                      key={media.id}
-                      className="relative h-[15vh] sm:h-[20vh] md:h-[28vh]"
-                      onClick={() =>
-                        handleMediaClick(
-                          mediaIndex,
-                          post.media.map((media) => media.url),
-                        )
-                      }
-                    >
-                      <Image
-                        fill
-                        src={media.url || "/placeholder.svg"}
-                        alt="Post media"
-                        className="h-full w-full rounded-xl object-cover"
-                      />
-                    </div>
-                  ))}
-                {post.media.length >= 3 && (
-                  <div className="grid h-[30vh] w-full max-w-[82vw] grid-cols-[auto_100px] gap-1 sm:h-[36vh] sm:grid-cols-[auto_120px] sm:gap-2 md:w-[36vw]">
-                    <div
-                      className="relative h-full w-full"
-                      onClick={() =>
-                        handleMediaClick(
-                          0,
-                          post.media.map((media) => media.url),
-                        )
-                      }
-                    >
-                      <Image
-                        fill
-                        src={post.media[0].url || "/placeholder.svg"}
-                        alt="Post media"
-                        className="h-full w-full rounded-xl object-cover"
-                      />
-                    </div>
 
-                    <div className="flex w-full flex-col gap-1 sm:gap-2">
-                      {post.media.slice(1, 4).map((media, mediaIndex) => (
-                        <div
-                          key={media.id}
-                          className="relative h-full w-full"
-                          onClick={() =>
-                            handleMediaClick(
-                              mediaIndex + 1,
-                              post.media.map((media) => media.url),
-                            )
-                          }
-                        >
-                          <Image
-                            fill
-                            src={media.url || "/placeholder.svg"}
-                            alt="Post media"
-                            className="h-full w-full rounded-xl object-cover"
-                          />
-                          {mediaIndex === 2 && post.media.length > 4 && (
-                            <div className="absolute bottom-1 right-1 rounded-full bg-black/50 px-1 py-0.5 text-[10px] text-white sm:bottom-2 sm:right-2 sm:px-2 sm:py-1 sm:text-xs">
+                  <div className="flex w-full flex-col gap-1 sm:gap-2">
+                    {post.media.slice(1, 4).map((media, mediaIndex) => (
+                      <div
+                        key={media.id}
+                        className="relative h-full w-full overflow-hidden rounded-xl"
+                        onClick={() =>
+                          handleMediaClick(
+                            mediaIndex + 1,
+                            post.media.map((media) => media.url),
+                          )
+                        }
+                      >
+                        <Image
+                          fill
+                          src={media.url || "/placeholder.svg"}
+                          alt="Post media"
+                          className="h-full w-full object-cover transition-transform hover:scale-105"
+                        />
+                        {mediaIndex === 2 && post.media.length > 4 && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-white">
+                            <span className="text-lg font-medium">
                               +{post.media.length - 4}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                )}
-              </div>
-            )}
-
-            <div className="flex-1 break-words">
-              <h4 className="whitespace-pre-wrap break-all text-xs sm:text-sm md:text-sm">
-                {(expandedStates[index] || !isLongContent
-                  ? post.content
-                  : truncatedContent
-                )
-                  .split(/(\s+)/)
-                  .map((word, i) =>
-                    word.startsWith("#") ? (
-                      <span key={i} className="text-purple-500">
-                        {word}
-                      </span>
-                    ) : (
-                      word
-                    ),
-                  )}
-                {!expandedStates[index] && isLongContent && "..."}
-              </h4>
-              {isLongContent && (
-                <button
-                  className="mt-1 text-xs text-purple-500 hover:underline sm:mt-2 sm:text-sm"
-                  onClick={() => toggleExpand(index)}
-                >
-                  {expandedStates[index] ? "See less" : "See more"}
-                </button>
+                </div>
               )}
             </div>
+          )}
+
+          <div className="mt-4 w-full">
+            <h4 className="whitespace-pre-wrap break-all font-geist text-base leading-relaxed text-foreground">
+              {(expandedStates[index] || !isLongContent ? post.content : truncatedContent)
+                .split(/(\s+)/)
+                .map((word, i) =>
+                  word.startsWith("#") ? (
+                    <span key={i} className="text-primary">{word}</span>
+                  ) : (
+                    word
+                  ),
+                )}
+              {!expandedStates[index] && isLongContent && "..."}
+            </h4>
+            {isLongContent && (
+              <button
+                className="mt-2 text-sm text-primary hover:underline"
+                onClick={() => toggleExpand(index)}
+              >
+                {expandedStates[index] ? "See less" : "See more"}
+              </button>
+            )}
           </div>
 
-          <div className="mt-4 flex w-full items-center justify-start gap-6 border-t border-t-gray-500/10 pt-3">
+          <div className="mt-6 flex w-full items-center justify-start gap-6 border-t border-gray-100 pt-4 dark:border-gray-500/5">
             <motion.div
               className="flex cursor-pointer items-center gap-2"
               onClick={() => likeMutation.mutate(post.id)}
@@ -829,9 +800,7 @@ const PostCard = ({
               ) : (
                 <GoHeart className="size-5" />
               )}
-              <span className="text-sm font-medium">
-                {formatCount(post._count?.likes || 0)}
-              </span>
+              <span className="font-geist text-sm font-medium">{formatCount(post._count?.likes || 0)}</span>
             </motion.div>
 
             <motion.div
@@ -849,9 +818,7 @@ const PostCard = ({
               transition={{ duration: 0.2 }}
             >
               <MessageCircle className="size-5" />
-              <span className="text-sm font-medium">
-                {formatCount(post._count?.replies || 0)}
-              </span>
+              <span className="font-geist text-sm font-medium">{formatCount(post._count?.replies || 0)}</span>
             </motion.div>
 
             <motion.div
@@ -887,36 +854,31 @@ const PostCard = ({
               ) : (
                 <HiOutlineBookmark className="size-5" />
               )}
-              <span className="text-sm font-medium">
-                {formatCount(post._count?.bookmarks || 0)}
-              </span>
+              <span className="font-geist text-sm font-medium">{formatCount(post._count?.bookmarks || 0)}</span>
             </motion.div>
           </div>
         </div>
 
         {commentShown[post.id] && (
-          <div>
-            <hr className="mb-2 mt-3 sm:mt-5" />
-            <div className="itemc flex gap-2 py-2">
+          <div className="mt-6 border-t border-gray-100 pt-6 dark:border-gray-500/5">
+            <div className="flex gap-3">
               <div className="relative flex-1">
                 <input
-                  placeholder="Comment here"
-                  className="w-full border-0 border-b border-b-textAlternative/20 bg-transparent px-2 py-2 text-xs placeholder:font-instrument placeholder:text-base focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0 dark:border-white/50 sm:text-sm sm:placeholder:text-lg"
+                  placeholder="Write a comment..."
+                  className="w-full rounded-full border border-gray-100 bg-white/50 px-4 py-2.5 text-sm placeholder:font-geist placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-gray-500/5 dark:bg-card/50"
                   value={commentContent}
                   onChange={(e) => setCommentContent(e?.target?.value)}
-                  onSelect={(e) =>
-                    setCursorPosition(e?.currentTarget?.selectionStart || 0)
-                  }
+                  onSelect={(e) => setCursorPosition(e?.currentTarget?.selectionStart || 0)}
                 />
-                <div className="absolute bottom-1 right-2">
+                <div className="absolute bottom-2 right-3">
                   <Popover onOpenChange={setIsEmojiOpen} open={isEmojiOpen}>
                     <PopoverTrigger asChild>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-6 w-6 rounded-lg p-0 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                        className="h-6 w-6 rounded-full p-0 text-muted-foreground hover:bg-gray-100 dark:hover:bg-black"
                       >
-                        <SmileIcon className="h-4 w-4" />
+                        <SmileIcon className="size-4" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-fit p-0">
@@ -937,13 +899,15 @@ const PostCard = ({
               </div>
               <Button
                 onClick={handleCommentSubmit}
-                className="h-8 border bg-transparent shadow-none hover:bg-transparent focus:outline-none focus:ring-0 sm:h-9"
+                className="h-10 w-10 rounded-full bg-primary text-white shadow-none hover:bg-primary/90 dark:bg-primary dark:hover:bg-primary/90"
               >
-                <SendIcon className="size-4 text-card-foreground dark:text-white sm:size-5" />
+                <SendIcon className="size-4" />
               </Button>
             </div>
+
             {commentLoading && <CommentSkeleton />}
-            <div className="mt-3 sm:mt-4">
+
+            <div className="mt-6 space-y-4">
               {renderComments({
                 comments: comments,
                 parentId: null,
@@ -962,19 +926,21 @@ const PostCard = ({
                 openEditModal,
                 openDeleteModal,
                 setSelectedCommentReply,
-                modalEditOpened: modalEditOpened,
-                modalDeleteOpened: modalDeleteOpened,
+                modalEditOpened,
+                modalDeleteOpened,
                 reportModalOpen,
                 setReportModalOpen,
-                setCommentId: (id: string) => setCommentId(id),
+                setCommentId,
               })}
+
               {hasNextCommentPage && (
                 <Button
                   onClick={() => fetchNextCommentPage()}
                   disabled={isFetchingNextCommentPage}
-                  className="mt-3 h-8 w-full text-xs sm:mt-4 sm:h-9 sm:text-sm"
+                  variant="outline"
+                  className="mt-4 h-10 w-full rounded-full border-gray-100 bg-white/50 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 dark:border-gray-500/5 dark:bg-card/50 dark:hover:bg-black"
                 >
-                  {isFetchingNextCommentPage ? "Loading..." : "Load More"}
+                  {isFetchingNextCommentPage ? "Loading..." : "Load More Comments"}
                 </Button>
               )}
             </div>
@@ -991,27 +957,23 @@ const PostCard = ({
         <Dialog open={isAccessDialogOpen} onOpenChange={setIsAccessDialogOpen}>
           <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
             <DialogTitle></DialogTitle>
-            {/* Optimized gradient effects */}
-            <div className="pointer-events-none absolute inset-0 overflow-visible">
-              <div className="absolute -right-4 size-40 -rotate-45 rounded-full bg-gradient-to-br from-red-300/40 via-red-400/50 to-transparent opacity-80 blur-[100px]"></div>
-              <div className="absolute -bottom-5 left-12 size-40 rotate-45 rounded-full bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent opacity-80 blur-[100px]"></div>
-            </div>
             <div className="relative flex flex-col">
+              <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/50 bg-gradient-to-br from-primary/40 via-primary/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+              <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+
               <div className="flex w-full flex-col px-6 pb-3">
                 <div className="mb-2 font-geist text-3xl font-medium">
-                  {(post.access as unknown as string) ===
-                  (PostAccess.public as unknown as string)
+                  {(post.access as unknown as string) === (PostAccess.public as unknown as string)
                     ? "Make Post Private"
                     : "Make Post Public"}
                 </div>
                 <p className="mb-6 font-geist text-muted-foreground">
-                  {(post.access as unknown as string) ===
-                  (PostAccess.public as unknown as string)
+                  {(post.access as unknown as string) === (PostAccess.public as unknown as string)
                     ? "Are you sure you want to make this post private? This will hide it from other users."
                     : "Are you sure you want to make this post public? This will make it visible to other users."}
                 </p>
 
-                <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
+                <div className="mt-8 flex justify-end gap-3 border-t border-gray-100 pt-4 font-geist dark:border-gray-500/5">
                   <Button
                     variant="outline"
                     className="h-11 w-24 rounded-2xl"
@@ -1024,7 +986,7 @@ const PostCard = ({
                       await changePostAccessType(post);
                       setIsAccessDialogOpen(false);
                     }}
-                    className="h-11 w-24 rounded-2xl"
+                    className="h-11 w-24 rounded-2xl bg-primary text-white hover:bg-primary/90"
                   >
                     Confirm
                   </Button>
