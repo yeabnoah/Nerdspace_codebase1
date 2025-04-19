@@ -11,17 +11,25 @@ const WhoAmIProvider = ({ children }: { children: ReactNode }) => {
   useQuery({
     queryKey: ["whoami"],
     queryFn: async () => {
-      const response = await axios.get("/api/whoami", {
-        withCredentials: true,
-      });
-
-      setuser(response.data.data);
-      setIsLoading(false);
-      return response.data;
+      try {
+        const response = await axios.get("/api/whoami", {
+          withCredentials: true,
+        });
+        setuser(response.data.data);
+        return response.data;
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+        // setuser(null);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
     },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: false,
   });
   
-  return <div>{children}</div>;
+  return <>{children}</>;
 };
 
 export default WhoAmIProvider;
