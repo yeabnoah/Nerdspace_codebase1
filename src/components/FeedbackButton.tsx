@@ -63,10 +63,10 @@ export function FeedbackButton() {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button
-            className="h-12 w-12 rounded-full border border-gray-100 bg-white shadow-lg transition-all hover:shadow-xl dark:border-gray-500/5 dark:bg-card/50 dark:hover:bg-card/80 fixed bottom-4 right-4"
+            className="h-12 w-12 rounded-full border hover:bg-white border-gray-300 bg-white shadow-lg transition-all hover:shadow-xl dark:border-gray-500/5 dark:bg-card dark:hover:bg-card/80 fixed bottom-4 right-4"
             size="icon"
           >
-            <MessageCircle className="h-6 w-6 text-primary dark:text-secondary" />
+            <MessageCircle className="h-6 w-6 text-primary dark:text-white" />
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
@@ -92,7 +92,7 @@ export function FeedbackButton() {
                     Severity
                   </label>
                   <Select value={severity} onValueChange={setSeverity}>
-                    <SelectTrigger className="h-11 rounded-xl border-input/50 font-geist shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5">
+                    <SelectTrigger className="h-11 rounded-xl border-input/90 font-geist shadow-none focus-visible:ring-primary/50 dark:border-gray-500/10">
                       <SelectValue placeholder="Select severity" />
                     </SelectTrigger>
                     <SelectContent>
@@ -111,7 +111,7 @@ export function FeedbackButton() {
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="Describe the issue or suggestion..."
-                    className="min-h-[120px] resize-none rounded-xl border-input/50 font-geist shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                    className="min-h-[120px] resize-none rounded-xl border-input/90 font-geist shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
                   />
                 </div>
 
