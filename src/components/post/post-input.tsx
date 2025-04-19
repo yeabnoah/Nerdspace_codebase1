@@ -346,20 +346,22 @@ const PostInput = () => {
               )}
             </div>
 
-            <div className="border-t border-gray-200 p-6 dark:border-gray-800">
+            <div className="border-t flex justify-end border-gray-200 p-6 dark:border-gray-800">
               <Button
                 onClick={handleSubmit}
-                className="w-full rounded-xl py-3 text-sm font-medium shadow-sm transition-all hover:shadow-md"
+                className="w-fit rounded justify-end py-3 text-sm font-medium shadow-sm transition-all hover:shadow-md"
                 disabled={isPending || isUploading || dialogPost.trim() === ""}
               >
-                {isPending || isUploading ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    {isUploading ? "Uploading..." : "Posting..."}
-                  </div>
-                ) : (
-                  "Post"
-                )}
+                <div className="flex items-center justify-center gap-2 px-3">
+                  {isPending || isUploading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      {isUploading ? "Uploading..." : "Posting..."}
+                    </div>
+                  ) : (
+                    "Post"
+                  )}
+                </div>
               </Button>
             </div>
           </div>
