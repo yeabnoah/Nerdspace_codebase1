@@ -487,13 +487,13 @@ const PostCard = ({
   return (
     <div className="relative my-5 w-full flex-1 border-b border-transparent p-2 px-2 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/10 before:to-transparent after:absolute after:left-0 after:top-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/20 after:to-transparent [&>*:last-child]:after:absolute [&>*:last-child]:after:right-[-17px] [&>*:last-child]:after:top-0 [&>*:last-child]:after:h-full [&>*:last-child]:after:w-[1px] [&>*:last-child]:after:bg-gradient-to-b [&>*:last-child]:after:from-transparent [&>*:last-child]:after:via-blue-500/20 [&>*:last-child]:after:to-transparent sm:p-4 sm:px-3">
      
-      <div className="pointer-events-none absolute inset-0 overflow-visible">
-        {/* Only render these effects on desktop for better performance */}
+      {/* <div className="pointer-events-none absolute inset-0 overflow-visible">
+    
         <div className="hidden md:block">
           <div className="absolute -right-4 size-40 -rotate-45 rounded-full bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent opacity-80 blur-[100px]"></div>
           <div className="absolute -bottom-5 left-12 size-40 rotate-45 rounded-full bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent opacity-80 blur-[100px]"></div>
         </div>
-      </div>
+      </div> */}
 
       <div className="relative backdrop-blur-sm sm:pl-5 md:pl-3">
         <div className="mr-2 flex w-full flex-col items-start justify-between gap-2 pb-2 sm:flex-row sm:items-center sm:gap-0">
