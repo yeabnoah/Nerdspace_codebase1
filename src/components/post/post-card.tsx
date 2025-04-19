@@ -440,7 +440,7 @@ const PostCard = ({
       return response.data;
     },
     onSuccess: (data) => {
-      // Invalidate all relevant queries
+      // Invalidate all relevant queries to ensure UI consistency
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       queryClient.invalidateQueries({ queryKey: ["who-to-follow"] });
       queryClient.invalidateQueries({ queryKey: ["follow-status"] });
@@ -448,6 +448,7 @@ const PostCard = ({
       queryClient.invalidateQueries({ queryKey: ["user-following"] });
       queryClient.invalidateQueries({ queryKey: ["explore"] });
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["user-data"] });
       toast.success(data.message);
     },
     onError: () => {

@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSession } from "@/lib/auth-client";
 import useUserProfileStore from "@/store/userProfile.store";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { Dot, Grid3X3, Hammer, LinkIcon, Users } from "lucide-react";
 import Image from "next/image";
@@ -14,6 +14,8 @@ import { useEffect, useState } from "react";
 import FollowButton from "./follow-button";
 import ProjectsTab from "./tabs/ProjectsTab";
 import RenderUserPosts from "./user-posts";
+import { toast } from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 // interface FollowCounts {
 //   followers: number;
@@ -25,6 +27,7 @@ export default function UserProfile() {
   const { userProfile } = useUserProfileStore();
   const [loading, setLoading] = useState(true);
   const session = useSession();
+  const queryClient = useQueryClient();
 
   const { data: userData, isLoading: isLoadingUser } = useQuery({
     queryKey: ["user-data", userProfile?.id],
@@ -52,6 +55,30 @@ export default function UserProfile() {
       return response.data;
     },
     enabled: !!userProfile?.id && !!session?.data?.user?.id,
+  });
+
+  const followMutation = useMutation({
+    mutationFn: async () => {
+      if (!userProfile?.id || !session?.data?.user?.id) return null;
+      const response = await axios.post(
+        `/api/user/follow?userId=${userProfile.id}&action=${followStatus?.[userProfile.id] ? "unfollow" : "follow"}`
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      // Invalidate all relevant queries to ensure UI consistency
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["who-to-follow"] });
+      queryClient.invalidateQueries({ queryKey: ["follow-status"] });
+      queryClient.invalidateQueries({ queryKey: ["user-followers"] });
+      queryClient.invalidateQueries({ queryKey: ["user-following"] });
+      queryClient.invalidateQueries({ queryKey: ["explore"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["user-data"] });
+    },
+    onError: () => {
+      toast.error("Error occurred while following/unfollowing user");
+    },
   });
 
   useEffect(() => {
