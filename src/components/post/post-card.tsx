@@ -336,7 +336,6 @@ const PostCard = ({
 
       const previousPosts = queryClient.getQueryData(["posts"]);
 
-      // Optimistically update the comment count
       queryClient.setQueryData(["posts"], (old: any) => {
         if (!old) return old;
         return {
@@ -494,7 +493,7 @@ const PostCard = ({
         </div>
       </div>
 
-      <div className="relative backdrop-blur-sm sm:pl-5 md:pl-3">
+      <div className="relative sm:pl-5 md:pl-3">
         <div className="mr-2 flex w-full flex-col items-start justify-between gap-2 pb-2 sm:flex-row sm:items-center sm:gap-0">
           <div className="flex flex-1 items-center gap-2 sm:gap-3">
             <Image
