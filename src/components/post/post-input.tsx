@@ -33,7 +33,6 @@ import {
   EmojiPickerFooter,
 } from "@/components/ui/emoji-picker";
 
-
 const cloudinaryUploadUrl = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!;
 const cloudinaryUploadPreset =
   process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
@@ -43,6 +42,7 @@ const PostInput = () => {
   const [dialogFiles, setDialogFiles] = useState<File[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const session = authClient.useSession();
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
@@ -63,7 +63,25 @@ const PostInput = () => {
   };
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDialogPost(e.target.value);
+    const newText = e.target.value;
+    setErrorMessage("");
+
+    // Check if any word exceeds 10 characters
+    const words = newText.split(/\s+/);
+    const hasLongWord = words.some((word) => word.length > 10);
+
+    if (hasLongWord) {
+      setErrorMessage("Words cannot be longer than 10 characters");
+      return;
+    }
+
+    // Check total character limit
+    if (newText.length > 200) {
+      setErrorMessage("Post cannot exceed 200 characters");
+      return;
+    }
+
+    setDialogPost(newText);
     setCursorPosition(e.target.selectionStart);
   };
 
@@ -227,40 +245,51 @@ const PostInput = () => {
 
               <div className="relative">
                 <AutosizeTextarea
-                  maxHeight={300}
-                  placeholder="What's on your mind?"
-                  className="h-64 w-full rounded-xl border bg-transparent text-base outline-none placeholder:text-gray-400 focus:outline-none focus:ring-0 focus-visible:ring-0 dark:border-gray-500/10 dark:placeholder:text-gray-500"
+                  maxHeight={500}
+                  placeholder="What's on your mind? (200 characters max, 10 characters per word)"
+                  className="min-h-[200px] w-full rounded-xl border bg-transparent text-base outline-none placeholder:text-gray-400 focus:outline-none focus:ring-0 focus-visible:ring-0 dark:border-gray-500/10 dark:placeholder:text-gray-500"
                   value={dialogPost}
                   onChange={handleTextareaChange}
                   onSelect={(e) =>
                     setCursorPosition(e.currentTarget.selectionStart)
                   }
+                  maxLength={300}
                 />
-                <div className="absolute bottom-4 right-4">
-                  <Popover onOpenChange={setIsOpen} open={isOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
-                      >
-                        <SmileIcon className="h-5 w-5" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-fit p-0">
-                      <EmojiPicker
-                        className="h-[342px]"
-                        onEmojiSelect={({ emoji }) => {
-                          setIsOpen(false);
-                          onEmojiClick({ emoji });
-                        }}
-                      >
-                        <EmojiPickerSearch />
-                        <EmojiPickerContent />
-                        <EmojiPickerFooter />
-                      </EmojiPicker>
-                    </PopoverContent>
-                  </Popover>
+                <div className="flex items-center justify-between px-4">
+                  <div className="flex items-center gap-4">
+                    <div className="text-sm text-gray-500">
+                      {dialogPost.length}/200 characters
+                    </div>
+                    {errorMessage && (
+                      <div className="text-sm text-red-500">{errorMessage}</div>
+                    )}
+                  </div>
+                  <div className="py-2">
+                    <Popover onOpenChange={setIsOpen} open={isOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                        >
+                          <SmileIcon className="h-5 w-5" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-fit p-0">
+                        <EmojiPicker
+                          className="h-[342px]"
+                          onEmojiSelect={({ emoji }) => {
+                            setIsOpen(false);
+                            onEmojiClick({ emoji });
+                          }}
+                        >
+                          <EmojiPickerSearch />
+                          <EmojiPickerContent />
+                          <EmojiPickerFooter />
+                        </EmojiPicker>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </div>
               </div>
 
