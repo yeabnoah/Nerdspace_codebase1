@@ -1,7 +1,9 @@
 "use client";
 
+import type React from "react";
+
 import { getTrimLimit } from "@/functions/render-helper";
-import postInterface from "@/interface/auth/post.interface";
+import type postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
 import usePostStore from "@/store/post.store";
 import useReportStore from "@/store/report.strore";
@@ -483,15 +485,17 @@ const PostCard = ({
   };
 
   return (
-    <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-2 px-2 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/10 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/20 after:to-transparent sm:p-4 sm:px-3 [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/20 [&>div]:before:to-transparent">
-      {/* Orange diagonal glow from bottom-left to top-right */}
-      {/* <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+    <div className="relative my-5 w-full flex-1 border-b border-transparent p-2 px-2 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/10 before:to-transparent after:absolute after:left-0 after:top-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/20 after:to-transparent [&>*:last-child]:after:absolute [&>*:last-child]:after:right-[-17px] [&>*:last-child]:after:top-0 [&>*:last-child]:after:h-full [&>*:last-child]:after:w-[1px] [&>*:last-child]:after:bg-gradient-to-b [&>*:last-child]:after:from-transparent [&>*:last-child]:after:via-blue-500/20 [&>*:last-child]:after:to-transparent sm:p-4 sm:px-3">
+     
+      <div className="pointer-events-none absolute inset-0 overflow-visible">
+        {/* Only render these effects on desktop for better performance */}
+        <div className="hidden md:block">
+          <div className="absolute -right-4 size-40 -rotate-45 rounded-full bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent opacity-80 blur-[100px]"></div>
+          <div className="absolute -bottom-5 left-12 size-40 rotate-45 rounded-full bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent opacity-80 blur-[100px]"></div>
+        </div>
+      </div>
 
-      <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
-
-      {/* comment */}
-
-      <div className="relative md:pl-3 backdrop-blur-sm sm:pl-5">
+      <div className="relative backdrop-blur-sm sm:pl-5 md:pl-3">
         <div className="mr-2 flex w-full flex-col items-start justify-between gap-2 pb-2 sm:flex-row sm:items-center sm:gap-0">
           <div className="flex flex-1 items-center gap-2 sm:gap-3">
             <Image
@@ -610,12 +614,14 @@ const PostCard = ({
           </div>
         </div>
 
-        <div className={`mt-2 flex w-full flex-1 flex-col items-start justify-center`}>
+        <div
+          className={`mt-2 flex w-full flex-1 flex-col items-start justify-center`}
+        >
           <div className="flex w-[100%] flex-1 flex-col justify-start gap-3">
             {post?.shared && (
               <Card
                 onClick={() => router.push(`project/${post.project?.id}`)}
-                className="overflow-hidden border-gray-100 opacity-80 shadow-none h-24 transition-all hover:cursor-pointer hover:opacity-100 dark:border-gray-500/5"
+                className="h-24 overflow-hidden border-gray-100 opacity-80 shadow-none transition-all hover:cursor-pointer hover:opacity-100 dark:border-gray-500/5"
               >
                 <div className="flex h-full gap-3">
                   <div className="relative h-full w-24">
@@ -633,11 +639,17 @@ const PostCard = ({
                         {post?.project?.name}
                       </h3>
                       <div className="mt-1 flex flex-wrap gap-1">
-                        <Badge variant="outline" className="bg-primary/5 text-[10px] font-normal">
+                        <Badge
+                          variant="outline"
+                          className="bg-primary/5 text-[10px] font-normal"
+                        >
                           {post?.project?.status}
                         </Badge>
                         {post?.project?.category && (
-                          <Badge variant="outline" className="bg-primary/5 text-[10px] font-normal">
+                          <Badge
+                            variant="outline"
+                            className="bg-primary/5 text-[10px] font-normal"
+                          >
                             {post?.project?.category}
                           </Badge>
                         )}
@@ -663,7 +675,9 @@ const PostCard = ({
               </Card>
             )}
             {post.media && post.media.length > 0 && (
-              <div className={`${!post.shared && "mt-2 sm:mt-4"} grid w-[100%] flex-1 gap-1 sm:gap-2 ${getGridClass(post.media.length)}`}>
+              <div
+                className={`${!post.shared && "mt-2 sm:mt-4"} grid w-[100%] flex-1 gap-1 sm:gap-2 ${getGridClass(post.media.length)}`}
+              >
                 {post.media.length === 1 && (
                   <div
                     className="relative h-[25vh] sm:h-[30vh] md:h-[36vh]"
@@ -676,7 +690,7 @@ const PostCard = ({
                   >
                     <Image
                       fill
-                      src={post.media[0].url}
+                      src={post.media[0].url || "/placeholder.svg"}
                       alt="Post media"
                       className="w-full rounded-xl object-cover"
                     />
@@ -696,7 +710,7 @@ const PostCard = ({
                     >
                       <Image
                         fill
-                        src={media.url}
+                        src={media.url || "/placeholder.svg"}
                         alt="Post media"
                         className="h-full w-full rounded-xl object-cover"
                       />
@@ -715,7 +729,7 @@ const PostCard = ({
                     >
                       <Image
                         fill
-                        src={post.media[0].url}
+                        src={post.media[0].url || "/placeholder.svg"}
                         alt="Post media"
                         className="h-full w-full rounded-xl object-cover"
                       />
@@ -735,7 +749,7 @@ const PostCard = ({
                         >
                           <Image
                             fill
-                            src={media.url}
+                            src={media.url || "/placeholder.svg"}
                             alt="Post media"
                             className="h-full w-full rounded-xl object-cover"
                           />
@@ -757,12 +771,18 @@ const PostCard = ({
                 {(expandedStates[index] || !isLongContent
                   ? post.content
                   : truncatedContent
-                ).split(/(\s+)/).map((word, i) => (
-                  word.startsWith('#') 
-                    ? <span key={i} className="text-purple-500">{word}</span>
-                    : word
-                ))}
-                {!expandedStates[index] && isLongContent && '...'}
+                )
+                  .split(/(\s+)/)
+                  .map((word, i) =>
+                    word.startsWith("#") ? (
+                      <span key={i} className="text-purple-500">
+                        {word}
+                      </span>
+                    ) : (
+                      word
+                    ),
+                  )}
+                {!expandedStates[index] && isLongContent && "..."}
               </h4>
               {isLongContent && (
                 <button
@@ -809,7 +829,9 @@ const PostCard = ({
               ) : (
                 <GoHeart className="size-5" />
               )}
-              <span className="text-sm font-medium">{formatCount(post._count?.likes || 0)}</span>
+              <span className="text-sm font-medium">
+                {formatCount(post._count?.likes || 0)}
+              </span>
             </motion.div>
 
             <motion.div
@@ -827,7 +849,9 @@ const PostCard = ({
               transition={{ duration: 0.2 }}
             >
               <MessageCircle className="size-5" />
-              <span className="text-sm font-medium">{formatCount(post._count?.replies || 0)}</span>
+              <span className="text-sm font-medium">
+                {formatCount(post._count?.replies || 0)}
+              </span>
             </motion.div>
 
             <motion.div
@@ -863,7 +887,9 @@ const PostCard = ({
               ) : (
                 <HiOutlineBookmark className="size-5" />
               )}
-              <span className="text-sm font-medium">{formatCount(post._count?.bookmarks || 0)}</span>
+              <span className="text-sm font-medium">
+                {formatCount(post._count?.bookmarks || 0)}
+              </span>
             </motion.div>
           </div>
         </div>
@@ -875,10 +901,12 @@ const PostCard = ({
               <div className="relative flex-1">
                 <input
                   placeholder="Comment here"
-                  className="w-full border-0 border-b border-b-textAlternative/20 bg-transparent text-xs placeholder:font-instrument placeholder:text-base focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0 py-2 px-2 dark:border-white/50 sm:text-sm sm:placeholder:text-lg"
+                  className="w-full border-0 border-b border-b-textAlternative/20 bg-transparent px-2 py-2 text-xs placeholder:font-instrument placeholder:text-base focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0 dark:border-white/50 sm:text-sm sm:placeholder:text-lg"
                   value={commentContent}
                   onChange={(e) => setCommentContent(e?.target?.value)}
-                  onSelect={(e) => setCursorPosition(e?.currentTarget?.selectionStart || 0)}
+                  onSelect={(e) =>
+                    setCursorPosition(e?.currentTarget?.selectionStart || 0)
+                  }
                 />
                 <div className="absolute bottom-1 right-2">
                   <Popover onOpenChange={setIsEmojiOpen} open={isEmojiOpen}>
@@ -963,11 +991,12 @@ const PostCard = ({
         <Dialog open={isAccessDialogOpen} onOpenChange={setIsAccessDialogOpen}>
           <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
             <DialogTitle></DialogTitle>
+            {/* Optimized gradient effects */}
+            <div className="pointer-events-none absolute inset-0 overflow-visible">
+              <div className="absolute -right-4 size-40 -rotate-45 rounded-full bg-gradient-to-br from-red-300/40 via-red-400/50 to-transparent opacity-80 blur-[100px]"></div>
+              <div className="absolute -bottom-5 left-12 size-40 rotate-45 rounded-full bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent opacity-80 blur-[100px]"></div>
+            </div>
             <div className="relative flex flex-col">
-              {/* Glow effects */}
-              {/* <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-red-300/50 bg-gradient-to-br from-red-300/40 via-red-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-              <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
-
               <div className="flex w-full flex-col px-6 pb-3">
                 <div className="mb-2 font-geist text-3xl font-medium">
                   {(post.access as unknown as string) ===
