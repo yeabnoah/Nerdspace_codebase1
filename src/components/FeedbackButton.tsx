@@ -26,18 +26,6 @@ export function FeedbackButton({ position = "bottom-right", apiEndpoint = "/api/
   const [isButtonHovered, setIsButtonHovered] = useState(false)
   const session = authClient.useSession()
 
-  // Don't render anything if user is not logged in
-  if (!session.data) {
-    return null
-  }
-
-  const positionClasses = {
-    "bottom-right": "bottom-4 right-4",
-    "bottom-left": "bottom-4 left-4",
-    "top-right": "top-4 right-4",
-    "top-left": "top-4 left-4",
-  }
-
   const { mutate: submitFeedback, isPending } = useMutation({
     mutationFn: async () => {
       return axios.post(apiEndpoint, {
@@ -56,6 +44,18 @@ export function FeedbackButton({ position = "bottom-right", apiEndpoint = "/api/
       toast.error("Failed to submit feedback. Please try again.")
     },
   })
+
+  // Don't render anything if user is not logged in
+  if (!session.data) {
+    return null
+  }
+
+  const positionClasses = {
+    "bottom-right": "bottom-4 right-4",
+    "bottom-left": "bottom-4 left-4",
+    "top-right": "top-4 right-4",
+    "top-left": "top-4 left-4",
+  }
 
   const handleSubmit = () => {
     if (!content.trim()) {
