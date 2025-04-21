@@ -5,6 +5,7 @@ interface emailInput {
   subject: string;
   text?: string;
   html?: string;
+  from?: string;
 }
 
 const transporter = nodemailer.createTransport({
@@ -17,9 +18,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendEmail = async ({ to, subject, text, html }: emailInput) => {
+const sendEmail = async ({ to, subject, text, html, from }: emailInput) => {
   const info = await transporter.sendMail({
-    from: "NerdSpace Team",
+    from: from || "NerdSpace Team <noreply@nerdspace.tech>",
     to: `${to}`,
     subject: `${subject}`,
     text: text || "",

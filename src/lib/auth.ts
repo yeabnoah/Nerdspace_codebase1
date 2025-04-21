@@ -30,8 +30,9 @@ export const auth = betterAuth({
     sendResetPassword: async ({ user, url, token }, request) => {
       await sendEmail({
         to: user.email,
-        subject: "Reset your password",
+        subject: "Reset Your Password | NerdSpace",
         html: passwordResetTemplate(url),
+        from: "NerdSpace Security <security@nerdspace.tech>",
       });
       console.log(token, request);
     },
@@ -41,8 +42,9 @@ export const auth = betterAuth({
     sendVerificationEmail: async ({ user, url, token }, request) => {
       await sendEmail({
         to: user.email,
-        subject: "Verify your email address",
+        subject: "Welcome to NerdSpace - Verify Your Email",
         html: emailVerificationTemplate(url),
+        from: "NerdSpace Team <welcome@nerdspace.tech>",
       });
       console.log(token, request);
     },
@@ -53,8 +55,9 @@ export const auth = betterAuth({
       sendMagicLink: async ({ email, token, url }, request) => {
         await sendEmail({
           to: email,
-          subject: "Sign in to Nerdspace",
+          subject: "Sign In to NerdSpace",
           html: magicLinkTemplate(url),
+          from: "NerdSpace <no-reply@nerdspace.tech>",
         });
         console.log(token, request);
       },
