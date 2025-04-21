@@ -3,7 +3,8 @@ import nodemailer from "nodemailer";
 interface emailInput {
   to: string;
   subject: string;
-  text: string;
+  text?: string;
+  html?: string;
 }
 
 const transporter = nodemailer.createTransport({
@@ -16,12 +17,13 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendEmail = async ({ to, subject, text }: emailInput) => {
+const sendEmail = async ({ to, subject, text, html }: emailInput) => {
   const info = await transporter.sendMail({
     from: "NerdSpace Team",
     to: `${to}`,
     subject: `${subject}`,
-    text: `${text}`,
+    text: text || "",
+    html: html,
   });
 
   console.log("Message sent: %s", info.messageId);
