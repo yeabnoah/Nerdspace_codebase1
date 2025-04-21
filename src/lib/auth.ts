@@ -4,6 +4,11 @@ import { magicLink } from "better-auth/plugins";
 import sendEmail from "./sendEmail";
 import { PrismaClient } from "@prisma/client";
 import { nextCookies } from "better-auth/next-js";
+import {
+  passwordResetTemplate,
+  emailVerificationTemplate,
+  magicLinkTemplate,
+} from "./emailTemplates/templates";
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -26,7 +31,7 @@ export const auth = betterAuth({
       await sendEmail({
         to: user.email,
         subject: "Reset your password",
-        text: `Click the link to reset your password: ${url}`,
+        html: passwordResetTemplate(url),
       });
       console.log(token, request);
     },
@@ -37,7 +42,7 @@ export const auth = betterAuth({
       await sendEmail({
         to: user.email,
         subject: "Verify your email address",
-        text: `Click the link to verify your email: ${url}`,
+        html: emailVerificationTemplate(url),
       });
       console.log(token, request);
     },
@@ -46,7 +51,12 @@ export const auth = betterAuth({
   plugins: [
     magicLink({
       sendMagicLink: async ({ email, token, url }, request) => {
-        console.log(email, token, url, request);
+        await sendEmail({
+          to: email,
+          subject: "Sign in to Nerdspace",
+          html: magicLinkTemplate(url),
+        });
+        console.log(token, request);
       },
     }),
     nextCookies(),
