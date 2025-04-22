@@ -44,6 +44,39 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
+    // Get the post to find its author
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { userId: true },
+    });
+
+    if (!post) {
+      return NextResponse.json({ message: "Post not found" }, { status: 404 });
+    }
+
+    // Create notification for the post author
+    if (post.userId !== session.user.id) {
+      // Don't notify if user comments on their own post
+      await prisma.notification.create({
+        data: {
+          type: "POST_COMMENT",
+          message: "", // Will be personalized in the notification API
+          user: {
+            connect: { id: post.userId }, // Notify the post author
+          },
+          actor: {
+            connect: { id: session.user.id }, // Who commented
+          },
+          post: {
+            connect: { id: postId },
+          },
+          comment: {
+            connect: { id: newComment.id },
+          },
+        },
+      });
+    }
+
     return NextResponse.json(
       {
         data: newComment,

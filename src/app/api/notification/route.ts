@@ -110,7 +110,6 @@ export const POST = async (request: NextRequest) => {
       }
     }
 
-    // Build the data object dynamically based on provided IDs
     const notificationData: any = {
       type,
       message: personalizedMessage,
@@ -121,7 +120,6 @@ export const POST = async (request: NextRequest) => {
       },
     };
 
-    // Only add relations that have valid IDs
     if (actorId) {
       notificationData.actor = {
         connect: { id: actorId },

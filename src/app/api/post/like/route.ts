@@ -29,7 +29,8 @@ export const POST = async (req: Request) => {
       );
     }
 
-    const { userId, postId } = result.data;
+    const { postId } = result.data;
+    const userId = session.user.id;
 
     const existingLike = await prisma.like.findFirst({
       where: { userId, postId },
@@ -40,13 +41,40 @@ export const POST = async (req: Request) => {
       return NextResponse.json({ message: "Like removed" }, { status: 200 });
     }
 
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { userId: true },
+    });
+
+    if (!post) {
+      return NextResponse.json({ message: "Post not found" }, { status: 404 });
+    }
+
     await prisma.like.create({
       data: { userId, postId },
     });
 
+    if (post.userId !== userId) {
+      await prisma.notification.create({
+        data: {
+          type: "POST_LIKE",
+          message: "",
+          user: {
+            connect: { id: post.userId },
+          },
+          actor: {
+            connect: { id: userId },
+          },
+          post: {
+            connect: { id: postId },
+          },
+        },
+      });
+    }
+
     return NextResponse.json({ message: "Liked post" }, { status: 201 });
   } catch (err) {
-    console.error("Error updating comment:", err);
+    console.error("Error updating like:", err);
     return NextResponse.json({ error: "error" }, { status: 500 });
   }
 };

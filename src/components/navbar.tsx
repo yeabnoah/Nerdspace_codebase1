@@ -155,7 +155,7 @@ const Navbar = () => {
           </Button>
         </div>
         <QualityNotice />
-        {/* <NotificationDropdown /> */}
+        <NotificationDropdown />
         <ModeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
