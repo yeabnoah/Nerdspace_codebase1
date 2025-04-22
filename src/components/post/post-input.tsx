@@ -441,7 +441,7 @@ const PostInput = () => {
                     isPending ||
                     isUploading ||
                     dialogPost.trim() === "" ||
-                    dialogPost.length > 200
+                    dialogPost.length > 500
                   }
                 >
                   {isPending || isUploading ? (
