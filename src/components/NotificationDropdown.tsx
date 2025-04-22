@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 interface Notification {
   id: string;
@@ -103,9 +104,26 @@ const NotificationDropdown = () => {
                 href={getNotificationLink(notification)}
                 key={notification.id}
               >
-                <DropdownMenuItem className="flex cursor-pointer flex-col gap-1 rounded-xl p-3 focus:bg-accent">
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="text-sm">{notification.message}</span>
+                <DropdownMenuItem className="flex cursor-pointer items-start gap-3 rounded-xl p-3 focus:bg-accent">
+                  {notification.actor && (
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={notification.actor.image} />
+                      <AvatarFallback>
+                        {notification.actor.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                  <div className="flex flex-1 flex-col gap-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="text-sm">
+                        <span className="font-medium">{notification.actor?.name}</span>{" "}
+                        {notification.type === "POST_LIKE" && "liked your post"}
+                        {notification.type === "POST_COMMENT" && "commented on your post"}
+                        {notification.type === "FOLLOW" && "started following you"}
+                        {notification.type === "PROJECT_STAR" && "starred your project"}
+                        {notification.type === "PROJECT_FOLLOW" && "is following your project"}
+                      </span>
+                    </div>
                     <span className="text-xs text-muted-foreground">
                       {formatDistanceToNow(new Date(notification.createdAt), {
                         addSuffix: true,
