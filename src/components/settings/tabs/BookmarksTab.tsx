@@ -191,7 +191,7 @@ export default function BookmarksTab() {
   console.log(selectedCommentReply);
 
   return (
-    <div className="space-y-4">
+    <div className="w-full max-w-3xl mx-auto space-y-4">
       {posts.map((post, index) => (
         <PostCard
           key={post.id}
