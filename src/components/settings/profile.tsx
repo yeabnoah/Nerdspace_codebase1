@@ -188,7 +188,7 @@ export default function ProfilePage() {
 
   if (isloading || isFetching || isPending) {
     return (
-      <div className="container relative mx-10 pb-8 font-geist">
+      <div className="container relative mx-10 pb-8 font-geist mt-5">
         <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
 
         <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl shadow-lg md:h-[250px]">
@@ -228,7 +228,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container relative mx-10 pb-8 font-geist">
+    <div className="container relative mx-10 pb-8 font-geist mt-5">
       <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
 
       <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-xl shadow-lg md:h-[250px]">
