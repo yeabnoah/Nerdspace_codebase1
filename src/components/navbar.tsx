@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/dialog";
 import useSearchStore from "@/store/search.store";
 import QualityNotice from "./quality-notice";
+import NotificationDropdown from "./NotificationDropdown";
 
 const Navbar = () => {
   const router = useRouter();
@@ -154,6 +155,7 @@ const Navbar = () => {
           </Button>
         </div>
         <QualityNotice />
+        <NotificationDropdown />
         <ModeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
