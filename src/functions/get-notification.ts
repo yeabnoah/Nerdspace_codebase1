@@ -1,16 +1,16 @@
-import axios from "axios";
-import getUserSession from "./get-user";
+// import axios from "axios";
+// import getUserSession from "./get-user";
 
-const getNotifications = async () => {
-  const session = await getUserSession();
+// const getNotifications = async () => {
+//   const session = await getUserSession();
 
-  if (!session) {
-    return null;
-  }
+//   if (!session) {
+//     return null;
+//   }
 
-  const notifications = await axios.get("/api/notification");
+//   const notifications = await axios.get("/api/notification");
 
-  return notifications.data;
-};
+//   return notifications.data;
+// };
 
-export default getNotifications;
+// export default getNotifications;
