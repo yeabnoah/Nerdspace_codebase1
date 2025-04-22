@@ -59,6 +59,27 @@ import {
 } from "@/components/ui/emoji-picker";
 import { SmileIcon } from "lucide-react";
 
+const timeAgo = (date: Date) => {
+  const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
+  
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + 'y';
+  
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + 'mo';
+  
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + 'd';
+  
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + 'h';
+  
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + 'm';
+  
+  return Math.floor(seconds) + 's';
+};
+
 interface PostCardProps {
   post: postInterface;
   index: number;
@@ -512,10 +533,11 @@ const PostCard = ({
               <h1 className="text-xs font-medium sm:text-sm">
                 {post.user.name}
               </h1>
-              <h1 className="text-[10px] text-muted-foreground sm:text-xs">
-                Nerd@
-                <span className="text-purple-500">{post.user.nerdAt}</span>
-              </h1>
+              <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground sm:text-xs">
+                <span>Nerd@<span className="text-purple-500">{post.user.nerdAt}</span></span>
+                <span>·</span>
+                <span>{timeAgo(post.createdAt)}</span>
+              </div>
             </div>
           </div>
 
