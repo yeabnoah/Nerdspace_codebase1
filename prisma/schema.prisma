@@ -56,6 +56,8 @@ model User {
   CommunityPost        CommunityPost[]
   interests            CommunityCategory[]    @relation("UserInterests")
   bugReport            bugReport[]
+  Notification         Notification[]
+  NotificationActor    Notification[]         @relation("NotificationActor")
 
   @@unique([email])
   @@map("user")
@@ -92,21 +94,22 @@ model Country {
 }
 
 model Post {
-  id           String        @id @default(uuid())
+  id           String         @id @default(uuid())
   content      String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @default(now())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now())
   userId       String
-  access       PostAccess    @default(public)
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  access       PostAccess     @default(public)
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   postcomments PostComment[]
   likes        Like[]
   bookmarks    Bookmark[]
   reports      Report[]
   media        Media[]
-  shared       Boolean?      @default(false)
+  shared       Boolean?       @default(false)
   projectId    String?
-  project      Project?      @relation(fields: [projectId], references: [id])
+  project      Project?       @relation(fields: [projectId], references: [id])
+  Notification Notification[]
 
   @@map("posts")
 }
@@ -126,6 +129,7 @@ model PostComment {
   reports         Report[]
   CommunityPost   CommunityPost? @relation(fields: [communityPostId], references: [id])
   communityPostId String?
+  Notification    Notification[]
 
   @@map("postcomments")
 }
@@ -229,22 +233,23 @@ model Media {
 }
 
 model Project {
-  id          String          @id @default(uuid())
-  name        String
-  description String
-  image       String
-  userId      String
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  status      projectStatus   @default(ONGOING)
-  category    String[]
-  access      PostAccess      @default(private)
-  updates     ProjectUpdate[]
-  createdAt   DateTime        @default(now())
-  stars       ProjectStar[]
-  ratings     ProjectRating[]
-  reviews     ProjectReview[]
-  followers   ProjectFollow[]
-  Post        Post[]
+  id           String          @id @default(uuid())
+  name         String
+  description  String
+  image        String
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status       projectStatus   @default(ONGOING)
+  category     String[]
+  access       PostAccess      @default(private)
+  updates      ProjectUpdate[]
+  createdAt    DateTime        @default(now())
+  stars        ProjectStar[]
+  ratings      ProjectRating[]
+  reviews      ProjectReview[]
+  followers    ProjectFollow[]
+  Post         Post[]
+  Notification Notification[]
 }
 
 model ProjectUpdate {
@@ -325,18 +330,19 @@ model ProjectFollow {
 }
 
 model Community {
-  id          String                @id @default(uuid())
-  name        String                @unique
-  description String
-  image       String?
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
-  creatorId   String
-  creator     User                  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  members     CommunityMembership[]
-  posts       CommunityPost[]
-  categoryId  String?
-  category    CommunityCategory?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  id           String                @id @default(uuid())
+  name         String                @unique
+  description  String
+  image        String?
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+  creatorId    String
+  creator      User                  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  members      CommunityMembership[]
+  posts        CommunityPost[]
+  categoryId   String?
+  category     CommunityCategory?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  Notification Notification[]
 
   @@map("communities")
 }
@@ -385,6 +391,47 @@ model bugReport {
   user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
+}
+
+enum NotificationType {
+  FOLLOW
+  POST_LIKE
+  POST_COMMENT
+  PROJECT_UPDATE
+  PROJECT_STAR
+  PROJECT_RATING
+  PROJECT_REVIEW
+  COMMUNITY_INVITE
+  COMMUNITY_POST
+  PROJECT_FOLLOW
+  MENTION
+}
+
+model Notification {
+  id      String           @id @default(uuid())
+  type    NotificationType
+  userId  String // User who receives the notification
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  actorId String? // User who triggered the notification (optional for system notifications)
+  actor   User?            @relation("NotificationActor", fields: [actorId], references: [id], onDelete: SetNull)
+  read    Boolean          @default(false)
+
+  // Reference to related content
+  postId      String?
+  post        Post?        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  commentId   String?
+  comment     PostComment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  projectId   String?
+  project     Project?     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  communityId String?
+  community   Community?   @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  message   String // Custom notification message
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, read, createdAt(sort: Desc)])
+  @@map("notifications")
 }
 
 enum bugReportSeverity {
