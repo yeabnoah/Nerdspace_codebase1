@@ -13,6 +13,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { cn } from "@/lib/utils";
 
 interface Notification {
   id: string;
@@ -38,6 +39,7 @@ interface Notification {
 const NotificationDropdown = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
 
   const fetchNotifications = async () => {
     try {
@@ -51,12 +53,36 @@ const NotificationDropdown = () => {
     }
   };
 
+  const markNotificationsAsRead = async () => {
+    try {
+      const response = await fetch("/api/notification", {
+        method: "PATCH",
+      });
+      if (!response.ok) throw new Error("Failed to mark notifications as read");
+      
+      // Update local state to mark all notifications as read
+      setNotifications((prev) =>
+        prev.map((notification) => ({ ...notification, read: true }))
+      );
+      setUnreadCount(0);
+    } catch (error) {
+      console.error("Error marking notifications as read:", error);
+    }
+  };
+
   useEffect(() => {
     fetchNotifications();
     // Fetch notifications every minute
     const interval = setInterval(fetchNotifications, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    // When dropdown is opened, mark notifications as read
+    if (isOpen && unreadCount > 0) {
+      markNotificationsAsRead();
+    }
+  }, [isOpen, unreadCount]);
 
   const getNotificationLink = (notification: Notification) => {
     switch (notification.type) {
@@ -78,7 +104,7 @@ const NotificationDropdown = () => {
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative rounded-full">
           <Bell className="h-5 w-5" />
@@ -104,7 +130,12 @@ const NotificationDropdown = () => {
                 href={getNotificationLink(notification)}
                 key={notification.id}
               >
-                <DropdownMenuItem className="flex cursor-pointer items-start gap-3 rounded-xl p-3 focus:bg-accent">
+                <DropdownMenuItem 
+                  className={cn(
+                    "flex cursor-pointer items-start gap-3 rounded-xl p-3 focus:bg-accent",
+                    notification.read && "opacity-60"
+                  )}
+                >
                   {notification.actor && (
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={notification.actor.image} />
