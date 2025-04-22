@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-row items-start ">
       <LeftNavbar />
-      <div className="my-5 min-h-fit flex-1 pr-0 lg:pr-5">
+      <div className="my-5 min-h-fit flex-1 pr-0 md:pr-7">
         <PostInput />
         <RenderPOst />
       </div>
