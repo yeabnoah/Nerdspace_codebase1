@@ -128,7 +128,7 @@ export const GET = async (request: NextRequest) => {
     }
   } catch (error: any) {
     console.error("Error fetching projects:", error);
-    return NextResponse.json({ error: "error" }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 };
 
