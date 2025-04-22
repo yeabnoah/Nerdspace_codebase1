@@ -26,7 +26,7 @@ export default function RecommendedProjects() {
   if (isError) return <p>Error loading users</p>;
 
   return (
-    <Card className="hidden min-h-32 rounded-2xl border border-gray-100 bg-transparent pt-4 shadow-none dark:border-gray-500/5 md:block">
+    <Card className="hidden w-64 min-h-32 rounded-2xl border border-gray-100 bg-transparent pt-4 shadow-none dark:border-gray-500/5 md:block">
       <div className="relative">
         {/* Subtle gradient background effects */}
         <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/10 bg-gradient-to-br from-primary/5 to-transparent blur-[150px] backdrop-blur-sm"></div>
@@ -68,7 +68,7 @@ export default function RecommendedProjects() {
                 <div className="flex flex-1 flex-col">
                   <div className="flex items-center justify-between">
                     <p
-                      className="text-sm font-medium hover:underline"
+                      className="text-xs font-medium hover:underline"
                       title={each.name}
                     >
                       {each.name.length > 15
@@ -77,9 +77,8 @@ export default function RecommendedProjects() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Star className="h-3 w-3 text-yellow-500" />
                     <p className="text-xs text-muted-foreground">
-                      {each.members?.toLocaleString() ?? 0} members
+                      {each.members?.toLocaleString() ?? 0} followers
                     </p>
                   </div>
                 </div>
