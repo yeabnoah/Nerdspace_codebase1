@@ -151,7 +151,7 @@ export const PUT = async (req: NextRequest) => {
       );
     }
 
-    const { commentId, content } = body; // Include postId
+    const { commentId, content } = body;
 
     if (!session) {
       return NextResponse.json(

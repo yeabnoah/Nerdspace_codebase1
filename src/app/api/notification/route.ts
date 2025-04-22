@@ -160,3 +160,36 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 };
+
+export const PATCH = async (request: NextRequest) => {
+  try {
+    const session = await getUserSession();
+    if (!session) {
+      return NextResponse.json(
+        {
+          message: "unauthorized | not logged in",
+        },
+        { status: 400 },
+      );
+    }
+
+    // Mark all notifications as read for the user
+    await prisma.notification.updateMany({
+      where: {
+        userId: session.user.id,
+        read: false,
+      },
+      data: {
+        read: true,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Notifications marked as read" },
+      { status: 200 },
+    );
+  } catch (error: any) {
+    console.error("Error marking notifications as read:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+};
