@@ -62,25 +62,12 @@ const PostInput = () => {
     setCursorPosition(cursorPosition + emojiObject.emoji.length);
   };
 
+  const validateText = (text: string): { isValid: boolean; error: string } => {
+    return { isValid: true, error: "" };
+  };
+
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
-    setErrorMessage("");
-
-    // Check if any word exceeds 10 characters
-    const words = newText.split(/\s+/);
-    const hasLongWord = words.some((word) => word.length > 10);
-
-    if (hasLongWord) {
-      setErrorMessage("Words cannot be longer than 10 characters");
-      return;
-    }
-
-    // Check total character limit
-    if (newText.length > 200) {
-      setErrorMessage("Post cannot exceed 200 characters");
-      return;
-    }
-
     setDialogPost(newText);
     setCursorPosition(e.target.selectionStart);
   };
@@ -125,8 +112,8 @@ const PostInput = () => {
   const handlePaste = (e: React.ClipboardEvent) => {
     const items = e.clipboardData.items;
     const imageFiles = Array.from(items)
-      .filter(item => item.type.startsWith('image/'))
-      .map(item => item.getAsFile())
+      .filter((item) => item.type.startsWith("image/"))
+      .map((item) => item.getAsFile())
       .filter((file): file is File => file !== null);
 
     if (imageFiles.length > 0) {
@@ -151,7 +138,9 @@ const PostInput = () => {
       }
 
       if (file.size > maxSize * 1024 * 1024) {
-        toast.error(`File ${file.name} exceeds the maximum size of ${maxSize}MB.`);
+        toast.error(
+          `File ${file.name} exceeds the maximum size of ${maxSize}MB.`,
+        );
         return false;
       }
 
@@ -269,12 +258,12 @@ const PostInput = () => {
           </Button>
         </div>
 
-        <DialogContent 
+        <DialogContent
           className="max-w-2xl overflow-hidden rounded-2xl border-gray-200 p-0 dark:border-gray-500/10 dark:bg-black"
           onPaste={handlePaste}
         >
-          <div 
-            className={`relative ${isDragging ? 'after:absolute after:inset-0 after:bg-primary/5 after:border-2 after:border-dashed after:border-primary after:rounded-2xl' : ''}`}
+          <div
+            className={`relative ${isDragging ? "after:absolute after:inset-0 after:rounded-2xl after:border-2 after:border-dashed after:border-primary after:bg-primary/5" : ""}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -315,21 +304,30 @@ const PostInput = () => {
                 <div className="relative">
                   <AutosizeTextarea
                     maxHeight={500}
-                    placeholder="What's on your mind? (200 characters max, 10 characters per word)"
+                    placeholder="What's on your mind? (500 characters max)"
                     className="min-h-[200px] w-full rounded-xl border bg-transparent text-base outline-none placeholder:text-gray-400 focus:outline-none focus:ring-0 focus-visible:ring-0 dark:border-gray-500/10 dark:placeholder:text-gray-500"
                     value={dialogPost}
                     onChange={handleTextareaChange}
-                    onSelect={(e) => setCursorPosition(e.currentTarget.selectionStart)}
+                    onSelect={(e) =>
+                      setCursorPosition(e.currentTarget.selectionStart)
+                    }
                     onPaste={handlePaste}
-                    maxLength={300}
+                    style={{
+                      color: "inherit",
+                      wordBreak: "break-word",
+                    }}
                   />
                   <div className="flex items-center justify-between px-4">
                     <div className="flex items-center gap-4">
-                      <div className="text-sm text-gray-500">
-                        {dialogPost.length}/200 characters
+                      <div
+                        className={`text-sm ${dialogPost.length > 500 ? "text-red-500" : "text-gray-500"}`}
+                      >
+                        {dialogPost.length}/500 characters
                       </div>
                       {errorMessage && (
-                        <div className="text-sm text-red-500">{errorMessage}</div>
+                        <div className="text-sm text-red-500">
+                          {errorMessage}
+                        </div>
                       )}
                     </div>
                     <div className="py-2">
@@ -368,12 +366,14 @@ const PostInput = () => {
                       size="sm"
                       className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
                       onClick={() => {
-                        const input = document.createElement('input');
-                        input.type = 'file';
+                        const input = document.createElement("input");
+                        input.type = "file";
                         input.multiple = true;
-                        input.accept = 'image/jpeg,image/png,image/gif';
+                        input.accept = "image/jpeg,image/png,image/gif";
                         input.onchange = (e) => {
-                          const files = Array.from((e.target as HTMLInputElement).files || []);
+                          const files = Array.from(
+                            (e.target as HTMLInputElement).files || [],
+                          );
                           handleFiles(files);
                         };
                         input.click();
@@ -412,7 +412,9 @@ const PostInput = () => {
                       >
                         <div className="relative h-full w-full bg-gray-50 dark:bg-gray-800/30">
                           <img
-                            src={URL.createObjectURL(file) || "/placeholder.svg"}
+                            src={
+                              URL.createObjectURL(file) || "/placeholder.svg"
+                            }
                             alt={file.name}
                             className="h-full w-full object-cover"
                           />
@@ -435,7 +437,12 @@ const PostInput = () => {
                 <Button
                   onClick={handleSubmit}
                   className="w-full rounded-xl py-3 text-sm font-medium shadow-sm transition-all hover:shadow-md"
-                  disabled={isPending || isUploading || dialogPost.trim() === ""}
+                  disabled={
+                    isPending ||
+                    isUploading ||
+                    dialogPost.trim() === "" ||
+                    dialogPost.length > 200
+                  }
                 >
                   {isPending || isUploading ? (
                     <div className="flex items-center justify-center gap-2">

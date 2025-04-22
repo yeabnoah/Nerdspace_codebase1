@@ -3,48 +3,24 @@ import { prisma } from "@/lib/prisma";
 import commentSchema from "@/validation/comment.validation";
 import { NextRequest, NextResponse } from "next/server";
 
-export const POST = async (req: NextRequest) => {
+export const POST = async (request: NextRequest) => {
   try {
     const session = await getUserSession();
-    const body = await req.json();
-
-    const parsedBody = commentSchema.safeParse(body);
-    if (!parsedBody.success) {
-      return NextResponse.json(
-        {
-          message: "Invalid request body",
-          errors: parsedBody.error.errors,
-        },
-        { status: 401 },
-      );
-    }
-
-    const { postId, content, parentId } = parsedBody.data;
-
     if (!session) {
       return NextResponse.json(
-        {
-          message: "unauthorized | not logged in",
-        },
+        { message: "unauthorized | not logged in" },
         { status: 400 },
       );
     }
 
-    const newComment = await prisma.postComment.create({
-      data: {
-        userId: session.user.id,
-        postId: postId,
-        content: content,
-        parentId: parentId || null,
-      },
-      include: {
-        user: true,
-        replies: true,
-        parent: true,
-      },
-    });
+    const { postId, content } = await request.json();
+    if (!postId || !content) {
+      return NextResponse.json(
+        { message: "Post ID and content are required" },
+        { status: 400 },
+      );
+    }
 
-    // Get the post to find its author
     const post = await prisma.post.findUnique({
       where: { id: postId },
       select: { userId: true },
@@ -54,37 +30,38 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ message: "Post not found" }, { status: 404 });
     }
 
-    // Create notification for the post author
+    // Create the comment
+    const comment = await prisma.postComment.create({
+      data: {
+        content,
+        userId: session.user.id,
+        postId: postId,
+      },
+    });
+
+    // Create notification for post owner
     if (post.userId !== session.user.id) {
-      // Don't notify if user comments on their own post
       await prisma.notification.create({
         data: {
           type: "POST_COMMENT",
-          message: "", // Will be personalized in the notification API
+          message: content,
           user: {
-            connect: { id: post.userId }, // Notify the post author
+            connect: { id: post.userId },
           },
           actor: {
-            connect: { id: session.user.id }, // Who commented
+            connect: { id: session.user.id },
           },
-          post: {
-            connect: { id: postId },
-          },
+          post: {},
           comment: {
-            connect: { id: newComment.id },
+            connect: { id: comment.id },
           },
         },
       });
     }
 
-    return NextResponse.json(
-      {
-        data: newComment,
-      },
-      { status: 200 },
-    );
-  } catch (err) {
-    console.error("Error creating comment:", err);
+    return NextResponse.json({ message: "Comment created", comment });
+  } catch (error) {
+    console.error("Error creating comment:", error);
     return NextResponse.json({ error: "error" }, { status: 500 });
   }
 };

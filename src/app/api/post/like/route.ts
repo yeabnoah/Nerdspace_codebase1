@@ -1,44 +1,24 @@
+import { NextRequest, NextResponse } from "next/server";
 import getUserSession from "@/functions/get-user";
 import { prisma } from "@/lib/prisma";
 import likeSchema from "@/validation/like.validation";
-import { NextResponse } from "next/server";
 
-export const POST = async (req: Request) => {
+export const POST = async (request: NextRequest) => {
   try {
     const session = await getUserSession();
-
     if (!session) {
       return NextResponse.json(
-        {
-          message: "unauthorized | not logged in",
-        },
+        { message: "unauthorized | not logged in" },
         { status: 400 },
       );
     }
 
-    const body = await req.json();
-    const result = likeSchema.safeParse(body);
-
-    if (!result.success) {
+    const { postId } = await request.json();
+    if (!postId) {
       return NextResponse.json(
-        {
-          message: "Invalid request body",
-          errors: result.error.errors,
-        },
+        { message: "Post ID is required" },
         { status: 400 },
       );
-    }
-
-    const { postId } = result.data;
-    const userId = session.user.id;
-
-    const existingLike = await prisma.like.findFirst({
-      where: { userId, postId },
-    });
-
-    if (existingLike) {
-      await prisma.like.delete({ where: { id: existingLike.id } });
-      return NextResponse.json({ message: "Like removed" }, { status: 200 });
     }
 
     const post = await prisma.post.findUnique({
@@ -50,11 +30,37 @@ export const POST = async (req: Request) => {
       return NextResponse.json({ message: "Post not found" }, { status: 404 });
     }
 
-    await prisma.like.create({
-      data: { userId, postId },
+    const existingLike = await prisma.like.findUnique({
+      where: {
+        userId_postId: {
+          userId: session.user.id,
+          postId: postId,
+        },
+      },
     });
 
-    if (post.userId !== userId) {
+    if (existingLike) {
+      await prisma.like.delete({
+        where: {
+          userId_postId: {
+            userId: session.user.id,
+            postId: postId,
+          },
+        },
+      });
+      return NextResponse.json({ message: "Like removed" });
+    }
+
+    // Create the like
+    await prisma.like.create({
+      data: {
+        userId: session.user.id,
+        postId: postId,
+      },
+    });
+
+    // Create notification for post owner
+    if (post.userId !== session.user.id) {
       await prisma.notification.create({
         data: {
           type: "POST_LIKE",
@@ -63,7 +69,7 @@ export const POST = async (req: Request) => {
             connect: { id: post.userId },
           },
           actor: {
-            connect: { id: userId },
+            connect: { id: session.user.id },
           },
           post: {
             connect: { id: postId },
@@ -72,9 +78,9 @@ export const POST = async (req: Request) => {
       });
     }
 
-    return NextResponse.json({ message: "Liked post" }, { status: 201 });
-  } catch (err) {
-    console.error("Error updating like:", err);
+    return NextResponse.json({ message: "Post liked" });
+  } catch (error) {
+    console.error("Error liking post:", error);
     return NextResponse.json({ error: "error" }, { status: 500 });
   }
 };
