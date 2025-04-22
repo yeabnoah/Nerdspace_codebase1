@@ -2,95 +2,70 @@ import getUserSession from "@/functions/get-user";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export const POST = async (req: NextRequest) => {
+export const POST = async (request: NextRequest) => {
   try {
     const session = await getUserSession();
-    const userId = req.nextUrl.searchParams.get("userId");
-    const action = req.nextUrl.searchParams.get("action") || "follow";
-
-    if (!userId) {
-      return NextResponse.json(
-        {
-          message: "userId is required",
-        },
-        { status: 400 },
-      );
-    }
-
     if (!session) {
       return NextResponse.json(
-        {
-          message: "unauthorized | not logged in",
-        },
+        { message: "unauthorized | not logged in" },
         { status: 400 },
       );
     }
 
-    if (session.user.id === userId) {
+    const { followingId } = await request.json();
+    if (!followingId) {
       return NextResponse.json(
-        {
-          message: "You cannot follow yourself",
-        },
+        { message: "Following ID is required" },
         { status: 400 },
       );
     }
 
-    const existingFollow = await prisma.follows.findFirst({
+    const existingFollow = await prisma.follows.findUnique({
       where: {
-        followerId: session.user.id,
-        followingId: userId,
+        followerId_followingId: {
+          followerId: session.user.id,
+          followingId: followingId,
+        },
       },
     });
 
-    if (action === "unfollow") {
-      if (!existingFollow) {
-        return NextResponse.json(
-          {
-            message: "You are not following this user",
-          },
-          { status: 400 },
-        );
-      }
-
+    if (existingFollow) {
       await prisma.follows.delete({
         where: {
-          id: existingFollow.id,
-        },
-      });
-
-      return NextResponse.json(
-        {
-          message: "Unfollowed successfully",
-        },
-        { status: 200 },
-      );
-    } else {
-      if (existingFollow) {
-        return NextResponse.json(
-          {
-            message: "You are already following this user",
+          followerId_followingId: {
+            followerId: session.user.id,
+            followingId: followingId,
           },
-          { status: 400 },
-        );
-      }
-
-      const following = await prisma.follows.create({
-        data: {
-          followerId: session.user.id,
-          followingId: userId,
         },
       });
-
-      return NextResponse.json(
-        {
-          data: following,
-          message: "Followed successfully",
-        },
-        { status: 201 },
-      );
+      return NextResponse.json({ message: "Unfollowed successfully" });
     }
+
+    // Create the follow
+    await prisma.follows.create({
+      data: {
+        followerId: session.user.id,
+        followingId: followingId,
+      },
+    });
+
+    // Create notification for the user being followed
+    await prisma.notification.create({
+      data: {
+        type: "FOLLOW",
+        message: "", // Will be personalized in the notification API
+        user: {
+          connect: { id: followingId }, // User being followed receives the notification
+        },
+        actor: {
+          connect: { id: session.user.id }, // User who followed
+        },
+      },
+    });
+
+    return NextResponse.json({ message: "Followed successfully" });
   } catch (error) {
-    console.error("Error following/unfollowing user:", error);
+    console.error("Error following user:", error);
     return NextResponse.json({ error: "error" }, { status: 500 });
   }
 };
