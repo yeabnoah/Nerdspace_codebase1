@@ -14,75 +14,41 @@ import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { cn } from "@/lib/utils";
-
-interface Notification {
-  id: string;
-  type: string;
-  message: string;
-  createdAt: string;
-  read: boolean;
-  actor: {
-    name: string;
-    image: string;
-  } | null;
-  post: {
-    id: string;
-  } | null;
-  project: {
-    id: string;
-  } | null;
-  community: {
-    id: string;
-  } | null;
-}
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { notificationApi, Notification } from "@/api/notification";
+import { toast } from "sonner";
 
 const NotificationDropdown = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  const fetchNotifications = async () => {
-    try {
-      const response = await fetch("/api/notification");
-      if (!response.ok) throw new Error("Failed to fetch notifications");
-      const data = await response.json();
-      setNotifications(data);
-      setUnreadCount(data.filter((n: Notification) => !n.read).length);
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-    }
-  };
+  const { data: notifications = [], isLoading } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: notificationApi.getNotifications,
+    refetchInterval: 60000,
+  });
 
-  const markNotificationsAsRead = async () => {
-    try {
-      const response = await fetch("/api/notification", {
-        method: "PATCH",
-      });
-      if (!response.ok) throw new Error("Failed to mark notifications as read");
-      
-      // Update local state to mark all notifications as read
-      setNotifications((prev) =>
-        prev.map((notification) => ({ ...notification, read: true }))
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const markAsReadMutation = useMutation({
+    mutationFn: notificationApi.markAsRead,
+    onSuccess: () => {
+      queryClient.setQueryData<Notification[]>(
+        ["notifications"],
+        (old) =>
+          old?.map((notification) => ({ ...notification, read: true })) || [],
       );
-      setUnreadCount(0);
-    } catch (error) {
-      console.error("Error marking notifications as read:", error);
-    }
-  };
+    },
+    onError: () => {
+      toast.error("Failed to mark notifications as read");
+    },
+  });
 
   useEffect(() => {
-    fetchNotifications();
-    // Fetch notifications every minute
-    const interval = setInterval(fetchNotifications, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    // When dropdown is opened, mark notifications as read
     if (isOpen && unreadCount > 0) {
-      markNotificationsAsRead();
+      markAsReadMutation.mutate();
     }
-  }, [isOpen, unreadCount]);
+  }, [isOpen, unreadCount, markAsReadMutation]);
 
   const getNotificationLink = (notification: Notification) => {
     switch (notification.type) {
@@ -120,7 +86,11 @@ const NotificationDropdown = () => {
         className="w-80 rounded-2xl border-none bg-white/80 p-2 shadow-lg backdrop-blur-sm dark:bg-black/80"
       >
         <ScrollArea className="h-[300px]">
-          {notifications.length === 0 ? (
+          {isLoading ? (
+            <div className="flex h-full items-center justify-center p-4">
+              <span className="text-sm text-muted-foreground">Loading...</span>
+            </div>
+          ) : notifications.length === 0 ? (
             <div className="flex h-full items-center justify-center p-4 text-sm text-muted-foreground">
               No notifications yet
             </div>
@@ -130,10 +100,10 @@ const NotificationDropdown = () => {
                 href={getNotificationLink(notification)}
                 key={notification.id}
               >
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   className={cn(
                     "flex cursor-pointer items-start gap-3 rounded-xl p-3 focus:bg-accent",
-                    notification.read && "opacity-60"
+                    notification.read && "opacity-60",
                   )}
                 >
                   {notification.actor && (
@@ -147,12 +117,18 @@ const NotificationDropdown = () => {
                   <div className="flex flex-1 flex-col gap-1">
                     <div className="flex items-start justify-between gap-2">
                       <span className="text-sm">
-                        <span className="font-medium">{notification.actor?.name}</span>{" "}
+                        <span className="font-medium">
+                          {notification.actor?.name}
+                        </span>{" "}
                         {notification.type === "POST_LIKE" && "liked your post"}
-                        {notification.type === "POST_COMMENT" && "commented on your post"}
-                        {notification.type === "FOLLOW" && "started following you"}
-                        {notification.type === "PROJECT_STAR" && "starred your project"}
-                        {notification.type === "PROJECT_FOLLOW" && "is following your project"}
+                        {notification.type === "POST_COMMENT" &&
+                          "commented on your post"}
+                        {notification.type === "FOLLOW" &&
+                          "started following you"}
+                        {notification.type === "PROJECT_STAR" &&
+                          "starred your project"}
+                        {notification.type === "PROJECT_FOLLOW" &&
+                          "is following your project"}
                       </span>
                     </div>
                     <span className="text-xs text-muted-foreground">
