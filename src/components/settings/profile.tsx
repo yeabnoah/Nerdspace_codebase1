@@ -75,7 +75,7 @@ export default function ProfilePage() {
   const { data: posts } = useQuery({
     queryKey: ["my-posts", user?.id],
     queryFn: async () => {
-      const response = await axios.get(`/api/posts/user/${user?.id}`);
+      const response = await axios.get(`/api/user/posts?userId=${user?.id}`);
       return response.data.data;
     },
     enabled: !!user?.id,
