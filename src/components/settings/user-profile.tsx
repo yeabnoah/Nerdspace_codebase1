@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import FollowButton from "./follow-button";
 import ProjectsTab from "./tabs/ProjectsTab";
+import UserProjectsTab from "./tabs/UserProjectsTab";
 import RenderUserPosts from "./user-posts";
 import { toast } from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -423,7 +424,7 @@ export default function UserProfile() {
                   </div>
                 </TabsContent>
                 <TabsContent value="projects" className="mt-0">
-                  <ProjectsTab />
+                  <UserProjectsTab />
                 </TabsContent>
               </Tabs>
             </CardContent>
