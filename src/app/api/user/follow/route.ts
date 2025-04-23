@@ -20,6 +20,23 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
+    // Make sure users can't follow themselves
+    if (followingId === session.user.id) {
+      return NextResponse.json(
+        { message: "You cannot follow yourself" },
+        { status: 400 },
+      );
+    }
+
+    // Make sure the target user exists
+    const targetUser = await prisma.user.findUnique({
+      where: { id: followingId },
+    });
+
+    if (!targetUser) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
     const existingFollow = await prisma.follows.findUnique({
       where: {
         followerId_followingId: {
@@ -66,6 +83,12 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json({ message: "Followed successfully" });
   } catch (error) {
     console.error("Error following user:", error);
-    return NextResponse.json({ error: "error" }, { status: 500 });
+    return NextResponse.json(
+      {
+        message: "Failed to process follow request",
+        error: (error as Error).message,
+      },
+      { status: 500 },
+    );
   }
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import UserInterface from "@/interface/auth/user.interface";
@@ -18,15 +18,19 @@ interface UserListProps {
 interface ApiResponse {
   data: UserInterface[];
   nextCursor: string | null;
+  message?: string;
 }
 
 const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
   const [cursor, setCursor] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const session = authClient.useSession();
-  const [followLoading, setFollowLoading] = useState<Record<string, boolean>>({});
+  const [followLoading, setFollowLoading] = useState<Record<string, boolean>>(
+    {},
+  );
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const { data, isLoading, isError, error } = useQuery<ApiResponse>({
+  const { data, isLoading, isError, error, refetch } = useQuery<ApiResponse>({
     queryKey: ["users", cursor],
     queryFn: async () => {
       try {
@@ -39,18 +43,21 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
         throw err;
       }
     },
-    gcTime: 1000 * 60 * 30, // Cache data for 30 minutes
-    staleTime: 1000 * 60 * 5, // Data stays fresh for 5 minutes
+    staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
     refetchOnMount: true,
+    retry: 3,
+    refetchOnReconnect: true,
+    initialData: { data: [], nextCursor: null },
   });
 
   const followMutation = useMutation({
-    mutationKey: ["follow-user"],
     mutationFn: async (userId: string) => {
       try {
         setFollowLoading((prev) => ({ ...prev, [userId]: true }));
-        const response = await axios.post(`/api/user/follow?userId=${userId}`);
+        const response = await axios.post(`/api/user/follow`, {
+          followingId: userId,
+        });
         return response.data.message;
       } catch (err) {
         console.error("Error following user:", err);
@@ -59,55 +66,83 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
     },
     onSuccess: (message, userId) => {
       handleFollow?.(userId);
-      
+
       // Update the cache immediately
       queryClient.setQueryData(["users", cursor], (oldData: any) => {
         if (!oldData) return oldData;
         return {
           ...oldData,
-          data: oldData.data.map((user: UserInterface) =>
-            user.id === userId
-              ? { ...user, isFollowingAuthor: true }
-              : user
+          data: oldData.data.filter(
+            (user: UserInterface) => user.id !== userId,
           ),
         };
       });
 
-      // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
-      queryClient.invalidateQueries({ queryKey: ["who-to-follow"] });
-      queryClient.invalidateQueries({ queryKey: ["follow-status"] });
-      queryClient.invalidateQueries({ queryKey: ["user-followers"] });
-      queryClient.invalidateQueries({ queryKey: ["user-following"] });
-      queryClient.invalidateQueries({ queryKey: ["explore"] });
-      
+      // Show skeleton loader during transition
+      setIsTransitioning(true);
+
+      // Fetch fresh data - but don't invalidate the current cache
+      setTimeout(() => {
+        // Only refetch if we've removed too many items
+        const currentData = queryClient.getQueryData(["users", cursor]) as
+          | ApiResponse
+          | undefined;
+        if (!currentData || currentData.data.length < 4) {
+          refetch().then(() => {
+            setIsTransitioning(false);
+          });
+        } else {
+          setIsTransitioning(false);
+        }
+      }, 300);
+
       toast.success(message || "Successfully followed user");
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : "Error occurred while following/unfollowing user";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Error occurred while following/unfollowing user";
       toast.error(errorMessage);
+      setIsTransitioning(false);
     },
     onSettled: (_, __, variables) => {
       setFollowLoading((prev) => ({ ...prev, [variables]: false }));
     },
   });
 
+  // Periodically refresh the list if empty
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (data && data.data.length === 0 && !isLoading) {
+      timer = setTimeout(() => {
+        setIsTransitioning(true);
+        refetch().finally(() => setIsTransitioning(false));
+      }, 3000);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [data, isLoading, refetch]);
+
   const handleFollowClick = (userId: string) => {
     if (!session.data) {
       toast.error("Please login to follow users");
       return;
     }
-    
+
     if (session.data?.user.id === userId) {
       toast.error("You cannot follow yourself");
       return;
     }
-    
+
     followMutation.mutate(userId);
   };
 
-  if (isLoading) return <UserListSkeleton />;
+  if (isLoading || isTransitioning) return <UserListSkeleton />;
+
   if (isError) {
     console.error("Error loading users:", error);
     return (
@@ -120,84 +155,88 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
   const users: UserInterface[] = data?.data || [];
   const nextCursor: string | null = data?.nextCursor || null;
 
+  // If no users, show skeleton instead of empty message
+  if (users.length === 0) {
+    return (
+      <div className="space-y-4">
+        <UserListSkeleton />
+        <p className="mt-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
+          {data?.message || "Looking for recommendations..."}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {users.length > 0 ? (
-          users.map((user) => (
-            <div
-              key={user.id}
-              className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-gray-500/10 dark:bg-black/80"
-            >
-              <div className="flex flex-col items-center text-center">
-                <div className="relative mb-3 h-20 w-20">
-                  <div className="h-full w-full overflow-hidden rounded-full border-2 border-zinc-200 dark:border-zinc-700">
-                    <Image
-                      src={user.image || "/user.jpg"}
-                      alt={user.name}
-                      fill
-                      className="rounded-full object-cover"
-                    />
-                  </div>
+        {users.map((user) => (
+          <div
+            key={user.id}
+            className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-gray-500/10 dark:bg-black/80"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="relative mb-3 h-20 w-20">
+                <div className="h-full w-full overflow-hidden rounded-full border-2 border-zinc-200 dark:border-zinc-700">
+                  <Image
+                    src={user.image || "/user.jpg"}
+                    alt={user.name}
+                    fill
+                    className="rounded-full object-cover"
+                  />
                 </div>
-
-                <h3 className="mb-1 text-lg font-semibold text-zinc-900 dark:text-white">
-                  {user.visualName || user.name}
-                </h3>
-
-                <p className="mb-3 text-sm text-zinc-500 dark:text-zinc-400">
-                  Nerd@
-                  {user.nerdAt || user.name.toLowerCase().replace(/\s+/g, "")}
-                </p>
-
-                <div className="mb-4 flex items-center gap-4 text-sm text-zinc-600 dark:text-zinc-400">
-                  <div>
-                    <span className="font-semibold">
-                      {user?._count?.following || 0}
-                    </span>{" "}
-                    Following
-                  </div>
-                  <div>
-                    <span className="font-semibold">
-                      {user?._count?.followers || 0}
-                    </span>{" "}
-                    Followers
-                  </div>
-                </div>
-
-                <Button
-                  variant={user.isFollowingAuthor ? "secondary" : "default"}
-                  className="w-full gap-2 rounded-full"
-                  onClick={() => handleFollowClick(user.id)}
-                  disabled={followLoading[user.id]}
-                >
-                  {followLoading[user.id] ? (
-                    <span className="flex items-center gap-2">
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                      Loading...
-                    </span>
-                  ) : user.isFollowingAuthor ? (
-                    <>
-                      <Users className="h-4 w-4" />
-                      Following
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="h-4 w-4" />
-                      Follow
-                    </>
-                  )}
-                </Button>
               </div>
+
+              <h3 className="mb-1 text-lg font-semibold text-zinc-900 dark:text-white">
+                {user.visualName || user.name}
+              </h3>
+
+              <p className="mb-3 text-sm text-zinc-500 dark:text-zinc-400">
+                Nerd@
+                {user.nerdAt || user.name.toLowerCase().replace(/\s+/g, "")}
+              </p>
+
+              <div className="mb-4 flex items-center gap-4 text-sm text-zinc-600 dark:text-zinc-400">
+                <div>
+                  <span className="font-semibold">
+                    {user?._count?.following || 0}
+                  </span>{" "}
+                  Following
+                </div>
+                <div>
+                  <span className="font-semibold">
+                    {user?._count?.followers || 0}
+                  </span>{" "}
+                  Followers
+                </div>
+              </div>
+
+              <Button
+                variant={user.isFollowingAuthor ? "secondary" : "default"}
+                className="w-full gap-2 rounded-full"
+                onClick={() => handleFollowClick(user.id)}
+                disabled={followLoading[user.id]}
+              >
+                {followLoading[user.id] ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    Loading...
+                  </span>
+                ) : user.isFollowingAuthor ? (
+                  <>
+                    <Users className="h-4 w-4" />
+                    Following
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="h-4 w-4" />
+                    Follow
+                  </>
+                )}
+              </Button>
             </div>
-          ))
-        ) : (
-          <div className="col-span-full text-center">
-            <p className="text-zinc-500 dark:text-zinc-400">
-              No users to recommend at the moment
-            </p>
           </div>
-        )}
+        ))}
       </div>
 
       {nextCursor && (

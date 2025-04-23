@@ -19,7 +19,14 @@ export const GET = async (req: NextRequest) => {
     const cursor = searchParams.get("cursor") || undefined;
     const currentUserId = session.user.id;
 
-    // First get users that the current user is following
+    // Get total count of users (excluding current user)
+    const totalUsers = await prisma.user.count({
+      where: {
+        id: { not: currentUserId },
+      },
+    });
+
+    // Get users that the current user is following
     const userFollows = await prisma.follows.findMany({
       where: {
         followerId: currentUserId,
@@ -31,21 +38,22 @@ export const GET = async (req: NextRequest) => {
 
     const followingIds = userFollows.map((follow) => follow.followingId);
 
-    // Then get recommended users
+    // If user has followed everyone, return empty with message
+    if (followingIds.length >= totalUsers - 1) {
+      return NextResponse.json(
+        {
+          data: [],
+          nextCursor: null,
+          message: "You have followed all available users!",
+        },
+        { status: 200 },
+      );
+    }
+
+    // Then get recommended users with better ordering - use a more reliable approach
     const users = await prisma.user.findMany({
       where: {
-        AND: [
-          {
-            id: {
-              not: currentUserId,
-            },
-          },
-          {
-            id: {
-              notIn: followingIds,
-            },
-          },
-        ],
+        AND: [{ id: { not: currentUserId } }, { id: { notIn: followingIds } }],
       },
       include: {
         _count: {
@@ -53,9 +61,7 @@ export const GET = async (req: NextRequest) => {
             followers: true,
             following: true,
             Project: {
-              where: {
-                access: "public",
-              },
+              where: { access: "public" },
             },
           },
         },
@@ -68,7 +74,7 @@ export const GET = async (req: NextRequest) => {
           },
         },
       },
-      take: 10,
+      take: 12, // Increased to ensure we have enough users
       cursor: cursor ? { id: cursor } : undefined,
       skip: cursor ? 1 : 0,
       orderBy: [
@@ -83,14 +89,27 @@ export const GET = async (req: NextRequest) => {
       ],
     });
 
+    // Extra check - if no users found despite our checks, return a helpful message
+    if (users.length === 0) {
+      return NextResponse.json(
+        {
+          data: [],
+          nextCursor: null,
+          message:
+            "No recommendations available right now. Please try again later.",
+        },
+        { status: 200 },
+      );
+    }
+
     // Transform the data to include isFollowingAuthor
     const transformedUsers = users.map((user) => ({
       ...user,
       isFollowingAuthor: user.followers.length > 0,
-      followers: undefined, // Remove the followers array from response
+      followers: undefined,
     }));
 
-    const nextCursor = users.length === 10 ? users[9].id : null;
+    const nextCursor = users.length === 12 ? users[11].id : null;
 
     return NextResponse.json(
       {
