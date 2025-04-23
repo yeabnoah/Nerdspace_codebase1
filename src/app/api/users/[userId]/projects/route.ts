@@ -2,10 +2,10 @@ import getUserSession from "@/functions/get-user";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (
+export async function GET(
   request: NextRequest,
   { params }: { params: { userId: string } },
-) => {
+) {
   try {
     const session = await getUserSession();
     if (!session) {
@@ -88,4 +88,4 @@ export const GET = async (
       { status: 500 },
     );
   }
-};
+}
