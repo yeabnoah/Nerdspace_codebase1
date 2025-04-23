@@ -232,7 +232,11 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       }
     },
     onSuccess: () => {
+      // Invalidate all relevant queries
       queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["recommended-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["followed-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast.success("Follow status updated!");
     },
     onError: () => {

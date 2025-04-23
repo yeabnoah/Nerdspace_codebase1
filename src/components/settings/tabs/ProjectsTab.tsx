@@ -219,7 +219,7 @@ export default function ProjectsTab() {
   });
 
   const { data: ownedProjects, isLoading: isLoadingOwned } = useQuery({
-    queryKey: ["owned-projects"],
+    queryKey: ["projects"],
     queryFn: async () => {
       const response = await axios.get("/api/users/projects/owned");
       return response.data.data;
