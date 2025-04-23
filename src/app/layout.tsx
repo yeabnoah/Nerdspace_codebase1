@@ -2,7 +2,7 @@ import { MobileViewMessage } from "@/components/mobile-view-message";
 import { ThemeProvider } from "@/components/theme-provider";
 import TanstackQueryProvider from "@/providers/tanstack-query-provider";
 import WhoAmIProvider from "@/providers/who-am-i-provider";
-import { FeedbackButton } from "@/components/FeedbackButton";
+import FeedbackButton from "@/components/FeedbackButton";
 import type { Metadata } from "next";
 import {
   Geist,

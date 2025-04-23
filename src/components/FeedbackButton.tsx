@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { AlertCircle, CheckCircle2, Loader2, MessageCircle, AlertTriangle, AlertOctagon } from "lucide-react"
+import { AlertCircle, CheckCircle2, Loader2, MessageCircle, AlertTriangle, AlertOctagon, MessageSquare } from "lucide-react"
 // import { useToast } from "@/hooks/use-toast"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
@@ -18,13 +18,14 @@ interface FeedbackButtonProps {
   apiEndpoint?: string
 }
 
-export function FeedbackButton({ position = "bottom-right", apiEndpoint = "/api/bug" }: FeedbackButtonProps = {}) {
+export default function FeedbackButton({ position = "bottom-right", apiEndpoint = "/api/bug" }: FeedbackButtonProps = {}) {
   const [isOpen, setIsOpen] = useState(false)
   const [content, setContent] = useState("")
   const [severity, setSeverity] = useState("LOW")
 //   const { toast } = useToast()
   const [isButtonHovered, setIsButtonHovered] = useState(false)
   const session = authClient.useSession()
+  const [isClient, setIsClient] = useState(false)
 
   const { mutate: submitFeedback, isPending } = useMutation({
     mutationFn: async () => {
@@ -45,8 +46,18 @@ export function FeedbackButton({ position = "bottom-right", apiEndpoint = "/api/
     },
   })
 
+  // Use useEffect to update isClient after mount
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   // Don't render anything if user is not logged in
   if (!session.data) {
+    return null
+  }
+
+  // Don't render anything on server, only render on client
+  if (!isClient) {
     return null
   }
 
@@ -100,15 +111,12 @@ export function FeedbackButton({ position = "bottom-right", apiEndpoint = "/api/
             onMouseLeave={() => setIsButtonHovered(false)}
             aria-label="Open feedback form"
           >
-            <MessageCircle
+            <MessageSquare
               className={cn(
-                "h-3 w-3 text-primary transition-all duration-300 dark:text-white",
+                "h-5 w-5 text-primary transition-transform group-hover:scale-110",
                 isButtonHovered ? "scale-110" : "",
               )}
             />
-            <span className="absolute -top-1 -right-1 flex dark:bg-gray-300 h-5 w-5 items-center justify-center rounded-full bg-primary text-[17px] font-bold text-white dark:text-black">
-              +
-            </span>
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 shadow-2xl backdrop-blur-sm transition-all duration-300">
@@ -120,9 +128,9 @@ export function FeedbackButton({ position = "bottom-right", apiEndpoint = "/api/
             <div className="flex w-full flex-col px-7 pb-4">
               <DialogHeader>
                 <DialogTitle className="mb-2 mt-6 font-geist text-3xl font-medium">Submit Bug Report</DialogTitle>
-                <p className="font-geist text-sm text-muted-foreground">
+                <DialogDescription>
                   Help us improve by reporting issues or suggesting improvements.
-                </p>
+                </DialogDescription>
               </DialogHeader>
 
               <div className="mt-7 space-y-5">

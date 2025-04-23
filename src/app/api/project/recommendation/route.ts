@@ -29,7 +29,7 @@ export async function GET() {
           },
         ],
       },
-      take: 9,
+      take: 8,
       orderBy: { createdAt: "desc" },
       include: {
         followers: true,

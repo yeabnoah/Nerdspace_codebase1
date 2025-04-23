@@ -17,45 +17,90 @@ export const GET = async (req: NextRequest) => {
 
     const { searchParams } = new URL(req.url);
     const cursor = searchParams.get("cursor") || undefined;
+    const currentUserId = session.user.id;
 
-    console.log("Cursor:", cursor); // Log the cursor value
+    // First get users that the current user is following
+    const userFollows = await prisma.follows.findMany({
+      where: {
+        followerId: currentUserId,
+      },
+      select: {
+        followingId: true,
+      },
+    });
 
+    const followingIds = userFollows.map((follow) => follow.followingId);
+
+    // Then get recommended users
     const users = await prisma.user.findMany({
       where: {
-        id: {
-          not: session.user.id,
-        },
-        NOT: {
-          following: {
-            some: {
-              followerId: session.user.id,
+        AND: [
+          {
+            id: {
+              not: currentUserId,
             },
+          },
+          {
+            id: {
+              notIn: followingIds,
+            },
+          },
+        ],
+      },
+      include: {
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+            Project: {
+              where: {
+                access: "public",
+              },
+            },
+          },
+        },
+        followers: {
+          where: {
+            followerId: currentUserId,
+          },
+          select: {
+            followerId: true,
           },
         },
       },
       take: 10,
       cursor: cursor ? { id: cursor } : undefined,
       skip: cursor ? 1 : 0,
-      orderBy: {
-        id: "asc",
-      },
+      orderBy: [
+        {
+          followers: {
+            _count: "desc",
+          },
+        },
+        {
+          createdAt: "desc",
+        },
+      ],
     });
 
-    console.log("Users:", users); // Log the users fetched
+    // Transform the data to include isFollowingAuthor
+    const transformedUsers = users.map((user) => ({
+      ...user,
+      isFollowingAuthor: user.followers.length > 0,
+      followers: undefined, // Remove the followers array from response
+    }));
 
     const nextCursor = users.length === 10 ? users[9].id : null;
 
-    console.log("Next Cursor:", nextCursor);
-
     return NextResponse.json(
       {
-        data: users,
+        data: transformedUsers,
         nextCursor,
       },
       { status: 200 },
     );
   } catch (err) {
-    console.error(err);
+    console.error("Error in user recommendation:", err);
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 },
