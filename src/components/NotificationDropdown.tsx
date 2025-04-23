@@ -59,6 +59,9 @@ const NotificationDropdown = () => {
       case "PROJECT_FOLLOW":
       case "PROJECT_UPDATE":
         return `/project/${notification.project?.id}`;
+      case "PROJECT_RATING":
+      case "PROJECT_REVIEW":
+        return `/project/${notification.project?.id}`;
       case "COMMUNITY_POST":
       case "COMMUNITY_INVITE":
         return `/community/${notification.community?.id}`;
@@ -66,6 +69,29 @@ const NotificationDropdown = () => {
         return `/profile/${notification.actor?.name}`;
       default:
         return "#";
+    }
+  };
+
+  const getNotificationContent = (notification: Notification) => {
+    switch (notification.type) {
+      case "POST_LIKE":
+        return "liked your post";
+      case "POST_COMMENT":
+        return "commented on your post";
+      case "FOLLOW":
+        return "started following you";
+      case "PROJECT_STAR":
+        return "starred your project";
+      case "PROJECT_FOLLOW":
+        return "is following your project";
+      case "PROJECT_UPDATE":
+        return "updated your followed project";
+      case "PROJECT_RATING":
+        return "rated your project";
+      case "PROJECT_REVIEW":
+        return "reviewed your project";
+      default:
+        return notification.message || "";
     }
   };
 
@@ -120,15 +146,7 @@ const NotificationDropdown = () => {
                         <span className="font-medium">
                           {notification.actor?.name}
                         </span>{" "}
-                        {notification.type === "POST_LIKE" && "liked your post"}
-                        {notification.type === "POST_COMMENT" &&
-                          "commented on your post"}
-                        {notification.type === "FOLLOW" &&
-                          "started following you"}
-                        {notification.type === "PROJECT_STAR" &&
-                          "starred your project"}
-                        {notification.type === "PROJECT_FOLLOW" &&
-                          "is following your project"}
+                        {getNotificationContent(notification)}
                       </span>
                     </div>
                     <span className="text-xs text-muted-foreground">
