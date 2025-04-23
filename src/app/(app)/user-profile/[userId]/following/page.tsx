@@ -54,7 +54,9 @@ export default function UserFollowingPage() {
       action: "follow" | "unfollow";
     }) => {
       const response = await axios.post(
-        `/api/user/follow?userId=${userId}&action=${action}`,
+        `/api/user/follow`,
+        { followingId: userId },
+        { params: { action } }
       );
       return response.data;
     },

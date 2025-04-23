@@ -12,7 +12,27 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    const { followingId } = await request.json();
+    // Support both query parameters and request body
+    const searchParams = request.nextUrl.searchParams;
+    const userId = searchParams.get("userId");
+    const action = searchParams.get("action") as "follow" | "unfollow" | null;
+
+    // If query params aren't present, try to get from request body
+    let followingId: string | null = null;
+
+    // Only parse request body if content type indicates JSON and body exists
+    if (request.headers.get("content-type")?.includes("application/json")) {
+      try {
+        const body = await request.json();
+        followingId = body.followingId || null;
+      } catch (err) {
+        // Silent fail on JSON parse error
+      }
+    }
+
+    // Use userId from query params as fallback for followingId
+    followingId = followingId || userId || null;
+
     if (!followingId) {
       return NextResponse.json(
         { message: "Following ID is required" },
@@ -46,7 +66,17 @@ export const POST = async (request: NextRequest) => {
       },
     });
 
-    if (existingFollow) {
+    // If an explicit action is provided, use it
+    const shouldUnfollow =
+      action === "unfollow" || (existingFollow && action !== "follow");
+
+    if (shouldUnfollow) {
+      if (!existingFollow) {
+        return NextResponse.json({
+          message: "You are not following this user",
+        });
+      }
+
       await prisma.follows.delete({
         where: {
           followerId_followingId: {
@@ -56,6 +86,13 @@ export const POST = async (request: NextRequest) => {
         },
       });
       return NextResponse.json({ message: "Unfollowed successfully" });
+    }
+
+    // If we get here, we're either explicitly following or toggling to follow
+    if (existingFollow) {
+      return NextResponse.json({
+        message: "You are already following this user",
+      });
     }
 
     // Create the follow

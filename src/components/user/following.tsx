@@ -39,7 +39,9 @@ const Following = () => {
   const followMutation = useMutation({
     mutationKey: ["follow-user"],
     mutationFn: async (userId: string) => {
-      const response = await axios.post(`/api/user/follow?userId=${userId}`);
+      const response = await axios.post(`/api/user/follow`, {
+        followingId: userId
+      });
       return response.data.message;
     },
     onSuccess: (message) => {
