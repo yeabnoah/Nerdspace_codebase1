@@ -236,7 +236,7 @@ export default function UserProjectsTab() {
               No projects yet
             </p>
             <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-500">
-              This user hasn't created any projects yet
+              This user hasn&apos;t created any projects yet
             </p>
           </div>
         </div>
