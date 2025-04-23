@@ -56,7 +56,7 @@ const UserList: React.FC<UserListProps> = ({ handleFollow }) => {
       try {
         setFollowLoading((prev) => ({ ...prev, [userId]: true }));
         const response = await axios.post(`/api/user/follow`, {
-          followingId: userId,
+          followingId: userId
         });
         return response.data.message;
       } catch (err) {
