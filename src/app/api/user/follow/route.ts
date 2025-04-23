@@ -12,25 +12,19 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    // Support both query parameters and request body
     const searchParams = request.nextUrl.searchParams;
     const userId = searchParams.get("userId");
     const action = searchParams.get("action") as "follow" | "unfollow" | null;
 
-    // If query params aren't present, try to get from request body
     let followingId: string | null = null;
 
-    // Only parse request body if content type indicates JSON and body exists
     if (request.headers.get("content-type")?.includes("application/json")) {
       try {
         const body = await request.json();
         followingId = body.followingId || null;
-      } catch (err) {
-        // Silent fail on JSON parse error
-      }
+      } catch (err) {}
     }
 
-    // Use userId from query params as fallback for followingId
     followingId = followingId || userId || null;
 
     if (!followingId) {
@@ -40,7 +34,6 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    // Make sure users can't follow themselves
     if (followingId === session.user.id) {
       return NextResponse.json(
         { message: "You cannot follow yourself" },
@@ -48,7 +41,6 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    // Make sure the target user exists
     const targetUser = await prisma.user.findUnique({
       where: { id: followingId },
     });
@@ -66,7 +58,6 @@ export const POST = async (request: NextRequest) => {
       },
     });
 
-    // If an explicit action is provided, use it
     const shouldUnfollow =
       action === "unfollow" || (existingFollow && action !== "follow");
 
@@ -88,14 +79,12 @@ export const POST = async (request: NextRequest) => {
       return NextResponse.json({ message: "Unfollowed successfully" });
     }
 
-    // If we get here, we're either explicitly following or toggling to follow
     if (existingFollow) {
       return NextResponse.json({
         message: "You are already following this user",
       });
     }
 
-    // Create the follow
     await prisma.follows.create({
       data: {
         followerId: session.user.id,
@@ -103,16 +92,15 @@ export const POST = async (request: NextRequest) => {
       },
     });
 
-    // Create notification for the user being followed
     await prisma.notification.create({
       data: {
         type: "FOLLOW",
-        message: "", // Will be personalized in the notification API
+        message: "",
         user: {
-          connect: { id: followingId }, // User being followed receives the notification
+          connect: { id: followingId },
         },
         actor: {
-          connect: { id: session.user.id }, // User who followed
+          connect: { id: session.user.id },
         },
       },
     });
