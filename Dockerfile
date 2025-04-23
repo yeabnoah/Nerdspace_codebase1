@@ -12,5 +12,6 @@ COPY . .
 
 EXPOSE 3000
 
+ENV NODE_ENV=production
 
 CMD ["sh", "-c", "pnpm run build && pnpm run start"] 
