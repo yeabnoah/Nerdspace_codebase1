@@ -2,10 +2,7 @@ import getUserSession from "@/functions/get-user";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { userId: string } },
-) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getUserSession();
     if (!session) {
@@ -17,7 +14,11 @@ export async function GET(
       );
     }
 
-    const userId = params.userId;
+    // Extract userId from the URL path
+    const url = new URL(request.url);
+    const pathParts = url.pathname.split("/").filter((part) => part !== "");
+    const userId = pathParts[pathParts.length - 2]; // Get the userId from the path
+
     if (!userId) {
       return NextResponse.json(
         {
