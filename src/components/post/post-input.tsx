@@ -226,7 +226,7 @@ const PostInput = () => {
               size="sm"
               className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
             >
-              <HiPhoto />
+              <HiPhoto className="size-4" />
               Photo
             </Button>
             <Button
@@ -235,7 +235,7 @@ const PostInput = () => {
               size="sm"
               className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
             >
-              <FolderIcon />
+              <FolderIcon className="size-4" />
               <span className="hidden md:block">Document</span>
             </Button>
             <Button
@@ -244,7 +244,7 @@ const PostInput = () => {
               size="sm"
               className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
             >
-              <MessagesSquareIcon />
+              <MessagesSquareIcon className="size-4" />
               <span className="hidden md:block">Poll</span>
             </Button>
           </div>
