@@ -53,7 +53,7 @@ export default function RecommendedProjects() {
     <Card className="hidden w-64 min-h-32 rounded-2xl border border-gray-100 bg-transparent pt-4 shadow-none dark:border-gray-500/5 md:block">
       <div className="relative">
         {/* Subtle gradient background effects */}
-        <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/10 bg-gradient-to-br from-primary/5 to-transparent blur-[150px] backdrop-blur-sm"></div>
+        {/* <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/10 bg-gradient-to-br from-primary/5 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
 
         <h2
           onClick={() => {

@@ -20,10 +20,10 @@ const Whotofollow = () => {
       try {
         // Directly fetch data
         const response = await axios.get("/api/user/follow/recommendation");
-        
+
         // Update query cache with fresh data
         queryClient.setQueryData(["users", null], response.data);
-        
+
         // Also prefetch to ensure consistent behavior
         queryClient.prefetchQuery({
           queryKey: ["users", null],
@@ -39,7 +39,7 @@ const Whotofollow = () => {
         }, 300);
       }
     };
-    
+
     fetchData();
   }, [queryClient]);
 
@@ -48,7 +48,7 @@ const Whotofollow = () => {
       toast.error("Please login to follow users");
       return;
     }
-    
+
     if (session.data?.user.id === userId) {
       toast.error("You cannot follow yourself");
       return;

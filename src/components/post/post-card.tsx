@@ -61,22 +61,22 @@ import { SmileIcon } from "lucide-react";
 
 const timeAgo = (date: Date) => {
   const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
-  
+
   let interval = seconds / 31536000;
   if (interval > 1) return Math.floor(interval) + 'y';
-  
+
   interval = seconds / 2592000;
   if (interval > 1) return Math.floor(interval) + 'mo';
-  
+
   interval = seconds / 86400;
   if (interval > 1) return Math.floor(interval) + 'd';
-  
+
   interval = seconds / 3600;
   if (interval > 1) return Math.floor(interval) + 'h';
-  
+
   interval = seconds / 60;
   if (interval > 1) return Math.floor(interval) + 'm';
-  
+
   return Math.floor(seconds) + 's';
 };
 
@@ -230,12 +230,12 @@ const PostCard = ({
                   ...p,
                   likes: isLiked
                     ? p.likes.filter(
-                        (like: any) => like.userId !== session.data?.user.id,
-                      )
+                      (like: any) => like.userId !== session.data?.user.id,
+                    )
                     : [
-                        ...p.likes,
-                        { userId: session.data?.user.id, postId: p.id },
-                      ],
+                      ...p.likes,
+                      { userId: session.data?.user.id, postId: p.id },
+                    ],
                   _count: {
                     ...p._count,
                     likes: isLiked ? p._count.likes - 1 : p._count.likes + 1,
@@ -301,13 +301,13 @@ const PostCard = ({
                   ...p,
                   bookmarks: isBookmarked
                     ? p.bookmarks.filter(
-                        (bookmark: any) =>
-                          bookmark.userId !== session.data?.user.id,
-                      )
+                      (bookmark: any) =>
+                        bookmark.userId !== session.data?.user.id,
+                    )
                     : [
-                        ...p.bookmarks,
-                        { userId: session.data?.user.id, postId: p.id },
-                      ],
+                      ...p.bookmarks,
+                      { userId: session.data?.user.id, postId: p.id },
+                    ],
                   _count: {
                     ...p._count,
                     bookmarks: isBookmarked
@@ -598,7 +598,7 @@ const PostCard = ({
                     <span>Delete</span>
                   </DropdownMenuItem>
                   {(post?.access as unknown as string) ===
-                  (PostAccess.public as unknown as string) ? (
+                    (PostAccess.public as unknown as string) ? (
                     <DropdownMenuItem
                       onClick={() => {
                         handleAccessChange();
@@ -832,8 +832,8 @@ const PostCard = ({
                     ? "liked"
                     : "initial"
                   : post.likes?.some(
-                        (like) => like.userId === session.data?.user.id,
-                      )
+                    (like) => like.userId === session.data?.user.id,
+                  )
                     ? "liked"
                     : "initial"
               }
@@ -848,8 +848,8 @@ const PostCard = ({
                   <GoHeart className="size-5" />
                 )
               ) : post.likes?.some(
-                  (like) => like.userId === session.data?.user.id,
-                ) ? (
+                (like) => like.userId === session.data?.user.id,
+              ) ? (
                 <GoHeartFill className="size-5 text-red-500" />
               ) : (
                 <GoHeart className="size-5" />
@@ -890,8 +890,8 @@ const PostCard = ({
                     ? "bookmarked"
                     : "initial"
                   : post.bookmarks.some(
-                        (bookmark) => bookmark.userId === session.data?.user.id,
-                      )
+                    (bookmark) => bookmark.userId === session.data?.user.id,
+                  )
                     ? "bookmarked"
                     : "initial"
               }
@@ -906,8 +906,8 @@ const PostCard = ({
                   <HiOutlineBookmark className="size-5" />
                 )
               ) : post.bookmarks.some(
-                  (bookmark) => bookmark.userId === session.data?.user.id,
-                ) ? (
+                (bookmark) => bookmark.userId === session.data?.user.id,
+              ) ? (
                 <HiBookmark className="size-5 text-primary" />
               ) : (
                 <HiOutlineBookmark className="size-5" />
@@ -1025,13 +1025,13 @@ const PostCard = ({
               <div className="flex w-full flex-col px-6 pb-3">
                 <div className="mb-2 font-geist text-3xl font-medium">
                   {(post.access as unknown as string) ===
-                  (PostAccess.public as unknown as string)
+                    (PostAccess.public as unknown as string)
                     ? "Make Post Private"
                     : "Make Post Public"}
                 </div>
                 <p className="mb-6 font-geist text-muted-foreground">
                   {(post.access as unknown as string) ===
-                  (PostAccess.public as unknown as string)
+                    (PostAccess.public as unknown as string)
                     ? "Are you sure you want to make this post private? This will hide it from other users."
                     : "Are you sure you want to make this post public? This will make it visible to other users."}
                 </p>
