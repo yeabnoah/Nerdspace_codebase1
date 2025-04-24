@@ -193,7 +193,7 @@ const PostInput = () => {
             <Image
               src={session?.data?.user?.image || "/user.jpg"}
               alt="user"
-              className="size-10 rounded-full border-2 border-gray-50 shadow-sm dark:border-gray-800"
+              className="size-10 rounded-full border-2 object-cover border-gray-50 shadow-sm dark:border-gray-800"
               height={40}
               width={40}
               priority
@@ -259,7 +259,7 @@ const PostInput = () => {
         </div>
 
         <DialogContent
-          className="max-w-2xl overflow-hidden rounded-2xl border-gray-200 p-0 dark:border-gray-500/10 dark:bg-black"
+          className="max-w-2xl overflow-hidden rounded-2xl border border-border p-0 dark:border-border "
           onPaste={handlePaste}
         >
           <div
@@ -305,7 +305,20 @@ const PostInput = () => {
                   <AutosizeTextarea
                     maxHeight={500}
                     placeholder="What's on your mind? (500 characters max)"
-                    className="min-h-[200px] w-full rounded-xl border bg-transparent text-base outline-none placeholder:text-gray-400 focus:outline-none focus:ring-0 focus-visible:ring-0 dark:border-gray-500/10 dark:placeholder:text-gray-500"
+                    className="
+                      min-h-[200px]
+                      w-full
+                      rounded-xl
+                      border
+                      !border-transparent
+                      text-base
+                      outline-none
+                      focus:!border-border
+                      focus:outline-none
+                      focus-visible:!ring-transparent
+                      focus-visible:outline-none
+                      focus:ring-0
+                    "
                     value={dialogPost}
                     onChange={handleTextareaChange}
                     onSelect={(e) =>
@@ -379,7 +392,7 @@ const PostInput = () => {
                         input.click();
                       }}
                     >
-                      <HiPhoto />
+                      <HiPhoto className="size-5" />
                       Photo
                     </Button>
                     <Button
@@ -388,7 +401,7 @@ const PostInput = () => {
                       size="sm"
                       className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
                     >
-                      <FolderIcon />
+                      <FolderIcon className="size-5" />
                       <span className="hidden md:block">Document</span>
                     </Button>
                     <Button
@@ -397,7 +410,7 @@ const PostInput = () => {
                       size="sm"
                       className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
                     >
-                      <MessagesSquareIcon />
+                      <MessagesSquareIcon className="size-5" />
                       <span className="hidden md:block">Poll</span>
                     </Button>
                   </div>
@@ -433,10 +446,10 @@ const PostInput = () => {
                 )}
               </div>
 
-              <div className="border-t border-gray-200 p-6 dark:border-gray-800">
+              <div className="border-t border-border p-6 dark:border-border">
                 <Button
                   onClick={handleSubmit}
-                  className="w-full rounded-xl py-3 text-sm font-medium shadow-sm transition-all hover:shadow-md"
+                  className="w-full rounded-xl py-3 cursor-pointer text-sm font-medium  shadow-sm transition-all hover:shadow-md"
                   disabled={
                     isPending ||
                     isUploading ||

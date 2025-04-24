@@ -119,10 +119,10 @@ export default function FeedbackButton({ position = "bottom-right", apiEndpoint 
             />
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 shadow-2xl backdrop-blur-sm transition-all duration-300">
+        <DialogContent className="max-w-md overflow-hidden rounded-xl border-2 p-0 shadow-2xl backdrop-blur-sm transition-all duration-300">
           <div className="relative flex flex-col">
             {/* Glow effects */}
-            <div className="absolute -right-4 size-40 -rotate-45 rounded-full border border-primary/50 bg-gradient-to-br from-primary/40 via-primary/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            {/* <div className="absolute -right-4 size-40 -rotate-45 rounded-full border border-primary/50 bg-gradient-to-br from-primary/40 via-primary/50 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
             {/* <div className="absolute -bottom-5 left-12 size-40 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
 
             <div className="flex w-full flex-col px-7 pb-4">

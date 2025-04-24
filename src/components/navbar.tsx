@@ -12,6 +12,7 @@ import {
   Search,
   Settings,
   UserIcon,
+  Command
 } from "lucide-react";
 import { ModeToggle } from "./theme-toggle";
 import {
@@ -27,7 +28,6 @@ import Link from "next/link";
 import useUserStore from "@/store/user.store";
 import { Skeleton } from "./ui/skeleton";
 import {
-  Command,
   CommandDialog,
   CommandInput,
   CommandList,
@@ -97,7 +97,8 @@ const Navbar = () => {
         <div className="hidden md:flex">
           <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
             <DialogTitle></DialogTitle>
-            <DialogContent className="max-w-xl overflow-hidden rounded-xl border-none bg-white/80 p-0 backdrop-blur-sm dark:bg-black/80">
+            <DialogContent className="max-w-xl overflow-hidden rounded-xl border-[2px] bg-white/80 p-0 dark:bg-black/80">
+
               <DialogHeader className="px-6 pt-4">
                 <DialogTitle className="font-geist text-3xl font-medium">
                   Search
@@ -106,19 +107,16 @@ const Navbar = () => {
                   Search for projects, users and more...
                 </p>
               </DialogHeader>
-
               <div className="relative flex flex-col px-6 pb-4">
                 {/* Glow effects */}
                 {/* <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
                 {/* <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
-
                 <CommandInput
                   value={query}
                   onValueChange={setQuery}
                   placeholder="Type to search..."
                   className="h-11 rounded-xl border-input/50 bg-transparent font-geist shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
                 />
-
                 <CommandList className="mt-4">
                   {query.trim() && (
                     <CommandGroup>
@@ -150,7 +148,8 @@ const Navbar = () => {
           >
             <span className="inline-flex">Search...</span>
             <kbd className="pointer-events-none absolute right-[12px] top-1/2 hidden h-5 -translate-y-1/2 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-              <span className="text-xs">⌘</span>K
+              <Command className="size-[13px]" />
+              <span className="text-sm">K</span>
             </kbd>
           </Button>
         </div>
@@ -222,8 +221,8 @@ const Navbar = () => {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 
