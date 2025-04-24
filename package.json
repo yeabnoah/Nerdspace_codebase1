@@ -23,7 +23,7 @@
 	},
 	"lint-staged": {
 		"*": ["cspell --no-must-find-files", "biome format"],
-		"**/*.{ts,tsx,js,jsx,cjs,mjs}": ["biome check"]
+		"**/*.{ts,tsx,js,jsx,cjs,mjs}": ["biome check --files-ignore-unknown=true"]
 	},
 	"config": {
 		"commitizen": {
