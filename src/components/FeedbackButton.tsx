@@ -22,7 +22,7 @@ export default function FeedbackButton({ position = "bottom-right", apiEndpoint 
   const [isOpen, setIsOpen] = useState(false)
   const [content, setContent] = useState("")
   const [severity, setSeverity] = useState("LOW")
-//   const { toast } = useToast()
+  //   const { toast } = useToast()
   const [isButtonHovered, setIsButtonHovered] = useState(false)
   const session = authClient.useSession()
   const [isClient, setIsClient] = useState(false)
@@ -123,7 +123,7 @@ export default function FeedbackButton({ position = "bottom-right", apiEndpoint 
           <div className="relative flex flex-col">
             {/* Glow effects */}
             <div className="absolute -right-4 size-40 -rotate-45 rounded-full border border-primary/50 bg-gradient-to-br from-primary/40 via-primary/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-            <div className="absolute -bottom-5 left-12 size-40 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            {/* <div className="absolute -bottom-5 left-12 size-40 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
 
             <div className="flex w-full flex-col px-7 pb-4">
               <DialogHeader>
