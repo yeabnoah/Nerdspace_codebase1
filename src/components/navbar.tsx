@@ -167,7 +167,7 @@ const Navbar = () => {
                   <>
                     <AvatarImage
                       src={user.image || "/user.jpg"}
-                      className="size-8 rounded-full"
+                      className="size-8 rounded-full object-cover"
                       alt="@shadcn"
                     />
                     <AvatarFallback className="">
