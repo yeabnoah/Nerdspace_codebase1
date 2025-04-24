@@ -226,7 +226,7 @@ const PostInput = () => {
               size="sm"
               className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
             >
-              <HiPhoto />
+              <HiPhoto className="size-4" />
               Photo
             </Button>
             <Button
@@ -235,7 +235,7 @@ const PostInput = () => {
               size="sm"
               className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
             >
-              <FolderIcon />
+              <FolderIcon className="size-4" />
               <span className="hidden md:block">Document</span>
             </Button>
             <Button
@@ -244,7 +244,7 @@ const PostInput = () => {
               size="sm"
               className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
             >
-              <MessagesSquareIcon />
+              <MessagesSquareIcon className="size-4" />
               <span className="hidden md:block">Poll</span>
             </Button>
           </div>
@@ -270,8 +270,8 @@ const PostInput = () => {
           >
             <div className="relative">
               {/* Glow effects */}
-              <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/50 bg-gradient-to-br from-primary/40 via-primary/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-              <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+              {/* <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/50 bg-gradient-to-br from-primary/40 via-primary/50 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
+              {/* <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
 
               <div className="border-b border-gray-200 px-6 py-4 dark:border-black">
                 <DialogTitle className="text-xl font-semibold tracking-tight">
