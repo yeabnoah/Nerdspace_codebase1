@@ -7,6 +7,7 @@ export interface Notification {
   createdAt: string;
   read: boolean;
   actor: {
+    id: string;
     name: string;
     image: string;
   } | null;
