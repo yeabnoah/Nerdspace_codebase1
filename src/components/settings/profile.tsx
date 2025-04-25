@@ -239,6 +239,7 @@ export default function ProfilePage() {
           quality={100}
           className="object-cover"
           priority={true}
+          sizes="100vw"
         />
         <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 via-zinc-900/60 to-transparent p-8 dark:from-black/80 dark:via-black/50">
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
@@ -286,6 +287,7 @@ export default function ProfilePage() {
             alt={user.visualName || user.name}
             fill
             className="object-cover"
+            sizes="80px"
           />
         </div>
 

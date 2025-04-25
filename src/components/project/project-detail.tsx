@@ -148,7 +148,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
   const starMutation = useMutation({
     mutationFn: async () => {
-      await axios.post(`/api/project/star?projectId=${projectId}`);
+      await axios.post(`/api/project/star`, { projectId });
     },
     onMutate: () => {
       // Optimistically update the UI

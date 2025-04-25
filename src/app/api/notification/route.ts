@@ -32,7 +32,12 @@ export const GET = async (request: NextRequest) => {
         comment: {
           include: {
             user: true,
-            post: true,
+            post: {
+              include: {
+                user: true,
+                media: true,
+              },
+            },
           },
         },
         project: {
@@ -51,7 +56,23 @@ export const GET = async (request: NextRequest) => {
       },
     });
 
-    return NextResponse.json(notifications, { status: 200 });
+    // Transform notifications to ensure post ID is always available
+    const transformedNotifications = notifications.map((notification) => {
+      if (
+        notification.type === "POST_COMMENT" &&
+        !notification.post &&
+        notification.comment?.post
+      ) {
+        // If it's a comment notification and post is not directly linked but available through comment
+        return {
+          ...notification,
+          post: notification.comment.post,
+        };
+      }
+      return notification;
+    });
+
+    return NextResponse.json(transformedNotifications, { status: 200 });
   } catch (error: any) {
     console.error("Error fetching notifications:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
