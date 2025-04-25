@@ -718,6 +718,7 @@ const PostCard = ({
                       src={post.media[0].url || "/placeholder.svg"}
                       alt="Post media"
                       className="w-full rounded-xl object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </div>
                 )}
@@ -738,6 +739,7 @@ const PostCard = ({
                         src={media.url || "/placeholder.svg"}
                         alt="Post media"
                         className="h-full w-full rounded-xl object-cover"
+                        sizes="(max-width: 768px) 50vw, 25vw"
                       />
                     </div>
                   ))}
@@ -757,6 +759,7 @@ const PostCard = ({
                         src={post.media[0].url || "/placeholder.svg"}
                         alt="Post media"
                         className="h-full w-full rounded-xl object-cover"
+                        sizes="(max-width: 768px) 70vw, 35vw"
                       />
                     </div>
 
@@ -777,6 +780,7 @@ const PostCard = ({
                             src={media.url || "/placeholder.svg"}
                             alt="Post media"
                             className="h-full w-full rounded-xl object-cover"
+                            sizes="(max-width: 768px) 50vw, 25vw"
                           />
                           {mediaIndex === 2 && post.media.length > 4 && (
                             <div className="absolute bottom-1 right-1 rounded-full bg-black/50 px-1 py-0.5 text-[10px] text-white sm:bottom-2 sm:right-2 sm:px-2 sm:py-1 sm:text-xs">

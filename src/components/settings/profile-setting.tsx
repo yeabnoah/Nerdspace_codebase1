@@ -302,6 +302,7 @@ const ProfileSettings = () => {
                     alt="Profile"
                     fill
                     className="object-cover"
+                    sizes="180px"
                   />
                 </div>
                 <div className="relative">

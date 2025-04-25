@@ -7,11 +7,22 @@ export interface Notification {
   createdAt: string;
   read: boolean;
   actor: {
+    id: string;
     name: string;
     image: string;
   } | null;
   post: {
     id: string;
+    user: {
+      id: string;
+      name: string;
+      image: string;
+    };
+    media: {
+      id: string;
+      url: string;
+      type: string;
+    }[];
   } | null;
   project: {
     id: string;
@@ -22,6 +33,19 @@ export interface Notification {
   } | null;
   comment?: {
     id: string;
+    post?: {
+      id: string;
+      user: {
+        id: string;
+        name: string;
+        image: string;
+      };
+      media: {
+        id: string;
+        url: string;
+        type: string;
+      }[];
+    };
   } | null;
 }
 

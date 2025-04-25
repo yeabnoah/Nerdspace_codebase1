@@ -13,6 +13,7 @@ export const POST = async (request: NextRequest) => {
     }
 
     const { projectId } = await request.json();
+
     if (!projectId) {
       return NextResponse.json(
         { message: "Project ID is required" },
@@ -118,6 +119,6 @@ export const GET = async (req: NextRequest) => {
     return NextResponse.json({ isStarred: !!isStarred });
   } catch (error) {
     console.error("Error fetching star status:", error);
-    return NextResponse.json({ error: "error" }, { status: 500 });
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 };

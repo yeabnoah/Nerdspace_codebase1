@@ -557,6 +557,7 @@ const ExplorePostCard = ({
                       src={post.media[0].url}
                       alt="Post media"
                       className="w-full rounded-xl object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </div>
                 )}
@@ -577,6 +578,7 @@ const ExplorePostCard = ({
                         src={media.url}
                         alt="Post media"
                         className="h-full w-full rounded-xl object-cover"
+                        sizes="(max-width: 768px) 50vw, 25vw"
                       />
                     </div>
                   ))}
@@ -596,6 +598,7 @@ const ExplorePostCard = ({
                         src={post.media[0].url}
                         alt="Post media"
                         className="h-full w-full rounded-xl object-cover"
+                        sizes="(max-width: 768px) 70vw, 35vw"
                       />
                     </div>
 
@@ -616,6 +619,7 @@ const ExplorePostCard = ({
                             src={media.url}
                             alt="Post media"
                             className="h-full w-full rounded-xl object-cover"
+                            sizes="(max-width: 768px) 30vw, 15vw"
                           />
                           {mediaIndex === 2 && post.media.length > 4 && (
                             <div className="absolute bottom-2 right-2 rounded-full bg-black/50 px-2 py-1 text-white">

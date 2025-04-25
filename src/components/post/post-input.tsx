@@ -38,7 +38,9 @@ const cloudinaryUploadPreset =
 
 const PostInput = () => {
   const [dialogPost, setDialogPost] = useState<string>("");
-  const [dialogFiles, setDialogFiles] = useState<File[]>([]);
+  const [dialogFiles, setDialogFiles] = useState<{ id: string; file: File }[]>(
+    [],
+  );
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -84,8 +86,8 @@ const PostInput = () => {
     },
   });
 
-  const handleRemoveFile = (fileName: string) => {
-    setDialogFiles(dialogFiles.filter((file) => file.name !== fileName));
+  const handleRemoveFile = (id: string) => {
+    setDialogFiles(dialogFiles.filter((file) => file.id !== id));
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -147,7 +149,12 @@ const PostInput = () => {
       return true;
     });
 
-    setDialogFiles([...dialogFiles, ...validFiles]);
+    const newFiles = validFiles.map((file) => ({
+      id: crypto.randomUUID(),
+      file,
+    }));
+
+    setDialogFiles([...dialogFiles, ...newFiles]);
   };
 
   const handleSubmit = async () => {
@@ -159,7 +166,7 @@ const PostInput = () => {
     setIsUploading(true);
     try {
       const fileUrls = await Promise.all(
-        dialogFiles.map(async (file) => {
+        dialogFiles.map(async ({ file }) => {
           const formData = new FormData();
           formData.append("file", file);
           formData.append("upload_preset", cloudinaryUploadPreset);
@@ -269,10 +276,6 @@ const PostInput = () => {
             onDrop={handleDrop}
           >
             <div className="relative">
-              {/* Glow effects */}
-              {/* <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/50 bg-gradient-to-br from-primary/40 via-primary/50 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
-              {/* <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
-
               <div className="border-b border-gray-200 px-6 py-4 dark:border-black">
                 <DialogTitle className="text-xl font-semibold tracking-tight">
                   Create post
@@ -418,10 +421,10 @@ const PostInput = () => {
 
                 {dialogFiles.length > 0 && (
                   <div className="flex flex-wrap items-center gap-4">
-                    {dialogFiles.map((file) => (
+                    {dialogFiles.map(({ id, file }) => (
                       <div
-                        key={file.name}
-                        className="group relative aspect-square size-40 overflow-hidden rounded-xl border border-gray-200 shadow-sm transition-all hover:shadow-md dark:border-gray-800"
+                        key={id}
+                        className="group relative aspect-square size-32 overflow-hidden rounded-xl border border-gray-200 shadow-sm transition-all hover:shadow-md dark:border-gray-800"
                       >
                         <div className="relative h-full w-full bg-gray-50 dark:bg-gray-800/30">
                           <img
@@ -434,10 +437,10 @@ const PostInput = () => {
                           <Button
                             variant="secondary"
                             size="icon"
-                            className="absolute right-2 top-2 h-8 w-fit rounded-full bg-black/60 px-2 hover:bg-black/80 dark:bg-black/80"
-                            onClick={() => handleRemoveFile(file.name)}
+                            className="absolute right-1 top-1 h-6 w-fit rounded-full bg-black/60 px-1.5 hover:bg-black/80 dark:bg-black/80"
+                            onClick={() => handleRemoveFile(id)}
                           >
-                            <X className="size-8 text-white" />
+                            <X className="size-6 text-white" />
                           </Button>
                         </div>
                       </div>

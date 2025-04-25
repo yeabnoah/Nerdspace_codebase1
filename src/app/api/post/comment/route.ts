@@ -51,7 +51,9 @@ export const POST = async (request: NextRequest) => {
           actor: {
             connect: { id: session.user.id },
           },
-          post: {},
+          post: {
+            connect: { id: postId },
+          },
           comment: {
             connect: { id: comment.id },
           },
