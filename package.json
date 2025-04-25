@@ -12,10 +12,10 @@
 		"start": "next start",
 		"format:check": "biome format",
 		"format:write": "biome format --write",
-		"lint:staged": "biome check --write --staged",
 		"lint": "pnpm lint:js && pnpm lint:spell",
 		"lint:js": "biome check",
 		"lint:js:write": "biome check --write",
+		"lint:js:staged": "biome check --write --staged",
 		"lint:spell": "cspell \"**/*\" --no-summary --no-progress",
 		"prepare": "husky"
 	},
