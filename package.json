@@ -14,7 +14,8 @@
 		"format:write": "biome format --write",
 		"lint:staged": "biome check --write --staged",
 		"lint": "pnpm lint:js && pnpm lint:spell",
-		"lint:js": "biome lint",
+		"lint:js": "biome check",
+		"lint:js:write": "biome check --write",
 		"lint:spell": "cspell \"**/*\" --no-summary --no-progress",
 		"prepare": "husky"
 	},
