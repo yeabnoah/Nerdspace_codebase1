@@ -15,15 +15,17 @@
 		"lint": "pnpm lint:js && pnpm lint:spell",
 		"lint:js": "biome check",
 		"lint:js:write": "biome check --write",
-		"lint:js:staged": "biome check --write --staged",
+		"lint:js:staged": "biome check --staged",
+		"lint:js:staged:write": "biome check --write --staged",
 		"lint:spell": "cspell \"**/*\" --no-summary --no-progress",
-		"prepare": "husky"
+		"prepare": "husky",
+		"typecheck": "tsc"
 	},
 	"commitlint": {
 		"extends": ["@commitlint/config-conventional"]
 	},
 	"lint-staged": {
-		"*": ["cspell --no-must-find-files", "biome check"]
+		"*": ["cspell --no-must-find-files", "biome check --no-errors-on-unmatched"]
 	},
 	"config": {
 		"commitizen": {
