@@ -23,8 +23,7 @@
 		"extends": ["@commitlint/config-conventional"]
 	},
 	"lint-staged": {
-		"*": ["cspell --no-must-find-files", "biome format"],
-		"**/*.{ts,tsx,js,jsx,cjs,mjs,yaml}": ["biome check --staged"]
+		"*": ["cspell --no-must-find-files", "biome check"]
 	},
 	"config": {
 		"commitizen": {
