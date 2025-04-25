@@ -66,7 +66,7 @@ const NotificationDropdown = () => {
       case "COMMUNITY_INVITE":
         return `/community/${notification.community?.id}`;
       case "FOLLOW":
-        return `/profile/${notification.actor?.name}`;
+        return `/user-profile/${notification.actor?.id}`;
       default:
         return "#";
     }
