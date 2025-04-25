@@ -38,7 +38,9 @@ const cloudinaryUploadPreset =
 
 const PostInput = () => {
   const [dialogPost, setDialogPost] = useState<string>("");
-  const [dialogFiles, setDialogFiles] = useState<{id: string, file: File}[]>([]);
+  const [dialogFiles, setDialogFiles] = useState<{ id: string; file: File }[]>(
+    [],
+  );
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -147,9 +149,9 @@ const PostInput = () => {
       return true;
     });
 
-    const newFiles = validFiles.map(file => ({
+    const newFiles = validFiles.map((file) => ({
       id: crypto.randomUUID(),
-      file
+      file,
     }));
 
     setDialogFiles([...dialogFiles, ...newFiles]);
@@ -164,7 +166,7 @@ const PostInput = () => {
     setIsUploading(true);
     try {
       const fileUrls = await Promise.all(
-        dialogFiles.map(async ({file}) => {
+        dialogFiles.map(async ({ file }) => {
           const formData = new FormData();
           formData.append("file", file);
           formData.append("upload_preset", cloudinaryUploadPreset);
@@ -406,7 +408,7 @@ const PostInput = () => {
 
                 {dialogFiles.length > 0 && (
                   <div className="flex flex-wrap items-center gap-4">
-                    {dialogFiles.map(({id, file}) => (
+                    {dialogFiles.map(({ id, file }) => (
                       <div
                         key={id}
                         className="group relative aspect-square size-32 overflow-hidden rounded-xl border border-gray-200 shadow-sm transition-all hover:shadow-md dark:border-gray-800"

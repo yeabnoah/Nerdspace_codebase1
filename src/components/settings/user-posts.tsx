@@ -158,6 +158,7 @@ const RenderUserPosts = () => {
                           src={post.media[0].url}
                           alt="Post media"
                           className="w-full rounded-xl object-cover transition-transform duration-300 hover:scale-[1.02]"
+                          sizes="(max-width: 768px) 70vw, 35vw"
                         />
                       </div>
                     )}
@@ -178,6 +179,7 @@ const RenderUserPosts = () => {
                             src={media.url}
                             alt="Post media"
                             className="h-full w-full rounded-xl object-cover transition-transform duration-300 hover:scale-[1.02]"
+                            sizes="(max-width: 768px) 50vw, 25vw"
                           />
                         </div>
                       ))}
@@ -197,6 +199,7 @@ const RenderUserPosts = () => {
                             src={post.media[0].url}
                             alt="Post media"
                             className="h-full w-full rounded-xl object-cover transition-transform duration-300 hover:scale-[1.02]"
+                            sizes="(max-width: 768px) 70vw, 35vw"
                           />
                         </div>
 
@@ -217,6 +220,7 @@ const RenderUserPosts = () => {
                                 src={media.url}
                                 alt="Post media"
                                 className="h-full w-full rounded-xl object-cover transition-transform duration-300 hover:scale-[1.02]"
+                                sizes="(max-width: 768px) 50vw, 25vw"
                               />
                               {mediaIndex === 2 && post.media.length > 4 && (
                                 <div className="absolute bottom-1 right-1 rounded-full bg-black/50 px-1 py-0.5 text-[10px] text-white sm:bottom-2 sm:right-2 sm:px-2 sm:py-1 sm:text-xs">

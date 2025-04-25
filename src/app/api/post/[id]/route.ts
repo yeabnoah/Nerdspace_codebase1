@@ -16,6 +16,16 @@ export const GET = async (request: NextRequest) => {
         likes: true,
         bookmarks: true,
         media: true,
+        postcomments: {
+          include: {
+            user: true,
+            replies: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
         project: {
           include: {
             _count: true,
