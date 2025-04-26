@@ -1,0 +1,26 @@
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+# DATABASE_URL="postgresql://postgres:nerd123@localhost:5432/nerdspace?schema=public"
+DATABASE_URL="postgresql://nerdspace_owner:npg_AbX5qkF3HZCo@ep-morning-violet-a46e1r3k-pooler.us-east-1.aws.neon.tech/nerdspace?sslmode=require"
+BETTER_AUTH_SECRET=63Vf6Ls6SKFPu3M25S33DsWxK4c3PjwA
+BETTER_AUTH_URL=http://localhost:3000
+GITHUB_CLIENT_ID=Ov23lijfKanxvhF3n4w0
+GITHUB_CLIENT_SECRET=b1eff1314feb8e02fae3f0fe138a36c0e811f119
+
+
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL=https://api.cloudinary.com/v1_1/dlqjsyrtt/image/upload
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=nerdspace
+CLOUDINARY_URL=cloudinary://762521873776786:suwFSELAU2KeVV1esWiU4GUwfpE@dlqjsyrtt
+
+NEXT_PUBLIC_AUTH_URL=http://localhost:3000
+NODE_ENV=production
+
+EMAIL_USER=yeabnoah5@gmail.com
+EMAIL_PASS=iepbhmcovlxjuikj
+
+NEXT_PUBLIC_POSTHOG_KEY=phc_kVJYbcd3KXNUzyiGjGjrYSv5DJkPocnEQQoRaMWkQzz
+NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
