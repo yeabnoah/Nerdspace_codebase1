@@ -15,6 +15,7 @@ import localFont from "next/font/local";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { PostHogProvider } from "@/lib/posthog-provider";
+import NerdspaceOut from "@/components/soon/nerdspace-out";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -105,6 +106,7 @@ export default function RootLayout({
             <WhoAmIProvider>
               <PostHogProvider>
                 <MobileViewMessage />
+                {/* <NerdspaceOut /> */}
                 {children}
                 <FeedbackButton />
               </PostHogProvider>
