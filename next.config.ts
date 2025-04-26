@@ -10,6 +10,16 @@ const nextConfig: NextConfig = {
       "play-lh.googleusercontent.com",
     ],
   },
+
+  // We remove ESLint
+  // run Biome and TypeScript separately in the CI pipeline
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
   experimental: {
     // nodeMiddleware: true,
     staleTimes: {
