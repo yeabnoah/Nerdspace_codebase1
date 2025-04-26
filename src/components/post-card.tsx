@@ -22,6 +22,7 @@ import { useState } from "react";
 import { FollowButton } from "@/components/follow-button";
 import { Input } from "@/components/ui/input";
 import type { CommunityPost } from "@/lib/types";
+import Image from "next/image";
 
 interface PostComment {
   id: string;
@@ -182,11 +183,15 @@ export function PostCard({ post, currentUser }: PostCardProps) {
             transition={{ delay: 0.2 }}
             className="text-sm"
           >
-            {post.content.split(/(\s+)/).map((word, i) => (
-              word.startsWith('#') 
-                ? <span key={i} className="text-purple-500">{word}</span>
-                : word
-            ))}
+            {post.content.split(/(\s+)/).map((word, i) =>
+              word.startsWith("#") ? (
+                <span key={i} className="text-purple-500">
+                  {word}
+                </span>
+              ) : (
+                word
+              ),
+            )}
           </motion.p>
           {post.image && (
             <motion.div
@@ -195,7 +200,8 @@ export function PostCard({ post, currentUser }: PostCardProps) {
               transition={{ delay: 0.3 }}
               className="mt-3 overflow-hidden rounded-md"
             >
-              <img
+              <Image
+                fill
                 src={post.image || "/placeholder.svg"}
                 alt="Post attachment"
                 className="h-auto w-full object-cover"

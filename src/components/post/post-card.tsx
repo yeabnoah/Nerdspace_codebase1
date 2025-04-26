@@ -655,7 +655,7 @@ const PostCard = ({
                       src={post?.project?.image || "/placeholder.svg"}
                       alt={post?.project?.name as string}
                       className="object-cover"
-                      sizes="96px"
+                      // sizes="96px"
                     />
                   </div>
                   <div className="flex flex-1 flex-col justify-between p-2">
