@@ -108,9 +108,15 @@ export const followService = {
     action: "follow" | "unfollow" = "follow",
   ) => {
     try {
-      const response = await axios.post(`/api/user/follow`, null, {
-        params: { userId, action },
-      });
+      const response = await axios.post(
+        `/api/user/follow`,
+        {
+          followingId: userId,
+        },
+        {
+          params: { action },
+        },
+      );
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {

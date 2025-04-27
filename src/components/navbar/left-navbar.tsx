@@ -71,7 +71,7 @@ const LeftNavbar = () => {
   };
 
   return (
-    <div className="sticky left-0 top-20 hidden w-full gap-1 px-5 py-5 md:flex md:flex-col lg:w-[17vw]">
+    <div className="sticky left-0 top-20 hidden w-fit  gap-1 px-5 py-5 md:flex md:flex-col lg:w-[17vw]">
       {/* Navigation Items */}
       {navItems.map((item) => (
         <motion.div

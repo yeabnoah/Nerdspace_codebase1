@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Star } from "lucide-react";
 import Link from "next/link";
@@ -10,9 +10,11 @@ import { useRouter } from "next/navigation";
 import { ProjectRecommendationSkeleton } from "./FollowListSkeleton";
 import ProjectInterface from "@/interface/auth/project.interface";
 import Image from "next/image";
+import { toast } from "react-hot-toast";
 
 export default function RecommendedProjects() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery<ProjectInterface[]>({
     queryKey: ["recommended-projects"],
@@ -22,6 +24,28 @@ export default function RecommendedProjects() {
     },
   });
 
+  const followMutation = useMutation({
+    mutationFn: async (projectId: string) => {
+      await axios.post(`/api/project/follow?projectId=${projectId}`);
+    },
+    onSuccess: () => {
+      // Invalidate all relevant queries
+      queryClient.invalidateQueries({ queryKey: ["recommended-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["followed-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["project"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      toast.success("Project follow status updated!");
+    },
+    onError: () => {
+      toast.error("Failed to update follow status");
+    },
+  });
+
+  const handleFollow = (e: React.MouseEvent, projectId: string) => {
+    e.preventDefault();
+    followMutation.mutate(projectId);
+  };
+
   if (isLoading) return <ProjectRecommendationSkeleton />;
   if (isError) return <p>Error loading users</p>;
 
@@ -29,7 +53,7 @@ export default function RecommendedProjects() {
     <Card className="hidden w-64 min-h-32 rounded-2xl border border-gray-100 bg-transparent pt-4 shadow-none dark:border-gray-500/5 md:block">
       <div className="relative">
         {/* Subtle gradient background effects */}
-        <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/10 bg-gradient-to-br from-primary/5 to-transparent blur-[150px] backdrop-blur-sm"></div>
+        {/* <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/10 bg-gradient-to-br from-primary/5 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
 
         <h2
           onClick={() => {
@@ -85,6 +109,7 @@ export default function RecommendedProjects() {
                 <Button
                   size="sm"
                   className="rounded-full border bg-transparent text-card-foreground shadow-none hover:bg-transparent dark:text-white"
+                  onClick={(e) => handleFollow(e, each.id)}
                 >
                   Follow
                 </Button>

@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
       "images.unsplash.com",
       "play-lh.googleusercontent.com",
     ],
+    // loader: "cloudinary",
+    // path: "https://api.cloudinary.com/v1_1/dsaitxphg/image/upload",
   },
 
   // We remove ESLint

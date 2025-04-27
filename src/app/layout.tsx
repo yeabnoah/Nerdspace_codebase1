@@ -2,7 +2,7 @@ import { MobileViewMessage } from "@/components/mobile-view-message";
 import { ThemeProvider } from "@/components/theme-provider";
 import TanstackQueryProvider from "@/providers/tanstack-query-provider";
 import WhoAmIProvider from "@/providers/who-am-i-provider";
-import { FeedbackButton } from "@/components/FeedbackButton";
+import FeedbackButton from "@/components/FeedbackButton";
 import type { Metadata } from "next";
 import {
   Geist,
@@ -14,6 +14,8 @@ import {
 import localFont from "next/font/local";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
+import { PostHogProvider } from "@/lib/posthog-provider";
+import NerdspaceOut from "@/components/soon/nerdspace-out";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -92,9 +94,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${InstrumentSerif.variable} ${inter.variable} ${itcThin.variable} ${itcBold.variable} ${itcThinItalic.variable} antialiased dark:bg-black overflow-x-hidden font-geist`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${InstrumentSerif.variable} ${inter.variable} ${itcThin.variable} ${itcBold.variable} ${itcThinItalic.variable} overflow-x-hidden font-geist antialiased dark:bg-black`}
       >
-        
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -103,9 +104,12 @@ export default function RootLayout({
         >
           <TanstackQueryProvider>
             <WhoAmIProvider>
-              <MobileViewMessage />
-              {children}
-              <FeedbackButton />
+              <PostHogProvider>
+                <MobileViewMessage />
+                {/* <NerdspaceOut /> */}
+                {children}
+                <FeedbackButton />
+              </PostHogProvider>
             </WhoAmIProvider>
           </TanstackQueryProvider>
           <Toaster

@@ -35,17 +35,19 @@ import {
   Upload,
   X
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { ProjectCardSkeleton } from "../skeleton/project-card";
 import LeaderboardPage from "./leaderBorad";
 import ProjectCard from "./project-card";
+import { usePostHog } from 'posthog-js/react';
 
 const cloudinaryUploadUrl = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!;
 const cloudinaryUploadPreset =
   process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
 
 export default function ProjectsPage() {
+  const posthog = usePostHog();
   const [searchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -77,6 +79,7 @@ export default function ProjectsPage() {
   const {
     data: projecter,
     isLoading,
+    refetch,
   } = useQuery<ProjectInterface[]>({
     queryKey: ["projects"],
     queryFn: async () => {
@@ -84,7 +87,18 @@ export default function ProjectsPage() {
       setProjects(response.data.data);
       return response.data.data;
     },
+    refetchOnMount: true,
+    staleTime: 1000 * 30, // 30 seconds
   });
+
+  // Effect to update projects state when data is available and refetch when component mounts
+  useEffect(() => {
+    if (projecter) {
+      setProjects(projecter);
+    }
+    // Refetch data on component mount
+    refetch();
+  }, [projecter, refetch]);
 
   const mutation = useMutation<ProjectInterface, Error, ProjectInterfaceToSubmit>({
     mutationKey: ["create-project"],
@@ -266,7 +280,15 @@ export default function ProjectsPage() {
     }
   };
 
-  console.log(activeTab, projecter)
+  // Track page visit
+  useEffect(() => {
+    if (posthog) {
+      posthog.capture('projects_page_view', {
+        activeTab,
+        source: 'project-component'
+      });
+    }
+  }, [posthog, activeTab]);
 
   return (
     <div className="container mx-auto w-full px-8 py-2 dark:bg-black">

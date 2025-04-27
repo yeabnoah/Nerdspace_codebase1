@@ -14,11 +14,22 @@ export async function GET() {
 
     const projects = await prisma.project.findMany({
       where: {
-        userId: {
-          not: session.user.id,
-        },
+        AND: [
+          {
+            userId: {
+              not: session.user.id,
+            },
+          },
+          {
+            followers: {
+              none: {
+                userId: session.user.id,
+              },
+            },
+          },
+        ],
       },
-      take: 9,
+      take: 8,
       orderBy: { createdAt: "desc" },
       include: {
         followers: true,

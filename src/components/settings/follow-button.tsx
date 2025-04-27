@@ -23,7 +23,11 @@ export default function FollowButton({
 
   const followMutation = useMutation({
     mutationFn: async (action: "follow" | "unfollow") => {
-      const response = await axios.post(`/api/user/follow?userId=${userId}&action=${action}`);
+      const response = await axios.post(`/api/user/follow`, {
+        followingId: userId
+      }, {
+        params: { action }
+      });
       return response.data;
     },
     onMutate: async (action) => {

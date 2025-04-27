@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 const likeSchema = z.object({
-  userId: z.string(),
   postId: z.string(),
 });
 

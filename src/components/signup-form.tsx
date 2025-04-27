@@ -51,7 +51,7 @@ export function SignUpForm({
             callbackURL: "/",
           });
 
-          toast("Please check your email to verify it", { icon: "‼️" });
+          toast("Please check your email to verify it or spam folder for verification link", { icon: "‼️" });
         },
         onError: (ctx) => {
           toast.dismiss(loadingToastId);

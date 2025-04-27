@@ -75,7 +75,7 @@ export default function ProfilePage() {
   const { data: posts } = useQuery({
     queryKey: ["my-posts", user?.id],
     queryFn: async () => {
-      const response = await axios.get(`/api/posts/user/${user?.id}`);
+      const response = await axios.get(`/api/user/posts?userId=${user?.id}`);
       return response.data.data;
     },
     enabled: !!user?.id,
@@ -188,7 +188,7 @@ export default function ProfilePage() {
 
   if (isloading || isFetching || isPending) {
     return (
-      <div className="container relative mx-10 pb-8 font-geist">
+      <div className="container relative mx-10 pb-8 font-geist mt-5">
         <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
 
         <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl shadow-lg md:h-[250px]">
@@ -228,7 +228,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container relative mx-10 pb-8 font-geist">
+    <div className="container relative mx-10 pb-8 font-geist mt-5">
       <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
 
       <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-xl shadow-lg md:h-[250px]">
@@ -239,6 +239,7 @@ export default function ProfilePage() {
           quality={100}
           className="object-cover"
           priority={true}
+          sizes="100vw"
         />
         <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 via-zinc-900/60 to-transparent p-8 dark:from-black/80 dark:via-black/50">
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
@@ -286,6 +287,7 @@ export default function ProfilePage() {
             alt={user.visualName || user.name}
             fill
             className="object-cover"
+            sizes="80px"
           />
         </div>
 
