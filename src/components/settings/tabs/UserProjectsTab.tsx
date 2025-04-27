@@ -4,16 +4,16 @@ import { ProjectCardSkeleton } from "@/components/skeleton/project-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { authClient } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth-client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
-import { ArrowRight, Calendar, Heart, Share2, Star } from "lucide-react";
+import { ArrowRight, Calendar, Share2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import useUserProfileStore from "@/store/userProfile.store";
 
 interface Project {
   id: string;
@@ -40,7 +40,7 @@ interface Project {
 function ProjectCard({ project }: { project: Project }) {
   const router = useRouter();
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  const session = authClient.useSession();
+  const session = useSession();
 
   const postAsPostMutation = useMutation({
     mutationKey: ["postaspost", project.id],
@@ -49,7 +49,7 @@ function ProjectCard({ project }: { project: Project }) {
         `/api/project/update/share`,
         {
           content:
-            project?.user.id === session.data?.user.id
+            project?.user.id === session?.data?.user?.id
               ? "This is my project and I'd like to share it with you"
               : "I saw this project and wanted to share it :)",
           fileUrls: [],
@@ -207,82 +207,46 @@ function ProjectCard({ project }: { project: Project }) {
   );
 }
 
-export default function ProjectsTab() {
-  const [activeTab, setActiveTab] = useState("followed");
+export default function UserProjectsTab() {
+  const { userProfile } = useUserProfileStore();
 
-  const { data: followedProjects, isLoading: isLoadingFollowed } = useQuery({
-    queryKey: ["followed-projects"],
+  const { data: userProjects, isLoading } = useQuery({
+    queryKey: ["user-projects", userProfile?.id],
     queryFn: async () => {
-      const response = await axios.get("/api/users/projects");
+      if (!userProfile?.id) return [];
+      
+      const response = await axios.get(`/api/users/${userProfile.id}/projects`);
       return response.data.data;
     },
+    enabled: !!userProfile?.id,
   });
-
-  const { data: ownedProjects, isLoading: isLoadingOwned } = useQuery({
-    queryKey: ["projects"],
-    queryFn: async () => {
-      const response = await axios.get("/api/users/projects/owned");
-      return response.data.data;
-    },
-  });
-
-  const isLoading =
-    activeTab === "followed" ? isLoadingFollowed : isLoadingOwned;
-  const projects = activeTab === "followed" ? followedProjects : ownedProjects;
 
   return (
     <div className="space-y-6">
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="mt-5 w-fit"
-      >
-        <TabsList className="grid h-12 w-full grid-cols-2 rounded-full border dark:border-gray-500/10 dark:bg-transparent">
-          <TabsTrigger
-            value="followed"
-            className="relative flex h-10 items-center gap-2 rounded-full"
-          >
-            <Heart className="h-4 w-4" />
-            Followed Projects
-          </TabsTrigger>
-          <TabsTrigger
-            value="owned"
-            className="relative flex h-10 items-center gap-2 rounded-full"
-          >
-            <Star className="h-4 w-4" />
-            My Projects
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
             <ProjectCardSkeleton key={i} />
           ))}
         </div>
-      ) : projects?.length === 0 ? (
+      ) : userProjects?.length === 0 ? (
         <div className="flex h-[200px] w-full items-center justify-center rounded-lg border border-dashed border-zinc-200 bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900/50">
           <div className="text-center">
             <p className="text-lg font-medium text-zinc-600 dark:text-zinc-400">
-              {activeTab === "followed"
-                ? "No followed projects yet"
-                : "No created projects yet"}
+              No projects yet
             </p>
             <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-500">
-              {activeTab === "followed"
-                ? "Start following projects to see them here"
-                : "Create your first project to get started"}
+              This user hasn&apos;t created any projects yet
             </p>
           </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {projects?.map((project: Project) => (
+          {userProjects?.map((project: Project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>
       )}
     </div>
   );
-}
+} 

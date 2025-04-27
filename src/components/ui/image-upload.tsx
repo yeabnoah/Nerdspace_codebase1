@@ -28,7 +28,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
       <div className="w-full h-full flex items-center justify-center rounded-md border border-dashed">
         {value ? (
           <div className="relative w-full h-full">
-            <Image fill src={value || "/placeholder.svg"} alt="Upload" className="object-cover rounded-md" />
+            <Image fill src={value || "/placeholder.svg"} alt="Upload" className="object-cover rounded-md" sizes="(max-width: 768px) 100vw, 40vw" />
             <Button
               onClick={() => onChange("")}
               variant="destructive"

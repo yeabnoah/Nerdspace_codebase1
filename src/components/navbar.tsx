@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/dialog";
 import useSearchStore from "@/store/search.store";
 import QualityNotice from "./quality-notice";
+import NotificationDropdown from "./NotificationDropdown";
 
 const Navbar = () => {
   const router = useRouter();
@@ -108,8 +109,8 @@ const Navbar = () => {
 
               <div className="relative flex flex-col px-6 pb-4">
                 {/* Glow effects */}
-                <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-                <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+                {/* <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
+                {/* <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div> */}
 
                 <CommandInput
                   value={query}
@@ -154,6 +155,7 @@ const Navbar = () => {
           </Button>
         </div>
         <QualityNotice />
+        <NotificationDropdown />
         <ModeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -165,7 +167,7 @@ const Navbar = () => {
                   <>
                     <AvatarImage
                       src={user.image || "/user.jpg"}
-                      className="size-8 rounded-full"
+                      className="size-8 rounded-full object-cover"
                       alt="@shadcn"
                     />
                     <AvatarFallback className="">

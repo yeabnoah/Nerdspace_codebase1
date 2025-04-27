@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import FollowButton from "./follow-button";
 import ProjectsTab from "./tabs/ProjectsTab";
+import UserProjectsTab from "./tabs/UserProjectsTab";
 import RenderUserPosts from "./user-posts";
 import { toast } from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -255,6 +256,7 @@ export default function UserProfile() {
           quality={100}
           className="object-cover"
           priority={true}
+          sizes="100vw"
         />
         <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 via-zinc-900/60 to-transparent p-8 dark:from-black/80 dark:via-black/50">
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
@@ -268,6 +270,7 @@ export default function UserProfile() {
             alt={userProfile?.visualName || userProfile?.name || ""}
             fill
             className="object-cover"
+            sizes="80px"
           />
         </div>
 
@@ -423,7 +426,7 @@ export default function UserProfile() {
                   </div>
                 </TabsContent>
                 <TabsContent value="projects" className="mt-0">
-                  <ProjectsTab />
+                  <UserProjectsTab />
                 </TabsContent>
               </Tabs>
             </CardContent>

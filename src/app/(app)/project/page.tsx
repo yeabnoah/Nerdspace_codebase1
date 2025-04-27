@@ -9,7 +9,6 @@ const Project = () => {
       <div className="my-5 min-h-fit flex-1 px-[.3px] flex flex-row items-start">
         <ProjectsPage />
       </div>
-
       <MobileNavBar />
     </div>
   );

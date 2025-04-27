@@ -60,24 +60,26 @@ import {
 import { SmileIcon } from "lucide-react";
 
 const timeAgo = (date: Date) => {
-  const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
-  
+  const seconds = Math.floor(
+    (new Date().getTime() - new Date(date).getTime()) / 1000,
+  );
+
   let interval = seconds / 31536000;
-  if (interval > 1) return Math.floor(interval) + 'y';
-  
+  if (interval > 1) return Math.floor(interval) + "y";
+
   interval = seconds / 2592000;
-  if (interval > 1) return Math.floor(interval) + 'mo';
-  
+  if (interval > 1) return Math.floor(interval) + "mo";
+
   interval = seconds / 86400;
-  if (interval > 1) return Math.floor(interval) + 'd';
-  
+  if (interval > 1) return Math.floor(interval) + "d";
+
   interval = seconds / 3600;
-  if (interval > 1) return Math.floor(interval) + 'h';
-  
+  if (interval > 1) return Math.floor(interval) + "h";
+
   interval = seconds / 60;
-  if (interval > 1) return Math.floor(interval) + 'm';
-  
-  return Math.floor(seconds) + 's';
+  if (interval > 1) return Math.floor(interval) + "m";
+
+  return Math.floor(seconds) + "s";
 };
 
 interface PostCardProps {
@@ -508,10 +510,10 @@ const PostCard = ({
     <div className="relative my-5 w-full flex-1 border-b border-transparent p-2 px-2 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/10 before:to-transparent after:absolute after:left-0 after:top-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/20 after:to-transparent sm:p-4 sm:px-3 [&>*:last-child]:after:absolute [&>*:last-child]:after:right-[-17px] [&>*:last-child]:after:top-0 [&>*:last-child]:after:h-full [&>*:last-child]:after:w-[1px] [&>*:last-child]:after:bg-gradient-to-b [&>*:last-child]:after:from-transparent [&>*:last-child]:after:via-blue-500/20 [&>*:last-child]:after:to-transparent">
       <div className="pointer-events-none absolute inset-0 overflow-visible">
         {/* Only render these effects on desktop for better performance */}
-        {/* <div className="hidden md:block">
-          <div className="absolute -right-4 size-40 -rotate-45 rounded-full bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent opacity-80 blur-[100px]"></div>
-          <div className="absolute -bottom-5 left-12 size-40 rotate-45 rounded-full bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent opacity-80 blur-[100px]"></div>
-        </div> */}
+        <div className="hidden md:block">
+          <div className="absolute -right-4 size-40 -rotate-45 rounded-full bg-gradient-to-br from-blue-300/20 via-blue-400/30 to-transparent opacity-60 blur-[100px]"></div>
+          <div className="absolute -bottom-5 left-12 size-40 rotate-45 rounded-full bg-gradient-to-tl from-orange-300/20 via-orange-400/20 to-transparent opacity-60 blur-[100px]"></div>
+        </div>
       </div>
 
       <div className="relative sm:pl-5 md:pl-3">
@@ -534,7 +536,10 @@ const PostCard = ({
                 {post.user.name}
               </h1>
               <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground sm:text-xs">
-                <span>Nerd@<span className="text-purple-500">{post.user.nerdAt}</span></span>
+                <span>
+                  Nerd@
+                  <span className="text-purple-500">{post.user.nerdAt}</span>
+                </span>
                 <span>·</span>
                 <span>{timeAgo(post.createdAt)}</span>
               </div>
@@ -542,26 +547,27 @@ const PostCard = ({
           </div>
 
           <div className="flex w-full items-center gap-2 sm:w-auto">
-            {session?.data?.user?.id !== post.user.id && !post.user?.isFollowingAuthor && (
-              <Button
-                variant={"outline"}
-                size="sm"
-                className={`h-9 w-full rounded-xl bg-transparent px-2 text-xs shadow-none hover:bg-transparent sm:h-11 sm:w-auto md:text-sm`}
-                onClick={() => {
-                  handleFollow(post);
-                }}
-                disabled={followMutation.isPending}
-              >
-                <span className="flex items-center gap-1 px-2">
-                  {followMutation.isPending ? (
-                    <div className="size-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  ) : (
-                    <Plus size={15} />
-                  )}
-                  {followMutation.isPending ? "Following..." : "Follow"}
-                </span>
-              </Button>
-            )}
+            {session?.data?.user?.id !== post.user.id &&
+              !post.user?.isFollowingAuthor && (
+                <Button
+                  variant={"outline"}
+                  size="sm"
+                  className={`h-9 w-full rounded-xl bg-transparent px-2 text-xs shadow-none hover:bg-transparent sm:h-11 sm:w-auto md:text-sm`}
+                  onClick={() => {
+                    handleFollow(post);
+                  }}
+                  disabled={followMutation.isPending}
+                >
+                  <span className="flex items-center gap-1 px-2">
+                    {followMutation.isPending ? (
+                      <div className="size-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    ) : (
+                      <Plus size={15} />
+                    )}
+                    {followMutation.isPending ? "Following..." : "Follow"}
+                  </span>
+                </Button>
+              )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -650,12 +656,10 @@ const PostCard = ({
               >
                 <div className="flex h-full gap-3">
                   <div className="relative h-full w-24">
-                    <Image
-                      fill
+                    <img
                       src={post?.project?.image || "/placeholder.svg"}
                       alt={post?.project?.name as string}
                       className="object-cover"
-                      sizes="96px"
                     />
                   </div>
                   <div className="flex flex-1 flex-col justify-between p-2">
@@ -718,6 +722,7 @@ const PostCard = ({
                       src={post.media[0].url || "/placeholder.svg"}
                       alt="Post media"
                       className="w-full rounded-xl object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </div>
                 )}
@@ -738,6 +743,7 @@ const PostCard = ({
                         src={media.url || "/placeholder.svg"}
                         alt="Post media"
                         className="h-full w-full rounded-xl object-cover"
+                        sizes="(max-width: 768px) 50vw, 25vw"
                       />
                     </div>
                   ))}
@@ -757,6 +763,7 @@ const PostCard = ({
                         src={post.media[0].url || "/placeholder.svg"}
                         alt="Post media"
                         className="h-full w-full rounded-xl object-cover"
+                        sizes="(max-width: 768px) 70vw, 35vw"
                       />
                     </div>
 
@@ -777,6 +784,7 @@ const PostCard = ({
                             src={media.url || "/placeholder.svg"}
                             alt="Post media"
                             className="h-full w-full rounded-xl object-cover"
+                            sizes="(max-width: 768px) 50vw, 25vw"
                           />
                           {mediaIndex === 2 && post.media.length > 4 && (
                             <div className="absolute bottom-1 right-1 rounded-full bg-black/50 px-1 py-0.5 text-[10px] text-white sm:bottom-2 sm:right-2 sm:px-2 sm:py-1 sm:text-xs">
