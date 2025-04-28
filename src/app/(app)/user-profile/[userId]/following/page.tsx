@@ -1,15 +1,15 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { useParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
 import { useSession } from "@/lib/auth-client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { Users } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function UserFollowingPage() {
@@ -17,6 +17,7 @@ export default function UserFollowingPage() {
   const userId = params?.userId as string;
   const session = useSession();
   const queryClient = useQueryClient();
+  const [loadingUserId, setLoadingUserId] = useState<string | null>(null);
 
   const { data: response, isLoading } = useQuery({
     queryKey: ["user-following", userId],
@@ -53,6 +54,7 @@ export default function UserFollowingPage() {
       userId: string;
       action: "follow" | "unfollow";
     }) => {
+      setLoadingUserId(userId);
       const response = await axios.post(
         `/api/user/follow`,
         { followingId: userId },
@@ -65,9 +67,11 @@ export default function UserFollowingPage() {
       queryClient.invalidateQueries({ queryKey: ["followers"] });
       queryClient.invalidateQueries({ queryKey: ["follow-status"] });
       toast.success(data.message);
+      setLoadingUserId(null);
     },
     onError: () => {
       toast.error("Error occurred while following/unfollowing user");
+      setLoadingUserId(null);
     },
   });
 
@@ -97,7 +101,7 @@ export default function UserFollowingPage() {
               {[...Array(5)].map((_, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-4 rounded-2xl bg-black/5 dark:bg-gray-400/5 p-2"
+                  className="flex items-center gap-4 rounded-2xl bg-black/5 p-2 dark:bg-gray-400/5"
                 >
                   <Skeleton className="h-12 w-12 rounded-full" />
                   <div className="flex-1 space-y-2">
@@ -154,9 +158,9 @@ export default function UserFollowingPage() {
                           ? "bg-zinc-100 text-zinc-900 hover:bg-zinc-200 dark:border dark:border-gray-500/10 dark:bg-black dark:text-zinc-100"
                           : "bg-black text-white dark:bg-white dark:text-black"
                       } mx-4`}
-                      disabled={followMutation.isPending}
+                      disabled={loadingUserId === followed.id}
                     >
-                      {followMutation.isPending
+                      {loadingUserId === followed.id
                         ? "Loading..."
                         : followStatus?.[followed.id]
                           ? "Following"

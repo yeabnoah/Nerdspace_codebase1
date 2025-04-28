@@ -1,15 +1,16 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
 import { useSession } from "@/lib/auth-client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { Users } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function UserFollowersPage() {
@@ -17,6 +18,7 @@ export default function UserFollowersPage() {
   const userId = params?.userId as string;
   const session = useSession();
   const queryClient = useQueryClient();
+  const [loadingUserId, setLoadingUserId] = useState<string | null>(null);
 
   const { data: response, isLoading } = useQuery({
     queryKey: ["user-followers", userId],
@@ -53,10 +55,11 @@ export default function UserFollowersPage() {
       userId: string;
       action: "follow" | "unfollow";
     }) => {
+      setLoadingUserId(userId);
       const response = await axios.post(
         `/api/user/follow`,
         { followingId: userId },
-        { params: { action } }
+        { params: { action } },
       );
       return response.data;
     },
@@ -65,9 +68,11 @@ export default function UserFollowersPage() {
       queryClient.invalidateQueries({ queryKey: ["following"] });
       queryClient.invalidateQueries({ queryKey: ["follow-status"] });
       toast.success(data.message);
+      setLoadingUserId(null);
     },
     onError: () => {
       toast.error("Error occurred while following/unfollowing user");
+      setLoadingUserId(null);
     },
   });
 
@@ -97,7 +102,7 @@ export default function UserFollowersPage() {
               {[...Array(5)].map((_, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-4 rounded-2xl bg-black/5 dark:bg-gray-400/5 p-2"
+                  className="flex items-center gap-4 rounded-2xl bg-black/5 p-2 dark:bg-gray-400/5"
                 >
                   <Skeleton className="h-12 w-12 rounded-full" />
                   <div className="flex-1 space-y-2">
@@ -115,7 +120,6 @@ export default function UserFollowersPage() {
 
   return (
     <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start">
-      
       <div className="mx-10 my-5 flex min-h-fit flex-1 flex-row items-start px-[.3px]">
         <div className="container mx-auto py-6">
           <h1 className="mb-6 font-instrument text-3xl">Followers</h1>
@@ -148,21 +152,21 @@ export default function UserFollowersPage() {
                     </div>
                   </Link>
                   {session.data?.user.id !== follower.id && (
-                    <button
+                    <Button
                       onClick={() => handleFollow(follower.id)}
                       className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105 ${
                         followStatus?.[follower.id]
                           ? "bg-zinc-100 text-zinc-900 hover:bg-zinc-200 dark:border dark:border-gray-500/10 dark:bg-black dark:text-zinc-100"
                           : "bg-black text-white dark:bg-white dark:text-black"
                       } mx-4`}
-                      disabled={followMutation.isPending}
+                      disabled={loadingUserId === follower.id}
                     >
-                      {followMutation.isPending
+                      {loadingUserId === follower.id
                         ? "Loading..."
                         : followStatus?.[follower.id]
                           ? "Following"
                           : "Follow"}
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>

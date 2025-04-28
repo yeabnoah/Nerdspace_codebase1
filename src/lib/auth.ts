@@ -1,14 +1,14 @@
+import { PrismaClient } from "@prisma/client";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { magicLink } from "better-auth/plugins";
-import sendEmail from "./sendEmail";
-import { PrismaClient } from "@prisma/client";
 import { nextCookies } from "better-auth/next-js";
+import { magicLink } from "better-auth/plugins";
 import {
-  passwordResetTemplate,
   emailVerificationTemplate,
   magicLinkTemplate,
+  passwordResetTemplate,
 } from "./emailTemplates/templates";
+import sendEmail from "./sendEmail";
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
