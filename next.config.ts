@@ -9,7 +9,19 @@ const nextConfig: NextConfig = {
       "images.unsplash.com",
       "play-lh.googleusercontent.com",
     ],
+    // loader: "cloudinary",
+    // path: "https://api.cloudinary.com/v1_1/dsaitxphg/image/upload",
   },
+
+  // We remove ESLint
+  // run Biome and TypeScript separately in the CI pipeline
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
   experimental: {
     // nodeMiddleware: true,
     staleTimes: {

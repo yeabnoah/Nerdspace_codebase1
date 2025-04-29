@@ -60,24 +60,26 @@ import {
 import { SmileIcon } from "lucide-react";
 
 const timeAgo = (date: Date) => {
-  const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
+  const seconds = Math.floor(
+    (new Date().getTime() - new Date(date).getTime()) / 1000,
+  );
 
   let interval = seconds / 31536000;
-  if (interval > 1) return Math.floor(interval) + 'y';
+  if (interval > 1) return Math.floor(interval) + "y";
 
   interval = seconds / 2592000;
-  if (interval > 1) return Math.floor(interval) + 'mo';
+  if (interval > 1) return Math.floor(interval) + "mo";
 
   interval = seconds / 86400;
-  if (interval > 1) return Math.floor(interval) + 'd';
+  if (interval > 1) return Math.floor(interval) + "d";
 
   interval = seconds / 3600;
-  if (interval > 1) return Math.floor(interval) + 'h';
+  if (interval > 1) return Math.floor(interval) + "h";
 
   interval = seconds / 60;
-  if (interval > 1) return Math.floor(interval) + 'm';
+  if (interval > 1) return Math.floor(interval) + "m";
 
-  return Math.floor(seconds) + 's';
+  return Math.floor(seconds) + "s";
 };
 
 interface PostCardProps {
@@ -230,12 +232,12 @@ const PostCard = ({
                   ...p,
                   likes: isLiked
                     ? p.likes.filter(
-                      (like: any) => like.userId !== session.data?.user.id,
-                    )
+                        (like: any) => like.userId !== session.data?.user.id,
+                      )
                     : [
-                      ...p.likes,
-                      { userId: session.data?.user.id, postId: p.id },
-                    ],
+                        ...p.likes,
+                        { userId: session.data?.user.id, postId: p.id },
+                      ],
                   _count: {
                     ...p._count,
                     likes: isLiked ? p._count.likes - 1 : p._count.likes + 1,
@@ -301,13 +303,13 @@ const PostCard = ({
                   ...p,
                   bookmarks: isBookmarked
                     ? p.bookmarks.filter(
-                      (bookmark: any) =>
-                        bookmark.userId !== session.data?.user.id,
-                    )
+                        (bookmark: any) =>
+                          bookmark.userId !== session.data?.user.id,
+                      )
                     : [
-                      ...p.bookmarks,
-                      { userId: session.data?.user.id, postId: p.id },
-                    ],
+                        ...p.bookmarks,
+                        { userId: session.data?.user.id, postId: p.id },
+                      ],
                   _count: {
                     ...p._count,
                     bookmarks: isBookmarked
@@ -534,7 +536,10 @@ const PostCard = ({
                 {post.user.name}
               </h1>
               <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground sm:text-xs">
-                <span>Nerd@<span className="text-purple-500">{post.user.nerdAt}</span></span>
+                <span>
+                  Nerd@
+                  <span className="text-purple-500">{post.user.nerdAt}</span>
+                </span>
                 <span>·</span>
                 <span>{timeAgo(post.createdAt)}</span>
               </div>
@@ -542,26 +547,27 @@ const PostCard = ({
           </div>
 
           <div className="flex w-full items-center gap-2 sm:w-auto">
-            {session?.data?.user?.id !== post.user.id && !post.user?.isFollowingAuthor && (
-              <Button
-                variant={"outline"}
-                size="sm"
-                className={`h-9 w-full rounded-xl bg-transparent px-2 text-xs shadow-none hover:bg-transparent sm:h-11 sm:w-auto md:text-sm`}
-                onClick={() => {
-                  handleFollow(post);
-                }}
-                disabled={followMutation.isPending}
-              >
-                <span className="flex items-center gap-1 px-2">
-                  {followMutation.isPending ? (
-                    <div className="size-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  ) : (
-                    <Plus size={15} />
-                  )}
-                  {followMutation.isPending ? "Following..." : "Follow"}
-                </span>
-              </Button>
-            )}
+            {session?.data?.user?.id !== post.user.id &&
+              !post.user?.isFollowingAuthor && (
+                <Button
+                  variant={"outline"}
+                  size="sm"
+                  className={`h-9 w-full rounded-xl bg-transparent px-2 text-xs shadow-none hover:bg-transparent sm:h-11 sm:w-auto md:text-sm`}
+                  onClick={() => {
+                    handleFollow(post);
+                  }}
+                  disabled={followMutation.isPending}
+                >
+                  <span className="flex items-center gap-1 px-2">
+                    {followMutation.isPending ? (
+                      <div className="size-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    ) : (
+                      <Plus size={15} />
+                    )}
+                    {followMutation.isPending ? "Following..." : "Follow"}
+                  </span>
+                </Button>
+              )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -598,7 +604,7 @@ const PostCard = ({
                     <span>Delete</span>
                   </DropdownMenuItem>
                   {(post?.access as unknown as string) ===
-                    (PostAccess.public as unknown as string) ? (
+                  (PostAccess.public as unknown as string) ? (
                     <DropdownMenuItem
                       onClick={() => {
                         handleAccessChange();
@@ -650,12 +656,10 @@ const PostCard = ({
               >
                 <div className="flex h-full gap-3">
                   <div className="relative h-full w-24">
-                    <Image
-                      fill
+                    <img
                       src={post?.project?.image || "/placeholder.svg"}
                       alt={post?.project?.name as string}
                       className="object-cover"
-                      sizes="96px"
                     />
                   </div>
                   <div className="flex flex-1 flex-col justify-between p-2">
@@ -700,12 +704,11 @@ const PostCard = ({
               </Card>
             )}
             {post.media && post.media.length > 0 && (
-              <div
-                className={`${!post.shared && "mt-2 sm:mt-4"} grid w-[100%] flex-1 gap-1 sm:gap-2 ${getGridClass(post.media.length)}`}
-              >
+              <div className={`${!post.shared && "mt-2 sm:mt-4"} w-full`}>
+                {/* 1 Image - Full width */}
                 {post.media.length === 1 && (
                   <div
-                    className="relative h-[25vh] sm:h-[30vh] md:h-[36vh]"
+                    className="relative aspect-video w-full" // Using aspect ratio instead of fixed height
                     onClick={() =>
                       handleMediaClick(
                         0,
@@ -715,38 +718,48 @@ const PostCard = ({
                   >
                     <Image
                       fill
-                      src={post.media[0].url || "/placeholder.svg"}
+                      src={
+                        (post?.media[0]?.url as string) || "/placeholder.svg"
+                      }
                       alt="Post media"
-                      className="w-full rounded-xl object-cover"
+                      className="rounded-xl object-cover"
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </div>
                 )}
-                {post.media.length === 2 &&
-                  post.media.map((media, mediaIndex) => (
-                    <div
-                      key={media.id}
-                      className="relative h-[15vh] sm:h-[20vh] md:h-[28vh]"
-                      onClick={() =>
-                        handleMediaClick(
-                          mediaIndex,
-                          post.media.map((media) => media.url),
-                        )
-                      }
-                    >
-                      <Image
-                        fill
-                        src={media.url || "/placeholder.svg"}
-                        alt="Post media"
-                        className="h-full w-full rounded-xl object-cover"
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                      />
-                    </div>
-                  ))}
+
+                {/* 2 Images - Equal split */}
+                {post.media.length === 2 && (
+                  <div className="grid grid-cols-2 gap-1 sm:gap-2">
+                    {post.media.map((media, mediaIndex) => (
+                      <div
+                        key={media.id}
+                        className="relative aspect-square" // Square aspect ratio
+                        onClick={() =>
+                          handleMediaClick(
+                            mediaIndex,
+                            post.media.map((media) => media.url),
+                          )
+                        }
+                      >
+                        <Image
+                          fill
+                          src={media.url || "/placeholder.svg"}
+                          alt="Post media"
+                          className="rounded-xl object-cover"
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 3+ Images - Main + Side thumbnails */}
                 {post.media.length >= 3 && (
-                  <div className="grid h-[30vh] w-full max-w-[82vw] grid-cols-[auto_100px] gap-1 sm:h-[36vh] sm:grid-cols-[auto_120px] sm:gap-2 md:w-[36vw]">
+                  <div className="grid aspect-video grid-cols-3 gap-1 sm:gap-2">
+                    {/* Main image (2/3 width) */}
                     <div
-                      className="relative h-full w-full"
+                      className="relative col-span-2 h-full"
                       onClick={() =>
                         handleMediaClick(
                           0,
@@ -756,15 +769,18 @@ const PostCard = ({
                     >
                       <Image
                         fill
-                        src={post.media[0].url || "/placeholder.svg"}
+                        src={
+                          (post?.media[0]?.url as string) || "/placeholder.svg"
+                        }
                         alt="Post media"
-                        className="h-full w-full rounded-xl object-cover"
-                        sizes="(max-width: 768px) 70vw, 35vw"
+                        className="rounded-xl object-cover"
+                        sizes="(max-width: 768px) 66vw, 33vw"
                       />
                     </div>
 
-                    <div className="flex w-full flex-col gap-1 sm:gap-2">
-                      {post.media.slice(1, 4).map((media, mediaIndex) => (
+                    {/* Thumbnail column (1/3 width) */}
+                    <div className="grid h-full grid-rows-2 gap-1 sm:gap-2">
+                      {post.media.slice(1, 3).map((media, mediaIndex) => (
                         <div
                           key={media.id}
                           className="relative h-full w-full"
@@ -779,16 +795,39 @@ const PostCard = ({
                             fill
                             src={media.url || "/placeholder.svg"}
                             alt="Post media"
-                            className="h-full w-full rounded-xl object-cover"
-                            sizes="(max-width: 768px) 50vw, 25vw"
+                            className="rounded-xl object-cover"
+                            sizes="(max-width: 768px) 33vw, 16vw"
                           />
-                          {mediaIndex === 2 && post.media.length > 4 && (
-                            <div className="absolute bottom-1 right-1 rounded-full bg-black/50 px-1 py-0.5 text-[10px] text-white sm:bottom-2 sm:right-2 sm:px-2 sm:py-1 sm:text-xs">
+                        </div>
+                      ))}
+                      {/* Extra images indicator */}
+                      {post.media.length > 3 && (
+                        <div
+                          className="relative"
+                          onClick={() =>
+                            handleMediaClick(
+                              3,
+                              post.media.map((media) => media.url),
+                            )
+                          }
+                        >
+                          <Image
+                            fill
+                            src={
+                              (post?.media[3]?.url as string) ||
+                              "/placeholder.svg"
+                            }
+                            alt="Post media"
+                            className="rounded-xl object-cover"
+                            sizes="(max-width: 768px) 33vw, 16vw"
+                          />
+                          {post.media.length > 4 && (
+                            <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/50 text-sm font-semibold text-white">
                               +{post.media.length - 4}
                             </div>
                           )}
                         </div>
-                      ))}
+                      )}
                     </div>
                   </div>
                 )}
@@ -836,8 +875,8 @@ const PostCard = ({
                     ? "liked"
                     : "initial"
                   : post.likes?.some(
-                    (like) => like.userId === session.data?.user.id,
-                  )
+                        (like) => like.userId === session.data?.user.id,
+                      )
                     ? "liked"
                     : "initial"
               }
@@ -852,8 +891,8 @@ const PostCard = ({
                   <GoHeart className="size-5" />
                 )
               ) : post.likes?.some(
-                (like) => like.userId === session.data?.user.id,
-              ) ? (
+                  (like) => like.userId === session.data?.user.id,
+                ) ? (
                 <GoHeartFill className="size-5 text-red-500" />
               ) : (
                 <GoHeart className="size-5" />
@@ -894,8 +933,8 @@ const PostCard = ({
                     ? "bookmarked"
                     : "initial"
                   : post.bookmarks.some(
-                    (bookmark) => bookmark.userId === session.data?.user.id,
-                  )
+                        (bookmark) => bookmark.userId === session.data?.user.id,
+                      )
                     ? "bookmarked"
                     : "initial"
               }
@@ -910,8 +949,8 @@ const PostCard = ({
                   <HiOutlineBookmark className="size-5" />
                 )
               ) : post.bookmarks.some(
-                (bookmark) => bookmark.userId === session.data?.user.id,
-              ) ? (
+                  (bookmark) => bookmark.userId === session.data?.user.id,
+                ) ? (
                 <HiBookmark className="size-5 text-primary" />
               ) : (
                 <HiOutlineBookmark className="size-5" />
@@ -1029,13 +1068,13 @@ const PostCard = ({
               <div className="flex w-full flex-col px-6 pb-3">
                 <div className="mb-2 font-geist text-3xl font-medium">
                   {(post.access as unknown as string) ===
-                    (PostAccess.public as unknown as string)
+                  (PostAccess.public as unknown as string)
                     ? "Make Post Private"
                     : "Make Post Public"}
                 </div>
                 <p className="mb-6 font-geist text-muted-foreground">
                   {(post.access as unknown as string) ===
-                    (PostAccess.public as unknown as string)
+                  (PostAccess.public as unknown as string)
                     ? "Are you sure you want to make this post private? This will hide it from other users."
                     : "Are you sure you want to make this post public? This will make it visible to other users."}
                 </p>
