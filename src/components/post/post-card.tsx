@@ -775,73 +775,36 @@ const PostCard = ({
                     </div>
 
                     {/* Thumbnail column (1/3 width) */}
-                    <div className="gap-1 sm:gap-2 grid grid-rows-2 h-full">
-                      {/* Always show 2nd and 3rd images */}
-                      {post.media.slice(1, 3).map((media, mediaIndex) => (
-                        <div
-                          key={media.id}
-                          className="relative w-full h-full"
-                          onClick={() =>
-                            handleMediaClick(
-                              mediaIndex + 1,
-                              post.media.map((media) => media.url),
-                            )
-                          }
-                        >
-                          <Image
-                            fill
-                            src={media.url || "/placeholder.svg"}
-                            alt="Post media"
-                            className="rounded-xl object-cover"
-                            sizes="(max-width: 768px) 33vw, 16vw"
-                          />
-                        </div>
-                      ))}
-
-                      {/* Show 4th image if exists (without +X badge) */}
-                      {post.media.length === 4 && (
-                        <div
-                          className="relative"
-                          onClick={() =>
-                            handleMediaClick(
-                              3,
-                              post.media.map((media) => media.url),
-                            )
-                          }
-                        >
-                          <Image
-                            fill
-                            src={post.media[3].url || "/placeholder.svg"}
-                            alt="Post media"
-                            className="rounded-xl object-cover"
-                            sizes="(max-width: 768px) 33vw, 16vw"
-                          />
-                        </div>
-                      )}
-
-                      {/* Show +X badge only when there are more than 4 images */}
-                      {post.media.length > 4 && (
-                        <div
-                          className="relative"
-                          onClick={() =>
-                            handleMediaClick(
-                              3,
-                              post.media.map((media) => media.url),
-                            )
-                          }
-                        >
-                          <Image
-                            fill
-                            src={post.media[3].url || "/placeholder.svg"}
-                            alt="Post media"
-                            className="rounded-xl object-cover"
-                            sizes="(max-width: 768px) 33vw, 16vw"
-                          />
-                          <div className="absolute inset-0 flex justify-center items-center bg-black/50 rounded-xl font-semibold text-white text-sm">
-                            +{post.media.length - 4}
+                    <div
+                      className={`grid h-full ${post.media.length === 3 ? "grid-rows-2" : "grid-rows-3"} gap-1 sm:gap-2`}
+                    >
+                      {post.media
+                        .slice(1, post.media.length === 4 ? 4 : 3)
+                        .map((media, mediaIndex) => (
+                          <div
+                            key={media.id}
+                            className="relative w-full h-full"
+                            onClick={() =>
+                              handleMediaClick(
+                                mediaIndex + 1,
+                                post.media.map((media) => media.url),
+                              )
+                            }
+                          >
+                            <Image
+                              fill
+                              src={media.url || "/placeholder.svg"}
+                              alt="Post media"
+                              className="rounded-xl object-cover"
+                              sizes="(max-width: 768px) 33vw, 16vw"
+                            />
+                            {mediaIndex === 2 && post.media.length > 4 && (
+                              <div className="absolute inset-0 flex justify-center items-center bg-black/50 rounded-xl font-semibold text-white text-sm">
+                                +{post.media.length - 4}
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      )}
+                        ))}
                     </div>
                   </div>
                 )}
