@@ -708,7 +708,7 @@ const PostCard = ({
                 {/* 1 Image - Full width */}
                 {post.media.length === 1 && (
                   <div
-                    className="relative w-full aspect-video"
+                    className="relative p-1 border border-border w-fit rounded-2xl"
                     onClick={() =>
                       handleMediaClick(
                         0,
@@ -717,11 +717,13 @@ const PostCard = ({
                     }
                   >
                     <Image
-                      fill
                       src={post.media[0].url || "/placeholder.svg"}
+                      width={400}
+                      height={500}
                       alt="Post media"
                       className="rounded-xl object-cover"
                       sizes="(max-width: 768px) 100vw, 50vw"
+                      style={{width:'auto', height:'auto', maxHeight:'400px'}}
                     />
                   </div>
                 )}
