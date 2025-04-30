@@ -76,9 +76,8 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: [
-    "http://192.168.1.6:3000",
     "http://localhost:3000",
-    "https://nerdspacer.com",
+    "https://1.nerdspacer.com",
     "https://nerd-space-kappa.vercel.app/",
   ],
   session: {
