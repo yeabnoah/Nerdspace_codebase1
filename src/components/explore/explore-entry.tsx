@@ -18,8 +18,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useDebounce } from "@/hooks/use-debounce";
-import PostCommentInterface from "@/interface/auth/comment.interface";
-import postInterface from "@/interface/auth/post.interface";
+import type PostCommentInterface from "@/interface/auth/comment.interface";
+import type postInterface from "@/interface/auth/post.interface";
 import useSearchStore from "@/store/search.store";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -31,7 +31,7 @@ import {
   Filter,
   Loader2,
   Search,
-  SortAsc
+  SortAsc,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -57,8 +57,6 @@ interface User {
   };
 }
 
-
-
 interface Project {
   id: string;
   name: string;
@@ -82,10 +80,10 @@ interface Comment {
 const ITEMS_PER_PAGE = 10;
 
 const NoResultsFound = ({ type }: { type: string }) => (
-  <div className="flex flex-col items-center justify-center py-12 text-center">
-    <Search className="h-12 w-12 text-muted-foreground" />
-    <h3 className="mt-4 text-lg font-semibold">No {type} found</h3>
-    <p className="mt-2 text-sm text-muted-foreground">
+  <div className="flex flex-col justify-center items-center py-12 text-center">
+    <Search className="w-12 h-12 text-muted-foreground" />
+    <h3 className="mt-4 font-semibold text-lg">No {type} found</h3>
+    <p className="mt-2 text-muted-foreground text-sm">
       Try adjusting your search or filters to find what you&apos;re looking for
     </p>
   </div>
@@ -157,12 +155,12 @@ const ExploreEntry = () => {
         animate={{ opacity: 1, y: 0 }}
         className="relative flex-1"
       >
-        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground sm:h-5 sm:w-5" />
+        <Search className="top-1/2 left-4 absolute w-4 sm:w-5 h-4 sm:h-5 text-muted-foreground -translate-y-1/2" />
         <Input
           placeholder="Search anything..."
           value={query}
           onChange={handleQueryChange}
-          className="h-12 w-full rounded-xl border-none bg-card/40 pl-10 pr-4 text-base shadow-sm backdrop-blur-sm transition-all duration-300 focus:bg-card/60 focus:ring-2 focus:ring-primary/20 sm:h-14 sm:pl-12 sm:text-lg"
+          className="bg-card/40 focus:bg-card/60 shadow-sm backdrop-blur-sm pr-4 pl-10 sm:pl-12 border-none rounded-xl focus:ring-2 focus:ring-primary/20 w-full h-12 sm:h-14 text-base sm:text-lg transition-all duration-300"
         />
       </motion.div>
     ),
@@ -197,11 +195,11 @@ const ExploreEntry = () => {
         className="w-full sm:w-40"
       >
         <Select value={sortBy} onValueChange={handleSortChange}>
-          <SelectTrigger className="h-12 w-full rounded-xl border-none bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 focus:ring-2 focus:ring-primary/20 sm:h-14">
-            <SortAsc className="mr-2 h-4 w-4 text-muted-foreground" />
+          <SelectTrigger className="bg-card/40 shadow-sm backdrop-blur-sm border-none rounded-xl focus:ring-2 focus:ring-primary/20 w-full h-12 sm:h-14 transition-all duration-300">
+            <SortAsc className="mr-2 w-4 h-4 text-muted-foreground" />
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
-          <SelectContent className="rounded-xl border-none bg-card/80 shadow-lg backdrop-blur-sm">
+          <SelectContent className="bg-card/80 shadow-lg backdrop-blur-sm border-none rounded-xl">
             <SelectItem value="relevance">Relevance</SelectItem>
             <SelectItem value="newest">Newest</SelectItem>
             {/* <SelectItem value="popular">Most Popular</SelectItem> */}
@@ -223,9 +221,9 @@ const ExploreEntry = () => {
           <SheetTrigger asChild>
             <Button
               variant="outline"
-              className="h-12 rounded-xl border-none bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 focus:ring-2 focus:ring-primary/20 sm:h-14"
+              className="bg-card/40 shadow-sm backdrop-blur-sm border-none rounded-xl focus:ring-2 focus:ring-primary/20 h-12 sm:h-14 transition-all duration-300"
             >
-              <Filter className="mr-2 h-4 w-4" />
+              <Filter className="mr-2 w-4 h-4" />
               Filters
             </Button>
           </SheetTrigger>
@@ -235,7 +233,7 @@ const ExploreEntry = () => {
                 Search Filters
               </SheetTitle>
             </SheetHeader>
-            <div className="mt-4 space-y-4">
+            <div className="space-y-4 mt-4">
               {type === "user" && (
                 <div className="space-y-2">
                   <Label>Followers</Label>
@@ -260,7 +258,7 @@ const ExploreEntry = () => {
               )}
               {/* Add more filter options as needed */}
             </div>
-            <div className="flex h-full w-full items-center justify-center font-instrument text-xl">
+            <div className="flex justify-center items-center w-full h-full font-instrument text-xl">
               Will add filtering features soon ..
             </div>
           </SheetContent>
@@ -271,31 +269,31 @@ const ExploreEntry = () => {
   );
 
   return (
-    <div className="relative mx-auto max-w-7xl p-4 sm:p-6">
+    <div className="relative mx-auto p-4 sm:p-6 max-w-7xl">
       {/* Glow effects */}
-      <div className="absolute hidden md:block -right-10 -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
-      <div className="absolute hidden md:block -bottom-20 -left-10 h-[300px] w-[300px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 to-transparent blur-[80px] dark:from-indigo-300/10"></div>
+      <div className="hidden md:block -top-20 -right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45"></div>
+      <div className="hidden md:block -bottom-20 -left-10 absolute bg-gradient-to-tl from-blue-300/10 dark:from-indigo-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] rotate-45"></div>
 
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-3 text-start font-geist text-3xl font-medium text-primary"
+        className="mb-3 font-geist font-medium text-primary text-3xl text-start"
       >
         Explore
       </motion.h1>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8 flex flex-col gap-4 rounded-xl bg-card/40 p-4 shadow-sm backdrop-blur-sm supports-[backdrop-filter]:bg-card/60 sm:mb-12 sm:flex-row sm:items-center sm:p-6"
+        className="flex sm:flex-row flex-col sm:items-center gap-4 bg-card/40 supports-[backdrop-filter]:bg-card/60 shadow-sm backdrop-blur-sm mb-8 sm:mb-12 p-4 sm:p-6 rounded-xl"
       >
         <div className="flex-1">{searchInput}</div>
         <div className="flex gap-2">
           <Select value={type} onValueChange={handleTypeChange}>
-            <SelectTrigger className="h-12 w-40 rounded-xl border-none bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 focus:ring-2 focus:ring-primary/20 sm:h-14">
-              <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
+            <SelectTrigger className="bg-card/40 shadow-sm backdrop-blur-sm border-none rounded-xl focus:ring-2 focus:ring-primary/20 w-40 h-12 sm:h-14 transition-all duration-300">
+              <Filter className="mr-2 w-4 h-4 text-muted-foreground" />
               <SelectValue placeholder="Filter" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-none bg-card/80 shadow-lg backdrop-blur-sm">
+            <SelectContent className="bg-card/80 shadow-lg backdrop-blur-sm border-none rounded-xl">
               <SelectItem value="all">All</SelectItem>
               <SelectItem value="user">Users</SelectItem>
               <SelectItem value="post">Posts</SelectItem>
@@ -310,7 +308,7 @@ const ExploreEntry = () => {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mb-4 text-center text-destructive"
+          className="mb-4 text-destructive text-center"
         >
           Error: {error.message}
         </motion.p>
@@ -319,9 +317,9 @@ const ExploreEntry = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="flex items-center justify-center py-8"
+          className="flex justify-center items-center py-8"
         >
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </motion.div>
       )}
 
@@ -332,8 +330,8 @@ const ExploreEntry = () => {
               {/* Users Section */}
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <h2 className="text-2xl font-semibold">Users</h2>
-                  <div className="dark:bg-border-gray-500/50 h-px flex-1 bg-border" />
+                  <h2 className="font-semibold text-2xl">Users</h2>
+                  <div className="flex-1 bg-border dark:bg-border-gray-500/50 h-px" />
                 </div>
                 {filteredResults.users?.length > 0 ? (
                   <UsersCard users={filteredResults.users} />
@@ -345,8 +343,8 @@ const ExploreEntry = () => {
               {/* Posts Section */}
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <h2 className="text-2xl font-semibold">Posts</h2>
-                  <div className="dark:bg-border-gray-500/50 h-px flex-1 bg-border" />
+                  <h2 className="font-semibold text-2xl">Posts</h2>
+                  <div className="flex-1 bg-border dark:bg-border-gray-500/50 h-px" />
                 </div>
                 {filteredResults.posts?.length > 0 ? (
                   <PostsCard posts={filteredResults.posts} />
@@ -358,8 +356,8 @@ const ExploreEntry = () => {
               {/* Projects Section */}
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <h2 className="text-2xl font-semibold">Projects</h2>
-                  <div className="dark:bg-border-gray-500/50 h-px flex-1 bg-border" />
+                  <h2 className="font-semibold text-2xl">Projects</h2>
+                  <div className="flex-1 bg-border dark:bg-border-gray-500/50 h-px" />
                 </div>
                 {filteredResults.projects?.length > 0 ? (
                   <ProjectsCard projects={filteredResults.projects} />
@@ -397,9 +395,9 @@ const ExploreEntry = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center justify-center py-4"
+            className="flex justify-center items-center py-4"
           >
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            <Loader2 className="w-6 h-6 text-primary animate-spin" />
           </motion.div>
         )}
       </div>
@@ -411,27 +409,27 @@ const UsersCard = ({ users }: { users: User[] }) => {
   const router = useRouter();
 
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="gap-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {users.map((user) => (
         <div
           key={user.id}
-          className="group relative overflow-hidden rounded-2xl border-none bg-gradient-to-br from-zinc-100 via-white to-zinc-50 shadow-md transition-all duration-300 hover:scale-[1.02] dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black"
+          className="group relative bg-gradient-to-br from-zinc-100 dark:from-zinc-900 via-white dark:via-zinc-800/10 to-zinc-50 dark:to-black shadow-md border-none rounded-2xl overflow-hidden hover:scale-[1.02] transition-all duration-300"
         >
           {/* Content container */}
-          <div className="relative z-10 flex flex-col p-6">
+          <div className="z-10 relative flex flex-col p-6">
             {/* Avatar and basic info */}
             <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16 ring-2 ring-white dark:ring-zinc-800">
+              <Avatar className="ring-2 ring-white dark:ring-zinc-800 w-16 h-16">
                 <AvatarImage src={user.image || "/user.jpg"} alt={user.name} />
                 <AvatarFallback>
                   {user.name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="font-heading text-lg font-semibold text-zinc-900 dark:text-white">
+                <h3 className="font-heading font-semibold text-zinc-900 dark:text-white text-lg">
                   {user.name}
                 </h3>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                <p className="text-zinc-500 dark:text-zinc-400 text-sm">
                   @{user.nerdAt}
                 </p>
               </div>
@@ -439,26 +437,26 @@ const UsersCard = ({ users }: { users: User[] }) => {
 
             {/* Bio section */}
             {user.bio && (
-              <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-zinc-600 dark:text-white/80">
+              <p className="mt-4 text-zinc-600 dark:text-white/80 text-sm line-clamp-2 leading-relaxed">
                 {user.bio}
               </p>
             )}
 
             {/* Stats section */}
-            <div className="mt-6 grid grid-cols-2 gap-4 rounded-xl bg-zinc-100/50 p-4 dark:bg-zinc-800/20">
+            <div className="gap-4 grid grid-cols-2 bg-zinc-100/50 dark:bg-zinc-800/20 mt-6 p-4 rounded-xl">
               <div className="flex flex-col items-center gap-1">
-                <span className="text-lg font-semibold text-zinc-900 dark:text-white">
+                <span className="font-semibold text-zinc-900 dark:text-white text-lg">
                   {user._count?.followers || 0}
                 </span>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                <span className="text-zinc-500 dark:text-zinc-400 text-xs">
                   Followers
                 </span>
               </div>
               <div className="flex flex-col items-center gap-1">
-                <span className="text-lg font-semibold text-zinc-900 dark:text-white">
+                <span className="font-semibold text-zinc-900 dark:text-white text-lg">
                   {user._count?.posts || 0}
                 </span>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                <span className="text-zinc-500 dark:text-zinc-400 text-xs">
                   Posts
                 </span>
               </div>
@@ -466,11 +464,11 @@ const UsersCard = ({ users }: { users: User[] }) => {
 
             {/* Action button */}
             <Button
-              className="mt-6 w-full gap-2 bg-transparent text-black shadow-none transition-all hover:bg-transparent dark:text-white"
+              className="gap-2 bg-transparent hover:bg-transparent shadow-none mt-6 w-full text-black dark:text-white transition-all"
               onClick={() => router.push(`/user-profile/${user.id}`)}
             >
               View Profile
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -482,11 +480,19 @@ const UsersCard = ({ users }: { users: User[] }) => {
 const PostsCard = ({ posts }: { posts: postInterface[] }) => {
   const router = useRouter();
   const [expandedStates, setExpandedStates] = useState<boolean[]>([]);
-  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>({});
-  const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
+  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>(
+    {},
+  );
+  const [expandedComments, setExpandedComments] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [replyShown, setReplyShown] = useState<{ [key: string]: boolean }>({});
-  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
-  const [expandedReplies, setExpandedReplies] = useState<{ [key: string]: boolean }>({});
+  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>(
+    {},
+  );
+  const [expandedReplies, setExpandedReplies] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [modalEditOpened, setModalEditOpened] = useState(false);
   const [modalDeleteOpened, setModalDeleteOpened] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -671,40 +677,40 @@ const ProjectsCard = ({ projects }: { projects: Project[] }) => {
   const router = useRouter();
 
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="gap-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {projects.map((project) => (
         <div
           key={project.id}
           onClick={() => router.push(`/project/${project.id}`)}
-          className="group relative h-[380px] w-full max-w-sm cursor-pointer overflow-hidden rounded-2xl border-none bg-gradient-to-br from-zinc-100 via-white to-zinc-50 shadow-md transition-all duration-300 hover:scale-[1.02] dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black"
+          className="group relative bg-gradient-to-br from-zinc-100 dark:from-zinc-900 via-white dark:via-zinc-800/10 to-zinc-50 dark:to-black shadow-md border-none rounded-2xl w-full max-w-sm h-[380px] overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer"
         >
           {/* Subtle animated glow effect */}
-          <div className="absolute inset-0 z-0 bg-gradient-to-br from-violet-500/5 via-transparent to-emerald-500/5 opacity-0 blur-xl transition-opacity duration-700 group-hover:opacity-100 dark:from-violet-500/10 dark:to-emerald-500/10"></div>
+          <div className="z-0 absolute inset-0 bg-gradient-to-br from-violet-500/5 dark:from-violet-500/10 via-transparent to-emerald-500/5 dark:to-emerald-500/10 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700"></div>
 
           {/* Background image with improved overlay */}
-          <div className="absolute inset-0 z-0">
+          <div className="z-0 absolute inset-0">
             <Image
               src={project.image || "/placeholder.svg?height=400&width=600"}
               alt={project.name}
               fill
-              className="object-cover opacity-40 transition-all duration-700 group-hover:scale-105 group-hover:opacity-50 dark:opacity-40 dark:group-hover:opacity-50"
+              className="opacity-40 dark:group-hover:opacity-50 dark:opacity-40 group-hover:opacity-50 object-cover group-hover:scale-105 transition-all duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-white/40 dark:from-black dark:via-black/80 dark:to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-black via-white/80 dark:via-black/80 to-white/40 dark:to-transparent"></div>
           </div>
 
           {/* Content container with better spacing */}
-          <div className="relative z-10 flex h-full flex-col p-6">
+          <div className="z-10 relative flex flex-col p-6 h-full">
             {/* Top section with date badge */}
-            <div className="mb-auto flex w-full items-start justify-between">
+            <div className="flex justify-between items-start mb-auto w-full">
               {/* Modern date badge */}
-              <div className="overflow-hidden rounded-xl bg-zinc-800/10 backdrop-blur-md dark:bg-white/10">
-                <div className="bg-zinc-800 px-3 py-1 text-center text-[10px] font-semibold text-white dark:bg-black/60">
+              <div className="bg-zinc-800/10 dark:bg-white/10 backdrop-blur-md rounded-xl overflow-hidden">
+                <div className="bg-zinc-800 dark:bg-black/60 px-3 py-1 font-semibold text-[10px] text-white text-center">
                   {new Date(project.createdAt)
                     .toLocaleString("default", { month: "short" })
                     .toUpperCase()}
                 </div>
                 <div className="px-3 py-1.5 text-center">
-                  <div className="text-lg font-bold text-zinc-800 dark:text-white">
+                  <div className="font-bold text-zinc-800 dark:text-white text-lg">
                     {new Date(project.createdAt).getDate()}
                   </div>
                 </div>
@@ -712,23 +718,23 @@ const ProjectsCard = ({ projects }: { projects: Project[] }) => {
             </div>
 
             {/* Project details with improved typography */}
-            <div className="mt-auto space-y-4">
+            <div className="space-y-4 mt-auto">
               {/* Status badge */}
               <Badge
                 variant="outline"
-                className="border-emerald-500/50 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                className="bg-emerald-500/10 border-emerald-500/50 text-emerald-700 dark:text-emerald-400"
               >
                 Active
               </Badge>
 
               {/* Title with better typography */}
-              <h2 className="font-heading font-instrument text-2xl font-bold leading-tight text-zinc-900 dark:text-white">
+              <h2 className="font-heading font-instrument font-bold text-zinc-900 dark:text-white text-2xl leading-tight">
                 {project.name}
               </h2>
 
               {/* Timestamp with icon */}
-              <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-white/60">
-                <Calendar className="h-3 w-3" />
+              <div className="flex items-center gap-1.5 text-zinc-500 dark:text-white/60 text-xs">
+                <Calendar className="w-3 h-3" />
                 <span>
                   {formatDistanceToNow(new Date(project.createdAt), {
                     addSuffix: true,
@@ -737,20 +743,20 @@ const ProjectsCard = ({ projects }: { projects: Project[] }) => {
               </div>
 
               {/* Description with better readability */}
-              <p className="line-clamp-2 text-xs leading-relaxed text-zinc-600 dark:text-white/80">
+              <p className="text-zinc-600 dark:text-white/80 text-xs line-clamp-2 leading-relaxed">
                 {project.description}
               </p>
 
               {/* Action button with hover effect */}
-              <Button className="mt-4 w-full gap-2 bg-transparent text-black shadow-none transition-all hover:bg-transparent dark:text-white">
+              <Button className="gap-2 bg-transparent hover:bg-transparent shadow-none mt-4 w-full text-black dark:text-white transition-all">
                 View Project
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
           </div>
 
           {/* Subtle border glow on hover */}
-          <div className="absolute inset-0 rounded-2xl border border-zinc-200 transition-all duration-300 group-hover:border-zinc-300 dark:border-white/5 dark:group-hover:border-white/10"></div>
+          <div className="absolute inset-0 border border-zinc-200 dark:border-white/5 dark:group-hover:border-white/10 group-hover:border-zinc-300 rounded-2xl transition-all duration-300"></div>
         </div>
       ))}
     </div>
@@ -758,31 +764,31 @@ const ProjectsCard = ({ projects }: { projects: Project[] }) => {
 };
 
 // const CommunitiesCard = ({ communities }: { communities: any[] }) => (
-//   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+//   <div className="gap-4 sm:gap-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 //     {communities.map((community) => (
 //       <Card
 //         key={community.id}
-//         className="group border-border/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+//         className="group hover:shadow-lg border-border/50 hover:scale-[1.02] transition-all duration-300"
 //       >
-//         <CardHeader className="flex flex-row items-center gap-3 p-4 sm:gap-4 sm:p-6">
+//         <CardHeader className="flex flex-row items-center gap-3 sm:gap-4 p-4 sm:p-6">
 //           {community.image ? (
 //             <img
 //               src={community.image}
 //               alt={community.name}
-//               className="h-12 w-12 rounded-full object-cover ring-2 ring-primary/20 transition-all duration-300 group-hover:ring-primary/40 sm:h-16 sm:w-16"
+//               className="rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 w-12 sm:w-16 h-12 sm:h-16 object-cover transition-all duration-300"
 //             />
 //           ) : (
-//             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 sm:h-16 sm:w-16">
-//               <span className="text-xl font-bold text-primary/60 sm:text-2xl">
+//             <div className="flex justify-center items-center bg-primary/10 rounded-full w-12 sm:w-16 h-12 sm:h-16">
+//               <span className="font-bold text-primary/60 text-xl sm:text-2xl">
 //                 {community.name[0]}
 //               </span>
 //             </div>
 //           )}
 //           <div>
-//             <CardTitle className="text-base font-semibold sm:text-lg">
+//             <CardTitle className="font-semibold text-base sm:text-lg">
 //               {community.name}
 //             </CardTitle>
-//             <p className="text-xs text-muted-foreground sm:text-sm">
+//             <p className="text-muted-foreground text-xs sm:text-sm">
 //               @{community.nerdAt}
 //             </p>
 //           </div>

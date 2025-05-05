@@ -46,11 +46,19 @@ export default function ProfilePage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [expandedStates, setExpandedStates] = useState<boolean[]>([]);
-  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>({});
-  const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
+  const [commentShown, setCommentShown] = useState<{ [key: string]: boolean }>(
+    {},
+  );
+  const [expandedComments, setExpandedComments] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [replyShown, setReplyShown] = useState<{ [key: string]: boolean }>({});
-  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
-  const [expandedReplies, setExpandedReplies] = useState<{ [key: string]: boolean }>({});
+  const [replyContent, setReplyContent] = useState<{ [key: string]: string }>(
+    {},
+  );
+  const [expandedReplies, setExpandedReplies] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [modalEditOpened, setEditModal] = useState(false);
   const [modalDeleteOpened, setDeleteModal] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -188,36 +196,36 @@ export default function ProfilePage() {
 
   if (isloading || isFetching || isPending) {
     return (
-      <div className="container relative mx-10 pb-8 font-geist mt-5">
-        <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
+      <div className="relative md:mx-10 mt-5 pb-8 font-geist container">
+        <div className="hidden md:block -top-20 md:-right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45" />
 
-        <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl shadow-lg md:h-[250px]">
-          <Skeleton className="h-full w-full" />
+        <div className="group relative shadow-lg mb-12 rounded-2xl w-full h-[400px] md:h-[250px] overflow-hidden">
+          <Skeleton className="w-full h-full" />
         </div>
 
-        <div className="relative z-10 mx-2 my-5 -mt-16 flex flex-col items-start gap-1">
-          <div className="relative mx-5 -mt-16 h-28 w-28 overflow-hidden rounded-full ring-2 ring-white/20">
-            <Skeleton className="h-full w-full rounded-full" />
+        <div className="z-10 relative flex flex-col items-start gap-1 mx-2 my-5 -mt-16">
+          <div className="relative mx-5 -mt-16 rounded-full ring-2 ring-white/20 w-28 h-28 overflow-hidden">
+            <Skeleton className="rounded-full w-full h-full" />
           </div>
           <div className="flex flex-col gap-2">
-            <Skeleton className="h-6 w-48" />
-            <Skeleton className="h-4 w-32" />
+            <Skeleton className="w-48 h-6" />
+            <Skeleton className="w-32 h-4" />
             <div className="flex gap-4">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-4 w-24" />
+              <Skeleton className="w-24 h-4" />
+              <Skeleton className="w-24 h-4" />
             </div>
           </div>
         </div>
 
         <div className="mt-8">
           <div className="space-y-8 lg:col-span-2">
-            <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-black">
+            <div className="bg-white dark:bg-black shadow-sm border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden">
               <div className="p-8">
                 <div className="mb-4">
-                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="w-full h-10" />
                 </div>
                 <div className="mt-4">
-                  <Skeleton className="h-64 w-full" />
+                  <Skeleton className="w-full h-64" />
                 </div>
               </div>
             </div>
@@ -228,10 +236,10 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container relative mx-10 pb-8 font-geist mt-5">
-      <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
+    <div className="relative md:mx-10 mt-5 pb-8 font-geist container">
+      <div className="hidden md:block -top-20 md:-right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45" />
 
-      <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-xl shadow-lg md:h-[250px]">
+      <div className="group relative shadow-lg mb-12 rounded-xl w-full h-[250px] md:h-[400px] overflow-hidden">
         <Image
           src={user.coverImage || "/obsession.jpg"}
           alt="Cover Image"
@@ -241,47 +249,47 @@ export default function ProfilePage() {
           priority={true}
           sizes="100vw"
         />
-        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 via-zinc-900/60 to-transparent p-8 dark:from-black/80 dark:via-black/50">
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
+        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 dark:from-black/80 via-zinc-900/60 dark:via-black/50 to-transparent p-8">
+          <div className="right-0 bottom-0 left-0 absolute bg-gradient-to-t from-zinc-900/90 dark:from-black to-transparent h-32"></div>
         </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="absolute right-4 top-4 rounded-full bg-black p-2">
-              <SettingsIcon className="size-4 cursor-pointer rounded-full text-white" />
+            <button className="top-4 right-4 absolute bg-black p-2 rounded-full">
+              <SettingsIcon className="rounded-full size-4 text-white cursor-pointer" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-48 rounded-2xl border-none bg-white/80 shadow-lg backdrop-blur-sm dark:bg-black/80"
+            className="bg-white/80 dark:bg-black/80 shadow-lg backdrop-blur-sm border-none rounded-2xl w-48"
           >
             <DropdownMenuItem
               onClick={() => router.push("/settings")}
-              className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+              className="hover:bg-black/70 rounded-xl h-10 cursor-pointer"
             >
-              <SettingsIcon className="mr-2 h-4 w-4" />
+              <SettingsIcon className="mr-2 w-4 h-4" />
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => router.push("/settings?tab=account")}
-              className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+              className="hover:bg-black/70 rounded-xl h-10 cursor-pointer"
             >
-              <User2 className="mr-2 h-4 w-4" />
+              <User2 className="mr-2 w-4 h-4" />
               <span>Account</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => router.push("/settings?tab=terms")}
-              className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+              className="hover:bg-black/70 rounded-xl h-10 cursor-pointer"
             >
-              <File className="mr-2 h-4 w-4" />
+              <File className="mr-2 w-4 h-4" />
               <span>Terms & Conditions</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      <div className="relative z-10 mx-2 my-5 -mt-8 ml-5 flex flex-col items-start gap-1">
-        <div className="relative h-20 w-20 -mt-16 shrink-0 overflow-hidden rounded-full ring-2 ring-white/20">
+      <div className="z-10 relative flex flex-col items-start gap-1 mx-2 my-5 -mt-8 ml-5">
+        <div className="relative -mt-16 rounded-full ring-2 ring-white/20 w-20 h-20 overflow-hidden shrink-0">
           <Image
             src={user.image || "/user.jpg?height=128&width=128"}
             alt={user.visualName || user.name}
@@ -291,20 +299,20 @@ export default function ProfilePage() {
           />
         </div>
 
-        <div className="flex w-full flex-col">
-          <div className="flex items-start justify-between">
+        <div className="flex flex-col w-full">
+          <div className="flex justify-between items-start">
             <div className="flex flex-col">
-              <h1 className="font-geist text-xl font-medium text-foreground">
+              <h1 className="font-geist font-medium text-foreground text-xl">
                 {user.visualName || user.name}
               </h1>
               <div className="flex items-center gap-2">
-                <p className="font-geist text-sm text-muted-foreground">
+                <p className="font-geist text-muted-foreground text-sm">
                   Nerd@{user.nerdAt}
                 </p>
                 {user.country && (
                   <>
-                    <Dot className="h-4 w-4 text-muted-foreground" />
-                    <p className="font-geist text-sm text-muted-foreground">
+                    <Dot className="w-4 h-4 text-muted-foreground" />
+                    <p className="font-geist text-muted-foreground text-sm">
                       {user.country.emoji} {user.country.name}
                     </p>
                   </>
@@ -315,11 +323,11 @@ export default function ProfilePage() {
             <div className="flex flex-col items-start gap-2">
               {user.link && (
                 <div className="flex items-center gap-2">
-                  <LinkIcon className="h-4 w-4 text-muted-foreground" />
-                  <a 
+                  <LinkIcon className="w-4 h-4 text-muted-foreground" />
+                  <a
                     href={user.link}
                     target="_blank"
-                    rel="noopener noreferrer" 
+                    rel="noopener noreferrer"
                     className="font-geist text-purple-500 text-sm hover:underline"
                   >
                     {user.link}
@@ -331,7 +339,7 @@ export default function ProfilePage() {
 
           <div className="flex flex-col gap-2 mt-1">
             <div className="flex items-center">
-              <p className="font-geist text-sm text-muted-foreground">
+              <p className="font-geist text-muted-foreground text-sm">
                 {user.bio || "No bio"}
               </p>
             </div>
@@ -339,19 +347,19 @@ export default function ProfilePage() {
             <div className="flex items-center gap-4">
               <Link
                 href={`/profile/${user.id}/followers`}
-                className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-5 py-2.5 shadow-sm hover:bg-gray-50 dark:border-gray-500/10 dark:bg-black dark:hover:bg-gray-900"
+                className="flex items-center gap-2 bg-white hover:bg-gray-50 dark:bg-black dark:hover:bg-gray-900 shadow-sm px-5 py-2.5 border border-gray-100 dark:border-gray-500/10 rounded-full"
               >
-                <Users className="h-4 w-4" />
-                <span className="font-geist text-sm font-medium">
+                <Users className="w-4 h-4" />
+                <span className="font-geist font-medium text-sm">
                   {user._count?.following || 0} Followers
                 </span>
               </Link>
               <Link
                 href={`/profile/${user.id}/following`}
-                className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-5 py-2.5 shadow-sm hover:bg-gray-50 dark:border-gray-500/10 dark:bg-black dark:hover:bg-gray-900"
+                className="flex items-center gap-2 bg-white hover:bg-gray-50 dark:bg-black dark:hover:bg-gray-900 shadow-sm px-5 py-2.5 border border-gray-100 dark:border-gray-500/10 rounded-full"
               >
-                <Users className="h-4 w-4" />
-                <span className="font-geist text-sm font-medium">
+                <Users className="w-4 h-4" />
+                <span className="font-geist font-medium text-sm">
                   {user._count?.followers || 0} Following
                 </span>
               </Link>
@@ -361,47 +369,55 @@ export default function ProfilePage() {
       </div>
       <div className="">
         <div className="space-y-8 lg:col-span-2">
-          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-black">
-            <CardContent className="p-8">
+          <Card className="bg-white dark:bg-black shadow-sm border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden">
+            <CardContent className="md:p-8 px-2 py-4">
               <Tabs
                 defaultValue="posts"
                 className="w-full"
                 onValueChange={setActiveTab}
               >
-                <TabsList className="scrollbar-hide mb-2 flex h-12 justify-start overflow-x-auto bg-transparent">
+                <TabsList className="flex justify-start bg-transparent mb-2 h-12 overflow-x-auto scrollbar-hide">
                   <TabsTrigger
                     value="posts"
-                    className="h-10 rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    className="data-[state=active]:bg-primary rounded-full h-10 data-[state=active]:text-primary-foreground"
                   >
-                    <Grid3X3 className="mr-2 h-4 w-4" />
-                    <span className="hidden sm:inline">Posts</span>
+                    <Grid3X3 className="mr-2 w-4 h-4" />
+                    <span className="hidden data-[state=active]:inline sm:inline">
+                      Posts
+                    </span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="projects"
-                    className="h-10 rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    className="data-[state=active]:bg-primary rounded-full h-10 data-[state=active]:text-primary-foreground"
                   >
-                    <Hammer className="mr-2 h-4 w-4" />
-                    <span className="hidden sm:inline">Projects</span>
+                    <Hammer className="mr-2 w-4 h-4" />
+                    <span className="hidden data-[state=active]:inline sm:inline">
+                      Projects
+                    </span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="bookmarks"
-                    className="h-10 rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    className="data-[state=active]:bg-primary rounded-full h-10 data-[state=active]:text-primary-foreground"
                   >
-                    <Bookmark className="mr-2 h-4 w-4" />
-                    <span className="hidden sm:inline">Bookmarks</span>
+                    <Bookmark className="mr-2 w-4 h-4" />
+                    <span className="hidden data-[state=active]:inline sm:inline">
+                      Bookmarks
+                    </span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="private"
-                    className="h-10 rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    className="data-[state=active]:bg-primary rounded-full h-10 data-[state=active]:text-primary-foreground"
                   >
-                    <Lock className="mr-2 h-4 w-4" />
-                    <span className="hidden sm:inline">Private</span>
+                    <Lock className="mr-2 w-4 h-4" />
+                    <span className="hidden data-[state=active]:inline sm:inline">
+                      Private
+                    </span>
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="posts" className="mt-0">
                   <div className="space-y-4">
-                    {posts?.map((post : postInterface, index : number) => (
+                    {posts?.map((post: postInterface, index: number) => (
                       <PostCard
                         key={post.id}
                         post={post}
