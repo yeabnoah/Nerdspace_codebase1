@@ -511,14 +511,14 @@ const PostCard = ({
       <div className="absolute inset-0 overflow-visible pointer-events-none">
         {/* Only render these effects on desktop for better performance */}
         <div className="hidden md:block">
-          <div className="-right-4 absolute bg-gradient-to-br from-blue-300/20 via-blue-400/30 to-transparent opacity-60 blur-[100px] rounded-full size-40 -rotate-45"></div>
-          <div className="-bottom-5 left-12 absolute bg-gradient-to-tl from-orange-300/20 via-orange-400/20 to-transparent opacity-60 blur-[100px] rounded-full size-40 rotate-45"></div>
+          <div className="-right-4 absolute bg-gradient-to-br from-blue-300/20 via-blue-400/30 to-transparent opacity-60 blur-[100px] rounded-full size-40 -rotate-45" />
+          <div className="-bottom-5 left-12 absolute bg-gradient-to-tl from-orange-300/20 via-orange-400/20 to-transparent opacity-60 blur-[100px] rounded-full size-40 rotate-45" />
         </div>
       </div>
 
       <div className="relative sm:pl-5 md:pl-3">
-        <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center gap-2 sm:gap-0 mr-2 pb-2 w-full">
-          <div className="flex flex-1 items-center gap-2 sm:gap-3">
+        <div className="flex flex-row justify-between items-center mr-2 pb-2 w-full">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Image
               src={post.user.image || "/user.jpg"}
               alt="user"
@@ -546,13 +546,13 @@ const PostCard = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="flex items-center gap-2">
             {session?.data?.user?.id !== post.user.id &&
               !post.user?.isFollowingAuthor && (
                 <Button
                   variant={"outline"}
                   size="sm"
-                  className={`h-9 w-full rounded-xl bg-transparent px-2 text-xs shadow-none hover:bg-transparent sm:h-11 sm:w-auto md:text-sm`}
+                  className="bg-transparent hover:bg-transparent shadow-none px-2 rounded-xl w-fit sm:w-auto md:w-full h-9 sm:h-11 text-xs md:text-sm"
                   onClick={() => {
                     handleFollow(post);
                   }}
@@ -564,7 +564,9 @@ const PostCard = ({
                     ) : (
                       <Plus size={15} />
                     )}
-                    {followMutation.isPending ? "Following..." : "Follow"}
+                    <span className="hidden md:block font-medium">
+                      {followMutation.isPending ? "Following..." : "Follow"}
+                    </span>
                   </span>
                 </Button>
               )}
@@ -708,7 +710,7 @@ const PostCard = ({
                 {/* 1 Image - Full width */}
                 {post.media.length === 1 && (
                   <div
-                    className="relative p-1 border border-border w-fit rounded-2xl"
+                    className="relative p-1 border border-border rounded-2xl w-fit"
                     onClick={() =>
                       handleMediaClick(
                         0,
@@ -723,7 +725,11 @@ const PostCard = ({
                       alt="Post media"
                       className="rounded-xl object-cover"
                       sizes="(max-width: 768px) 100vw, 50vw"
-                      style={{width:'auto', height:'auto', maxHeight:'400px'}}
+                      style={{
+                        width: "auto",
+                        height: "auto",
+                        maxHeight: "400px",
+                      }}
                     />
                   </div>
                 )}
@@ -1037,7 +1043,7 @@ const PostCard = ({
 
         <Dialog open={isAccessDialogOpen} onOpenChange={setIsAccessDialogOpen}>
           <DialogContent className="backdrop-blur-sm p-0 border-none rounded-xl max-w-md overflow-hidden">
-            <DialogTitle></DialogTitle>
+            <DialogTitle className="hidden">test</DialogTitle>
             {/* Optimized gradient effects */}
             <div className="absolute inset-0 overflow-visible pointer-events-none">
               <div className="-right-4 absolute bg-gradient-to-br from-red-300/40 via-red-400/50 to-transparent opacity-80 blur-[100px] rounded-full size-40 -rotate-45" />
