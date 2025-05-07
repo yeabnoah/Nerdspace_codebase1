@@ -507,7 +507,7 @@ const PostCard = ({
   };
 
   return (
-    <div className="after:top-0 [&>*:last-child]:after:top-0 before:right-0 [&>*:last-child]:after:right-[-17px] before:bottom-0 after:left-0 before:absolute after:absolute [&>*:last-child]:after:absolute relative flex-1 before:bg-gradient-to-r after:bg-gradient-to-b [&>*:last-child]:after:bg-gradient-to-b before:from-transparent after:from-transparent [&>*:last-child]:after:from-transparent before:via-orange-500/10 after:via-blue-500/20 [&>*:last-child]:after:via-blue-500/20 before:to-transparent after:to-transparent [&>*:last-child]:after:to-transparent my-5 p-2 sm:p-4 px-2 sm:px-3 border-transparent border-b w-full before:w-full after:w-[1px] [&>*:last-child]:after:w-[1px] before:h-[1px] after:h-full [&>*:last-child]:after:h-full">
+    <div className="after:top-0 [&>*:last-child]:after:top-0 before:right-0 [&>*:last-child]:after:right-[-17px] before:bottom-0 after:left-0 before:absolute after:absolute [&>*:last-child]:after:absolute relative flex-1 before:bg-gradient-to-r after:bg-gradient-to-b [&>*:last-child]:after:bg-gradient-to-b before:from-transparent after:from-transparent [&>*:last-child]:after:from-transparent md:before:via-orange-500/10 md:after:via-blue-500/20 md:[&>*:last-child]:after:via-blue-500/20 before:to-transparent after:to-transparent [&>*:last-child]:after:to-transparent my-5 p-2 sm:p-4 px-2 sm:px-3 border-transparent border-b w-full before:w-full after:w-[1px] [&>*:last-child]:after:w-[1px] before:h-[1px] after:h-full [&>*:last-child]:after:h-full">
       <div className="absolute inset-0 overflow-visible pointer-events-none">
         {/* Only render these effects on desktop for better performance */}
         <div className="hidden md:block">

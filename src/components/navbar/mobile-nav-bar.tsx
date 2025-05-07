@@ -10,8 +10,8 @@ const navItems = [
   { id: "home", icon: HomeIcon, label: "Home", path: "/" },
   { id: "explore", icon: Search, label: "Explore", path: "/explore" },
   { id: "project", icon: FolderKanbanIcon, label: "Project", path: "/project" },
-  { id: "community", icon: Users, label: "Community", path: "/community" },
-  { id: "events", icon: Clock, label: "Events", path: "/event" },
+  // { id: "community", icon: Users, label: "Community", path: "/community" },
+  // { id: "events", icon: Clock, label: "Events", path: "/event" },
   { id: "nerd-ai", icon: Computer, label: "Nerd AI", path: "/ai" },
 ];
 
@@ -42,7 +42,7 @@ const MobileNavBar = () => {
           >
             <span
               className={cn(
-                "flex items-center my-1 py-1 justify-center w-10 h-10 transition-all duration-200",
+                "flex items-center  justify-center w-10 h-10 transition-all duration-200",
                 isActive
                   ? "bg-primary text-primary-foreground shadow-lg rounded-full"
                   : "text-muted-foreground"
@@ -50,25 +50,25 @@ const MobileNavBar = () => {
             >
               <item.icon size={22} strokeWidth={isActive ? 2.2 : 1.7} />
             </span>
-            {/* <span
+            <span
               className={cn(
-                "mt-1 text-xs font-medium transition-colors duration-200",
+                "text-xs font-medium transition-colors duration-200",
                 isActive
                   ? "text-primary"
                   : "text-muted-foreground"
               )}
             >
               {item.label}
-            </span> */}
+            </span>
             {/* Indicator bar */}
-            <span
+            {/* <span
               className={cn(
-                "absolute left-1/2 -translate-x-1/2 bottom-0 h-1 rounded-full transition-all duration-200",
+                "absolute left-1/2 -translate-x-1/2 bottom-0 mt-5 h-1 rounded-full transition-all duration-200",
                 isActive
                   ? "w-6 bg-primary/80 opacity-80"
                   : "w-0 bg-transparent opacity-0"
               )}
-            />
+            /> */}
           </button>
         );
       })}
