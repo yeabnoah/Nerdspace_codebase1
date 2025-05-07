@@ -29,3 +29,13 @@
   //     "path": "@commitlint/cz-commitlint"
   //   }
   // },
+
+   "@biomejs/biome": "1.9.4",
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "@commitlint/cz-commitlint": "^19.8.0",
+    "@total-typescript/ts-reset": "^0.6.1",
+    "commitizen": "^4.3.1",
+    "cspell": "^8.19.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",

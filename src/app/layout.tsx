@@ -108,7 +108,7 @@ export default function RootLayout({
                 {/* <MobileViewMessage /> */}
                 {/* <NerdspaceOut /> */}
                 {children}
-                <FeedbackButton />
+                {/* <FeedbackButton /> */}
               </PostHogProvider>
             </WhoAmIProvider>
           </TanstackQueryProvider>
