@@ -1,0 +1,31 @@
+ // "clean": "rm -rf .next node_modules *.tsbuildinfo next-env.d.ts",
+    
+    // "format:check": "biome format",
+    // "format:write": "biome format --write",
+    // "generate": "prisma generate",
+    // "lint": "pnpm lint:js && pnpm lint:spell",
+    // "lint:js": "biome check",
+    // "lint:staged": "biome check --write --staged",
+    // "lint:js:write": "biome check --write",
+    // "lint:spell": "cspell \"**/*\" --no-summary --no-progress",
+    // "migrate-deploy": "prisma migrate deploy",
+    // "prepare": "husky",
+    // "prisma-workflow": "pnpm run migrate-deploy && pnpm run generate && pnpm run build",
+    // "start": "next start",
+    // "typecheck": "tsc"
+    // "commitlint": {
+  //   "extends": [
+  //     "@commitlint/config-conventional"
+  //   ]
+  // },
+  // "lint-staged": {
+  //   "*": [
+  //     "cspell --no-must-find-files",
+  //     "biome check --no-errors-on-unmatched"
+  //   ]
+  // },
+  // "config": {
+  //   "commitizen": {
+  //     "path": "@commitlint/cz-commitlint"
+  //   }
+  // },

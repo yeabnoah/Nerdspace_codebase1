@@ -15,12 +15,12 @@ const nextConfig: NextConfig = {
 
   // We remove ESLint
   // run Biome and TypeScript separately in the CI pipeline
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  // eslint: {
+  //   ignoreDuringBuilds: true,
+  // },
+  // typescript: {
+  //   ignoreBuildErrors: true,
+  // },
 
   experimental: {
     // nodeMiddleware: true,
