@@ -53,13 +53,13 @@ export default function LeaderboardPage() {
   const allProjects = data?.pages?.flatMap((page) => page.projects) || [];
 
   return (
-    <div className="container relative mx-auto max-w-5xl py-8">
+    <div className="relative mx-auto py-8 max-w-5xl container">
       {/* Add gradient background effects */}
-      <div className="absolute -bottom-20 -left-20 h-[200px] w-[200px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 via-blue-400/10 to-transparent blur-[80px]"></div>
-      <div className="absolute -right-20 -top-20 h-[200px] w-[200px] -rotate-45 rounded-full bg-gradient-to-br from-orange-300/10 to-transparent blur-[80px]"></div>
+      <div className="-bottom-20 -left-20 absolute bg-gradient-to-tl from-blue-300/10 via-blue-400/10 to-transparent blur-[80px] rounded-full w-[200px] h-[200px] rotate-45"></div>
+      <div className="-top-20 -right-20 absolute bg-gradient-to-br from-orange-300/10 to-transparent blur-[80px] rounded-full w-[200px] h-[200px] -rotate-45"></div>
 
       <div className="relative mb-8 text-center">
-        <h1 className="font-geist mb-2 text-4xl font-medium tracking-tight">
+        <h1 className="mb-2 font-geist font-medium text-4xl tracking-tight">
           Project Leaderboard
         </h1>
         <p className="font-geist text-muted-foreground">
@@ -67,70 +67,70 @@ export default function LeaderboardPage() {
         </p>
       </div>
 
-      <div className="relative mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="relative gap-4 grid grid-cols-1 md:grid-cols-3 mb-6">
         {allProjects.slice(0, 3).length === 3 ? (
           <>
-            {/* Second place */}
-            <div className="group relative h-[380px] w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-100 via-white to-zinc-50 shadow-md transition-all duration-300 hover:scale-[1.02] dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black border-none">
-              <div className="absolute inset-0 z-0 bg-gradient-to-br from-violet-500/5 via-transparent to-emerald-500/5 opacity-0 blur-xl transition-opacity duration-700 group-hover:opacity-100 dark:from-violet-500/10 dark:to-emerald-500/10"></div>
+            {/* Second place - First on mobile, left on desktop */}
+            <div className="group relative order-1 md:order-1 bg-gradient-to-br from-zinc-100 dark:from-zinc-900 via-white dark:via-zinc-800/10 to-zinc-50 dark:to-black shadow-md border-none rounded-2xl w-full max-w-sm h-[280px] md:h-[380px] overflow-hidden hover:scale-[1.02] transition-all duration-300">
+              <div className="z-0 absolute inset-0 bg-gradient-to-br from-violet-500/5 dark:from-violet-500/10 via-transparent to-emerald-500/5 dark:to-emerald-500/10 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700"></div>
 
-              <div className="absolute inset-0 z-0">
+              <div className="z-0 absolute inset-0">
                 <Image
                   src={allProjects[1].image || "/user.jpg"}
                   alt={allProjects[1].name}
                   fill
-                  className="object-cover opacity-40 transition-all duration-700 group-hover:scale-105 group-hover:opacity-50 dark:opacity-40 dark:group-hover:opacity-50"
+                  className="opacity-40 dark:group-hover:opacity-50 dark:opacity-40 group-hover:opacity-50 object-cover group-hover:scale-105 transition-all duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-white/40 dark:from-black dark:via-black/80 dark:to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-black via-white/80 dark:via-black/80 to-white/40 dark:to-transparent"></div>
               </div>
 
-              <div className="relative z-10 flex h-full flex-col p-6">
-                <div className="mb-auto flex w-full items-start justify-between">
-                  <div className="overflow-hidden rounded-xl bg-zinc-800/10 backdrop-blur-md dark:bg-white/10">
-                    <div className="bg-zinc-800 px-3 py-1 text-center text-[10px] font-semibold text-white dark:bg-black/60">
+              <div className="z-10 relative flex flex-col p-4 md:p-6 h-full">
+                <div className="flex justify-between items-start mb-auto w-full">
+                  <div className="bg-zinc-800/10 dark:bg-white/10 backdrop-blur-md rounded-xl overflow-hidden">
+                    <div className="bg-zinc-800 dark:bg-black/60 px-3 py-1 font-semibold text-[10px] text-white text-center">
                       #2
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-auto space-y-4">
+                <div className="space-y-3 md:space-y-4 mt-auto">
                   <Badge
                     variant="outline"
-                    className="border-emerald-500/50 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                    className="bg-emerald-500/10 border-emerald-500/50 text-emerald-700 dark:text-emerald-400"
                   >
                     Active
                   </Badge>
 
-                  <h2 className="font-heading text-2xl font-instrument font-bold leading-tight text-zinc-900 dark:text-white">
+                  <h2 className="font-heading font-instrument font-bold text-zinc-900 dark:text-white text-xl md:text-2xl leading-tight">
                     {allProjects[1].name}
                   </h2>
 
-                  <p className="line-clamp-2 text-xs leading-relaxed text-zinc-600 dark:text-white/80">
+                  <p className="text-zinc-600 dark:text-white/80 text-xs line-clamp-2 leading-relaxed">
                     {allProjects[1].description}
                   </p>
 
-                  <div className="flex w-full flex-wrap justify-center gap-2">
-                    <div className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white/50 px-2 py-1 backdrop-blur-sm dark:border-border/40 dark:bg-background/50">
-                      <GoStarFill className="h-3 w-3 text-primary dark:text-primary" />
-                      <span className="font-geist text-xs font-medium text-gray-800 dark:text-foreground">
+                  <div className="flex flex-wrap justify-center gap-1.5 md:gap-2 w-full">
+                    <div className="flex items-center gap-1 bg-white/50 dark:bg-background/50 backdrop-blur-sm px-2 py-1 border border-zinc-200 dark:border-border/40 rounded-full">
+                      <GoStarFill className="w-3 h-3 text-primary dark:text-primary" />
+                      <span className="font-geist font-medium text-gray-800 dark:text-foreground text-xs">
                         {allProjects[1].stars.toLocaleString()}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white/50 px-2 py-1 backdrop-blur-sm dark:border-border/40 dark:bg-background/50">
-                      <UserIcon className="h-3 w-3 text-primary dark:text-primary" />
-                      <span className="font-geist text-xs font-medium text-gray-800 dark:text-foreground">
+                    <div className="flex items-center gap-1 bg-white/50 dark:bg-background/50 backdrop-blur-sm px-2 py-1 border border-zinc-200 dark:border-border/40 rounded-full">
+                      <UserIcon className="w-3 h-3 text-primary dark:text-primary" />
+                      <span className="font-geist font-medium text-gray-800 dark:text-foreground text-xs">
                         {allProjects[1].follower.toLocaleString()}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white/50 px-2 py-1 backdrop-blur-sm dark:border-border/40 dark:bg-background/50">
-                      <Flag className="h-3 w-3 text-primary dark:text-primary" />
-                      <span className="font-geist text-xs font-medium text-gray-800 dark:text-foreground">
+                    <div className="flex items-center gap-1 bg-white/50 dark:bg-background/50 backdrop-blur-sm px-2 py-1 border border-zinc-200 dark:border-border/40 rounded-full">
+                      <Flag className="w-3 h-3 text-primary dark:text-primary" />
+                      <span className="font-geist font-medium text-gray-800 dark:text-foreground text-xs">
                         {allProjects[1].review.toLocaleString()}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white/50 px-2 py-1 backdrop-blur-sm dark:border-border/40 dark:bg-background/50">
-                      <PackageIcon className="h-3 w-3 text-primary dark:text-primary" />
-                      <span className="font-geist text-xs font-medium text-gray-800 dark:text-foreground">
+                    <div className="flex items-center gap-1 bg-white/50 dark:bg-background/50 backdrop-blur-sm px-2 py-1 border border-zinc-200 dark:border-border/40 rounded-full">
+                      <PackageIcon className="w-3 h-3 text-primary dark:text-primary" />
+                      <span className="font-geist font-medium text-gray-800 dark:text-foreground text-xs">
                         {allProjects[1].update.toLocaleString()}
                       </span>
                     </div>
@@ -138,71 +138,71 @@ export default function LeaderboardPage() {
                 </div>
               </div>
 
-              <div className="absolute inset-0 rounded-2xl border border-zinc-200 transition-all duration-300 group-hover:border-zinc-300 dark:border-white/5 dark:group-hover:border-white/10"></div>
+              <div className="absolute inset-0 border border-zinc-200 dark:border-white/5 dark:group-hover:border-white/10 group-hover:border-zinc-300 rounded-2xl transition-all duration-300"></div>
             </div>
 
-            {/* First place */}
-            <div className="group relative h-[380px] w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-amber-100 via-white to-amber-50 shadow-md transition-all duration-300 hover:scale-[1.02] dark:from-amber-900 dark:via-amber-800/10 dark:to-black border-none">
-              <div className="absolute inset-0 z-0 bg-gradient-to-br from-amber-500/5 via-transparent to-amber-500/5 opacity-0 blur-xl transition-opacity duration-700 group-hover:opacity-100 dark:from-amber-500/10 dark:to-amber-500/10"></div>
+            {/* First place - Second on mobile, center on desktop */}
+            <div className="group relative order-2 md:order-2 bg-gradient-to-br from-amber-100 dark:from-amber-900 via-white dark:via-amber-800/10 to-amber-50 dark:to-black shadow-md border-none rounded-2xl w-full max-w-sm h-[320px] md:h-[380px] overflow-hidden hover:scale-[1.02] transition-all duration-300">
+              <div className="z-0 absolute inset-0 bg-gradient-to-br from-amber-500/5 dark:from-amber-500/10 via-transparent to-amber-500/5 dark:to-amber-500/10 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700"></div>
 
-              <div className="absolute inset-0 z-0">
+              <div className="z-0 absolute inset-0">
                 <Image
                   src={allProjects[0].image || "/user.jpg"}
                   alt={allProjects[0].name}
                   fill
-                  className="object-cover opacity-40 transition-all duration-700 group-hover:scale-105 group-hover:opacity-50 dark:opacity-40 dark:group-hover:opacity-50"
+                  className="opacity-40 dark:group-hover:opacity-50 dark:opacity-40 group-hover:opacity-50 object-cover group-hover:scale-105 transition-all duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-white/40 dark:from-black dark:via-black/80 dark:to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-black via-white/80 dark:via-black/80 to-white/40 dark:to-transparent"></div>
               </div>
 
-              <div className="relative z-10 flex h-full flex-col p-6">
-                <div className="mb-auto flex w-full items-start justify-between">
-                  <div className="overflow-hidden rounded-xl bg-amber-800/10 backdrop-blur-md dark:bg-white/10">
-                    <div className="bg-amber-800 px-3 py-1 text-center text-[10px] font-semibold text-white dark:bg-black/60">
+              <div className="z-10 relative flex flex-col p-4 md:p-6 h-full">
+                <div className="flex justify-between items-start mb-auto w-full">
+                  <div className="bg-amber-800/10 dark:bg-white/10 backdrop-blur-md rounded-xl overflow-hidden">
+                    <div className="bg-amber-800 dark:bg-black/60 px-3 py-1 font-semibold text-[10px] text-white text-center">
                       #1
                     </div>
                   </div>
-                  <Trophy className="h-5 w-5 text-amber-500 dark:text-amber-500" />
+                  <Trophy className="w-5 h-5 text-amber-500 dark:text-amber-500" />
                 </div>
 
-                <div className="mt-auto space-y-4">
+                <div className="space-y-3 md:space-y-4 mt-auto">
                   <Badge
                     variant="outline"
-                    className="border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                    className="bg-amber-500/10 border-amber-500/50 text-amber-700 dark:text-amber-400"
                   >
                     Active
                   </Badge>
 
-                  <h2 className="font-heading text-2xl font-instrument font-bold leading-tight text-amber-900 dark:text-white">
+                  <h2 className="font-heading font-instrument font-bold text-amber-900 dark:text-white text-xl md:text-2xl leading-tight">
                     {allProjects[0].name}
                   </h2>
 
-                  <p className="line-clamp-2 text-xs leading-relaxed text-amber-600 dark:text-white/80">
+                  <p className="text-amber-600 dark:text-white/80 text-xs line-clamp-2 leading-relaxed">
                     {allProjects[0].description}
                   </p>
 
-                  <div className="flex w-full flex-wrap justify-center gap-2">
-                    <div className="flex items-center gap-1 rounded-full border border-amber-200 bg-white/50 px-2 py-1 backdrop-blur-sm dark:border-border/40 dark:bg-background/50">
-                      <GoStarFill className="h-3 w-3 text-amber-600 dark:text-primary" />
-                      <span className="font-geist text-xs font-medium text-gray-800 dark:text-foreground">
+                  <div className="flex flex-wrap justify-center gap-1.5 md:gap-2 w-full">
+                    <div className="flex items-center gap-1 bg-white/50 dark:bg-background/50 backdrop-blur-sm px-2 py-1 border border-amber-200 dark:border-border/40 rounded-full">
+                      <GoStarFill className="w-3 h-3 text-amber-600 dark:text-primary" />
+                      <span className="font-geist font-medium text-gray-800 dark:text-foreground text-xs">
                         {allProjects[0].stars.toLocaleString()}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 rounded-full border border-amber-200 bg-white/50 px-2 py-1 backdrop-blur-sm dark:border-border/40 dark:bg-background/50">
-                      <UserIcon className="h-3 w-3 text-amber-600 dark:text-primary" />
-                      <span className="font-geist text-xs font-medium text-gray-800 dark:text-foreground">
+                    <div className="flex items-center gap-1 bg-white/50 dark:bg-background/50 backdrop-blur-sm px-2 py-1 border border-amber-200 dark:border-border/40 rounded-full">
+                      <UserIcon className="w-3 h-3 text-amber-600 dark:text-primary" />
+                      <span className="font-geist font-medium text-gray-800 dark:text-foreground text-xs">
                         {allProjects[0].follower.toLocaleString()}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 rounded-full border border-amber-200 bg-white/50 px-2 py-1 backdrop-blur-sm dark:border-border/40 dark:bg-background/50">
-                      <Flag className="h-3 w-3 text-amber-600 dark:text-primary" />
-                      <span className="font-geist text-xs font-medium text-gray-800 dark:text-foreground">
+                    <div className="flex items-center gap-1 bg-white/50 dark:bg-background/50 backdrop-blur-sm px-2 py-1 border border-amber-200 dark:border-border/40 rounded-full">
+                      <Flag className="w-3 h-3 text-amber-600 dark:text-primary" />
+                      <span className="font-geist font-medium text-gray-800 dark:text-foreground text-xs">
                         {allProjects[0].review.toLocaleString()}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 rounded-full border border-amber-200 bg-white/50 px-2 py-1 backdrop-blur-sm dark:border-border/40 dark:bg-background/50">
-                      <PackageIcon className="h-3 w-3 text-amber-600 dark:text-primary" />
-                      <span className="font-geist text-xs font-medium text-gray-800 dark:text-foreground">
+                    <div className="flex items-center gap-1 bg-white/50 dark:bg-background/50 backdrop-blur-sm px-2 py-1 border border-amber-200 dark:border-border/40 rounded-full">
+                      <PackageIcon className="w-3 h-3 text-amber-600 dark:text-primary" />
+                      <span className="font-geist font-medium text-gray-800 dark:text-foreground text-xs">
                         {allProjects[0].update.toLocaleString()}
                       </span>
                     </div>
@@ -210,70 +210,70 @@ export default function LeaderboardPage() {
                 </div>
               </div>
 
-              <div className="absolute inset-0 rounded-2xl border border-amber-200 transition-all duration-300 group-hover:border-amber-300 dark:border-white/5 dark:group-hover:border-white/10"></div>
+              <div className="absolute inset-0 border border-amber-200 dark:border-white/5 dark:group-hover:border-white/10 group-hover:border-amber-300 rounded-2xl transition-all duration-300"></div>
             </div>
 
-            {/* Third place */}
-            <div className="group relative h-[380px] w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-100 via-white to-zinc-50 shadow-md transition-all duration-300 hover:scale-[1.02] dark:from-zinc-900 dark:via-zinc-800/10 dark:to-black border-none">
-              <div className="absolute inset-0 z-0 bg-gradient-to-br from-violet-500/5 via-transparent to-emerald-500/5 opacity-0 blur-xl transition-opacity duration-700 group-hover:opacity-100 dark:from-violet-500/10 dark:to-emerald-500/10"></div>
+            {/* Third place - Third on mobile, right on desktop */}
+            <div className="group relative order-3 md:order-3 bg-gradient-to-br from-zinc-100 dark:from-zinc-900 via-white dark:via-zinc-800/10 to-zinc-50 dark:to-black shadow-md border-none rounded-2xl w-full max-w-sm h-[280px] md:h-[380px] overflow-hidden hover:scale-[1.02] transition-all duration-300">
+              <div className="z-0 absolute inset-0 bg-gradient-to-br from-violet-500/5 dark:from-violet-500/10 via-transparent to-emerald-500/5 dark:to-emerald-500/10 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700"></div>
 
-              <div className="absolute inset-0 z-0">
+              <div className="z-0 absolute inset-0">
                 <Image
                   src={allProjects[2].image || "/user.jpg"}
                   alt={allProjects[2].name}
                   fill
-                  className="object-cover opacity-40 transition-all duration-700 group-hover:scale-105 group-hover:opacity-50 dark:opacity-40 dark:group-hover:opacity-50"
+                  className="opacity-40 dark:group-hover:opacity-50 dark:opacity-40 group-hover:opacity-50 object-cover group-hover:scale-105 transition-all duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-white/40 dark:from-black dark:via-black/80 dark:to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-black via-white/80 dark:via-black/80 to-white/40 dark:to-transparent"></div>
               </div>
 
-              <div className="relative z-10 flex h-full flex-col p-6">
-                <div className="mb-auto flex w-full items-start justify-between">
-                  <div className="overflow-hidden rounded-xl bg-zinc-800/10 backdrop-blur-md dark:bg-white/10">
-                    <div className="bg-zinc-800 px-3 py-1 text-center text-[10px] font-semibold text-white dark:bg-black/60">
+              <div className="z-10 relative flex flex-col p-4 md:p-6 h-full">
+                <div className="flex justify-between items-start mb-auto w-full">
+                  <div className="bg-zinc-800/10 dark:bg-white/10 backdrop-blur-md rounded-xl overflow-hidden">
+                    <div className="bg-zinc-800 dark:bg-black/60 px-3 py-1 font-semibold text-[10px] text-white text-center">
                       #3
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-auto space-y-4">
+                <div className="space-y-3 md:space-y-4 mt-auto">
                   <Badge
                     variant="outline"
-                    className="border-emerald-500/50 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                    className="bg-emerald-500/10 border-emerald-500/50 text-emerald-700 dark:text-emerald-400"
                   >
                     Active
                   </Badge>
 
-                  <h2 className="font-heading text-2xl font-instrument font-bold leading-tight text-zinc-900 dark:text-white">
+                  <h2 className="font-heading font-instrument font-bold text-zinc-900 dark:text-white text-xl md:text-2xl leading-tight">
                     {allProjects[2].name}
                   </h2>
 
-                  <p className="line-clamp-2 text-xs leading-relaxed text-zinc-600 dark:text-white/80">
+                  <p className="text-zinc-600 dark:text-white/80 text-xs line-clamp-2 leading-relaxed">
                     {allProjects[2].description}
                   </p>
 
-                  <div className="flex w-full flex-wrap justify-center gap-2">
-                    <div className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white/50 px-2 py-1 backdrop-blur-sm dark:border-border/40 dark:bg-background/50">
-                      <GoStarFill className="h-3 w-3 text-primary dark:text-primary" />
-                      <span className="font-geist text-xs font-medium text-gray-800 dark:text-foreground">
+                  <div className="flex flex-wrap justify-center gap-1.5 md:gap-2 w-full">
+                    <div className="flex items-center gap-1 bg-white/50 dark:bg-background/50 backdrop-blur-sm px-2 py-1 border border-zinc-200 dark:border-border/40 rounded-full">
+                      <GoStarFill className="w-3 h-3 text-primary dark:text-primary" />
+                      <span className="font-geist font-medium text-gray-800 dark:text-foreground text-xs">
                         {allProjects[2].stars.toLocaleString()}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white/50 px-2 py-1 backdrop-blur-sm dark:border-border/40 dark:bg-background/50">
-                      <UserIcon className="h-3 w-3 text-primary dark:text-primary" />
-                      <span className="font-geist text-xs font-medium text-gray-800 dark:text-foreground">
+                    <div className="flex items-center gap-1 bg-white/50 dark:bg-background/50 backdrop-blur-sm px-2 py-1 border border-zinc-200 dark:border-border/40 rounded-full">
+                      <UserIcon className="w-3 h-3 text-primary dark:text-primary" />
+                      <span className="font-geist font-medium text-gray-800 dark:text-foreground text-xs">
                         {allProjects[2].follower.toLocaleString()}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white/50 px-2 py-1 backdrop-blur-sm dark:border-border/40 dark:bg-background/50">
-                      <Flag className="h-3 w-3 text-primary dark:text-primary" />
-                      <span className="font-geist text-xs font-medium text-gray-800 dark:text-foreground">
+                    <div className="flex items-center gap-1 bg-white/50 dark:bg-background/50 backdrop-blur-sm px-2 py-1 border border-zinc-200 dark:border-border/40 rounded-full">
+                      <Flag className="w-3 h-3 text-primary dark:text-primary" />
+                      <span className="font-geist font-medium text-gray-800 dark:text-foreground text-xs">
                         {allProjects[2].review.toLocaleString()}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white/50 px-2 py-1 backdrop-blur-sm dark:border-border/40 dark:bg-background/50">
-                      <PackageIcon className="h-3 w-3 text-primary dark:text-primary" />
-                      <span className="font-geist text-xs font-medium text-gray-800 dark:text-foreground">
+                    <div className="flex items-center gap-1 bg-white/50 dark:bg-background/50 backdrop-blur-sm px-2 py-1 border border-zinc-200 dark:border-border/40 rounded-full">
+                      <PackageIcon className="w-3 h-3 text-primary dark:text-primary" />
+                      <span className="font-geist font-medium text-gray-800 dark:text-foreground text-xs">
                         {allProjects[2].update.toLocaleString()}
                       </span>
                     </div>
@@ -281,7 +281,7 @@ export default function LeaderboardPage() {
                 </div>
               </div>
 
-              <div className="absolute inset-0 rounded-2xl border border-zinc-200 transition-all duration-300 group-hover:border-zinc-300 dark:border-white/5 dark:group-hover:border-white/10"></div>
+              <div className="absolute inset-0 border border-zinc-200 dark:border-white/5 dark:group-hover:border-white/10 group-hover:border-zinc-300 rounded-2xl transition-all duration-300"></div>
             </div>
           </>
         ) : (
@@ -293,16 +293,16 @@ export default function LeaderboardPage() {
         )}
       </div>
 
-      <div className="relative mb-4 flex items-center justify-between">
-        <h2 className="font-geist text-xl font-medium">All Rankings</h2>
+      <div className="relative flex justify-between items-center mb-4">
+        <h2 className="font-geist font-medium text-xl">All Rankings</h2>
         <div className="flex gap-2">
           <Badge
             variant="outline"
-            className="bg-white/80 py-2 px-4 rounded-full  backdrop-blur-sm dark:bg-black/80"
+            className="bg-white/80 dark:bg-black/80 backdrop-blur-sm px-4 py-2 rounded-full"
           >
             <div className="flex items-center gap-1.5">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-                <GoStarFill className="h-2.5 w-2.5 text-primary" />
+              <div className="flex justify-center items-center bg-primary/10 rounded-full w-5 h-5">
+                <GoStarFill className="w-2.5 h-2.5 text-primary" />
               </div>
               <span className="font-geist text-gray-600 dark:text-muted-foreground">
                 Stars
@@ -311,11 +311,11 @@ export default function LeaderboardPage() {
           </Badge>
           <Badge
             variant="outline"
-            className="bg-white/80 py-2 px-4 rounded-full  backdrop-blur-sm dark:bg-black/80"
+            className="bg-white/80 dark:bg-black/80 backdrop-blur-sm px-4 py-2 rounded-full"
           >
             <div className="flex items-center gap-1.5">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-                <UserIcon className="h-2.5 w-2.5 text-primary" />
+              <div className="flex justify-center items-center bg-primary/10 rounded-full w-5 h-5">
+                <UserIcon className="w-2.5 h-2.5 text-primary" />
               </div>
               <span className="font-geist text-gray-600 dark:text-muted-foreground">
                 Followers
@@ -324,11 +324,11 @@ export default function LeaderboardPage() {
           </Badge>
           <Badge
             variant="outline"
-            className="bg-white/80 py-2 px-4 rounded-full  backdrop-blur-sm dark:bg-black/80"
+            className="bg-white/80 dark:bg-black/80 backdrop-blur-sm px-4 py-2 rounded-full"
           >
             <div className="flex items-center gap-1.5">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-                <Flag className="h-2.5 w-2.5 text-primary" />
+              <div className="flex justify-center items-center bg-primary/10 rounded-full w-5 h-5">
+                <Flag className="w-2.5 h-2.5 text-primary" />
               </div>
               <span className="font-geist text-gray-600 dark:text-muted-foreground">
                 Reviews
@@ -337,11 +337,11 @@ export default function LeaderboardPage() {
           </Badge>
           <Badge
             variant="outline"
-            className="bg-white/80 py-2 px-4 rounded-full  backdrop-blur-sm dark:bg-black/80"
+            className="bg-white/80 dark:bg-black/80 backdrop-blur-sm px-4 py-2 rounded-full"
           >
             <div className="flex items-center gap-1.5">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-                <PackageIcon className="h-2.5 w-2.5 text-primary" />
+              <div className="flex justify-center items-center bg-primary/10 rounded-full w-5 h-5">
+                <PackageIcon className="w-2.5 h-2.5 text-primary" />
               </div>
               <span className="font-geist text-gray-600 dark:text-muted-foreground">
                 Updates
@@ -363,25 +363,25 @@ export default function LeaderboardPage() {
               key={`${project.id}-${index}`}
               className="block"
             >
-              <div className="group relative overflow-hidden rounded-xl border border-border/10 bg-card/50 shadow-sm backdrop-blur-sm dark:bg-transparent dark:border-none">
-                <Card className="group relative my-2 flex items-center dark:border-border/20 overflow-hidden border-0 bg-white/80 p-4 backdrop-blur-[2px] transition-all hover:bg-gray-50 dark:bg-black/80">
-                  <div className="absolute inset-0 z-0 opacity-0 transition-opacity group-hover:opacity-100">
-                    <div className="absolute -bottom-20 -left-20 h-[200px] w-[200px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 via-blue-400/10 to-transparent blur-[80px]"></div>
-                    <div className="absolute -right-20 -top-20 h-[200px] w-[200px] -rotate-45 rounded-full bg-gradient-to-br from-orange-300/10 to-transparent blur-[80px]"></div>
+              <div className="group relative bg-card/50 dark:bg-transparent shadow-sm backdrop-blur-sm border border-border/10 dark:border-none rounded-xl overflow-hidden">
+                <Card className="group relative flex items-center bg-white/80 hover:bg-gray-50 dark:bg-black/80 backdrop-blur-[2px] my-2 p-4 border-0 dark:border-border/20 overflow-hidden transition-all">
+                  <div className="z-0 absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="-bottom-20 -left-20 absolute bg-gradient-to-tl from-blue-300/10 via-blue-400/10 to-transparent blur-[80px] rounded-full w-[200px] h-[200px] rotate-45"></div>
+                    <div className="-top-20 -right-20 absolute bg-gradient-to-br from-orange-300/10 to-transparent blur-[80px] rounded-full w-[200px] h-[200px] -rotate-45"></div>
                   </div>
 
-                  <div className="relative z-10 mr-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 font-bold text-gray-800 backdrop-blur-sm dark:bg-black/80 dark:text-foreground dark:border dark:border-border/40">
+                  <div className="z-10 relative flex justify-center items-center bg-gray-100 dark:bg-black/80 backdrop-blur-sm mr-4 dark:border dark:border-border/40 rounded-full w-8 h-8 font-bold text-gray-800 dark:text-foreground">
                     {index + 1}
                   </div>
 
-                  <div className="relative z-10 flex flex-1 items-center gap-4">
-                    <div className="relative h-16 w-16 overflow-hidden rounded-md">
+                  <div className="z-10 relative flex flex-1 items-center gap-4">
+                    <div className="relative rounded-md w-16 h-16 overflow-hidden">
                       <Image
                         height={1200}
                         width={1200}
                         src={project.image || "/user.jpg"}
                         alt={project.name}
-                        className="h-16 w-16 rounded-md object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                        className="rounded-md w-16 h-16 object-center object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-gray-200/40 to-transparent"></div>
                     </div>
@@ -390,40 +390,40 @@ export default function LeaderboardPage() {
                       <h3 className="font-geist font-medium text-gray-800 dark:text-foreground">
                         {project.name}
                       </h3>
-                      <p className="font-geist line-clamp-1 text-sm text-gray-600 dark:text-muted-foreground">
+                      <p className="font-geist text-gray-600 dark:text-muted-foreground text-sm line-clamp-1">
                         {project.description}
                       </p>
                     </div>
                   </div>
 
-                  <div className="relative z-10 hidden grid-cols-4 gap-2 rounded-full border border-gray-200 px-4 py-3 dark:border-border/40 md:grid">
+                  <div className="hidden z-10 relative gap-2 md:grid grid-cols-4 px-4 py-3 border border-gray-200 dark:border-border/40 rounded-full">
                     <div className="flex items-center gap-2">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
-                        <GoStarFill className="h-3 w-3 text-primary" />
+                      <div className="flex justify-center items-center bg-primary/10 rounded-full w-6 h-6">
+                        <GoStarFill className="w-3 h-3 text-primary" />
                       </div>
                       <span className="font-geist font-medium text-gray-600 dark:text-muted-foreground">
                         {project.stars.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
-                        <UserIcon className="h-3 w-3 text-primary" />
+                      <div className="flex justify-center items-center bg-primary/10 rounded-full w-6 h-6">
+                        <UserIcon className="w-3 h-3 text-primary" />
                       </div>
                       <span className="font-geist font-medium text-gray-600 dark:text-muted-foreground">
                         {project.follower.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
-                        <Flag className="h-3 w-3 text-primary" />
+                      <div className="flex justify-center items-center bg-primary/10 rounded-full w-6 h-6">
+                        <Flag className="w-3 h-3 text-primary" />
                       </div>
                       <span className="font-geist font-medium text-gray-600 dark:text-muted-foreground">
                         {project.review.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
-                        <PackageIcon className="h-3 w-3 text-primary" />
+                      <div className="flex justify-center items-center bg-primary/10 rounded-full w-6 h-6">
+                        <PackageIcon className="w-3 h-3 text-primary" />
                       </div>
                       <span className="font-geist font-medium text-gray-600 dark:text-muted-foreground">
                         {project.update.toLocaleString()}
@@ -431,20 +431,20 @@ export default function LeaderboardPage() {
                     </div>
                   </div>
 
-                  <div className="relative z-10 ml-4 flex items-center gap-3 md:hidden">
+                  <div className="md:hidden z-10 relative flex items-center gap-3 ml-4">
                     <div className="flex items-center gap-1.5">
-                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-                        <GoStarFill className="h-2.5 w-2.5 text-primary" />
+                      <div className="flex justify-center items-center bg-primary/10 rounded-full w-5 h-5">
+                        <GoStarFill className="w-2.5 h-2.5 text-primary" />
                       </div>
-                      <span className="font-geist text-xs font-medium text-gray-600 dark:text-muted-foreground">
+                      <span className="font-geist font-medium text-gray-600 dark:text-muted-foreground text-xs">
                         {project.stars.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-                        <UserIcon className="h-2.5 w-2.5 text-primary" />
+                      <div className="flex justify-center items-center bg-primary/10 rounded-full w-5 h-5">
+                        <UserIcon className="w-2.5 h-2.5 text-primary" />
                       </div>
-                      <span className="font-geist text-xs font-medium text-gray-600 dark:text-muted-foreground">
+                      <span className="font-geist font-medium text-gray-600 dark:text-muted-foreground text-xs">
                         {project.follower.toLocaleString()}
                       </span>
                     </div>
@@ -468,7 +468,7 @@ export default function LeaderboardPage() {
             variant="outline"
             onClick={loadMore}
             disabled={isLoading || isFetching}
-            className="font-geist w-full bg-white/80 text-gray-800 backdrop-blur-sm hover:bg-gray-100 dark:bg-black/80 dark:text-foreground dark:hover:bg-background/90"
+            className="bg-white/80 hover:bg-gray-100 dark:bg-black/80 dark:hover:bg-background/90 backdrop-blur-sm w-full font-geist text-gray-800 dark:text-foreground"
           >
             {isLoading || isFetching ? "Loading..." : "Load More Projects"}
           </Button>

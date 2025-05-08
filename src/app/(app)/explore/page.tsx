@@ -21,12 +21,15 @@ const ExploreContent = () => {
   }, [searchParams, setQuery]);
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-1 flex-row items-start">
-      <LeftNavbar />
-      <div className="my-5 flex min-h-fit flex-1 flex-row items-center md:mx-10">
-        <ExploreEntry />
+    <div className="flex flex-col flex-1 mx-auto px-4 sm:px-6 lg:px-8 w-full max-w-6xl">
+      <div className="flex flex-col flex-1 items-start gap-4 py-4 sm:py-6">
+        <div className="flex sm:flex-row flex-col sm:items-center gap-4 w-full">
+          <LeftNavbar />
+          <div className="flex flex-col flex-1 gap-4 w-full">
+            <ExploreEntry />
+          </div>
+        </div>
       </div>
-
       <MobileNavBar />
     </div>
   );
