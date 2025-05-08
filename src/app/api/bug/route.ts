@@ -3,13 +3,13 @@ import { prisma } from "@/lib/prisma";
 import { bugReportSchema } from "@/validation/bug.validation";
 import { NextRequest, NextResponse } from "next/server";
 
-export enum bugReportSeverity {
+enum bugReportSeverity {
   LOW = "LOW",
   MEDIUM = "MEDIUM",
   HIGH = "HIGH",
 }
 
-export enum bugReportStatus {
+enum bugReportStatus {
   PENDING = "PENDING",
   RESOLVED = "RESOLVED",
   REJECTED = "REJECTED",
