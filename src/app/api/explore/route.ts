@@ -1,8 +1,7 @@
 import getUserSession from "@/functions/get-user";
-import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-
+import { Prisma } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 const ITEMS_PER_PAGE = 10;
 
 interface Filter {
