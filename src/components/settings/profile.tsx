@@ -196,7 +196,7 @@ export default function ProfilePage() {
 
   if (isloading || isFetching || isPending) {
     return (
-      <div className="relative md:mx-10 mt-5 px-4 md:px-0 pb-8 font-geist container">
+      <div className="relative md:mx-5 mt-5 px-4 md:px-0 pb-8 font-geist container">
         <div className="hidden md:block -top-20 md:-right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45" />
 
         <div className="group relative shadow-lg mb-12 rounded-2xl w-full h-[400px] md:h-[250px] overflow-hidden">
@@ -236,7 +236,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="relative md:mx-10 mt-5 px-4 md:px-0 pb-8 font-geist container">
+    <div className="relative md:mx-10 mt-5 md:px-0 pb-8 font-geist container">
       <div className="hidden md:block -top-20 md:-right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45" />
 
       <div className="group relative shadow-lg mb-12 rounded-xl w-full h-[250px] overflow-hidden">
@@ -292,7 +292,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="z-10 relative flex flex-col items-start gap-1 mx-2 my-5 -mt-8">
-        <div className="relative -mt-16 rounded-full ring-2 ring-white/20 w-20 h-20 overflow-hidden shrink-0">
+        <div className="relative mx-3 -mt-16 rounded-full ring-2 ring-white/20 w-20 h-20 overflow-hidden shrink-0">
           <Image
             src={user.image || "/user.jpg?height=128&width=128"}
             alt={user.visualName || user.name}
@@ -347,7 +347,7 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            <div className="flex sm:flex-row flex-col items-center gap-4">
+            <div className="flex flex-row items-center gap-4">
               <Link
                 href={`/profile/${user.id}/followers`}
                 className="flex justify-center items-center gap-2 bg-white hover:bg-gray-50 dark:bg-black dark:hover:bg-gray-900 shadow-sm px-5 py-2.5 border border-gray-100 dark:border-gray-500/10 rounded-full w-full sm:w-auto"
@@ -373,7 +373,7 @@ export default function ProfilePage() {
       <div className="">
         <div className="space-y-8 lg:col-span-2">
           <Card className="bg-white dark:bg-black shadow-sm border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden">
-            <CardContent className="p-4 md:p-8">
+            <CardContent className="p-2 md:p-8">
               <Tabs
                 defaultValue="posts"
                 className="w-full"
