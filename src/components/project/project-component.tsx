@@ -318,104 +318,104 @@ export default function ProjectsPage() {
             <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
               <DialogTitle>Create New Project</DialogTitle>
               <div className="space-y-4 mt-4">
-                <div className="space-y-2">
+                          <div className="space-y-2">
                   <Label htmlFor="name">Project Name</Label>
-                  <Input
-                    id="name"
-                    value={newProject.name}
-                    onChange={(e) =>
+                            <Input
+                              id="name"
+                              value={newProject.name}
+                              onChange={(e) =>
                       setNewProject({ ...newProject, name: e.target.value })
-                    }
-                    placeholder="Enter project name"
-                  />
-                </div>
+                              }
+                              placeholder="Enter project name"
+                            />
+                          </div>
 
-                <div className="space-y-2">
+                          <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={newProject.description}
-                    onChange={(e) =>
-                      setNewProject({
-                        ...newProject,
-                        description: e.target.value,
-                      })
-                    }
+                            <Textarea
+                              id="description"
+                              value={newProject.description}
+                              onChange={(e) =>
+                                setNewProject({
+                                  ...newProject,
+                                  description: e.target.value,
+                                })
+                              }
                     placeholder="Enter project description"
                     className="min-h-[100px]"
-                  />
-                </div>
+                            />
+                          </div>
 
-                <div className="space-y-2">
+                          <div className="space-y-2">
                   <Label htmlFor="status">Status</Label>
-                  <Select
-                    value={newProject.status}
+                            <Select
+                              value={newProject.status}
                     onValueChange={(value: "ONGOING" | "COMPLETED" | "PAUSED" | "CANCELLED") =>
                       setNewProject({ ...newProject, status: value })
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
+                                <SelectValue placeholder="Select status" />
+                              </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="ONGOING">Ongoing</SelectItem>
                       <SelectItem value="COMPLETED">Completed</SelectItem>
                       <SelectItem value="PAUSED">Paused</SelectItem>
                       <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                              </SelectContent>
+                            </Select>
+                          </div>
 
-                <div className="space-y-2">
+                          <div className="space-y-2">
                   <Label htmlFor="access">Access</Label>
-                  <Select
-                    value={newProject.access}
+                            <Select
+                              value={newProject.access}
                     onValueChange={(value: "public" | "private") =>
                       setNewProject({ ...newProject, access: value })
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select access" />
-                    </SelectTrigger>
+                                <SelectValue placeholder="Select access" />
+                              </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="public">
+                                <SelectItem value="public">
                         <div className="flex items-center gap-2">
                           <Globe className="w-4 h-4" />
-                          Public
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="private">
+                                    Public
+                                  </div>
+                                </SelectItem>
+                                <SelectItem value="private">
                         <div className="flex items-center gap-2">
                           <Lock className="w-4 h-4" />
-                          Private
-                        </div>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                                    Private
+                                  </div>
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                      </div>
 
                 <div className="space-y-2">
                   <Label>Categories</Label>
-                  <div className="flex flex-wrap gap-2">
+                              <div className="flex flex-wrap gap-2">
                     {selectedCategories.map((category, index) => (
-                      <Badge
+                                  <Badge
                         key={index}
-                        variant="secondary"
+                                    variant="secondary"
                         className="flex items-center gap-1"
-                      >
-                        {category}
-                        <button
-                          onClick={() =>
+                                  >
+                                    {category}
+                                    <button
+                                      onClick={() =>
                             setSelectedCategories(
                               selectedCategories.filter((_, i) => i !== index)
-                            )
-                          }
+                                        )
+                                      }
                           className="hover:bg-muted ml-1 p-0.5 rounded-full"
-                        >
+                                    >
                           <X className="w-3 h-3" />
-                        </button>
-                      </Badge>
-                    ))}
+                                    </button>
+                                  </Badge>
+                                ))}
                   </div>
                   <Input
                     placeholder="Add a category and press Enter"
@@ -440,12 +440,12 @@ export default function ProjectsPage() {
                         >
                           <X className="w-4 h-4" />
                         </button>
-                      </div>
-                    ) : (
+                              </div>
+                            ) : (
                       <div className="flex justify-center items-center border-2 border-muted-foreground/25 border-dashed rounded-lg w-full sm:w-48 h-32">
                         <Upload className="w-8 h-8 text-muted-foreground" />
-                      </div>
-                    )}
+                              </div>
+                            )}
                     <div className="flex flex-col gap-2">
                       <Input
                         type="file"
@@ -456,30 +456,30 @@ export default function ProjectsPage() {
                       <p className="text-muted-foreground text-xs">
                         Recommended size: 1200x630px
                       </p>
-                    </div>
-                  </div>
-                </div>
+                          </div>
+                        </div>
+                      </div>
 
                 <div className="flex justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsCreateModalOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleCreateProject}
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsCreateModalOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleCreateProject}
                     disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
+                    >
+                      {isSubmitting ? (
+                        <>
                         <Loader2 className="mr-2 w-4 h-4 animate-spin" />
-                        Creating...
-                      </>
-                    ) : (
+                          Creating...
+                        </>
+                      ) : (
                       "Create Project"
-                    )}
-                  </Button>
+                      )}
+                    </Button>
                 </div>
               </div>
             </DialogContent>
@@ -496,11 +496,11 @@ export default function ProjectsPage() {
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="projects" className="flex-1 sm:flex-none">
             Projects
-          </TabsTrigger>
+            </TabsTrigger>
           <TabsTrigger value="leaderboard" className="flex-1 sm:flex-none">
-            Leaderboard
-          </TabsTrigger>
-        </TabsList>
+              Leaderboard
+            </TabsTrigger>
+          </TabsList>
 
         <TabsContent value="projects" className="mt-6">
           {isLoading ? (

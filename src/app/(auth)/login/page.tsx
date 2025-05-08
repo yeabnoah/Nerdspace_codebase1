@@ -98,7 +98,7 @@ export default function LoginPage() {
   return (
     <div className="relative bg-[#0A0A0A] min-h-svh">
       <div className="relative grid grid-cols-1 lg:grid-cols-6 min-h-svh">
-        <div className="relative flex flex-col col-span-1 lg:col-span-2 p-6 lg:p-12 lg:pl-16 border-white/10 lg:border-r border-b lg:border-b-0">
+        <div className="relative flex flex-col col-span-1 lg:col-span-2 p-4 sm:p-6 lg:p-12 lg:pl-16 border-white/10 lg:border-r border-b lg:border-b-0">
           <div className="lg:bottom-14 lg:left-8 lg:fixed flex flex-col flex-1 justify-center w-full lg:max-w-[370px]">
             <AnimatePresence mode="wait">
               {currentForm === "landing" ? (
@@ -109,14 +109,14 @@ export default function LoginPage() {
                   transition={{ duration: 0.3 }}
                   key="landing"
                 >
-                  <h1 className="mb-3 font-bold text-white lg:text-[72px] text-4xl sm:text-5xl leading-[1.1]">
+                  <h1 className="mb-3 font-bold text-white lg:text-[72px] text-3xl sm:text-4xl md:text-5xl leading-[1.1]">
                     {formTitles.landing.title} <br />
                     <span className="text-white">
                       {formTitles.landing.subtitle}
                     </span>
                   </h1>
 
-                  <p className="mb-8 text-[#8F8F8F] text-base sm:text-lg">
+                  <p className="mb-6 sm:mb-8 text-[#8F8F8F] text-sm sm:text-base md:text-lg">
                     {formTitles.landing.description.map((line, i) => (
                       <span key={i}>
                         {line}
@@ -128,13 +128,13 @@ export default function LoginPage() {
                   <div className="flex sm:flex-row flex-col gap-3">
                     <button
                       onClick={() => setCurrentForm("signup")}
-                      className="bg-white hover:bg-[#EFEFEF] px-6 py-3 border-[#3D3D3D] border-[0.5px] rounded font-medium text-[15px] text-black transition-colors"
+                      className="bg-white hover:bg-[#EFEFEF] px-6 py-3 border-[#3D3D3D] border-[0.5px] rounded w-full sm:w-auto font-medium text-[15px] text-black transition-colors"
                     >
                       Get Started
                     </button>
                     <Link
                       href="/story"
-                      className="bg-[#1C1C1C] hover:bg-[#2C2C2C] px-6 py-3 border-[#3D3D3D] border-[0.5px] rounded font-medium text-[15px] text-white transition-colors"
+                      className="bg-[#1C1C1C] hover:bg-[#2C2C2C] px-6 py-3 border-[#3D3D3D] border-[0.5px] rounded w-full sm:w-auto font-medium text-[15px] text-white text-center transition-colors"
                     >
                       Read about the story
                     </Link>
@@ -148,14 +148,14 @@ export default function LoginPage() {
                   transition={{ duration: 0.3 }}
                   key={currentForm}
                 >
-                  <h1 className="mb-3 font-bold text-white lg:text-[72px] text-4xl sm:text-5xl leading-[1.1]">
+                  <h1 className="mb-3 font-bold text-white lg:text-[72px] text-3xl sm:text-4xl md:text-5xl leading-[1.1]">
                     {formTitles[currentForm].title} <br />
                     <span className="text-white">
                       {formTitles[currentForm].subtitle}
                     </span>
                   </h1>
 
-                  <p className="mb-8 text-[#8F8F8F] text-base sm:text-lg">
+                  <p className="mb-6 sm:mb-8 text-[#8F8F8F] text-sm sm:text-base md:text-lg">
                     {formTitles[currentForm].description.map((line, i) => (
                       <span key={i}>
                         {line}
@@ -164,7 +164,7 @@ export default function LoginPage() {
                     ))}
                   </p>
 
-                  <div className="space-y-6">
+                  <div className="space-y-4 sm:space-y-6">
                     {currentForm === "login" && (
                       <LoginForm className="w-full" />
                     )}

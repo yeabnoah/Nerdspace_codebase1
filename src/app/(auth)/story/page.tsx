@@ -7,31 +7,31 @@ import { ArrowLeft } from "lucide-react";
 
 export default function StoryPage() {
   return (
-    <div className="relative min-h-svh bg-[#0A0A0A]">
-      <div className="relative grid min-h-svh grid-cols-6">
-        <div className="relative col-span-2 flex flex-col border-r border-white/10 p-12 lg:p-16">
+    <div className="relative bg-[#0A0A0A] min-h-svh">
+      <div className="relative grid grid-cols-1 lg:grid-cols-6 min-h-svh">
+        <div className="relative flex flex-col col-span-1 lg:col-span-2 p-4 sm:p-6 lg:p-12 lg:pl-16 border-white/10 lg:border-r border-b lg:border-b-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="max-w-[370px]"
+            className="mx-auto w-full lg:max-w-[370px]"
           >
             <Link 
               href="/login"
-              className="mb-8 flex items-center gap-2 text-[#8F8F8F] hover:text-white transition-colors"
+              className="flex items-center gap-2 mb-6 sm:mb-8 text-[#8F8F8F] hover:text-white transition-colors"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="w-4 h-4" />
               Back to home
             </Link>
 
             {/* Scrollable story container */}
-            <div className="h-[calc(100vh-150px)] overflow-y-auto pr-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20 hover:scrollbar-thumb-white/40">
-              <h1 className="mb-8 text-[60px] font-bold leading-[1.1] text-white">
+            <div className="pr-4 h-[calc(100vh-150px)] overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20 hover:scrollbar-thumb-white/40">
+              <h1 className="mb-6 sm:mb-8 font-bold text-white lg:text-[60px] text-4xl sm:text-5xl leading-[1.1]">
                 My <br />
                 <span className="text-white">Story</span>
               </h1>
 
-              <div className="space-y-6 text-lg text-[#8F8F8F] pb-16">
+              <div className="space-y-4 sm:space-y-6 pb-16 text-[#8F8F8F] text-base sm:text-lg">
                 <p>
                   I&apos;ve always been that kid who dives way too deep into things. Whether it was tech, storytelling, music, or random historical rabbit holes at 2 a.m., I never knew how to do &quot;casual interest.&quot; If I loved something, I obsessed over it. I wanted to understand how it worked, where it came from, and how far I could take it.
                 </p>
@@ -64,9 +64,9 @@ export default function StoryPage() {
                   Welcome to NerdSpace. I&apos;m glad you&apos;re here.
                 </p>
 
-                <div className="pt-8">
+                <div className="pt-6 sm:pt-8">
                   <p className="text-white">Yeabsra Ashebir (Tech Nerd)</p>
-                  <div className="mt-4 flex gap-4">
+                  <div className="flex gap-4 mt-3 sm:mt-4">
                     <a
                       href="https://t.me/selfmadecoder"
                       target="_blank"
@@ -90,13 +90,13 @@ export default function StoryPage() {
           </motion.div>
         </div>
 
-        <div className="relative col-span-4 hidden lg:block">
+        <div className="hidden lg:block relative col-span-4">
           <div className="absolute inset-0">
             <Image
               src="/03.png"
               alt="Background"
               fill
-              className="object-cover brightness-[0.8]"
+              className="brightness-[0.8] object-cover"
               priority
               quality={100}
             />
@@ -114,7 +114,7 @@ export default function StoryPage() {
       </div>
       {/* Add subtle grain effect to entire page */}
       <div 
-        className="pointer-events-none fixed inset-0 opacity-20"
+        className="fixed inset-0 opacity-20 pointer-events-none"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
           mixBlendMode: "overlay"
