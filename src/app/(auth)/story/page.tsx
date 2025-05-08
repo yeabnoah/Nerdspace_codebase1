@@ -90,8 +90,8 @@ export default function StoryPage() {
           </motion.div>
         </div>
 
-        <div className="hidden lg:block relative col-span-4">
-          <div className="absolute inset-0">
+        <div className="hidden lg:block relative col-span-4 h-full">
+          <div className="absolute inset-0 h-full">
             <Image
               src="/03.png"
               alt="Background"
@@ -99,6 +99,7 @@ export default function StoryPage() {
               className="brightness-[0.8] object-cover"
               priority
               quality={100}
+              sizes="(min-width: 1024px) 66vw, 100vw"
             />
           </div>
           <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A] via-transparent to-transparent"></div>

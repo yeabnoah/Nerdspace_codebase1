@@ -222,7 +222,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="hidden lg:block relative lg:col-span-4">
+        <div className="hidden lg:block relative col-span-4">
           <div className="absolute inset-0">
             <Image
               src={shuffledImages[currentImageIndex]}
@@ -231,6 +231,7 @@ export default function LoginPage() {
               className="brightness-[0.8] object-cover"
               priority
               quality={100}
+              sizes="100vw"
             />
           </div>
           <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A] via-transparent to-transparent"></div>
