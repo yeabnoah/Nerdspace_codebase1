@@ -58,7 +58,7 @@ export async function GET() {
     }
 
     // Format sessions with device information
-    const formattedSessions = sessions.map((session) => ({
+    const formattedSessions = sessions.map((session: any) => ({
       id: session.id,
       createdAt: session.createdAt,
       expiresAt: session.expiresAt,
@@ -71,7 +71,7 @@ export async function GET() {
     }));
 
     // Format connected accounts
-    const formattedAccounts = accounts.map((account) => ({
+    const formattedAccounts = accounts.map((account: any) => ({
       provider: account.providerId,
       email: account.accountId,
       connectedAt: account.createdAt,
