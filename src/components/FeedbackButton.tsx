@@ -70,11 +70,7 @@ export default function FeedbackButton({ position = "bottom-right", apiEndpoint 
 
   const handleSubmit = () => {
     if (!content.trim()) {
-      toast({
-        title: "Missing description",
-        description: "Please provide a description of the issue.",
-        variant: "destructive",
-      })
+      toast.error("Please provide a description of the issue")
       return
     }
     submitFeedback()
