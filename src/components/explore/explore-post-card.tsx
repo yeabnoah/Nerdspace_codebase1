@@ -2,7 +2,7 @@ import { getTrimLimit } from "@/functions/render-helper";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import usePostStore from "@/store/post.store";
-import { PostAccess } from "@prisma/client";
+import { postAccess } from "@/interface/auth/post.interface";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import {
@@ -419,7 +419,7 @@ const ExplorePostCard = ({
                     <TrashIcon className="mr-2 w-4 h-4" />
                     <span className="hidden md:block">Delete</span>
                   </DropdownMenuItem>
-                  {(post?.access as unknown as string) === (PostAccess.public as unknown as string) ? (
+                  {(post?.access as unknown as string) === (postAccess.public as unknown as string) ? (
                     <DropdownMenuItem onClick={() => changePostAccessType(post)}>
                       <LockIcon className="mr-2 w-4 h-4" />
                       <span className="hidden md:block">Go Private</span>
