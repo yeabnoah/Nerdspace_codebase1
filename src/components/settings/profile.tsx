@@ -199,7 +199,7 @@ export default function ProfilePage() {
       <div className="relative md:mx-5 mt-5 px-4 md:px-0 pb-8 font-geist container">
         <div className="hidden md:block -top-20 md:-right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45" />
 
-        <div className="group relative shadow-lg mb-12 rounded-2xl w-full h-[400px] md:h-[250px] overflow-hidden">
+        <div className="group relative shadow-lg mb-12 rounded-2xl w-full h-[250px] overflow-hidden">
           <Skeleton className="w-full h-full" />
         </div>
 
@@ -305,7 +305,7 @@ export default function ProfilePage() {
         <div className="flex flex-col w-full">
           <div className="flex sm:flex-row flex-col justify-between items-start gap-4">
             <div className="flex flex-col">
-              <h1 className="font-geist font-medium text-foreground text-xl">
+              <h1 className="font-geist font-sm md:font-medium text-foreground text-xl">
                 {user.visualName || user.name}
               </h1>
               <div className="flex items-center gap-2">
