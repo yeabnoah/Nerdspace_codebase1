@@ -352,8 +352,8 @@ export default function ProfilePage() {
                 href={`/profile/${user.id}/followers`}
                 className="flex justify-center items-center gap-2 bg-white hover:bg-gray-50 dark:bg-black dark:hover:bg-gray-900 shadow-sm px-5 py-2.5 border border-gray-100 dark:border-gray-500/10 rounded-full w-full sm:w-auto"
               >
-                <Users className="w-4 h-4" />
-                <span className="font-geist font-medium text-sm">
+                <Users className="w-3 md:w-4 h-3 md:h-4" />
+                <span className="font-geist font-medium text-xs md:text-sm">
                   {user._count?.following || 0} Followers
                 </span>
               </Link>
@@ -361,8 +361,8 @@ export default function ProfilePage() {
                 href={`/profile/${user.id}/following`}
                 className="flex justify-center items-center gap-2 bg-white hover:bg-gray-50 dark:bg-black dark:hover:bg-gray-900 shadow-sm px-5 py-2.5 border border-gray-100 dark:border-gray-500/10 rounded-full w-full sm:w-auto"
               >
-                <Users className="w-4 h-4" />
-                <span className="font-geist font-medium text-sm">
+                <Users className="w-3 md:w-4 h-3 md:h-4" />
+                <span className="font-geist font-medium text-xs md:text-sm">
                   {user._count?.followers || 0} Following
                 </span>
               </Link>
