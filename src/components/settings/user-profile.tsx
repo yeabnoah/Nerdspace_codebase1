@@ -3,25 +3,19 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type postInterface from "@/interface/auth/post.interface";
 import { useSession } from "@/lib/auth-client";
 import useUserProfileStore from "@/store/userProfile.store";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Dot, Grid3X3, Hammer, LinkIcon, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import FollowButton from "./follow-button";
-import ProjectsTab from "./tabs/ProjectsTab";
-import UserProjectsTab from "./tabs/UserProjectsTab";
-import RenderUserPosts from "./user-posts";
-import { toast } from "react-hot-toast";
-import { useQueryClient } from "@tanstack/react-query";
-import PostCard from "../post/post-card";
-import type postInterface from "@/interface/auth/post.interface";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import ExplorePostCard from "../explore/explore-post-card";
-import PostCommentInterface from "@/interface/auth/comment.interface";
+import UserProjectsTab from "./tabs/UserProjectsTab";
 
 // interface FollowCounts {
 //   followers: number;
