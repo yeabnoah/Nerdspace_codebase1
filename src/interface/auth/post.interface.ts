@@ -24,7 +24,7 @@ interface postInterface {
   };
 }
 
-enum postAccess {
+export enum postAccess {
   private,
   public,
 }

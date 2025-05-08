@@ -7,7 +7,6 @@ import type postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
 import usePostStore from "@/store/post.store";
 import useReportStore from "@/store/report.strore";
-import { PostAccess } from "@prisma/client";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -58,6 +57,7 @@ import {
   EmojiPickerFooter,
 } from "@/components/ui/emoji-picker";
 import { SmileIcon } from "lucide-react";
+import { postAccess } from "@/interface/auth/post.interface";
 
 const timeAgo = (date: Date) => {
   const seconds = Math.floor(
@@ -606,7 +606,7 @@ const PostCard = ({
                     <span>Delete</span>
                   </DropdownMenuItem>
                   {(post?.access as unknown as string) ===
-                  (PostAccess.public as unknown as string) ? (
+                  (postAccess.public as unknown as string) ? (
                     <DropdownMenuItem
                       onClick={() => {
                         handleAccessChange();
@@ -1053,13 +1053,13 @@ const PostCard = ({
               <div className="flex flex-col px-6 pb-3 w-full">
                 <div className="mb-2 font-geist font-medium text-3xl">
                   {(post.access as unknown as string) ===
-                  (PostAccess.public as unknown as string)
+                  (postAccess.public as unknown as string)
                     ? "Make Post Private"
                     : "Make Post Public"}
                 </div>
                 <p className="mb-6 font-geist text-muted-foreground">
                   {(post.access as unknown as string) ===
-                  (PostAccess.public as unknown as string)
+                  (postAccess.public as unknown as string)
                     ? "Are you sure you want to make this post private? This will hide it from other users."
                     : "Are you sure you want to make this post public? This will make it visible to other users."}
                 </p>
