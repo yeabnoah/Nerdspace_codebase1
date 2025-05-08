@@ -30,7 +30,7 @@ import PostCommentInterface from "@/interface/auth/comment.interface";
 
 export default function UserProfile() {
   const [activeTab, setActiveTab] = useState("posts");
-  const { userProfile } = useUserProfileStore();
+  const { userProfile, setUserProfile } = useUserProfileStore();
   const [loading, setLoading] = useState(true);
   const session = useSession();
   const queryClient = useQueryClient();
@@ -118,8 +118,8 @@ export default function UserProfile() {
     // Implement change post access type logic
   };
 
-  const handleFollow = () => {
-    // Implement follow logic
+  const handleFollow = (post: postInterface) => {
+    followMutation.mutate();
   };
 
   const handlePostClick = (post: postInterface) => {
@@ -187,6 +187,61 @@ export default function UserProfile() {
     enabled: !!userProfile?.id,
   });
 
+  const likeMutation = useMutation({
+    mutationFn: async (postId: string) => {
+      const response = await axios.post(`/api/posts/${postId}/like`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.success("Post liked successfully");
+    },
+    onError: () => {
+      toast.error("Error liking post");
+    },
+  });
+
+  const bookmarkMutation = useMutation({
+    mutationFn: async (postId: string) => {
+      const response = await axios.post(`/api/posts/${postId}/bookmark`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.success("Post bookmarked successfully");
+    },
+    onError: () => {
+      toast.error("Error bookmarking post");
+    },
+  });
+
+  const handleLike = (postId: string) => {
+    likeMutation.mutate(postId);
+  };
+
+  const handleBookmark = (postId: string) => {
+    bookmarkMutation.mutate(postId);
+  };
+
+  const handleCommentToggle = (postId: string) => {
+    // Toggle comment section visibility
+    setCommentShown((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+  };
+
+  const handleMediaClick = (index: number, images: string[]) => {
+    // Handle media click - you can implement a modal or lightbox here
+    console.log("Media clicked:", index, images);
+  };
+
+  useEffect(() => {
+    if (userProfile) {
+      setUserProfile(userProfile);
+    }
+  }, [userProfile, setUserProfile]);
+
   useEffect(() => {
     if (userProfile) {
       setLoading(false);
@@ -195,36 +250,36 @@ export default function UserProfile() {
 
   if (loading || isLoadingUser) {
     return (
-      <div className="container relative mx-10 pb-8 font-geist">
-        <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
+      <div className="relative mx-10 pb-8 font-geist container">
+        <div className="hidden md:block -top-20 -right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45" />
 
-        <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl md:h-[200px]">
-          <Skeleton className="h-full w-full" />
+        <div className="group relative mb-12 rounded-2xl w-full h-[400px] md:h-[200px] overflow-hidden">
+          <Skeleton className="w-full h-full" />
         </div>
 
-        <div className="relative z-10 mx-2 my-5 -mt-16 flex flex-col items-start gap-1">
-          <div className="relative mx-5 -mt-16 h-28 w-28 overflow-hidden rounded-full ring-2 ring-white/20">
-            <Skeleton className="h-full w-full rounded-full" />
+        <div className="z-10 relative flex flex-col items-start gap-1 mx-2 my-5 -mt-16">
+          <div className="relative mx-5 -mt-16 rounded-full ring-2 ring-white/20 w-28 h-28 overflow-hidden">
+            <Skeleton className="rounded-full w-full h-full" />
           </div>
           <div className="flex flex-col gap-2">
-            <Skeleton className="h-6 w-48" />
-            <Skeleton className="h-4 w-32" />
+            <Skeleton className="w-48 h-6" />
+            <Skeleton className="w-32 h-4" />
             <div className="flex gap-4">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-4 w-24" />
+              <Skeleton className="w-24 h-4" />
+              <Skeleton className="w-24 h-4" />
             </div>
           </div>
         </div>
 
         <div className="mt-8">
           <div className="space-y-8 lg:col-span-2">
-            <div className="overflow-hidden rounded-xl border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-black">
+            <div className="bg-white dark:bg-black border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden">
               <div className="p-8">
                 <div className="mb-4">
-                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="w-full h-10" />
                 </div>
                 <div className="mt-4">
-                  <Skeleton className="h-64 w-full" />
+                  <Skeleton className="w-full h-64" />
                 </div>
               </div>
             </div>
@@ -236,8 +291,8 @@ export default function UserProfile() {
 
   if (!userProfile) {
     return (
-      <div className="container relative mx-10 pb-8 font-geist">
-        <div className="flex h-[50vh] items-center justify-center">
+      <div className="relative mx-10 pb-8 font-geist container">
+        <div className="flex justify-center items-center h-[50vh]">
           <p className="text-muted-foreground">No user profile found</p>
         </div>
       </div>
@@ -245,10 +300,10 @@ export default function UserProfile() {
   }
 
   return (
-    <div className="container relative mx-10 pb-8 font-geist">
-      <div className="absolute -right-10 -top-20 hidden h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10 md:block"></div>
+    <div className="relative md:mx-10 mt-5 pb-8 w-[94%] font-geist container">
+      <div className="hidden md:block -top-20 md:-right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45" />
 
-      <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-xl shadow-lg md:h-[250px]">
+      <div className="group relative shadow-lg mx-auto mb-12 rounded-2xl h-[250px] md:h-[400px] overflow-hidden">
         <Image
           src={userProfile?.coverImage || "/obsession.jpg"}
           alt="Cover Image"
@@ -258,13 +313,13 @@ export default function UserProfile() {
           priority={true}
           sizes="100vw"
         />
-        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 via-zinc-900/60 to-transparent p-8 dark:from-black/80 dark:via-black/50">
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
+        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 dark:from-black/80 via-zinc-900/60 dark:via-black/50 to-transparent p-8">
+          <div className="right-0 bottom-0 left-0 absolute bg-gradient-to-t from-zinc-900/90 dark:from-black to-transparent h-32" />
         </div>
       </div>
 
-      <div className="relative z-10 mx-2 my-5 -mt-8 ml-5 flex flex-col items-start gap-1">
-        <div className="relative -mt-16 h-20 w-20 shrink-0 overflow-hidden rounded-full ring-2 ring-white/20">
+      <div className="z-10 relative flex flex-col items-start gap-1 mx-2 my-5 -mt-8 ml-5">
+        <div className="relative -mt-16 rounded-full ring-2 ring-white/20 w-20 h-20 overflow-hidden shrink-0">
           <Image
             src={userProfile?.image || "/user.jpg?height=128&width=128"}
             alt={userProfile?.visualName || userProfile?.name || ""}
@@ -274,30 +329,20 @@ export default function UserProfile() {
           />
         </div>
 
-        <div className="flex w-full flex-col">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col gap-1">
+        <div className="flex flex-col w-full">
+          <div className="flex justify-between items-start">
+            <div className="flex flex-col">
+              <h1 className="font-geist font-medium text-foreground text-xl">
+                {userProfile?.visualName || userProfile?.name}
+              </h1>
               <div className="flex items-center gap-2">
-                <h1 className="font-geist text-xl font-medium text-foreground">
-                  {userProfile?.visualName || userProfile?.name}
-                </h1>
-                <Dot className="h-4 w-4 text-muted-foreground" />
-                {session?.data?.user?.id !== userProfile?.id && (
-                  <FollowButton
-                    userId={userProfile?.id}
-                    isCurrentUser={session?.data?.user?.id === userProfile?.id}
-                    isFollowing={followStatus?.[userProfile?.id] || false}
-                  />
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <p className="font-geist text-sm text-muted-foreground">
+                <p className="font-geist text-muted-foreground text-sm">
                   Nerd@{userProfile?.nerdAt}
                 </p>
                 {userProfile?.country && (
                   <>
-                    <Dot className="h-4 w-4 text-muted-foreground" />
-                    <p className="font-geist text-sm text-muted-foreground">
+                    <Dot className="w-4 h-4 text-muted-foreground" />
+                    <p className="font-geist text-muted-foreground text-sm">
                       {userProfile.country.emoji} {userProfile.country.name}
                     </p>
                   </>
@@ -307,12 +352,12 @@ export default function UserProfile() {
 
             {userProfile?.link && (
               <div className="flex items-center gap-2">
-                <LinkIcon className="h-4 w-4 text-muted-foreground" />
+                <LinkIcon className="w-4 h-4 text-muted-foreground" />
                 <a
                   href={userProfile.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-geist text-sm text-purple-500 hover:underline"
+                  className="font-geist text-purple-500 text-sm hover:underline"
                 >
                   {userProfile.link}
                 </a>
@@ -320,29 +365,29 @@ export default function UserProfile() {
             )}
           </div>
 
-          <div className="mt-1 flex flex-col gap-2">
+          <div className="flex flex-col gap-2 mt-1">
             <div className="flex items-center">
-              <p className="font-geist text-sm text-muted-foreground">
+              <p className="font-geist text-muted-foreground text-sm">
                 {userProfile?.bio || "No bio"}
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
               <Link
                 href={`/user-profile/${userProfile?.id}/followers`}
-                className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-4 py-1.5 shadow-sm hover:bg-gray-50 dark:border-gray-500/10 dark:bg-black dark:hover:bg-gray-900"
+                className="flex items-center gap-2 bg-white hover:bg-gray-50 dark:bg-black dark:hover:bg-gray-900 shadow-sm px-5 py-2.5 border border-gray-100 dark:border-gray-500/10 rounded-full"
               >
-                <Users className="h-3.5 w-3.5" />
-                <span className="font-geist text-xs font-medium">
+                <Users className="w-4 h-4" />
+                <span className="font-geist font-medium text-sm">
                   {userData?._count?.following || 0} Followers
                 </span>
               </Link>
               <Link
                 href={`/user-profile/${userProfile?.id}/following`}
-                className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-4 py-1.5 shadow-sm hover:bg-gray-50 dark:border-gray-500/10 dark:bg-black dark:hover:bg-gray-900"
+                className="flex items-center gap-2 bg-white hover:bg-gray-50 dark:bg-black dark:hover:bg-gray-900 shadow-sm px-5 py-2.5 border border-gray-100 dark:border-gray-500/10 rounded-full"
               >
-                <Users className="h-3.5 w-3.5" />
-                <span className="font-geist text-xs font-medium">
+                <Users className="w-4 h-4" />
+                <span className="font-geist font-medium text-sm">
                   {userData?._count?.followers || 0} Following
                 </span>
               </Link>
@@ -351,77 +396,76 @@ export default function UserProfile() {
         </div>
       </div>
 
-      <div className="mt-8">
+      <div className="">
         <div className="space-y-8 lg:col-span-2">
-          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-black">
-            <CardContent className="p-8">
+          <Card className="bg-white dark:bg-black shadow-sm border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden">
+            <CardContent className="md:p-8 px-2 py-4">
               <Tabs
                 defaultValue="posts"
                 className="w-full"
                 onValueChange={setActiveTab}
               >
-                <TabsList className="scrollbar-hide mb-2 flex h-12 justify-start overflow-x-auto bg-transparent">
+                <TabsList className="flex justify-start bg-transparent mb-2 h-12 overflow-x-auto scrollbar-hide">
                   <TabsTrigger
                     value="posts"
-                    className="h-10 rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    className="data-[state=active]:bg-primary rounded-full h-10 data-[state=active]:text-primary-foreground"
                   >
-                    <Grid3X3 className="mr-2 h-4 w-4" />
-                    <span className="hidden sm:inline">Posts</span>
+                    <Grid3X3 className="mr-2 w-4 h-4" />
+                    <span className="hidden data-[state=active]:inline sm:inline">
+                      Posts
+                    </span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="projects"
-                    className="h-10 rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    className="data-[state=active]:bg-primary rounded-full h-10 data-[state=active]:text-primary-foreground"
                   >
-                    <Hammer className="mr-2 h-4 w-4" />
-                    <span className="hidden sm:inline">Projects</span>
+                    <Hammer className="mr-2 w-4 h-4" />
+                    <span className="hidden data-[state=active]:inline sm:inline">
+                      Projects
+                    </span>
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="posts" className="mt-0">
                   <div className="space-y-4">
-                    {posts?.map((post : postInterface, index : number) => (
-                      <div
+                    {posts?.map((post: postInterface, index: number) => (
+                      <ExplorePostCard
                         key={post.id}
-                        onClick={() => handlePostClick(post)}
-                        className="cursor-pointer"
-                      >
-                        <ExplorePostCard
-                          post={post}
-                          index={index}
-                          expandedStates={expandedStates}
-                          toggleExpand={toggleExpand}
-                          commentShown={commentShown}
-                          toggleCommentShown={toggleCommentShown}
-                          expandedComments={expandedComments}
-                          toggleCommentExpand={toggleCommentExpand}
-                          replyShown={replyShown}
-                          toggleReplyShown={toggleReplyShown}
-                          replyContent={replyContent}
-                          setReplyContent={setReplyContent}
-                          handleReplySubmit={handleReplySubmit}
-                          expandedReplies={expandedReplies}
-                          toggleReplies={toggleReplies}
-                          handleEditComment={handleEditComment}
-                          handleDeleteComment={handleDeleteComment}
-                          openEditModal={openEditModal}
-                          openDeleteModal={openDeleteModal}
-                          setSelectedCommentReply={setSelectedCommentReply}
-                          modalEditOpened={modalEditOpened}
-                          modalDeleteOpened={modalDeleteOpened}
-                          reportModalOpen={reportModalOpen}
-                          setReportModalOpen={setReportModalOpen}
-                          commentLoading={false}
-                          comments={[]}
-                          hasNextCommentPage={false}
-                          isFetchingNextCommentPage={false}
-                          fetchNextCommentPage={() => {}}
-                          setEditModal={setEditModal}
-                          setDeleteModal={setDeleteModal}
-                          changePostAccessType={changePostAccessType}
-                          handleFollow={handleFollow}
-                          setCommentId={setCommentId}
-                        />
-                      </div>
+                        post={post}
+                        index={index}
+                        expandedStates={expandedStates}
+                        toggleExpand={toggleExpand}
+                        commentShown={commentShown}
+                        toggleCommentShown={toggleCommentShown}
+                        expandedComments={expandedComments}
+                        toggleCommentExpand={toggleCommentExpand}
+                        replyShown={replyShown}
+                        toggleReplyShown={toggleReplyShown}
+                        replyContent={replyContent}
+                        setReplyContent={setReplyContent}
+                        handleReplySubmit={handleReplySubmit}
+                        expandedReplies={expandedReplies}
+                        toggleReplies={toggleReplies}
+                        handleEditComment={handleEditComment}
+                        handleDeleteComment={handleDeleteComment}
+                        openEditModal={openEditModal}
+                        openDeleteModal={openDeleteModal}
+                        setSelectedCommentReply={setSelectedCommentReply}
+                        modalEditOpened={modalEditOpened}
+                        modalDeleteOpened={modalDeleteOpened}
+                        reportModalOpen={reportModalOpen}
+                        setReportModalOpen={setReportModalOpen}
+                        commentLoading={false}
+                        comments={[]}
+                        hasNextCommentPage={false}
+                        isFetchingNextCommentPage={false}
+                        fetchNextCommentPage={() => {}}
+                        setEditModal={setModalEditOpened}
+                        setDeleteModal={setModalDeleteOpened}
+                        changePostAccessType={changePostAccessType}
+                        handleFollow={handleFollow}
+                        setCommentId={setCommentId}
+                      />
                     ))}
                   </div>
                 </TabsContent>
