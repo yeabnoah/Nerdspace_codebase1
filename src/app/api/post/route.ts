@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       );
     }
     const cursor = request.nextUrl.searchParams.get("cursor") || null;
-    const limit = 5;
+    const limit = 10;
 
     const posts = await prisma.post.findMany({
       where: {

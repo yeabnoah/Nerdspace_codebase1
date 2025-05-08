@@ -239,7 +239,7 @@ export default function ProfilePage() {
     <div className="relative md:mx-10 mt-5 pb-8 font-geist container">
       <div className="hidden md:block -top-20 md:-right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45" />
 
-      <div className="group relative shadow-lg mb-12 rounded-xl w-full h-[250px] md:h-[400px] overflow-hidden">
+      <div className="group relative shadow-lg mb-12 rounded-xl w-full h-[250px] overflow-hidden">
         <Image
           src={user.coverImage || "/obsession.jpg"}
           alt="Cover Image"
@@ -247,7 +247,7 @@ export default function ProfilePage() {
           quality={100}
           className="object-cover"
           priority={true}
-          sizes="100vw"
+          // sizes="100vw"
         />
         <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 dark:from-black/80 via-zinc-900/60 dark:via-black/50 to-transparent p-8">
           <div className="right-0 bottom-0 left-0 absolute bg-gradient-to-t from-zinc-900/90 dark:from-black to-transparent h-32" />
