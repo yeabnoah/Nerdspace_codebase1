@@ -1,10 +1,19 @@
 import getUserSession from "@/functions/get-user";
 import { prisma } from "@/lib/prisma";
 import { bugReportSchema } from "@/validation/bug.validation";
-import { postSchema } from "@/validation/post.validation";
-import { bugReportSeverity, bugReportStatus } from "@prisma/client";
-import { z } from "better-auth/react";
 import { NextRequest, NextResponse } from "next/server";
+
+export enum bugReportSeverity {
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+}
+
+export enum bugReportStatus {
+  PENDING = "PENDING",
+  RESOLVED = "RESOLVED",
+  REJECTED = "REJECTED",
+}
 
 export async function GET(request: NextRequest) {
   try {
