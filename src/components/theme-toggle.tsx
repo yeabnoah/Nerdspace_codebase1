@@ -21,40 +21,52 @@ export function ModeToggle() {
         <Button
           variant="outline"
           size="icon"
-          className="mx-auto bg-white outline-none outline-transparent after:outline-none dark:bg-textAlternative"
+          className="bg-white dark:bg-textAlternative mx-auto outline-none outline-transparent after:outline-none"
         >
-          <Sun className="absolute size-[1rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute size-[1rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <Sun className="absolute size-[1rem] rotate-0 dark:-rotate-90 scale-100 dark:scale-0 transition-all" />
+          <Moon className="absolute size-[1rem] rotate-90 dark:rotate-0 scale-0 dark:scale-100 transition-all" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-48 rounded-2xl border-none bg-white/80 shadow-lg backdrop-blur-sm dark:bg-black/80"
+        className="bg-white/80 dark:bg-black/80 shadow-lg backdrop-blur-sm border-none rounded-2xl w-48"
       >
         <DropdownMenuItem
-          onClick={() => setTheme("light")}
-          className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setTheme("light");
+          }}
+          className="hover:bg-black/70 rounded-xl h-10 cursor-pointer"
         >
-          <Sun className="mr-2 h-4 w-4" />
+          <Sun className="mr-2 w-4 h-4" />
           <span>Light</span>
-          {theme === "light" && <Check className="ml-auto h-4 w-4" />}
+          {theme === "light" && <Check className="ml-auto w-4 h-4" />}
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => setTheme("dark")}
-          className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setTheme("dark");
+          }}
+          className="hover:bg-black/70 rounded-xl h-10 cursor-pointer"
         >
-          <Moon className="mr-2 h-4 w-4" />
+          <Moon className="mr-2 w-4 h-4" />
           <span>Dark</span>
-          {theme === "dark" && <Check className="ml-auto h-4 w-4" />}
+          {theme === "dark" && <Check className="ml-auto w-4 h-4" />}
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => setTheme("system")}
-          className="h-10 cursor-pointer rounded-xl hover:bg-black/70"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setTheme("system");
+          }}
+          className="hover:bg-black/70 rounded-xl h-10 cursor-pointer"
         >
-          <Laptop className="mr-2 h-4 w-4" />
+          <Laptop className="mr-2 w-4 h-4" />
           <span>System</span>
-          {theme === "system" && <Check className="ml-auto h-4 w-4" />}
+          {theme === "system" && <Check className="ml-auto w-4 h-4" />}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
