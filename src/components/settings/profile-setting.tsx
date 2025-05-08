@@ -70,7 +70,7 @@ const ProfileSettings = () => {
     },
     onError: (error) => {
       const errorMessage = error || "An error occurred while updating";
-      toast.error(errorMessage);
+      toast.error(errorMessage.message);
     },
   });
 

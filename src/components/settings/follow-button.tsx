@@ -67,7 +67,7 @@ export default function FollowButton({
         queryClient.setQueryData(["user-data", userId], context.previousUserData);
       }
       const errorMessage = err || "Error occurred while following/unfollowing user";
-      toast.error(errorMessage);
+      toast.error(errorMessage.message);
     },
     onSettled: () => {
       // Invalidate and refetch

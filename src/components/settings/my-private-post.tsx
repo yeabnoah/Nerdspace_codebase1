@@ -2,43 +2,19 @@
 
 import changePostAccess from "@/functions/access-change-post";
 import fetchMyPrivatePosts from "@/functions/fetch-my-private-post";
-import { getTrimLimit } from "@/functions/render-helper";
 import postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import usePostStore from "@/store/post.store";
-import { PostAccess } from "@prisma/client";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import {
-  BanIcon,
-  Edit,
-  LockIcon,
-  LockOpen,
-  MessageCircle,
-  MoreHorizontal,
-  Share2Icon,
-  TrashIcon
-} from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { GoHeart } from "react-icons/go";
-import { HiOutlineBookmark } from "react-icons/hi2";
 import { useInView } from "react-intersection-observer";
 import ImagePreviewDialog from "../image-preview";
 import DeleteModal from "../modal/delete.modal";
 import EditModal from "../modal/edit.modal";
-import RenderPostSkeleton from "../skeleton/render-post.skeleton";
-import { Card } from "../ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../ui/dropdown-menu";
-import { Skeleton } from "../ui/skeleton";
 import PostCard from "../post/post-card";
+import RenderPostSkeleton from "../skeleton/render-post.skeleton";
 
 const iconVariants = {
   initial: { scale: 1 },

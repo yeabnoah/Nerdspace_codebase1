@@ -112,9 +112,9 @@ export default function ProjectsPage() {
     },
     onError: (error) => {
       const errorMessage =
-        error ||
+        error.message ||
         "An error occurred while creating the project";
-      toast.error(errorMessage);
+      toast.error(errorMessage as string);
     },
   });
 
@@ -130,7 +130,7 @@ export default function ProjectsPage() {
     },
     onError: (error) => {
       const errorMessage =
-        error ||
+        error.message ||
         "An error occurred while updating the project";
       toast.error(errorMessage);
     },
