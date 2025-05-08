@@ -1,5 +1,4 @@
 import { getTrimLimit } from "@/functions/render-helper";
-import postInterface from "@/interface/auth/post.interface";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/providers/tanstack-query-provider";
 import usePostStore from "@/store/post.store";
@@ -39,7 +38,7 @@ import {
 import ImagePreviewDialog from "../image-preview";
 import CommentSkeleton from "../skeleton/comment.skelton";
 import { renderComments } from "../post/comment/render-comments";
-import PostCommentInterface from "@/interface/auth/comment.interface";
+
 import {
   Popover,
   PopoverContent,
@@ -52,6 +51,10 @@ import {
   EmojiPickerFooter,
 } from "@/components/ui/emoji-picker";
 import { SmileIcon } from "lucide-react";
+import { motion } from "framer-motion";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import PostCommentInterface from "@/interface/auth/comment.interface";
+import postInterface from "@/interface/auth/post.interface";
 
 interface ExplorePostCardProps {
   post: postInterface;
@@ -133,9 +136,7 @@ const ExplorePostCard = ({
   const { setSelectedPost, setContent } = usePostStore();
   const [commentContent, setCommentContent] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(
-    null,
-  );
+  const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(null);
   const [selectedPostImages, setSelectedPostImages] = useState<string[]>([]);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [isEmojiOpen, setIsEmojiOpen] = useState(false);
@@ -360,30 +361,26 @@ const ExplorePostCard = ({
   };
 
   return (
-    <div className="relative my-5 w-full flex-1 border-b border-r border-transparent p-4 px-3 before:absolute before:bottom-0 before:right-0 before:h-[1px] before:w-full before:bg-gradient-to-r before:from-transparent before:via-orange-500/50 before:to-transparent after:absolute after:bottom-0 after:right-0 after:h-full after:w-[1px] after:bg-gradient-to-b after:from-transparent after:via-blue-500/50 after:to-transparent [&>div]:before:absolute [&>div]:before:left-0 [&>div]:before:top-0 [&>div]:before:h-full [&>div]:before:w-[1px] [&>div]:before:bg-gradient-to-b [&>div]:before:from-transparent [&>div]:before:via-blue-500/50 [&>div]:before:to-transparent">
-      <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-      <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.2 }}
+      className="group relative bg-card/40 shadow-sm hover:shadow-lg backdrop-blur-sm border-border/50 dark:border-border/5 rounded-xl overflow-hidden transition-all duration-300"
+    >
+     
 
-      <div className="relative pl-5 backdrop-blur-sm">
-        <div className="mr-2 flex w-full items-center justify-between pb-2">
-          <div className="flex flex-1 items-center gap-3">
-            <Image
-              src={post.user.image || "/user.jpg"}
-              alt="user"
-              className="size-10 cursor-pointer rounded-full shadow-[0_0_3px_rgba(0,122,255,0.5),0_0_5px_rgba(255,165,0,0.5),0_0_7px_rgba(0,122,255,0.4)] transition-all"
-              height={200}
-              width={200}
-              onClick={() => handleUserProfileClick(post.user.id)}
-            />
-
-            <div
-              onClick={() => handleUserProfileClick(post.user.id)}
-              className="cursor-pointer"
-            >
-              <h1 className="text-sm font-medium">{post.user.name}</h1>
-              <h1 className="text-xs text-muted-foreground text-purple-500">
-                Nerd@
-                <span className="text-white">{post.user.nerdAt}</span>
+      <div className="relative backdrop-blur-sm p-4 sm:p-6">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-3">
+            <Avatar className="w-10 h-10">
+              <AvatarImage src={post.user.image || "/user.jpg"} alt={post.user.name} />
+              <AvatarFallback>{post.user.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <div onClick={() => handleUserProfileClick(post.user.id)} className="cursor-pointer">
+              <h1 className="font-medium text-sm sm:text-base">{post.user.name}</h1>
+              <h1 className="text-muted-foreground text-purple-500 text-xs">
+                Nerd@<span className="text-white">{post.user.nerdAt}</span>
               </h1>
             </div>
           </div>
@@ -391,79 +388,61 @@ const ExplorePostCard = ({
           <div className="flex items-center gap-2">
             {session?.data?.user?.id !== post.user.id && (
               <Button
-                variant={"outline"}
+                variant="outline"
                 size="sm"
-                className={`mx-0 rounded-lg bg-transparent px-2 py-1 text-xs shadow-none hover:bg-transparent md:text-sm`}
-                onClick={() => {
-                  handleFollow(post);
-                }}
+                className="bg-transparent hover:bg-transparent shadow-none mx-0 px-2 py-1 rounded-lg text-xs md:text-sm"
+                onClick={() => handleFollow(post)}
               >
                 {!post.user?.isFollowingAuthor && <Plus size={15} />}
                 {post.user?.isFollowingAuthor ? "Following" : "Follow"}
               </Button>
             )}
             <DropdownMenu>
-              <DropdownMenuTrigger className="mx-auto w-9 py-0 outline-none">
+              <DropdownMenuTrigger className="mx-auto py-0 outline-none w-9">
                 <MoreHorizontal />
               </DropdownMenuTrigger>
               {session?.data?.user?.id === post.user.id ? (
-                <DropdownMenuContent className="mr-5 flex flex-row bg-white dark:bg-textAlternative md:mr-0 md:block">
-                  <DropdownMenuItem
-                    onClick={() => {
+                <DropdownMenuContent className="md:block flex flex-row bg-white dark:bg-textAlternative mr-5 md:mr-0">
+                  <DropdownMenuItem onClick={() => {
                       setSelectedPost(post);
                       setContent(post.content);
                       setEditModal(true);
-                    }}
-                  >
-                    <Edit className="mr-2 h-4 w-4" />
+                  }}>
+                    <Edit className="mr-2 w-4 h-4" />
                     <span className="hidden md:block">Edit</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => {
+                  <DropdownMenuItem onClick={() => {
                       setSelectedPost(post);
                       setContent(post.content);
                       setDeleteModal(true);
-                    }}
-                  >
-                    <TrashIcon className="mr-2 h-4 w-4" />
+                  }}>
+                    <TrashIcon className="mr-2 w-4 h-4" />
                     <span className="hidden md:block">Delete</span>
                   </DropdownMenuItem>
-                  {(post?.access as unknown as string) ===
-                  (PostAccess.public as unknown as string) ? (
-                    <DropdownMenuItem
-                      onClick={() => {
-                        changePostAccessType(post);
-                      }}
-                    >
-                      <LockIcon className="mr-2 h-4 w-4" />
+                  {(post?.access as unknown as string) === (PostAccess.public as unknown as string) ? (
+                    <DropdownMenuItem onClick={() => changePostAccessType(post)}>
+                      <LockIcon className="mr-2 w-4 h-4" />
                       <span className="hidden md:block">Go Private</span>
                     </DropdownMenuItem>
                   ) : (
-                    <DropdownMenuItem
-                      onClick={() => {
-                        changePostAccessType(post);
-                      }}
-                    >
-                      <LockOpen className="mr-2 h-4 w-4" />
+                    <DropdownMenuItem onClick={() => changePostAccessType(post)}>
+                      <LockOpen className="mr-2 w-4 h-4" />
                       <span className="hidden md:block">Go Public</span>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem>
-                    <Share2Icon className="mr-2 h-4 w-4" />
+                    <Share2Icon className="mr-2 w-4 h-4" />
                     <span className="hidden md:block">Share</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               ) : (
-                <DropdownMenuContent className="mr-5 flex flex-row justify-center bg-white dark:bg-textAlternative md:mr-0 md:block">
+                <DropdownMenuContent className="md:block flex flex-row justify-center bg-white dark:bg-textAlternative mr-5 md:mr-0">
                   <DropdownMenuItem>
-                    <Share2Icon className="mr-2 h-4 w-4" />
+                    <Share2Icon className="mr-2 w-4 h-4" />
                     <span className="hidden md:block">Share</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleReport(post.id)}
-                    disabled={session?.data?.user?.id === post.user.id}
-                  >
-                    <BanIcon className="mr-2 h-4 w-4" />
+                  <DropdownMenuItem onClick={() => handleReport(post.id)} disabled={session?.data?.user?.id === post.user.id}>
+                    <BanIcon className="mr-2 w-4 h-4" />
                     <span className="hidden md:block">Report</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -472,21 +451,14 @@ const ExplorePostCard = ({
           </div>
         </div>
 
-        <div
-          className={`mt-2 flex w-full flex-1 ${
-            isShortContent && isTooShort ? "flex-col" : "flex-row"
-          } items-start justify-center`}
-        >
-          <div className="flex w-[100%] flex-1 flex-col justify-start gap-5">
+        <div className="space-y-4">
             {post?.shared && (
               <Card
-                onClick={() => {
-                  router.push(`project/${post.project?.id}`);
-                }}
-                className="overflow-hidden border-gray-100 opacity-80 shadow-none transition-all hover:cursor-pointer hover:opacity-100 dark:border-gray-500/5"
+              onClick={() => router.push(`project/${post.project?.id}`)}
+                className="opacity-80 hover:opacity-100 shadow-none border-gray-100 dark:border-gray-500/5 overflow-hidden transition-all hover:cursor-pointer"
               >
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <div className="relative h-48 w-full sm:h-auto sm:w-1/3">
+                <div className="flex sm:flex-row flex-col gap-3">
+                  <div className="relative w-full sm:w-1/3 h-48 sm:h-auto">
                     <Image
                       fill
                       src={post?.project?.image || "/placeholder.svg"}
@@ -495,40 +467,31 @@ const ExplorePostCard = ({
                       sizes="(max-width: 640px) 100vw, 33vw"
                     />
                   </div>
-                  <div className="flex flex-1 flex-col justify-between p-4">
+                  <div className="flex flex-col flex-1 justify-between p-4">
                     <div className="space-y-2">
-                      <h3 className="font-medium tracking-tight">
-                        {post?.project?.name}
-                      </h3>
+                    <h3 className="font-medium tracking-tight">{post?.project?.name}</h3>
                       <div className="flex flex-wrap gap-2">
-                        <Badge
-                          variant="outline"
-                          className="bg-primary/5 text-xs font-normal"
-                        >
+                      <Badge variant="outline" className="bg-primary/5 font-normal text-xs">
                           {post?.project?.status}
                         </Badge>
                         {post?.project?.category && (
-                          <Badge
-                            variant="outline"
-                            className="bg-primary/5 text-xs font-normal"
-                          >
+                        <Badge variant="outline" className="bg-primary/5 font-normal text-xs">
                             {post?.project?.category}
                           </Badge>
                         )}
                       </div>
                     </div>
-
-                    <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-4 mt-4 text-muted-foreground text-sm">
                       <div className="flex items-center gap-1">
-                        <Clock className="h-3.5 w-3.5" />
+                        <Clock className="w-3.5 h-3.5" />
                         <span>{post?.project?._count.updates}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Star className="h-3.5 w-3.5" />
+                        <Star className="w-3.5 h-3.5" />
                         <span>{post?.project?._count.stars}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <MessageSquare className="h-3.5 w-3.5" />
+                        <MessageSquare className="w-3.5 h-3.5" />
                         <span>{post?.project?._count.reviews}</span>
                       </div>
                     </div>
@@ -536,15 +499,13 @@ const ExplorePostCard = ({
                 </div>
               </Card>
             )}
+
             {post.media && post.media.length > 0 && (
-              <div
-                className={`${!post.shared && "mt-4"} grid w-[100%] flex-1 gap-2 ${getGridClass(
-                  post.media.length,
-                )}`}
-              >
+              <div className={`${!post.shared && "mt-2 sm:mt-4"} w-full`}>
+                {/* 1 Image - Full width */}
                 {post.media.length === 1 && (
                   <div
-                    className="relative h-[30vh] md:h-[36vh]"
+                    className="relative p-1 border border-border rounded-2xl w-fit"
                     onClick={() =>
                       handleMediaClick(
                         0,
@@ -553,39 +514,53 @@ const ExplorePostCard = ({
                     }
                   >
                     <Image
-                      fill
-                      src={post.media[0].url}
+                      src={post.media[0].url || "/placeholder.svg"}
+                      width={400}
+                      height={500}
                       alt="Post media"
-                      className="w-full rounded-xl object-cover"
+                      className="rounded-xl object-cover"
                       sizes="(max-width: 768px) 100vw, 50vw"
+                      style={{
+                        width: "auto",
+                        height: "auto",
+                        maxHeight: "400px",
+                      }}
                     />
                   </div>
                 )}
-                {post.media.length === 2 &&
-                  post.media.map((media, mediaIndex) => (
-                    <div
-                      key={media.id}
-                      className="relative h-[20vh] md:h-[28vh]"
-                      onClick={() =>
-                        handleMediaClick(
-                          mediaIndex,
-                          post.media.map((media) => media.url),
-                        )
-                      }
-                    >
-                      <Image
-                        fill
-                        src={media.url}
-                        alt="Post media"
-                        className="h-full w-full rounded-xl object-cover"
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                      />
-                    </div>
-                  ))}
+
+                {/* 2 Images - Equal split */}
+                {post.media.length === 2 && (
+                  <div className="gap-1 sm:gap-2 grid grid-cols-2">
+                    {post.media.map((media, mediaIndex) => (
+                      <div
+                        key={media.id}
+                        className="relative aspect-square"
+                        onClick={() =>
+                          handleMediaClick(
+                            mediaIndex,
+                            post.media.map((media) => media.url),
+                          )
+                        }
+                      >
+                        <Image
+                          fill
+                          src={media.url || "/placeholder.svg"}
+                          alt="Post media"
+                          className="rounded-xl object-cover"
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 3+ Images - Main + Side thumbnails */}
                 {post.media.length >= 3 && (
-                  <div className="grid h-[36vh] w-full max-w-[82vw] grid-cols-[auto_120px] gap-2 md:w-[36vw]">
+                  <div className="gap-1 sm:gap-2 grid grid-cols-3 aspect-video">
+                    {/* Main image (2/3 width) */}
                     <div
-                      className="relative h-full w-full"
+                      className="relative col-span-2 h-full"
                       onClick={() =>
                         handleMediaClick(
                           0,
@@ -595,39 +570,44 @@ const ExplorePostCard = ({
                     >
                       <Image
                         fill
-                        src={post.media[0].url}
+                        src={post.media[0].url || "/placeholder.svg"}
                         alt="Post media"
-                        className="h-full w-full rounded-xl object-cover"
-                        sizes="(max-width: 768px) 70vw, 35vw"
+                        className="rounded-xl object-cover"
+                        sizes="(max-width: 768px) 66vw, 33vw"
                       />
                     </div>
 
-                    <div className="flex w-full flex-col gap-2">
-                      {post.media.slice(1, 4).map((media, mediaIndex) => (
-                        <div
-                          key={media.id}
-                          className="relative h-full w-full"
-                          onClick={() =>
-                            handleMediaClick(
-                              mediaIndex + 1,
-                              post.media.map((media) => media.url),
-                            )
-                          }
-                        >
-                          <Image
-                            fill
-                            src={media.url}
-                            alt="Post media"
-                            className="h-full w-full rounded-xl object-cover"
-                            sizes="(max-width: 768px) 30vw, 15vw"
-                          />
-                          {mediaIndex === 2 && post.media.length > 4 && (
-                            <div className="absolute bottom-2 right-2 rounded-full bg-black/50 px-2 py-1 text-white">
-                              +{post.media.length - 4}
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                    {/* Thumbnail column (1/3 width) */}
+                    <div
+                      className={`grid h-full ${post.media.length === 3 ? "grid-rows-2" : "grid-rows-3"} gap-1 sm:gap-2`}
+                    >
+                      {post.media
+                        .slice(1, post.media.length === 4 ? 4 : 3)
+                        .map((media, mediaIndex) => (
+                          <div
+                            key={media.id}
+                            className="relative w-full h-full"
+                            onClick={() =>
+                              handleMediaClick(
+                                mediaIndex + 1,
+                                post.media.map((media) => media.url),
+                              )
+                            }
+                          >
+                            <Image
+                              fill
+                              src={media.url || "/placeholder.svg"}
+                              alt="Post media"
+                              className="rounded-xl object-cover"
+                              sizes="(max-width: 768px) 33vw, 16vw"
+                            />
+                            {mediaIndex === 2 && post.media.length > 4 && (
+                              <div className="absolute inset-0 flex justify-center items-center bg-black/50 rounded-xl font-semibold text-white text-sm">
+                                +{post.media.length - 4}
+                              </div>
+                            )}
+                          </div>
+                        ))}
                     </div>
                   </div>
                 )}
@@ -635,11 +615,10 @@ const ExplorePostCard = ({
             )}
 
             <div className="flex-1 break-words">
-              <h4 className="break-all text-sm md:text-base">
-                {(expandedStates[index] || !isLongContent
-                  ? post.content
-                  : truncatedContent
-                ).split(/(\s+)/).map((word, i) => (
+              <h4 className="text-sm md:text-base break-all">
+              {(expandedStates[index] || !isLongContent ? post.content : truncatedContent)
+                .split(/(\s+)/)
+                .map((word, i) => (
                   word.startsWith('#') 
                     ? <span key={i} className="text-purple-500">{word}</span>
                     : word
@@ -648,38 +627,28 @@ const ExplorePostCard = ({
               </h4>
               {isLongContent && (
                 <button
-                  className="mt-2 text-sm text-purple-500 hover:underline"
+                  className="mt-2 text-purple-500 text-sm hover:underline"
                   onClick={() => toggleExpand(index)}
                 >
                   {expandedStates[index] ? "See less" : "See more"}
                 </button>
               )}
-            </div>
           </div>
 
-          <div
-            className={`flex ${
-              isShortContent && isTooShort ? "mt-5 flex-row" : "mt-5 flex-col"
-            } gap-5 md:w-16`}
-          >
+          <div className="flex items-center gap-4 text-muted-foreground text-xs">
             <div
-              className={`rounded-full ${
-                isShortContent && isTooShort ? "flex items-center gap-2 pr-2" : "px-2"
-              } md:mx-auto`}
+              className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
               onClick={() => handleLike(post.id)}
             >
-              <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center"}`}>
-                {post.likes?.some(
-                  (like) => like.userId === session.data?.user.id,
-                ) ? (
-                  <GoHeartFill className="size-5 text-red-500" />
-                ) : (
-                  <GoHeart className="size-5" />
-                )}
-                <span className="text-xs font-medium">{formatCount(post._count?.likes || 0)}</span>
-              </div>
+              {post.likes?.some((like) => like.userId === session.data?.user.id) ? (
+                <GoHeartFill className="w-4 h-4 text-red-500" />
+              ) : (
+                <GoHeart className="w-4 h-4" />
+              )}
+              <span>{formatCount(post._count?.likes || 0)}</span>
             </div>
             <div
+              className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
               onClick={async () => {
                 await setSelectedPost(post);
                 toggleCommentShown(post.id);
@@ -687,59 +656,49 @@ const ExplorePostCard = ({
                   queryKey: ["comment", post.id],
                 });
               }}
-              className={`mx-auto cursor-pointer rounded-full ${
-                isShortContent && isTooShort ? "flex items-center gap-2 pr-2" : "px-2"
-              }`}
             >
-              <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center"}`}>
-                <MessageCircle className="size-5" />
-                <span className="text-xs font-medium">{formatCount(post._count?.replies || 0)}</span>
-              </div>
+              <MessageCircle className="w-4 h-4" />
+              <span>{formatCount(post._count?.replies || 0)}</span>
             </div>
             <div
-              className={`mx-auto rounded-full ${
-                isShortContent && isTooShort ? "flex items-center gap-2 pr-2" : "px-2"
-              }`}
+              className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
               onClick={() => handleBookmark(post.id)}
             >
-              <div className={`flex ${isShortContent && isTooShort ? "flex-row items-center gap-1" : "flex-col items-center"}`}>
-                {post.bookmarks.some(
-                  (bookmark) => bookmark.userId === session.data?.user.id,
-                ) ? (
-                  <HiBookmark className="size-5 text-primary" />
-                ) : (
-                  <HiOutlineBookmark className="size-5" />
-                )}
-                <span className="text-xs font-medium">{formatCount(post._count?.bookmarks || 0)}</span>
-              </div>
+              {post.bookmarks.some((bookmark) => bookmark.userId === session.data?.user.id) ? (
+                <HiBookmark className="w-4 h-4 text-primary" />
+              ) : (
+                <HiOutlineBookmark className="w-4 h-4" />
+              )}
+              <span>{formatCount(post._count?.bookmarks || 0)}</span>
+            </div>
             </div>
           </div>
         </div>
 
         {commentShown[post.id] && (
           <div>
-            <hr className="mb-2 mt-5" />
-            <div className="itemc flex gap-2 py-2">
+            <hr className="mt-5 mb-2" />
+            <div className="flex gap-2 py-2 itemc">
               <div className="relative flex-1">
                 <input
                   placeholder="Comment here"
-                  className="w-full border-0 border-b border-b-textAlternative/20 bg-transparent text-sm placeholder:font-instrument placeholder:text-lg focus:border-b focus:border-gray-500 focus:outline-none focus:ring-0 py-2 px-2 dark:border-white/50"
+                  className="bg-transparent px-2 py-2 border-0 focus:border-gray-500 dark:border-white/50 border-b border-b-textAlternative/20 focus:border-b focus:outline-none focus:ring-0 w-full placeholder:font-instrument text-sm placeholder:text-lg"
                   value={commentContent}
                   onChange={(e) => setCommentContent(e?.target?.value)}
                   onSelect={(e) => setCursorPosition(e?.currentTarget?.selectionStart || 0)}
                 />
-                <div className="absolute bottom-1 right-2">
+                <div className="right-2 bottom-1 absolute">
                   <Popover onOpenChange={setIsEmojiOpen} open={isEmojiOpen}>
                     <PopoverTrigger asChild>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-6 w-6 rounded-lg p-0 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                        className="p-0 rounded-lg w-6 h-6 font-medium text-gray-600 dark:text-gray-300 text-sm"
                       >
-                        <SmileIcon className="h-4 w-4" />
+                        <SmileIcon className="w-4 h-4" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-fit p-0">
+                    <PopoverContent className="p-0 w-fit">
                       <EmojiPicker
                         className="h-[342px]"
                         onEmojiSelect={({ emoji }) => {
@@ -757,7 +716,7 @@ const ExplorePostCard = ({
               </div>
               <Button
                 onClick={handleCommentSubmit}
-                className="border bg-transparent shadow-none hover:bg-transparent focus:outline-none focus:ring-0"
+                className="bg-transparent hover:bg-transparent shadow-none border focus:outline-none focus:ring-0"
               >
                 <SendIcon className="text-card-foreground dark:text-white" />
               </Button>
@@ -807,8 +766,7 @@ const ExplorePostCard = ({
           isOpen={isDialogOpen}
           onClose={() => setIsDialogOpen(false)}
         />
-      </div>
-    </div>
+    </motion.div>
   );
 };
 

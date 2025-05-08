@@ -250,12 +250,15 @@ export default function ProfilePage() {
           sizes="100vw"
         />
         <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 dark:from-black/80 via-zinc-900/60 dark:via-black/50 to-transparent p-8">
-          <div className="right-0 bottom-0 left-0 absolute bg-gradient-to-t from-zinc-900/90 dark:from-black to-transparent h-32"></div>
+          <div className="right-0 bottom-0 left-0 absolute bg-gradient-to-t from-zinc-900/90 dark:from-black to-transparent h-32" />
         </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="top-4 right-4 absolute bg-black p-2 rounded-full">
+            <button
+              type="button"
+              className="top-4 right-4 absolute bg-black p-2 rounded-full"
+            >
               <SettingsIcon className="rounded-full size-4 text-white cursor-pointer" />
             </button>
           </DropdownMenuTrigger>
