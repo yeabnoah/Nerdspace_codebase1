@@ -102,28 +102,28 @@ export function LoginForm({
       <Button
         onClick={loginWithGithub}
         variant="outline"
-        className="relative flex h-12 w-full items-center justify-center gap-3 overflow-hidden rounded-lg border border-white/10 bg-white/5 px-4 py-2 font-medium text-white transition-all hover:bg-white/10"
+        className="relative flex justify-center items-center gap-2 sm:gap-3 bg-white/5 hover:bg-white/10 px-3 sm:px-4 py-2 border border-white/10 rounded-lg w-full h-12 overflow-hidden font-medium text-white text-sm sm:text-base transition-all"
         type="button"
         disabled={loading}
       >
         {loading ? (
           <span className="flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="w-4 h-4 animate-spin" />
             connecting...
           </span>
         ) : (
           <>
-            <Github className="h-5 w-5" />
+            <Github className="w-5 h-5" />
             <span>Continue with Github</span>
           </>
         )}
       </Button>
 
-      <div className="relative flex items-center justify-center py-2">
+      <div className="relative flex justify-center items-center py-2">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-white/10"></span>
+          <span className="border-white/10 border-t w-full"></span>
         </div>
-        <span className="relative bg-black px-2 text-sm text-white/40">
+        <span className="relative bg-black px-2 text-white/40 text-xs sm:text-sm">
           or continue with email
         </span>
       </div>
@@ -134,11 +134,11 @@ export function LoginForm({
             id="email"
             type="email"
             placeholder="email"
-            className="h-12 rounded-lg border-white/10 bg-white/5 text-sm text-white transition-colors placeholder:text-white/40 focus-visible:border-white/20 focus-visible:ring-0"
+            className="bg-white/5 border-white/10 focus-visible:border-white/20 rounded-lg focus-visible:ring-0 h-12 text-white placeholder:text-white/40 text-sm transition-colors"
             {...register("email")}
           />
           {errors.email && (
-            <p className="mt-2 text-sm text-red-400">{errors.email.message}</p>
+            <p className="mt-2 text-red-400 text-xs sm:text-sm">{errors.email.message}</p>
           )}
         </div>
 
@@ -148,24 +148,24 @@ export function LoginForm({
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="password"
-              className="h-12 rounded-lg border-white/10 bg-white/5 pr-10 text-sm text-white transition-colors placeholder:text-white/40 focus-visible:border-white/20 focus-visible:ring-0"
+              className="bg-white/5 pr-10 border-white/10 focus-visible:border-white/20 rounded-lg focus-visible:ring-0 h-12 text-white placeholder:text-white/40 text-sm transition-colors"
               {...register("password")}
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-3 flex items-center text-white/40 transition-colors hover:text-white"
+              className="right-3 absolute inset-y-0 flex items-center text-white/40 hover:text-white transition-colors"
               onClick={() => setShowPassword((prev) => !prev)}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
-                <EyeOff className="h-4 w-4" />
+                <EyeOff className="w-4 h-4" />
               ) : (
-                <Eye className="h-4 w-4" />
+                <Eye className="w-4 h-4" />
               )}
             </button>
           </div>
           {errors.password && (
-            <p className="mt-2 text-sm text-red-400">
+            <p className="mt-2 text-red-400 text-xs sm:text-sm">
               {errors.password.message}
             </p>
           )}
@@ -173,12 +173,12 @@ export function LoginForm({
 
         <Button
           type="submit"
-          className="relative h-12 w-full overflow-hidden rounded-lg bg-white font-medium text-black transition-all hover:bg-white/90 disabled:opacity-70"
+          className="relative bg-white hover:bg-white/90 disabled:opacity-70 px-4 py-2 rounded-lg w-full h-12 overflow-hidden font-medium text-black text-sm sm:text-base transition-all"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
             <span className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
               connecting...
             </span>
           ) : (

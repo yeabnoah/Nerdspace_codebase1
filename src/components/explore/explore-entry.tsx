@@ -155,12 +155,12 @@ const ExploreEntry = () => {
         animate={{ opacity: 1, y: 0 }}
         className="relative flex-1"
       >
-        <Search className="top-1/2 left-4 absolute w-4 sm:w-5 h-4 sm:h-5 text-muted-foreground -translate-y-1/2" />
+        <Search className="top-1/2 left-3 sm:left-4 absolute w-4 sm:w-5 h-4 sm:h-5 text-muted-foreground -translate-y-1/2" />
         <Input
           placeholder="Search anything..."
           value={query}
           onChange={handleQueryChange}
-          className="bg-card/40 focus:bg-card/60 shadow-sm backdrop-blur-sm pr-4 pl-10 sm:pl-12 border-none rounded-xl focus:ring-2 focus:ring-primary/20 w-full h-12 sm:h-14 text-base sm:text-lg transition-all duration-300"
+          className="bg-card/40 focus:bg-card/60 shadow-sm backdrop-blur-sm pr-4 pl-9 sm:pl-12 border-none rounded-xl focus:ring-2 focus:ring-primary/20 w-full h-11 sm:h-12 text-sm sm:text-base transition-all duration-300"
         />
       </motion.div>
     ),
@@ -195,14 +195,13 @@ const ExploreEntry = () => {
         className="w-full sm:w-40"
       >
         <Select value={sortBy} onValueChange={handleSortChange}>
-          <SelectTrigger className="bg-card/40 shadow-sm backdrop-blur-sm border-none rounded-xl focus:ring-2 focus:ring-primary/20 w-full h-12 sm:h-14 transition-all duration-300">
+          <SelectTrigger className="bg-card/40 shadow-sm backdrop-blur-sm border-none rounded-xl focus:ring-2 focus:ring-primary/20 w-full h-11 sm:h-12 transition-all duration-300">
             <SortAsc className="mr-2 w-4 h-4 text-muted-foreground" />
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent className="bg-card/80 shadow-lg backdrop-blur-sm border-none rounded-xl">
             <SelectItem value="relevance">Relevance</SelectItem>
             <SelectItem value="newest">Newest</SelectItem>
-            {/* <SelectItem value="popular">Most Popular</SelectItem> */}
           </SelectContent>
         </Select>
       </motion.div>
@@ -221,17 +220,15 @@ const ExploreEntry = () => {
           <SheetTrigger asChild>
             <Button
               variant="outline"
-              className="bg-card/40 shadow-sm backdrop-blur-sm border-none rounded-xl focus:ring-2 focus:ring-primary/20 h-12 sm:h-14 transition-all duration-300"
+              className="bg-card/40 shadow-sm backdrop-blur-sm border-none rounded-xl focus:ring-2 focus:ring-primary/20 w-full sm:w-auto h-11 sm:h-12 transition-all duration-300"
             >
               <Filter className="mr-2 w-4 h-4" />
               Filters
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-[400px]">
+          <SheetContent className="w-full sm:w-[400px] max-w-[400px]">
             <SheetHeader>
-              <SheetTitle className="font-instrument">
-                Search Filters
-              </SheetTitle>
+              <SheetTitle className="font-instrument">Search Filters</SheetTitle>
             </SheetHeader>
             <div className="space-y-4 mt-4">
               {type === "user" && (
@@ -249,17 +246,13 @@ const ExploreEntry = () => {
                 <div className="space-y-2">
                   <Label>Likes</Label>
                   <Slider
-                    defaultValue={[0, 100]}
-                    max={100}
-                    step={1}
+                    defaultValue={[0, 1000]}
+                    max={1000}
+                    step={10}
                     className="w-full"
                   />
                 </div>
               )}
-              {/* Add more filter options as needed */}
-            </div>
-            <div className="flex justify-center items-center w-full h-full font-instrument text-xl">
-              Will add filtering features soon ..
             </div>
           </SheetContent>
         </Sheet>
@@ -269,138 +262,73 @@ const ExploreEntry = () => {
   );
 
   return (
-    <div className="relative mx-auto p-4 sm:p-6 max-w-7xl">
-      {/* Glow effects */}
-      <div className="hidden md:block -top-20 -right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45"></div>
-      <div className="hidden md:block -bottom-20 -left-10 absolute bg-gradient-to-tl from-blue-300/10 dark:from-indigo-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] rotate-45"></div>
-
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-3 font-geist font-medium text-primary text-3xl text-start"
-      >
-        Explore
-      </motion.h1>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex sm:flex-row flex-col sm:items-center gap-4 bg-card/40 supports-[backdrop-filter]:bg-card/60 shadow-sm backdrop-blur-sm mb-8 sm:mb-12 p-4 sm:p-6 rounded-xl"
-      >
-        <div className="flex-1">{searchInput}</div>
-        <div className="flex gap-2">
-          <Select value={type} onValueChange={handleTypeChange}>
-            <SelectTrigger className="bg-card/40 shadow-sm backdrop-blur-sm border-none rounded-xl focus:ring-2 focus:ring-primary/20 w-40 h-12 sm:h-14 transition-all duration-300">
-              <Filter className="mr-2 w-4 h-4 text-muted-foreground" />
-              <SelectValue placeholder="Filter" />
-            </SelectTrigger>
-            <SelectContent className="bg-card/80 shadow-lg backdrop-blur-sm border-none rounded-xl">
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="user">Users</SelectItem>
-              <SelectItem value="post">Posts</SelectItem>
-              <SelectItem value="project">Projects</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="flex flex-col gap-4 w-full">
+      <div className="flex sm:flex-row flex-col gap-4">
+        {searchInput}
+        <div className="flex gap-2 sm:gap-4">
           {sortSelect}
           {filterButton}
         </div>
-      </motion.div>
-      {error && (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mb-4 text-destructive text-center"
-        >
-          Error: {error.message}
-        </motion.p>
-      )}
-      {isFetching && !filteredResults && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex justify-center items-center py-8"
-        >
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
-        </motion.div>
-      )}
-
-      {filteredResults && (
-        <div className="space-y-8">
-          {type === "all" && (
-            <>
-              {/* Users Section */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <h2 className="font-semibold text-2xl">Users</h2>
-                  <div className="flex-1 bg-border dark:bg-border-gray-500/50 h-px" />
-                </div>
-                {filteredResults.users?.length > 0 ? (
-                  <UsersCard users={filteredResults.users} />
-                ) : (
-                  <NoResultsFound type="users" />
-                )}
               </div>
 
-              {/* Posts Section */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <h2 className="font-semibold text-2xl">Posts</h2>
-                  <div className="flex-1 bg-border dark:bg-border-gray-500/50 h-px" />
+      {!debouncedQuery.trim() ? (
+        <div className="flex flex-col justify-center items-center py-12 text-center">
+          <Search className="w-12 h-12 text-muted-foreground" />
+          <h3 className="mt-4 font-semibold text-lg">Start exploring</h3>
+          <p className="mt-2 text-muted-foreground text-sm">
+            Search for users, posts, or projects to get started
+          </p>
                 </div>
-                {filteredResults.posts?.length > 0 ? (
-                  <PostsCard posts={filteredResults.posts} />
-                ) : (
-                  <NoResultsFound type="posts" />
-                )}
+      ) : isFetching ? (
+        <div className="flex flex-col justify-center items-center py-12">
+          <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
+          <p className="mt-4 text-muted-foreground text-sm">Searching...</p>
               </div>
-
-              {/* Projects Section */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <h2 className="font-semibold text-2xl">Projects</h2>
-                  <div className="flex-1 bg-border dark:bg-border-gray-500/50 h-px" />
+      ) : error ? (
+        <div className="flex flex-col justify-center items-center py-12 text-center">
+          <h3 className="font-semibold text-destructive text-lg">Error</h3>
+          <p className="mt-2 text-muted-foreground text-sm">
+            Something went wrong. Please try again.
+          </p>
                 </div>
-                {filteredResults.projects?.length > 0 ? (
-                  <ProjectsCard projects={filteredResults.projects} />
-                ) : (
-                  <NoResultsFound type="projects" />
-                )}
-              </div>
-            </>
-          )}
-
-          {type !== "all" && (
-            <div>
-              {type === "user" && filteredResults.users?.length > 0 ? (
+      ) : filteredResults ? (
+        <div className="flex flex-col gap-8">
+          {type === "all" || type === "user" ? (
+            filteredResults.users.length > 0 ? (
                 <UsersCard users={filteredResults.users} />
-              ) : (
-                type === "user" && <NoResultsFound type="users" />
-              )}
-              {type === "post" && filteredResults.posts?.length > 0 ? (
+            ) : type === "user" ? (
+              <NoResultsFound type="users" />
+            ) : null
+          ) : null}
+
+          {type === "all" || type === "post" ? (
+            filteredResults.posts.length > 0 ? (
                 <PostsCard posts={filteredResults.posts} />
-              ) : (
-                type === "post" && <NoResultsFound type="posts" />
-              )}
-              {type === "project" && filteredResults.projects?.length > 0 ? (
+            ) : type === "post" ? (
+              <NoResultsFound type="posts" />
+            ) : null
+          ) : null}
+
+          {type === "all" || type === "project" ? (
+            filteredResults.projects.length > 0 ? (
                 <ProjectsCard projects={filteredResults.projects} />
-              ) : (
-                type === "project" && <NoResultsFound type="projects" />
-              )}
+            ) : type === "project" ? (
+              <NoResultsFound type="projects" />
+            ) : null
+          ) : null}
+
+          {hasNextPage && (
+            <div
+              ref={ref}
+              className="flex justify-center py-4"
+            >
+              {isFetchingNextPage ? (
+                <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
+              ) : null}
             </div>
           )}
         </div>
-      )}
-
-      <div ref={ref} className="h-10">
-        {isFetchingNextPage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex justify-center items-center py-4"
-          >
-            <Loader2 className="w-6 h-6 text-primary animate-spin" />
-          </motion.div>
-        )}
-      </div>
+      ) : null}
     </div>
   );
 };

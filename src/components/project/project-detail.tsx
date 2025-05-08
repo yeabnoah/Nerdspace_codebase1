@@ -671,34 +671,34 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         open={isEditReviewModalOpen}
         onOpenChange={setIsEditReviewModalOpen}
       >
-        <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+        <DialogContent className="backdrop-blur-sm p-0 border-none rounded-xl max-w-md overflow-hidden">
           <DialogTitle></DialogTitle>
           <div className="relative flex flex-col">
             {/* Glow effects */}
-            <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/50 bg-gradient-to-br from-primary/40 via-primary/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-            <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            <div className="-right-4 absolute bg-gradient-to-br from-primary/40 via-primary/50 to-transparent backdrop-blur-sm blur-[150px] border border-primary/50 rounded-full size-32 -rotate-45"></div>
+            <div className="-bottom-5 left-12 absolute bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent backdrop-blur-sm blur-[150px] border border-secondary/50 rounded-full size-32 rotate-45"></div>
 
-            <div className="flex w-full flex-col px-6 pb-3">
-              <div className="mb-2 font-geist text-3xl font-medium">
+            <div className="flex flex-col px-6 pb-3 w-full">
+              <div className="mb-2 font-geist font-medium text-3xl">
                 Edit Review
               </div>
               <Textarea
                 value={localContent}
                 onChange={handleChange}
-                className="min-h-[120px] rounded-xl border-none bg-background/50 shadow-sm backdrop-blur-sm focus-visible:ring-1 focus-visible:ring-ring"
+                className="bg-background/50 shadow-sm backdrop-blur-sm border-none rounded-xl focus-visible:ring-1 focus-visible:ring-ring min-h-[120px]"
                 placeholder="Edit your review..."
               />
 
-              <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
+              <div className="flex justify-end gap-3 mt-8 pt-4 dark:border-gray-500/5 border-t font-geist">
                 <Button
                   variant="outline"
-                  className="h-11 w-24 rounded-2xl"
+                  className="rounded-2xl w-24 h-11"
                   onClick={() => setIsEditReviewModalOpen(false)}
                 >
                   Cancel
                 </Button>
                 <Button
-                  className="h-11 w-24 rounded-2xl"
+                  className="rounded-2xl w-24 h-11"
                   onClick={handleSave}
                   disabled={editReviewMutation.isPending}
                 >
@@ -720,15 +720,15 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         open={isDeleteReviewModalOpen}
         onOpenChange={setIsDeleteReviewModalOpen}
       >
-        <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+        <DialogContent className="backdrop-blur-sm p-0 border-none rounded-xl max-w-md overflow-hidden">
           <DialogTitle></DialogTitle>
           <div className="relative flex flex-col">
             {/* Glow effects */}
-            <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-red-300/50 bg-gradient-to-br from-red-300/40 via-red-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-            <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            <div className="-right-4 absolute bg-gradient-to-br from-red-300/40 via-red-400/50 to-transparent backdrop-blur-sm blur-[150px] border border-red-300/50 rounded-full size-32 -rotate-45"></div>
+            <div className="-bottom-5 left-12 absolute bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent backdrop-blur-sm blur-[150px] border border-orange-300/50 rounded-full size-32 rotate-45"></div>
 
-            <div className="flex w-full flex-col px-6 pb-3">
-              <div className="mb-2 font-geist text-3xl font-medium">
+            <div className="flex flex-col px-6 pb-3 w-full">
+              <div className="mb-2 font-geist font-medium text-3xl">
                 Delete Review
               </div>
               <p className="mb-6 font-geist text-muted-foreground">
@@ -736,17 +736,17 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                 be undone.
               </p>
 
-              <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
+              <div className="flex justify-end gap-3 mt-8 pt-4 dark:border-gray-500/5 border-t font-geist">
                 <Button
                   variant="outline"
-                  className="h-11 w-24 rounded-2xl"
+                  className="rounded-2xl w-24 h-11"
                   onClick={() => setIsDeleteReviewModalOpen(false)}
                 >
                   Cancel
                 </Button>
                 <Button
                   variant="destructive"
-                  className="h-11 w-24 rounded-2xl"
+                  className="rounded-2xl w-24 h-11"
                   onClick={() => {
                     if (reviewToDelete) {
                       deleteReviewMutation.mutate(reviewToDelete);
@@ -778,40 +778,40 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
   const isUserAuthor = session.data?.user.id === project?.userId;
 
   return (
-    <div className="container relative mx-auto pb-8">
-      <div className="absolute -right-10 hidden md:block -top-20 h-[300px] w-[300px] -rotate-45 rounded-full bg-gradient-to-br from-amber-300/10 to-transparent blur-[80px] dark:from-orange-300/10"></div>
+    <div className="relative mx-auto pb-8 container">
+      <div className="hidden md:block -top-20 -right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45"></div>
 
-      <div className="group relative mb-12 h-[400px] w-full overflow-hidden rounded-2xl shadow-lg md:h-[300px]">
+      <div className="group relative shadow-lg mx-auto mb-12 rounded-2xl w-[94%] md:w-full h-[400px] md:h-[300px] overflow-hidden">
         <Image
           src={project?.image || "/placeholder.svg"}
           alt={(project?.name as string) || ""}
           fill
           quality={100}
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
           priority={true}
         />
-        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 via-zinc-900/60 to-transparent p-8 dark:from-black/80 dark:via-black/50">
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-900/90 to-transparent dark:from-black"></div>
-          <div className="relative z-10 mb-4 flex items-center gap-3">
+        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-900/90 dark:from-black/80 via-zinc-900/60 dark:via-black/50 to-transparent p-8">
+          <div className="right-0 bottom-0 left-0 absolute bg-gradient-to-t from-zinc-900/90 dark:from-black to-transparent h-32"></div>
+          <div className="z-10 relative flex items-center gap-3 mb-4">
             <Badge
               variant="outline"
-              className="h-8 rounded-full border-primary/30 bg-primary/10 px-3 font-geist text-xs font-normal text-white backdrop-blur-sm"
+              className="bg-primary/10 backdrop-blur-sm px-3 border-primary/30 rounded-full h-8 font-geist font-normal text-white text-xs"
             >
               {project?.status}
             </Badge>
             <Badge
               variant="outline"
-              className="h-8 rounded-full border-secondary/30 bg-secondary/20 px-3 font-geist font-normal text-secondary-foreground backdrop-blur-sm"
+              className="bg-secondary/20 backdrop-blur-sm px-3 border-secondary/30 rounded-full h-8 font-geist font-normal text-secondary-foreground"
             >
               {project?.access}
             </Badge>
           </div>
-          <h1 className="relative z-10 mb-4 font-geist text-4xl font-semibold text-white md:text-5xl">
+          <h1 className="z-10 relative mb-4 font-geist font-semibold text-white text-4xl md:text-5xl">
             {project?.name}
           </h1>
-          <div className="relative z-10 flex items-center gap-4">
+          <div className="z-10 relative flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-white/20">
+              <div className="relative rounded-full ring-2 ring-white/20 w-10 h-10 overflow-hidden">
                 <Image
                   src={project?.user.image || "/placeholder.svg"}
                   alt={project?.user.visualName as string}
@@ -823,39 +823,39 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                 {project?.user.visualName}
               </span>
             </div>
-            <div className="flex items-center font-geist text-sm font-normal text-white/80">
-              <CalendarIcon className="mr-2 h-4 w-4" />
+            <div className="flex items-center font-geist font-normal text-white/80 text-sm">
+              <CalendarIcon className="mr-2 w-4 h-4" />
               <span>{timeAgo}</span>
             </div>
           </div>
           {project?.user.id === session.data?.user.id && (
-            <div className="absolute right-6 top-6">
+            <div className="top-6 right-6 absolute">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20"
+                    className="bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full w-9 h-9 text-white"
                   >
-                    <SettingsIcon className="h-5 w-5" />
+                    <SettingsIcon className="w-5 h-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="w-44 rounded-xl border shadow-none dark:border-gray-500/5"
+                  className="shadow-none border dark:border-gray-500/5 rounded-xl w-44"
                 >
                   <DropdownMenuItem
-                    className="flex h-11 items-center gap-2 rounded-xl font-geist"
+                    className="flex items-center gap-2 rounded-xl h-11 font-geist"
                     onClick={() => setIsEditModalOpen(true)}
                   >
-                    <PencilIcon className="h-4 w-4" />
+                    <PencilIcon className="w-4 h-4" />
                     Edit Project
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => setIsDeleteModalOpen(true)}
-                    className="flex h-11 items-center gap-2 rounded-xl font-geist text-red-600 focus:text-red-600"
+                    className="flex items-center gap-2 rounded-xl h-11 font-geist text-red-600 focus:text-red-600"
                   >
-                    <Trash2Icon className="h-4 w-4" />
+                    <Trash2Icon className="w-4 h-4" />
                     Delete Project
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -865,14 +865,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <div className="gap-8 grid grid-cols-1 lg:grid-cols-3 mx-auto w-[94%] md:w-full">
         <div className="space-y-8 lg:col-span-2">
           <div className="flex flex-wrap gap-2">
             {project?.category.map((cat: string) => (
               <Badge
                 key={cat}
                 variant="outline"
-                className="h-8 rounded-full border-border/40 bg-background/50 px-3 font-geist text-sm font-normal backdrop-blur-sm"
+                className="bg-background/50 backdrop-blur-sm px-3 border-border/40 rounded-full h-8 font-geist font-normal text-sm"
               >
                 {cat}
               </Badge>
@@ -880,79 +880,190 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </div>
 
           {/* Description */}
-          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-card/50">
+          <Card className="bg-white dark:bg-card/50 shadow-sm border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden">
             <CardContent className="p-8">
-              <h2 className="mb-6 font-geist text-4xl font-medium text-foreground">
+              <h2 className="mb-6 font-geist font-medium text-foreground text-4xl">
                 About this project
               </h2>
-              <p className="font-geist text-sm font-normal leading-relaxed text-muted-foreground">
+              <p className="font-geist font-normal text-muted-foreground text-sm leading-relaxed">
                 {project?.description}
               </p>
             </CardContent>
           </Card>
 
+          {/* Mobile Creator and Star Cards - Only visible on mobile */}
+          <div className="lg:hidden space-y-4">
+            {/* Creator Profile */}
+            <Card className="bg-white dark:bg-card/50 shadow-sm border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden">
+              <CardContent className="p-4">
+                <h2 className="mb-4 font-geist font-normal text-xl text-center">
+                  Creator
+                </h2>
+                <div className="flex items-center gap-4">
+                  <div className="relative rounded-full ring-2 ring-primary/20 w-16 h-16 overflow-hidden">
+                    <Image
+                      src={project?.user.image || "/placeholder.svg"}
+                      alt={(project?.user.visualName as string) || ""}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-geist font-normal text-lg">
+                      {project?.user.visualName}
+                    </h3>
+                    <span className="font-geist font-normal text-muted-foreground text-sm">
+                      Nerd at: {project?.user.nerdAt}
+                    </span>
+                    <p className="font-geist font-normal text-muted-foreground text-sm line-clamp-2">
+                      {project?.user.bio}
+                    </p>
+                    <Link
+                      href={`/user-profile/${project?.userId}`}
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 mt-2 text-primary text-sm hover:underline"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Connect
+                    </Link>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Star and Follow Card */}
+            <Card className="bg-white dark:bg-card/50 shadow-sm border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden">
+              <CardContent className="p-4">
+                <div className="flex flex-col gap-2">
+                  <Button
+                    variant="outline"
+                    className="gap-2 bg-white/5 hover:bg-white/10 dark:bg-black/5 dark:hover:bg-black/10 backdrop-blur-sm border-zinc-200/20 dark:border-zinc-800/20 rounded-full w-full h-11 font-medium text-zinc-900 dark:text-zinc-100 text-sm transition-colors"
+                    onClick={handleStarProject}
+                  >
+                    {project?.stars?.some(
+                      (each) => each.userId === session.data?.user.id,
+                    ) ? (
+                      <GoStarFill className="w-4 h-4 text-yellow-500" />
+                    ) : (
+                      <GoStar className="w-4 h-4" />
+                    )}
+                    {project?.stars?.some(
+                      (each) => each.userId === session.data?.user.id,
+                    )
+                      ? "Remove Star"
+                      : "Star Project"}
+                  </Button>
+
+                  {!isUserAuthor && (
+                    <Button
+                      variant={isFollowing ? "outline" : "default"}
+                      className={`h-11 w-full gap-2 rounded-full text-sm font-medium dark:text-black ${
+                        isFollowing
+                          ? "border-gray-100 bg-white text-gray-900 hover:bg-gray-50 dark:border-gray-500/5 dark:bg-card/50 dark:text-gray-100"
+                          : "bg-primary text-white hover:bg-primary/90"
+                      }`}
+                      onClick={handleFollowProject}
+                    >
+                      {isFollowing ? (
+                        <>
+                          <Check className="w-4 h-4" />
+                          <span>Following</span>
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-4 h-4" />
+                          <span>Follow</span>
+                        </>
+                      )}
+                    </Button>
+                  )}
+
+                  <Button
+                    onClick={() => setIsShareProjectDialogOpen(true)}
+                    variant="outline"
+                    className="gap-2 bg-white dark:bg-card/50 border-gray-100 dark:border-gray-500/5 rounded-full w-full h-11 font-medium text-gray-900 dark:text-gray-100 text-sm"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Share project
+                  </Button>
+
+                  {isUserAuthor && (
+                    <Button
+                      variant="outline"
+                      className="gap-2 bg-white dark:bg-card/50 border-gray-100 dark:border-gray-500/5 rounded-full w-full h-11 font-medium text-gray-900 dark:text-gray-100 text-sm"
+                      onClick={() => setIsShareUpdateDialogOpen(true)}
+                    >
+                      <PlusIcon className="w-4 h-4" />
+                      Share Update
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Stats */}
-          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-card/50">
+          <Card className="bg-white dark:bg-card/50 shadow-sm border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden">
             <CardContent className="p-8">
-              <h2 className="mb-6 font-geist text-3xl font-normal text-foreground">
+              <h2 className="mb-6 font-geist font-normal text-foreground text-3xl">
                 Project Stats
               </h2>
-              <div className="grid grid-cols-2 gap-6 text-center md:grid-cols-5">
+              <div className="gap-6 grid grid-cols-2 md:grid-cols-5 text-center">
                 <div className="flex flex-col items-center">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-card/50">
-                    <Star className="h-4 w-4 text-foreground" />
+                  <div className="flex justify-center items-center bg-white dark:bg-card/50 mb-2 border border-gray-100 dark:border-gray-500/5 rounded-full w-10 h-10">
+                    <Star className="w-4 h-4 text-foreground" />
                   </div>
-                  <span className="font-geist text-lg font-normal">
+                  <span className="font-geist font-normal text-lg">
                     {project?._count.stars}
                   </span>
-                  <span className="font-geist text-xs font-normal text-muted-foreground">
+                  <span className="font-geist font-normal text-muted-foreground text-xs">
                     Stars
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-card/50">
+                  <div className="flex justify-center items-center bg-white dark:bg-card/50 mb-2 border border-gray-100 dark:border-gray-500/5 rounded-full w-10 h-10">
                     <Heart
-                      className="h-4 w-4 cursor-pointer text-foreground"
+                      className="w-4 h-4 text-foreground cursor-pointer"
                       onClick={handleLikeProject}
                     />
                   </div>
-                  <span className="font-geist text-lg font-normal">
+                  <span className="font-geist font-normal text-lg">
                     {project?._count.followers}
                   </span>
-                  <span className="font-geist text-xs font-normal text-muted-foreground">
+                  <span className="font-geist font-normal text-muted-foreground text-xs">
                     Followers
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-card/50">
-                    <MessageSquare className="h-4 w-4 text-foreground" />
+                  <div className="flex justify-center items-center bg-white dark:bg-card/50 mb-2 border border-gray-100 dark:border-gray-500/5 rounded-full w-10 h-10">
+                    <MessageSquare className="w-4 h-4 text-foreground" />
                   </div>
-                  <span className="font-geist text-lg font-normal">
+                  <span className="font-geist font-normal text-lg">
                     {project?._count.reviews}
                   </span>
-                  <span className="font-geist text-xs font-normal text-muted-foreground">
+                  <span className="font-geist font-normal text-muted-foreground text-xs">
                     Reviews
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-card/50">
-                    <Flag className="h-4 w-4 text-foreground" />
+                  <div className="flex justify-center items-center bg-white dark:bg-card/50 mb-2 border border-gray-100 dark:border-gray-500/5 rounded-full w-10 h-10">
+                    <Flag className="w-4 h-4 text-foreground" />
                   </div>
-                  <span className="font-geist text-lg font-normal">
+                  <span className="font-geist font-normal text-lg">
                     {project?._count?.updates as number}
                   </span>
-                  <span className="font-geist text-xs font-normal text-muted-foreground">
+                  <span className="font-geist font-normal text-muted-foreground text-xs">
                     Updates
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white dark:border-gray-500/5 dark:bg-card/50">
-                    <Star className="h-4 w-4 text-foreground" />
+                  <div className="flex justify-center items-center bg-white dark:bg-card/50 mb-2 border border-gray-100 dark:border-gray-500/5 rounded-full w-10 h-10">
+                    <Star className="w-4 h-4 text-foreground" />
                   </div>
-                  <span className="font-geist text-lg font-normal">
+                  <span className="font-geist font-normal text-lg">
                     {project?._count?.ratings as number}
                   </span>
-                  <span className="font-geist text-xs font-normal text-muted-foreground">
+                  <span className="font-geist font-normal text-muted-foreground text-xs">
                     Ratings
                   </span>
                 </div>
@@ -961,15 +1072,15 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Updates and Reviews Section */}
-          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-card/50">
-            <CardContent className="p-8">
-              <h2 className="mb-6 font-geist text-3xl font-normal text-foreground">
+          <Card className="bg-white dark:bg-card/50 shadow-sm border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden">
+            <CardContent className="p-4 md:p-8">
+              <h2 className="mb-6 font-geist font-normal text-foreground text-3xl">
                 Project Activity
               </h2>
 
               <div className="w-full">
                 {/* Custom Tab Headers */}
-                <div className="mb-8 flex w-full overflow-hidden rounded-full border border-gray-100 bg-white p-1 dark:border-gray-500/5 dark:bg-card/50">
+                <div className="flex bg-white dark:bg-card/50 mb-8 p-1 border border-gray-100 dark:border-gray-500/5 rounded-full w-full overflow-hidden">
                   <button
                     onClick={() => setActiveTab("updates")}
                     className={`relative flex-1 rounded-full py-2.5 text-sm font-medium transition-all duration-300 ${
@@ -979,10 +1090,10 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                     }`}
                   >
                     {activeTab === "updates" && (
-                      <span className="absolute inset-0 rounded-full bg-primary shadow-lg transition-all duration-300 dark:bg-secondary"></span>
+                      <span className="absolute inset-0 bg-primary dark:bg-secondary shadow-lg rounded-full transition-all duration-300"></span>
                     )}
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <Flag className="h-4 w-4" />
+                    <span className="z-10 relative flex justify-center items-center gap-2">
+                      <Flag className="w-4 h-4" />
                       Updates
                     </span>
                   </button>
@@ -995,10 +1106,10 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                     }`}
                   >
                     {activeTab === "reviews" && (
-                      <span className="absolute inset-0 rounded-full bg-primary shadow-lg transition-all duration-300 dark:bg-secondary"></span>
+                      <span className="absolute inset-0 bg-primary dark:bg-secondary shadow-lg rounded-full transition-all duration-300"></span>
                     )}
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      <MessageSquare className="h-4 w-4" />
+                    <span className="z-10 relative flex justify-center items-center gap-2">
+                      <MessageSquare className="w-4 h-4" />
                       Reviews
                     </span>
                   </button>
@@ -1025,11 +1136,11 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                         ))}
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center rounded-xl bg-white py-12 text-center dark:bg-card/50">
-                        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/10 to-indigo-500/10">
-                          <PaintBucket className="h-10 w-10 text-indigo-500" />
+                      <div className="flex flex-col justify-center items-center bg-white dark:bg-card/50 py-12 rounded-xl text-center">
+                        <div className="flex justify-center items-center bg-gradient-to-br from-violet-500/10 to-indigo-500/10 mb-6 rounded-full w-20 h-20">
+                          <PaintBucket className="w-10 h-10 text-indigo-500" />
                         </div>
-                        <h3 className="mb-2 text-xl font-normal">
+                        <h3 className="mb-2 font-normal text-xl">
                           No updates yet
                         </h3>
                         <p className="max-w-md text-gray-500 dark:text-gray-400">
@@ -1048,17 +1159,17 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                         : "pointer-events-none absolute inset-0 opacity-0"
                     }`}
                   >
-                    <div className="mx-auto mb-8 flex-col items-center space-y-4">
+                    <div className="flex-col items-center space-y-4 mx-auto mb-8">
                       <Textarea
                         placeholder="Write your review here..."
                         value={reviewContent}
                         onChange={(e) => setReviewContent(e.target.value)}
-                        className="min-h-[120px] w-full rounded-xl border border-gray-100 bg-white p-4 text-sm dark:border-gray-500/5 dark:bg-card/50"
+                        className="bg-white dark:bg-card/50 p-4 border border-gray-100 dark:border-gray-500/5 rounded-xl w-full min-h-[120px] text-sm"
                       />
                       <Button
                         onClick={handleCreateReview}
                         disabled={createReviewMutation.isPending}
-                        className="right-0 mx-auto h-12 w-fit justify-end rounded-full border bg-primary font-medium text-white shadow-none transition-opacity hover:opacity-90 disabled:opacity-50 dark:border-gray-700/10 dark:bg-transparent"
+                        className="right-0 justify-end bg-primary dark:bg-transparent hover:opacity-90 disabled:opacity-50 shadow-none mx-auto border dark:border-gray-700/10 rounded-full w-fit h-12 font-medium text-white transition-opacity"
                       >
                         <span className="py-1 text-white">
                           {createReviewMutation.isPending
@@ -1073,10 +1184,10 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                         {project.reviews.map((review, index) => (
                           <div
                             key={index}
-                            className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white p-6 dark:border-gray-500/5 dark:bg-card/50"
+                            className="group relative bg-white dark:bg-card/50 p-6 border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden"
                           >
                             <div className="flex items-start gap-4">
-                              <div className="relative h-10 w-10 overflow-hidden rounded-full ring-1 ring-white/10">
+                              <div className="relative rounded-full ring-1 ring-white/10 w-10 h-10 overflow-hidden">
                                 <Image
                                   src={review.user.image || "/placeholder.svg"}
                                   alt={review.user.visualName as string}
@@ -1085,11 +1196,11 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                                 />
                               </div>
                               <div className="flex-1">
-                                <div className="mb-2 flex items-center justify-between">
+                                <div className="flex justify-between items-center mb-2">
                                   <h4 className="font-medium text-gray-900 dark:text-gray-100">
                                     {review.user.visualName}
                                   </h4>
-                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  <span className="text-gray-500 dark:text-gray-400 text-xs">
                                     {formatDistanceToNow(
                                       new Date(review.createdAt as string),
                                       {
@@ -1098,11 +1209,11 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                                     )}
                                   </span>
                                 </div>
-                                <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                                <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
                                   {review.content}
                                 </p>
                                 {review.user.id === session.data?.user.id && (
-                                  <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                                  <div className="right-4 bottom-4 absolute flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <Button
                                       onClick={() =>
                                         handleEditReview(
@@ -1112,9 +1223,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                                       }
                                       variant="ghost"
                                       size="icon"
-                                      className="h-8 w-8 rounded-full text-primary hover:text-primary/80"
+                                      className="rounded-full w-8 h-8 text-primary hover:text-primary/80"
                                     >
-                                      <PencilIcon className="h-4 w-4" />
+                                      <PencilIcon className="w-4 h-4" />
                                     </Button>
                                     <Button
                                       onClick={() =>
@@ -1122,9 +1233,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                                       }
                                       variant="ghost"
                                       size="icon"
-                                      className="h-8 w-8 rounded-full text-destructive hover:text-destructive"
+                                      className="rounded-full w-8 h-8 text-destructive hover:text-destructive"
                                     >
-                                      <Trash2 className="h-4 w-4" />
+                                      <Trash2 className="w-4 h-4" />
                                     </Button>
                                   </div>
                                 )}
@@ -1134,11 +1245,11 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                         ))}
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center rounded-xl bg-white py-12 text-center dark:bg-card/50">
-                        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/10 to-indigo-500/10">
-                          <MessageSquare className="h-10 w-10 text-indigo-500" />
+                      <div className="flex flex-col justify-center items-center bg-white dark:bg-card/50 py-12 rounded-xl text-center">
+                        <div className="flex justify-center items-center bg-gradient-to-br from-violet-500/10 to-indigo-500/10 mb-6 rounded-full w-20 h-20">
+                          <MessageSquare className="w-10 h-10 text-indigo-500" />
                         </div>
-                        <h3 className="mb-2 text-xl font-normal text-gray-900 dark:text-gray-100">
+                        <h3 className="mb-2 font-normal text-gray-900 dark:text-gray-100 text-xl">
                           No reviews yet
                         </h3>
                         <p className="max-w-md text-gray-500 dark:text-gray-400">
@@ -1154,21 +1265,21 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
         </div>
 
-        {/* Right Column - Sidebar */}
-        <div className="space-y-8">
-          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-card/50">
+        {/* Right Column - Sidebar - Only visible on desktop */}
+        <div className="hidden lg:block space-y-8">
+          <Card className="bg-white dark:bg-card/50 shadow-sm border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden">
             <CardContent className="space-y-3 p-4">
               <Button
                 variant="outline"
-                className="h-11 w-full gap-2 rounded-full border-zinc-200/20 bg-white/5 text-sm font-medium text-zinc-900 backdrop-blur-sm transition-colors hover:bg-white/10 dark:border-zinc-800/20 dark:bg-black/5 dark:text-zinc-100 dark:hover:bg-black/10"
+                className="gap-2 bg-white/5 hover:bg-white/10 dark:bg-black/5 dark:hover:bg-black/10 backdrop-blur-sm border-zinc-200/20 dark:border-zinc-800/20 rounded-full w-full h-11 font-medium text-zinc-900 dark:text-zinc-100 text-sm transition-colors"
                 onClick={handleStarProject}
               >
                 {project?.stars?.some(
                   (each) => each.userId === session.data?.user.id,
                 ) ? (
-                  <GoStarFill className="h-4 w-4 text-yellow-500" />
+                  <GoStarFill className="w-4 h-4 text-yellow-500" />
                 ) : (
-                  <GoStar className="h-4 w-4" />
+                  <GoStar className="w-4 h-4" />
                 )}
                 {project?.stars?.some(
                   (each) => each.userId === session.data?.user.id,
@@ -1189,12 +1300,12 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                 >
                   {isFollowing ? (
                     <>
-                      <Check className="h-4 w-4" />
+                      <Check className="w-4 h-4" />
                       <span>Following</span>
                     </>
                   ) : (
                     <>
-                      <Plus className="h-4 w-4" />
+                      <Plus className="w-4 h-4" />
                       <span>Follow</span>
                     </>
                   )}
@@ -1204,19 +1315,19 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
               <Button
                 onClick={() => setIsShareProjectDialogOpen(true)}
                 variant="outline"
-                className="h-11 w-full gap-2 rounded-full border-gray-100 bg-white text-sm font-medium text-gray-900 dark:border-gray-500/5 dark:bg-card/50 dark:text-gray-100"
+                className="gap-2 bg-white dark:bg-card/50 border-gray-100 dark:border-gray-500/5 rounded-full w-full h-11 font-medium text-gray-900 dark:text-gray-100 text-sm"
               >
-                <Share2 className="h-4 w-4" />
+                <Share2 className="w-4 h-4" />
                 Share project
               </Button>
 
               {isUserAuthor && (
                 <Button
                   variant="outline"
-                  className="h-11 w-full gap-2 rounded-full border-gray-100 bg-white text-sm font-medium text-gray-900 dark:border-gray-500/5 dark:bg-card/50 dark:text-gray-100"
+                  className="gap-2 bg-white dark:bg-card/50 border-gray-100 dark:border-gray-500/5 rounded-full w-full h-11 font-medium text-gray-900 dark:text-gray-100 text-sm"
                   onClick={() => setIsShareUpdateDialogOpen(true)}
                 >
-                  <PlusIcon className="h-4 w-4" />
+                  <PlusIcon className="w-4 h-4" />
                   Share Update
                 </Button>
               )}
@@ -1224,13 +1335,13 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
           </Card>
 
           {/* Creator Profile */}
-          <Card className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm dark:border-gray-500/5 dark:bg-card/50">
+          <Card className="bg-white dark:bg-card/50 shadow-sm border border-gray-100 dark:border-gray-500/5 rounded-xl overflow-hidden">
             <CardContent className="px-6 py-6">
-              <h2 className="mb-4 text-center font-geist text-xl font-normal">
+              <h2 className="mb-4 font-geist font-normal text-xl text-center">
                 Creator
               </h2>
               <div className="flex flex-col items-center text-center">
-                <div className="relative mb-4 h-24 w-24 overflow-hidden rounded-full ring-2 ring-primary/20">
+                <div className="relative mb-4 rounded-full ring-2 ring-primary/20 w-24 h-24 overflow-hidden">
                   <Image
                     src={project?.user.image || "/placeholder.svg"}
                     alt={(project?.user.visualName as string) || ""}
@@ -1238,22 +1349,22 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                     className="object-cover"
                   />
                 </div>
-                <h3 className="font-geist text-lg font-normal">
+                <h3 className="font-geist font-normal text-lg">
                   {project?.user.visualName}
                 </h3>
-                <span className="mb-2 font-geist text-sm font-normal text-muted-foreground">
+                <span className="mb-2 font-geist font-normal text-muted-foreground text-sm">
                   Nerd at: {project?.user.nerdAt}
                 </span>
-                <p className="mb-2 font-geist text-sm font-normal text-muted-foreground">
+                <p className="mb-2 font-geist font-normal text-muted-foreground text-sm">
                   {project?.user.bio}
                 </p>
                 <Separator className="mb-2" />
                 <Link
                   href={`/user-profile/${project?.userId}`}
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm text-primary hover:underline"
+                  className="flex items-center gap-2 text-primary text-sm hover:underline"
                 >
-                  <ExternalLink className="h-4 w-4" />
+                  <ExternalLink className="w-4 h-4" />
                   Connect with {project?.user.visualName}
                 </Link>
               </div>
@@ -1275,15 +1386,15 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
       />
 
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-        <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+        <DialogContent className="backdrop-blur-sm p-0 border-none rounded-xl max-w-md overflow-hidden">
           <DialogTitle></DialogTitle>
           <div className="relative flex flex-col">
             {/* Glow effects */}
-            <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-red-300/50 bg-gradient-to-br from-red-300/40 via-red-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-            <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            <div className="-right-4 absolute bg-gradient-to-br from-red-300/40 via-red-400/50 to-transparent backdrop-blur-sm blur-[150px] border border-red-300/50 rounded-full size-32 -rotate-45"></div>
+            <div className="-bottom-5 left-12 absolute bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent backdrop-blur-sm blur-[150px] border border-orange-300/50 rounded-full size-32 rotate-45"></div>
 
-            <div className="flex w-full flex-col px-6 pb-3">
-              <div className="mb-2 font-geist text-3xl font-medium">
+            <div className="flex flex-col px-6 pb-3 w-full">
+              <div className="mb-2 font-geist font-medium text-3xl">
                 Delete Project
               </div>
               <p className="mb-6 font-geist text-muted-foreground">
@@ -1291,17 +1402,17 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                 be undone.
               </p>
 
-              <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
+              <div className="flex justify-end gap-3 mt-8 pt-4 dark:border-gray-500/5 border-t font-geist">
                 <Button
                   variant="outline"
-                  className="h-11 w-24 rounded-2xl"
+                  className="rounded-2xl w-24 h-11"
                   onClick={() => setIsDeleteModalOpen(false)}
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleDeleteProject}
-                  className="h-11 w-24 rounded-2xl bg-red-600 text-white hover:bg-red-600"
+                  className="bg-red-600 hover:bg-red-600 rounded-2xl w-24 h-11 text-white"
                 >
                   Delete
                 </Button>
@@ -1317,23 +1428,23 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         onOpenChange={setIsShareUpdateDialogOpen}
       >
         <DialogTitle></DialogTitle>
-        <DialogContent className="max-w-4xl overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
-          <div className="relative flex h-[85vh] max-h-[85vh] flex-col md:flex-row">
+        <DialogContent className="backdrop-blur-sm p-0 border-none rounded-xl max-w-4xl overflow-hidden">
+          <div className="relative flex md:flex-row flex-col h-[85vh] max-h-[85vh]">
             {/* Glow effects */}
-            <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-            <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            <div className="hidden md:block -right-4 absolute bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent backdrop-blur-sm blur-[150px] border border-blue-300/50 rounded-full size-32 -rotate-45"></div>
+            <div className="hidden md:block -bottom-5 left-12 absolute bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent backdrop-blur-sm blur-[150px] border border-orange-300/50 rounded-full size-32 rotate-45"></div>
 
             {/* Left Column */}
-            <div className="flex w-full flex-col rounded-l-xl border-b border-l border-r border-t p-6 dark:border-gray-600/10 dark:bg-black md:w-1/3">
-              <div className="mb-2 font-geist text-3xl font-medium">
+            <div className="flex flex-col dark:bg-black p-6 dark:border-gray-600/10 border-t border-r border-b border-l rounded-l-xl w-full md:w-1/3">
+              <div className="mb-2 font-geist font-medium text-3xl">
                 Share Update
               </div>
               <p className="mb-6 font-geist text-muted-foreground">
                 Share a new update about your project&apos;s progress
               </p>
 
-              <div className="mt-4 flex flex-1 flex-col items-center justify-center">
-                <div className="relative mb-4 aspect-square w-full max-w-[220px] overflow-hidden rounded-xl border-2 border-dashed border-primary/20 bg-black">
+              <div className="flex flex-col flex-1 justify-center items-center mt-4">
+                <div className="relative bg-black mb-4 border-2 border-primary/20 border-dashed rounded-xl w-full max-w-[220px] aspect-square overflow-hidden">
                   {updateImage ? (
                     <Image
                       src={
@@ -1344,7 +1455,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center font-geist text-muted-foreground">
+                    <div className="flex justify-center items-center w-full h-full font-geist text-muted-foreground">
                       No image
                     </div>
                   )}
@@ -1352,15 +1463,15 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
 
                 <div className="relative w-full max-w-[220px]">
                   <Button
-                    className="b h-11 w-full rounded-full font-geist"
+                    className="rounded-full w-full h-11 font-geist b"
                     type="button"
                   >
-                    <Upload className="mr-2 h-4 w-4" />
+                    <Upload className="mr-2 w-4 h-4" />
                     {updateImage ? "Change Image" : "Upload Image"}
                   </Button>
                   <Input
                     type="file"
-                    className="absolute inset-0 cursor-pointer opacity-0"
+                    className="absolute inset-0 opacity-0 cursor-pointer"
                     accept="image/*"
                     onChange={handleUpdateImageChange}
                   />
@@ -1369,10 +1480,10 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
             </div>
 
             {/* Right Column */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 p-6 overflow-y-auto">
               <div className="space-y-6">
-                <div className="rounded-xl border border-gray-100 bg-card p-4 shadow-none dark:border-gray-500/5">
-                  <h3 className="mb-4 font-geist text-lg font-medium">
+                <div className="bg-card shadow-none p-4 border border-gray-100 dark:border-gray-500/5 rounded-xl">
+                  <h3 className="mb-4 font-geist font-medium text-lg">
                     Update Details
                   </h3>
 
@@ -1380,7 +1491,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                     <div className="space-y-2">
                       <Label
                         htmlFor="title"
-                        className="font-geist text-sm font-medium"
+                        className="font-geist font-medium text-sm"
                       >
                         Title
                       </Label>
@@ -1389,14 +1500,14 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                         value={updateTitle}
                         onChange={(e) => setUpdateTitle(e.target.value)}
                         placeholder="Enter update title"
-                        className="h-11 rounded-xl border-input/50 font-geist shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                        className="shadow-none border-input/50 dark:border-gray-500/5 rounded-xl focus-visible:ring-primary/50 h-11 font-geist"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label
                         htmlFor="content"
-                        className="font-geist text-sm font-medium"
+                        className="font-geist font-medium text-sm"
                       >
                         Content
                       </Label>
@@ -1406,29 +1517,29 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                         onChange={(e) => setUpdateContent(e.target.value)}
                         placeholder="Share your progress..."
                         rows={6}
-                        className="resize-none rounded-xl border-input/50 font-geist shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
+                        className="shadow-none border-input/50 dark:border-gray-500/5 rounded-xl focus-visible:ring-primary/50 font-geist resize-none"
                       />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
+              <div className="flex justify-end gap-3 mt-8 pt-4 dark:border-gray-500/5 border-t font-geist">
                 <Button
                   variant="outline"
-                  className="h-11 w-24 rounded-2xl"
+                  className="rounded-2xl w-24 h-11"
                   onClick={() => setIsShareUpdateDialogOpen(false)}
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleShareUpdate}
-                  className="h-11 w-fit gap-2 rounded-2xl"
+                  className="gap-2 rounded-2xl w-fit h-11"
                   disabled={isSubmittingUpdate}
                 >
                   {isSubmittingUpdate ? (
                     <>
-                      <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24">
                         <circle
                           className="opacity-25"
                           cx="12"
@@ -1447,7 +1558,7 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                     </>
                   ) : (
                     <>
-                      <Check className="h-4 w-4" />
+                      <Check className="w-4 h-4" />
                       Share Update
                     </>
                   )}
@@ -1463,26 +1574,26 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
         open={isShareProjectDialogOpen}
         onOpenChange={setIsShareProjectDialogOpen}
       >
-        <DialogContent className="max-w-md overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm">
+        <DialogContent className="backdrop-blur-sm p-0 border-none rounded-xl max-w-md overflow-hidden">
           <DialogTitle></DialogTitle>
           <div className="relative flex flex-col">
             {/* Glow effects */}
-            <div className="absolute -right-4 size-32 -rotate-45 rounded-full border border-primary/50 bg-gradient-to-br from-primary/40 via-primary/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-            <div className="absolute -bottom-5 left-12 size-32 rotate-45 rounded-full border border-secondary/50 bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            <div className="-right-4 absolute bg-gradient-to-br from-primary/40 via-primary/50 to-transparent backdrop-blur-sm blur-[150px] border border-primary/50 rounded-full size-32 -rotate-45"></div>
+            <div className="-bottom-5 left-12 absolute bg-gradient-to-tl from-secondary/40 via-secondary/30 to-transparent backdrop-blur-sm blur-[150px] border border-secondary/50 rounded-full size-32 rotate-45"></div>
 
-            <div className="flex w-full flex-col px-6 pb-3">
-              <div className="mb-2 font-geist text-3xl font-medium">
+            <div className="flex flex-col px-6 pb-3 w-full">
+              <div className="mb-2 font-geist font-medium text-3xl">
                 Share Project
               </div>
-              <p className="font-geist text-sm text-muted-foreground">
+              <p className="font-geist text-muted-foreground text-sm">
                 Share this project as a post to let others discover it. This
                 will create a new post featuring your project.
               </p>
 
-              <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
+              <div className="flex justify-end gap-3 mt-8 pt-4 dark:border-gray-500/5 border-t font-geist">
                 <Button
                   variant="outline"
-                  className="h-11 w-24 rounded-2xl"
+                  className="rounded-2xl w-24 h-11"
                   onClick={() => setIsShareProjectDialogOpen(false)}
                 >
                   Cancel
@@ -1492,9 +1603,9 @@ const ProjectDetail = ({ projectId }: { projectId: string }) => {
                     await postAsPostMutation.mutate();
                     setIsShareProjectDialogOpen(false);
                   }}
-                  className="h-11 w-fit gap-2 rounded-2xl"
+                  className="gap-2 rounded-2xl w-fit h-11"
                 >
-                  <Share2 className="h-4 w-4" />
+                  <Share2 className="w-4 h-4" />
                   Share as Post
                 </Button>
               </div>

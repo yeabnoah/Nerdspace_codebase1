@@ -33,7 +33,8 @@ import {
   Plus,
   Tag,
   Upload,
-  X
+  X,
+  Loader2
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
@@ -291,359 +292,194 @@ export default function ProjectsPage() {
   }, [posthog, activeTab]);
 
   return (
-    <div className="container mx-auto w-full px-8 py-2 dark:bg-black">
-      <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-        <h1 className="font-geist text-3xl font-medium">Projects</h1>
-
-        <div className="flex w-full flex-col gap-4 sm:flex-row md:w-auto">
+    <div className="flex flex-col gap-6 w-full">
+      <div className="flex sm:flex-row flex-col sm:justify-between sm:items-center gap-4">
+        <h1 className="font-semibold text-2xl sm:text-3xl">Projects</h1>
+        <div className="flex sm:flex-row flex-col sm:items-center gap-2 sm:gap-4">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="h-11 w-full rounded-xl border-gray-100 dark:border-gray-500/10 sm:w-40">
-              <SelectValue placeholder="Status" />
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-gray-100 dark:border-gray-500/10 dark:bg-black">
-              <SelectItem value="all" className="font-geist">
-                All Status
-              </SelectItem>
-              <SelectItem value="ongoing" className="font-geist">
-                Ongoing
-              </SelectItem>
-              <SelectItem value="completed" className="font-geist">
-                Completed
-              </SelectItem>
-              <SelectItem value="paused" className="font-geist">
-                Paused
-              </SelectItem>
-              <SelectItem value="cancelled" className="font-geist">
-                Cancelled
-              </SelectItem>
+            <SelectContent>
+              <SelectItem value="all">All Projects</SelectItem>
+              <SelectItem value="ongoing">Ongoing</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="on-hold">On Hold</SelectItem>
             </SelectContent>
           </Select>
 
           <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
             <DialogTrigger asChild>
-              <Button
-                className="h-11 w-full cursor-pointer rounded-xl sm:w-auto"
-                onClick={() => setIsCreateModalOpen(true)}
-              >
-                <Plus className="h-4" />
+              <Button className="w-full sm:w-auto">
+                <Plus className="mr-2 w-4 h-4" />
                 Create Project
               </Button>
             </DialogTrigger>
-            <DialogContent
-              className="max-w-4xl overflow-hidden rounded-xl border-none p-0 backdrop-blur-sm"
-              aria-describedby="create-project-description"
-            >
-              <p id="create-project-description" className="sr-only font-geist">
-                Fill in the details to create a new project.
-              </p>
-              <div className="relative flex h-[85vh] max-h-[85vh] flex-col md:flex-row">
-                {/* Glow effects */}
-                <div className="absolute hidden md:block -right-4 size-32 -rotate-45 rounded-full border border-blue-300/50 bg-gradient-to-br from-blue-300/40 via-blue-400/50 to-transparent blur-[150px] backdrop-blur-sm"></div>
-                <div className="absolute hidden md:block -bottom-5 left-12 size-32 rotate-45 rounded-full border border-orange-300/50 bg-gradient-to-tl from-orange-300/40 via-orange-400/30 to-transparent blur-[150px] backdrop-blur-sm"></div>
+            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+              <DialogTitle>Create New Project</DialogTitle>
+              <div className="space-y-4 mt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Project Name</Label>
+                  <Input
+                    id="name"
+                    value={newProject.name}
+                    onChange={(e) =>
+                      setNewProject({ ...newProject, name: e.target.value })
+                    }
+                    placeholder="Enter project name"
+                  />
+                </div>
 
-                <DialogTitle></DialogTitle>
-                <div className="flex w-full flex-col rounded-l-xl border-b border-l border-r border-t p-6 dark:border-gray-600/10 dark:bg-black md:w-1/3">
-                  <div className="mb-2 font-geist text-3xl font-medium">
-                    New Project
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={newProject.description}
+                    onChange={(e) =>
+                      setNewProject({
+                        ...newProject,
+                        description: e.target.value,
+                      })
+                    }
+                    placeholder="Enter project description"
+                    className="min-h-[100px]"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select
+                    value={newProject.status}
+                    onValueChange={(value: "ONGOING" | "COMPLETED" | "PAUSED" | "CANCELLED") =>
+                      setNewProject({ ...newProject, status: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ONGOING">Ongoing</SelectItem>
+                      <SelectItem value="COMPLETED">Completed</SelectItem>
+                      <SelectItem value="PAUSED">Paused</SelectItem>
+                      <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="access">Access</Label>
+                  <Select
+                    value={newProject.access}
+                    onValueChange={(value: "public" | "private") =>
+                      setNewProject({ ...newProject, access: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select access" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="public">
+                        <div className="flex items-center gap-2">
+                          <Globe className="w-4 h-4" />
+                          Public
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="private">
+                        <div className="flex items-center gap-2">
+                          <Lock className="w-4 h-4" />
+                          Private
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Categories</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedCategories.map((category, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="flex items-center gap-1"
+                      >
+                        {category}
+                        <button
+                          onClick={() =>
+                            setSelectedCategories(
+                              selectedCategories.filter((_, i) => i !== index)
+                            )
+                          }
+                          className="hover:bg-muted ml-1 p-0.5 rounded-full"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
+                    ))}
                   </div>
-                  <p className="mb-6 font-geist text-muted-foreground">
-                    Fill in the details to create a new project
-                  </p>
+                  <Input
+                    placeholder="Add a category and press Enter"
+                    onKeyDown={handleCategoryInput}
+                    className="mt-2"
+                  />
+                </div>
 
-                  <div className="mt-4 flex flex-1 flex-col items-center justify-center">
-                    <div className="relative mb-4 aspect-square w-full max-w-[220px] overflow-hidden rounded-xl border-2 border-dashed border-primary/20 dark:bg-black">
-                      {selectedImage ? (
+                <div className="space-y-2">
+                  <Label>Project Image</Label>
+                  <div className="flex sm:flex-row flex-col sm:items-center gap-4">
+                    {selectedImage ? (
+                      <div className="relative w-full sm:w-48 h-32">
                         <img
                           src={URL.createObjectURL(selectedImage)}
                           alt="Selected"
-                          className="h-full w-full object-cover"
+                          className="rounded-lg w-full h-full object-cover"
                         />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center font-geist text-muted-foreground">
-                          No image
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="relative w-full max-w-[220px]">
-                      <Button
-                        className="h-11 w-full rounded-full font-geist"
-                        type="button"
-                      >
-                        <Upload className="mr-2 h-4 w-4" />
-                        {selectedImage ? "Change Image" : "Upload Image"}
-                      </Button>
-                      <Input
-                        type="file"
-                        className="absolute inset-0 cursor-pointer opacity-0"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                      />
-                    </div>
-
-                    {selectedImage && (
-                      <div className="mt-2 font-geist">
-                        <p>Selected Image: {selectedImage.name}</p>
-                        <Button variant="outline" onClick={handleImageCancel}>
-                          Remove Image
-                        </Button>
+                        <button
+                          onClick={handleImageCancel}
+                          className="-top-2 -right-2 absolute bg-destructive hover:bg-destructive/90 p-1 rounded-full text-white"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex justify-center items-center border-2 border-muted-foreground/25 border-dashed rounded-lg w-full sm:w-48 h-32">
+                        <Upload className="w-8 h-8 text-muted-foreground" />
                       </div>
                     )}
+                    <div className="flex flex-col gap-2">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="w-full"
+                      />
+                      <p className="text-muted-foreground text-xs">
+                        Recommended size: 1200x630px
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6">
-                  <Tabs defaultValue="details" className="w-full">
-                    <TabsList className="mb-6 grid h-12 w-full grid-cols-2 rounded-full border border-gray-100 dark:border-gray-500/10 dark:bg-black">
-                      <TabsTrigger
-                        value="details"
-                        className="h-10 rounded-full font-geist"
-                      >
-                        Project Details
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="settings"
-                        className="h-10 rounded-full font-geist"
-                      >
-                        Settings & Categories
-                      </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="details" className="space-y-6">
-                      <div className="rounded-xl border border-gray-100 bg-card p-4 shadow-none dark:border-gray-500/5">
-                        <h3 className="mb-4 font-geist text-lg font-medium">
-                          Basic Information
-                        </h3>
-                        <div className="space-y-4">
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="name"
-                              className="font-geist text-sm font-medium"
-                            >
-                              Project Name
-                            </Label>
-                            <Input
-                              id="name"
-                              value={newProject.name}
-                              onChange={(e) =>
-                                setNewProject({
-                                  ...newProject,
-                                  name: e.target.value,
-                                })
-                              }
-                              placeholder="Enter project name"
-                              className="h-11 rounded-xl border-input/50 font-geist shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="description"
-                              className="font-geist text-sm font-medium"
-                            >
-                              Description
-                            </Label>
-                            <Textarea
-                              id="description"
-                              value={newProject.description}
-                              onChange={(e) =>
-                                setNewProject({
-                                  ...newProject,
-                                  description: e.target.value,
-                                })
-                              }
-                              placeholder="Describe your project"
-                              rows={6}
-                              className="h-24 resize-none rounded-xl border-input/50 font-geist shadow-none focus-visible:ring-primary/50 dark:border-gray-500/5"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="settings" className="space-y-6">
-                      <div className="rounded-xl border border-gray-100 bg-card p-4 dark:border-gray-500/5">
-                        <h3 className="mb-4 font-geist text-lg font-medium">
-                          Project Status
-                        </h3>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="status"
-                              className="font-geist text-sm font-medium"
-                            >
-                              Status
-                            </Label>
-                            <Select
-                              value={newProject.status}
-                              onValueChange={(value) =>
-                                setNewProject({
-                                  ...newProject,
-                                  status: value as
-                                    | "ONGOING"
-                                    | "COMPLETED"
-                                    | "PAUSED"
-                                    | "CANCELLED",
-                                })
-                              }
-                            >
-                              <SelectTrigger
-                                id="status"
-                                className="h-11 w-full rounded-xl border font-geist shadow-none dark:border-gray-500/5"
-                              >
-                                <SelectValue placeholder="Select status" />
-                              </SelectTrigger>
-                              <SelectContent className="rounded-xl border font-geist shadow-none dark:border-gray-500/5">
-                                <SelectItem value="ONGOING">
-                                  <div className="flex items-center">
-                                    <div className="mr-2 h-2 w-2 rounded-full bg-blue-500"></div>
-                                    Ongoing
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="COMPLETED">
-                                  <div className="flex items-center">
-                                    <div className="mr-2 h-2 w-2 rounded-full bg-green-500"></div>
-                                    Completed
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="PAUSED">
-                                  <div className="flex items-center">
-                                    <div className="mr-2 h-2 w-2 rounded-full bg-amber-500"></div>
-                                    Paused
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="CANCELLED">
-                                  <div className="flex items-center">
-                                    <div className="mr-2 h-2 w-2 rounded-full bg-red-500"></div>
-                                    Cancelled
-                                  </div>
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="access"
-                              className="font-geist text-sm font-medium"
-                            >
-                              Access
-                            </Label>
-                            <Select
-                              value={newProject.access}
-                              onValueChange={(value) =>
-                                setNewProject({
-                                  ...newProject,
-                                  access: value as "public" | "private",
-                                })
-                              }
-                            >
-                              <SelectTrigger
-                                id="access"
-                                className="h-11 w-full rounded-xl border font-geist shadow-none dark:border-gray-500/5"
-                              >
-                                <SelectValue placeholder="Select access" />
-                              </SelectTrigger>
-                              <SelectContent className="rounded-xl border font-geist shadow-none dark:border-gray-500/5">
-                                <SelectItem value="public">
-                                  <div className="flex items-center">
-                                    <Globe className="mr-2 h-4 w-4 text-blue-500" />
-                                    Public
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="private">
-                                  <div className="flex items-center">
-                                    <Lock className="mr-2 h-4 w-4 text-amber-500" />
-                                    Private
-                                  </div>
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="rounded-xl border border-gray-100 bg-card p-4 dark:border-gray-500/5">
-                        <h3 className="mb-4 font-geist text-lg font-medium">
-                          Categories
-                        </h3>
-                        <div className="space-y-4">
-                          <div className="relative">
-                            <Tag className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
-                            <Input
-                              id="category"
-                              placeholder="Type a category and press space"
-                              onKeyDown={handleCategoryInput}
-                              className="h-11 rounded-xl border pl-10 font-geist shadow-none dark:border-gray-500/5"
-                            />
-                          </div>
-
-                          <div className="min-h-[100px] rounded-xl border bg-background/50 p-3 dark:border-gray-500/5">
-                            {selectedCategories.length > 0 ? (
-                              <div className="flex flex-wrap gap-2">
-                                {selectedCategories.map((category) => (
-                                  <Badge
-                                    key={category}
-                                    variant="secondary"
-                                    className="group flex h-8 items-center gap-2 rounded-xl px-2 py-1 font-geist"
-                                  >
-                                    {category}
-                                    <button
-                                      type="button"
-                                      className="text-muted-foreground transition-colors hover:text-foreground"
-                                      onClick={() =>
-                                        setSelectedCategories((prev) =>
-                                          prev.filter((c) => c !== category),
-                                        )
-                                      }
-                                    >
-                                      <X className="h-3 w-3" />
-                                    </button>
-                                  </Badge>
-                                ))}
-                              </div>
-                            ) : (
-                              <div className="flex h-full items-center justify-center font-geist text-sm text-muted-foreground">
-                                <AlertCircle className="mr-2 h-4 w-4" />
-                                No categories added yet
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-
-                  <div className="mt-8 flex justify-end gap-3 border-t pt-4 font-geist dark:border-gray-500/5">
-                    <Button
-                      variant="outline"
-                      className="h-11 w-24 rounded-2xl"
-                      onClick={() => setIsCreateModalOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={handleCreateProject}
-                      disabled={
-                        !newProject.name ||
-                        !newProject.description ||
-                        isSubmitting
-                      }
-                      className="h-11 w-fit gap-2 rounded-2xl"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                          Creating...
-                        </>
-                      ) : (
-                        <>
-                          <Check className="h-4 w-4" />
-                          Create Project
-                        </>
-                      )}
-                    </Button>
-                  </div>
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsCreateModalOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleCreateProject}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      "Create Project"
+                    )}
+                  </Button>
                 </div>
               </div>
             </DialogContent>
@@ -653,67 +489,57 @@ export default function ProjectsPage() {
 
       <Tabs
         defaultValue="projects"
+        value={activeTab}
+        onValueChange={setActiveTab}
         className="w-full"
-        onValueChange={(value) => setActiveTab(value)}
       >
-        <div className="relative mb-6 flex w-full max-w-6xl flex-1 items-center justify-between">
-          {/* Add gradient background effects */}
-          <div className="absolute -bottom-20 -left-20 h-[200px] w-[200px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 via-blue-400/10 to-transparent blur-[80px]"></div>
-          <div className="absolute -right-20 -top-20 h-[200px] w-[200px] -rotate-45 rounded-full bg-gradient-to-br from-orange-300/10 to-transparent blur-[80px]"></div>
+        <TabsList className="w-full sm:w-auto">
+          <TabsTrigger value="projects" className="flex-1 sm:flex-none">
+            Projects
+          </TabsTrigger>
+          <TabsTrigger value="leaderboard" className="flex-1 sm:flex-none">
+            Leaderboard
+          </TabsTrigger>
+        </TabsList>
 
-          <TabsList className="relative z-10 flex h-12 justify-center rounded-full border border-gray-100 dark:border-gray-500/10 dark:bg-black">
-            <TabsTrigger
-              value="projects"
-              className="h-10 rounded-full px-5 font-geist"
-            >
-              Project Board
-            </TabsTrigger>
-            <TabsTrigger
-              value="leaderboard"
-              className="h-10 rounded-full px-5 font-geist"
-            >
-              Leaderboard
-            </TabsTrigger>
-          </TabsList>
-        </div>
-
-        <TabsContent value="projects">
-          {isLoading && (
-            <div className="min-w-6xl relative mx-auto h-52">
-              <div className="absolute inset-0 flex flex-row items-center justify-center bg-gradient-to-br from-primary/5 via-transparent to-primary/5 blur-3xl"></div>
-              <div className="grid grid-cols-3 gap-5">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <ProjectCardSkeleton key={i} />
-                ))}
-              </div>
+        <TabsContent value="projects" className="mt-6">
+          {isLoading ? (
+            <div className="gap-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              {[...Array(6)].map((_, index) => (
+                <ProjectCardSkeleton key={index} />
+              ))}
             </div>
-          )}
-
-          {!isLoading && filteredProjects?.length === 0 ? (
-            <div className="relative flex w-full flex-col items-center justify-center py-12">
-              {/* Add gradient background effects */}
-              <div className="absolute -bottom-20 -left-20 h-[200px] w-[200px] rotate-45 rounded-full bg-gradient-to-tl from-blue-300/10 via-blue-400/10 to-transparent blur-[80px]"></div>
-              <div className="absolute -right-20 -top-20 h-[200px] w-[200px] -rotate-45 rounded-full bg-gradient-to-br from-orange-300/10 to-transparent blur-[80px]"></div>
-
-              <div className="relative z-10 text-center">
-                <h3 className="text-lg font-medium">No projects found</h3>
-                <p className="mt-1 text-muted-foreground">
-                  Try adjusting your search or filter criteria
-                </p>
-              </div>
+          ) : filteredProjects?.length === 0 ? (
+            <div className="flex flex-col justify-center items-center p-8 border border-dashed rounded-lg text-center">
+              <AlertCircle className="mb-4 w-12 h-12 text-muted-foreground" />
+              <h3 className="mb-2 font-semibold text-lg">No projects found</h3>
+              <p className="mb-4 text-muted-foreground text-sm">
+                Create your first project to get started
+              </p>
+              <Button onClick={() => setIsCreateModalOpen(true)} className="py-5 w-full">
+                <Plus className="mr-2 w-4 h-4" />
+                Create Project
+              </Button>
             </div>
           ) : (
-            <div className="relative grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {/* Add subtle gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 blur-3xl"></div>
+            <div className="gap-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {filteredProjects?.map((project) => (
-                <ProjectCard key={project.id} {...project} />
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  onUpdate={() => {
+                    // Handle update
+                  }}
+                  onDelete={() => {
+                    // Handle delete
+                  }}
+                />
               ))}
             </div>
           )}
         </TabsContent>
 
-        <TabsContent value="leaderboard">
+        <TabsContent value="leaderboard" className="mt-6">
           <LeaderboardPage />
         </TabsContent>
       </Tabs>
