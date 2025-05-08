@@ -196,7 +196,7 @@ export default function ProfilePage() {
 
   if (isloading || isFetching || isPending) {
     return (
-      <div className="relative md:mx-5 mt-5 px-4 md:px-0 pb-8 font-geist container">
+      <div className="relative md:mx-5 mt-5 md:px-0 pb-8 font-geist container">
         <div className="hidden md:block -top-20 md:-right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45" />
 
         <div className="group relative shadow-lg mb-12 rounded-2xl w-full h-[250px] overflow-hidden">
