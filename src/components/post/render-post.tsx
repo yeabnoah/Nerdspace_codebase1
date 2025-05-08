@@ -19,6 +19,7 @@ import MorePostsFetchSkeleton from "../skeleton/morepostFetch.skeleton";
 import RenderPostSkeleton from "../skeleton/render-post.skeleton";
 import DeleteCommentModal from "./comment/DeleteCommentModal";
 import EditCommentModal from "./comment/EditCommentModal";
+import { postAccess } from "@/interface/auth/post.interface";
 import PostCard from "./post-card";
 
 const RenderPost = () => {
@@ -311,7 +312,7 @@ const RenderPost = () => {
 
   if (data && data.pages.flatMap((page) => page.data).length === 0) {
     return (
-      <div className="flex h-[50vh] w-full items-center justify-center">
+      <div className="flex justify-center items-center w-full h-[50vh]">
         No posts available
       </div>
     );
@@ -319,7 +320,7 @@ const RenderPost = () => {
 
   if (isError) {
     return (
-      <div className="flex h-[60vh] w-full items-center justify-center">
+      <div className="flex justify-center items-center w-full h-[60vh]">
         Error loading posts
       </div>
     );
@@ -327,7 +328,7 @@ const RenderPost = () => {
 
   return (
     <div className="relative">
-      <div className="relative z-10 px-4 md:px-0">
+      <div className="z-10 relative px-4 md:px-0">
         {data?.pages
           .flatMap((page) => page.data)
           .map((each: postInterface, index) => {

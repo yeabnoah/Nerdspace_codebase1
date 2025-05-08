@@ -303,7 +303,7 @@ export default function UserProfile() {
     <div className="relative md:mx-10 mt-5 pb-8 w-[94%] font-geist container">
       <div className="hidden md:block -top-20 md:-right-10 absolute bg-gradient-to-br from-amber-300/10 dark:from-orange-300/10 to-transparent blur-[80px] rounded-full w-[300px] h-[300px] -rotate-45" />
 
-      <div className="group relative shadow-lg mx-auto mb-12 rounded-2xl h-[250px] md:h-[400px] overflow-hidden">
+      <div className="group relative shadow-lg mx-auto mb-12 rounded-2xl h-[250px] md:h-[250px] overflow-hidden">
         <Image
           src={userProfile?.coverImage || "/obsession.jpg"}
           alt="Cover Image"

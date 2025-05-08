@@ -7,7 +7,7 @@ import { queryClient } from "@/providers/tanstack-query-provider";
 import useExploreStore from "@/store/explore.store";
 import usePostStore from "@/store/post.store";
 import useReportStore from "@/store/report.strore";
-import { PostAccess } from "@prisma/client";
+import { postAccess } from "@/interface/auth/post.interface";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import React, { useState } from "react";
@@ -355,8 +355,8 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
     try {
       const newAccess =
         post.access.toString() === "public"
-          ? PostAccess.private
-          : PostAccess.public;
+          ? postAccess.private
+          : postAccess.public;
       await axios.patch("/api/security", {
         id: post.id,
         access: newAccess,
@@ -407,7 +407,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
 
   if (isError) {
     return (
-      <div className="flex h-[60vh] w-full items-center justify-center">
+      <div className="flex justify-center items-center w-full h-[60vh]">
         Error loading posts
       </div>
     );
@@ -418,7 +418,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
 
   return (
     <div className="relative">
-      <div className="relative z-10">
+      <div className="z-10 relative">
         {/* Render selected post first */}
         <PostCard
           key="selected-post"
@@ -461,7 +461,7 @@ const ExploreRenderPost = ({ selectedPost }: ExploreRenderPostProps) => {
 
         {/* Render the rest of the feed */}
         {feedPosts.length > 0 && (
-          <div className="mt-8 space-y-4">
+          <div className="space-y-4 mt-8">
             {feedPosts.map((post, index) => (
               <PostCard
                 key={post.id}
