@@ -193,21 +193,21 @@ const PostInput = () => {
   }
 
   return (
-    <div className="mx-auto mb-6 w-[93vw] rounded-2xl border border-gray-100 bg-white shadow-sm transition-all dark:border-gray-700/10 dark:bg-black md:w-full">
-      <div className="flex items-center gap-4 border-b border-gray-100 p-4 dark:border-gray-800/30">
+    <div className="bg-white dark:bg-black shadow-sm mx-auto mb-6 border border-gray-100 dark:border-gray-700/10 rounded-2xl w-[93vw] md:w-full transition-all">
+      <div className="flex items-center gap-4 p-4 border-gray-100 dark:border-gray-800/30 border-b">
         <div className="relative">
           {mounted && (
             <Image
               src={session?.data?.user?.image || "/user.jpg"}
               alt="user"
-              className="size-10 rounded-full border-2 border-gray-50 shadow-sm dark:border-gray-800"
+              className="shadow-sm border-2 border-gray-50 dark:border-gray-800 rounded-full size-10"
               height={40}
               width={40}
               priority
             />
           )}
           {mounted && (
-            <div className="absolute -bottom-1 -right-1 size-3 rounded-full border-2 border-white bg-green-500 dark:border-gray-900" />
+            <div className="-right-1 -bottom-1 absolute bg-green-500 border-2 border-white dark:border-gray-900 rounded-full size-3" />
           )}
         </div>
         <h3 className="font-medium text-gray-800 dark:text-gray-200">
@@ -218,20 +218,20 @@ const PostInput = () => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
           <div className="p-4">
-            <div className="flex w-full cursor-pointer items-start rounded-xl border border-gray-200 bg-gray-50/80 px-4 py-3 transition-all hover:border-gray-300 dark:border-gray-800/30 dark:bg-gray-800/20">
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex items-start bg-gray-50/80 dark:bg-gray-800/20 px-4 py-3 border border-gray-200 hover:border-gray-300 dark:border-gray-800/30 rounded-xl w-full transition-all cursor-pointer">
+              <span className="text-gray-500 dark:text-gray-400 text-sm">
                 What&apos;s on your mind?
               </span>
             </div>
           </div>
         </DialogTrigger>
 
-        <div className="flex items-center justify-between px-4 pb-4">
+        <div className="flex justify-between items-center px-4 pb-4">
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="sm"
-              className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
+              className="flex items-center gap-2 rounded-lg font-medium text-gray-600 dark:text-gray-300 text-sm"
             >
               <HiPhoto className="size-4" />
               Photo
@@ -240,7 +240,7 @@ const PostInput = () => {
               disabled
               variant="ghost"
               size="sm"
-              className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
+              className="flex items-center gap-2 rounded-lg font-medium text-gray-600 dark:text-gray-300 text-sm"
             >
               <FolderIcon className="size-4" />
               <span className="hidden md:block">Document</span>
@@ -249,7 +249,7 @@ const PostInput = () => {
               disabled
               variant="ghost"
               size="sm"
-              className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
+              className="flex items-center gap-2 rounded-lg font-medium text-gray-600 dark:text-gray-300 text-sm"
             >
               <MessagesSquareIcon className="size-4" />
               <span className="hidden md:block">Poll</span>
@@ -259,14 +259,14 @@ const PostInput = () => {
             disabled
             variant="ghost"
             size="sm"
-            className="rounded-lg bg-gray-100 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-black dark:text-gray-300 dark:hover:bg-gray-700"
+            className="bg-gray-100 hover:bg-gray-200 dark:bg-black dark:hover:bg-gray-700 rounded-lg font-medium text-gray-700 dark:text-gray-300 text-sm"
           >
             <span className="hidden md:block">Post</span>
           </Button>
         </div>
 
         <DialogContent
-          className="max-w-2xl overflow-hidden rounded-2xl border-gray-200 p-0 dark:border-gray-500/10 dark:bg-black"
+          className="dark:bg-black p-0 border-gray-200 dark:border-gray-500/10 rounded-2xl max-w-2xl overflow-hidden"
           onPaste={handlePaste}
         >
           <div
@@ -276,19 +276,19 @@ const PostInput = () => {
             onDrop={handleDrop}
           >
             <div className="relative">
-              <div className="border-b border-gray-200 px-6 py-4 dark:border-black">
-                <DialogTitle className="text-xl font-semibold tracking-tight">
+              <div className="px-6 py-4 border-gray-200 border-b dark:border-black">
+                <DialogTitle className="font-semibold text-xl tracking-tight">
                   Create post
                 </DialogTitle>
               </div>
 
               <div className="p-6">
-                <div className="mb-6 flex items-center gap-4">
+                <div className="flex items-center gap-4 mb-6">
                   {mounted && (
                     <Image
                       src={session?.data?.user?.image || "/user.jpg"}
                       alt="user"
-                      className="size-12 rounded-full border-2 border-gray-50 shadow-sm dark:border-gray-800"
+                      className="shadow-sm border-2 border-gray-50 dark:border-gray-800 rounded-full size-12"
                       height={48}
                       width={48}
                       priority
@@ -298,7 +298,7 @@ const PostInput = () => {
                     <h4 className="font-medium text-gray-900 dark:text-gray-100">
                       {mounted ? session?.data?.user?.name || "User" : "User"}
                     </h4>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                    <span className="text-gray-500 dark:text-gray-400 text-sm">
                       Public post
                     </span>
                   </div>
@@ -308,7 +308,7 @@ const PostInput = () => {
                   <AutosizeTextarea
                     maxHeight={500}
                     placeholder="What's on your mind? (500 characters max)"
-                    className="min-h-[200px] w-full rounded-xl border bg-transparent text-base outline-none placeholder:text-gray-400 focus:outline-none focus:ring-0 focus-visible:ring-0 dark:border-gray-500/10 dark:placeholder:text-gray-500"
+                    className="bg-transparent border dark:border-gray-500/10 rounded-xl outline-none focus:outline-none focus-visible:ring-0 focus:ring-0 w-full min-h-[200px] dark:placeholder:text-gray-500 placeholder:text-gray-400 text-base"
                     value={dialogPost}
                     onChange={handleTextareaChange}
                     onSelect={(e) =>
@@ -320,7 +320,7 @@ const PostInput = () => {
                       wordBreak: "break-word",
                     }}
                   />
-                  <div className="flex items-center justify-between px-4">
+                  <div className="flex justify-between items-center px-4">
                     <div className="flex items-center gap-4">
                       <div
                         className={`text-sm ${dialogPost.length > 500 ? "text-red-500" : "text-gray-500"}`}
@@ -328,7 +328,7 @@ const PostInput = () => {
                         {dialogPost.length}/500 characters
                       </div>
                       {errorMessage && (
-                        <div className="text-sm text-red-500">
+                        <div className="text-red-500 text-sm">
                           {errorMessage}
                         </div>
                       )}
@@ -339,12 +339,12 @@ const PostInput = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                            className="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg font-medium text-gray-600 dark:text-gray-300 text-sm"
                           >
-                            <SmileIcon className="h-5 w-5" />
+                            <SmileIcon className="w-5 h-5" />
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-fit p-0">
+                        <PopoverContent className="p-0 w-fit">
                           <EmojiPicker
                             className="h-[342px]"
                             onEmojiSelect={({ emoji }) => {
@@ -362,12 +362,12 @@ const PostInput = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pb-4">
+                <div className="flex justify-between items-center pb-4">
                   <div className="flex items-center gap-2">
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
+                      className="flex items-center gap-2 rounded-lg font-medium text-gray-600 dark:text-gray-300 text-sm"
                       onClick={() => {
                         const input = document.createElement("input");
                         input.type = "file";
@@ -389,7 +389,7 @@ const PostInput = () => {
                       disabled
                       variant="ghost"
                       size="sm"
-                      className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
+                      className="flex items-center gap-2 rounded-lg font-medium text-gray-600 dark:text-gray-300 text-sm"
                     >
                       <FolderIcon />
                       <span className="hidden md:block">Document</span>
@@ -398,7 +398,7 @@ const PostInput = () => {
                       disabled
                       variant="ghost"
                       size="sm"
-                      className="flex items-center gap-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300"
+                      className="flex items-center gap-2 rounded-lg font-medium text-gray-600 dark:text-gray-300 text-sm"
                     >
                       <MessagesSquareIcon />
                       <span className="hidden md:block">Poll</span>
@@ -411,20 +411,20 @@ const PostInput = () => {
                     {dialogFiles.map(({ id, file }) => (
                       <div
                         key={id}
-                        className="group relative aspect-square size-32 overflow-hidden rounded-xl border border-gray-200 shadow-sm transition-all hover:shadow-md dark:border-gray-800"
+                        className="group relative shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-800 rounded-xl size-32 aspect-square overflow-hidden transition-all"
                       >
-                        <div className="relative h-full w-full bg-gray-50 dark:bg-gray-800/30">
+                        <div className="relative bg-gray-50 dark:bg-gray-800/30 w-full h-full">
                           <img
                             src={
                               URL.createObjectURL(file) || "/placeholder.svg"
                             }
                             alt={file.name}
-                            className="h-full w-full object-cover"
+                            className="w-full h-full object-cover"
                           />
                           <Button
                             variant="secondary"
                             size="icon"
-                            className="absolute right-1 top-1 h-6 w-fit rounded-full bg-black/60 px-1.5 hover:bg-black/80 dark:bg-black/80"
+                            className="top-1 right-1 absolute bg-black/60 hover:bg-black/80 dark:bg-black/80 px-1.5 rounded-full w-fit h-6"
                             onClick={() => handleRemoveFile(id)}
                           >
                             <X className="size-6 text-white" />
@@ -436,10 +436,10 @@ const PostInput = () => {
                 )}
               </div>
 
-              <div className="border-t border-gray-200 p-6 dark:border-gray-800">
+              <div className="p-6 border-gray-200 dark:border-gray-800 border-t">
                 <Button
                   onClick={handleSubmit}
-                  className="w-full rounded-xl py-3 text-sm font-medium shadow-sm transition-all hover:shadow-md"
+                  className="shadow-sm hover:shadow-md py-3 rounded-xl w-full font-medium text-sm transition-all"
                   disabled={
                     isPending ||
                     isUploading ||
@@ -448,8 +448,8 @@ const PostInput = () => {
                   }
                 >
                   {isPending || isUploading ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <div className="flex justify-center items-center gap-2">
+                      <div className="border-2 border-white border-t-transparent rounded-full w-4 h-4 animate-spin" />
                       {isUploading ? "Uploading..." : "Posting..."}
                     </div>
                   ) : (

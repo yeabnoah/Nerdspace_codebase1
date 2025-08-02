@@ -6,9 +6,10 @@ import RenderPOst from "@/components/post/render-post";
 
 export default function Home() {
   return (
-    <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-row items-start ">
+    <div className="relative flex flex-row flex-1 items-start mx-auto w-full max-w-6xl">
       <LeftNavbar />
-      <div className="my-5 min-h-fit flex-1 pr-0 md:pr-7">
+      <div className="flex-1 my-5 pr-0 md:pr-7 min-h-fit">
+        
         <PostInput />
         <RenderPOst />
       </div>
